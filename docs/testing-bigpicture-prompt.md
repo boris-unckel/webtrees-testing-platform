@@ -26,13 +26,13 @@ sowie ein sofort renderbares Mermaid-Diagramm.
 | **OpenTelemetry**    | OTel PHP SDK (PDO-Auto-Instrumentation) + OTel Collector Sidecar-Container; Traces für Teststufen 2–3 und Performanztest; Jaeger als lokales UI; versionierter Trace-Vergleich für Performance-Regression |
 | **Code Coverage**    | pcov + php-coveralls (wie webtrees Core selbst)                              |
 | **Static Analysis**  | PHPStan + PHPCS (wie webtrees Core selbst)                                   |
-| **Verzeichnis**      | `webtrees-tests/` im Repo-Root, unabhängig von `smoke-tests/` und `sitemirror/` |
-| **Repo-Platzierung** | Dieses Repo (`dombrinksblagen`) — bei Upstream-Contribution später extrahierbar |
+| **Verzeichnis**      | Eigenständiges Repo (`webtrees-testing-platform`), unabhängig von Deployment-Repo und `smoke-tests/` |
+| **Repo-Platzierung** | Eigenständiges Repo (`webtrees-testing-platform`) — für Upstream-Contribution Testcode extrahierbar |
 | **RE-Methodik**      | Code-first + Gap-Analyse existierender Tests + GEDCOM-5.5.1-Abgleich         |
-| **Prioritäts-Domänen** | GEDCOM Import/Export (24 Testfälle), Suche & Navigation (26 Testfälle)      |
+| **Prioritäts-Domänen** | GEDCOM Import/Export (23 Testfälle), Suche & Navigation (39 Testfälle)      |
 | **Testfall-Format**  | Feature-Matrix: Code-Stelle → Anforderung → Testart → Teststufe → Priorität |
 | **Wartbarkeit**      | Höchste Priorität — monatelange Pause darf kein Blocker sein                 |
-| **Upstream-Tests**   | Separater Branch in `github/webtrees/` — Stubs mit echten Tests füllen, als PR an webtrees Core; zunächst redundant zu `webtrees-tests/`, nach Upstream-Akzeptanz rückbaubar |
+| **Upstream-Tests**   | Separater Branch in `../webtrees-upstream/webtrees/` — Stubs mit echten Tests füllen, als PR an webtrees Core; zunächst redundant, nach Upstream-Akzeptanz rückbaubar |
 | **Terminologie**     | ISTQB-Glossar (de_DE) v4.7.1 durchgängig — Komponententest, Komponentenintegrationstest, Systemtest, Testart |
 | **Stufenstruktur**   | 3 Teststufen (Komponenten-, Komponentenintegrations-, Systemtest) + Querschnitte (Testumgebung, Statischer Test, Performanztest, CI/CD, OTel, KI-Debug) |
 | **Endekriterien**    | Pro Teststufe definiert; Eingangskriterien implizit durch sequentielle Job-Kette |
@@ -64,7 +64,7 @@ Das Diagramm soll als Schichtenmodell (von unten nach oben) aufgebaut sein:
 
 QUERSCHNITT — Testumgebung (Container-Stack)
   - Podman Compose Stack
-  - Container: PHP-FPM + Apache (webtrees), MySQL 8, Playwright-Runner (Node.js),
+  - Container: PHP + Apache mod_php (webtrees), MySQL 8, Playwright-Runner (Node.js),
     OpenTelemetry Collector (Sidecar), Jaeger (lokales Trace-UI)
   - Gemeinsames Netzwerk, persistente Volumes für DB und GEDCOM-Fixtures
   - GEDCOM-Testdatei als reproduzierbarer Import-Fixture
@@ -178,7 +178,7 @@ graph TB
 
     subgraph INFRA["Querschnitt — Testumgebung (Podman Compose)"]
         direction LR
-        php["PHP-FPM\n+ Apache\n(webtrees)\n+ OTel SDK"]
+        php["PHP mod_php\n+ Apache\n(webtrees)\n+ OTel SDK"]
         db["MySQL 8\n(Container-DB)"]
         pw["Playwright-Runner\n(Node.js)"]
         fixture["GEDCOM-Fixture\n(Musterfamilie)"]
@@ -273,16 +273,19 @@ Stattdessen werden explizite Health-Checks und ein `wait-for-it.sh`-Skript verwe
 
 ---
 
-### N2 — Verzeichnisstruktur: `webtrees-tests/` im Repo-Root
+### N2 — Verzeichnisstruktur: Eigenständiges Repo `webtrees-testing-platform`
 
 ```
-webtrees-tests/
+webtrees-testing-platform/
 ├── compose.yaml                    # Podman Compose Stack-Definition
-├── Containerfile.webtrees          # PHP 8.5 + Apache + OTel SDK
+├── Containerfile.webtrees          # PHP 8.5 + Apache mod_php
 ├── Containerfile.playwright        # Node.js 22 + Playwright + Chromium
 ├── Makefile                        # make up / down / test-all / test-N / clean
 ├── .env.example                    # Template: DB-Creds, OTel-Config
 ├── README.md                       # Deutsch: Strategie + Quickstart
+├── CLAUDE.md                       # AI-Kontext: Testaufruf, Layer-Architektur, SELinux
+├── docs/
+│   └── testing-bigpicture-prompt.md # Dieses Dokument (Teststrategie)
 ├── scripts/
 │   ├── setup-webtrees.sh          # Auto-Installer (config.ini.php, Migration, GEDCOM-Import)
 │   ├── analyze-failure.sh         # Artefakt-Sammler → Claude Code CLI
@@ -299,10 +302,18 @@ webtrees-tests/
 ├── layer3-integration/
 │   ├── run.sh                     # PHPUnit Integration-Suite
 │   ├── phpunit-integration.xml    # Config (MySQL)
-│   └── tests/                     # Neue Integrationstests
+│   ├── bootstrap.php              # Autoloader (webtrees + DombrinksBlagen-Namespace)
+│   └── tests/                     # 11 Integrationstests (MysqlTestCase + 10 Tests)
 │       ├── MysqlTestCase.php
+│       ├── AutoCompleteIntegrationTest.php
+│       ├── ChartModuleIntegrationTest.php
 │       ├── GedcomImportTest.php
+│       ├── GedcomServiceIntegrationTest.php
+│       ├── ListModuleIntegrationTest.php
 │       ├── RelationshipDbTest.php
+│       ├── RelationshipServiceIntegrationTest.php
+│       ├── RomanNumeralsIntegrationTest.php
+│       ├── SearchIntegrationTest.php
 │       └── TreeOperationsTest.php
 ├── layer4-e2e/
 │   ├── playwright.config.ts       # baseURL = http://webtrees:80
@@ -312,6 +323,7 @@ webtrees-tests/
 │       ├── individual.spec.ts
 │       └── theme-matrix.spec.ts
 ├── layer5-performance/
+│   ├── playwright.config.ts       # Performance-spezifische Config (timeout 60s, retries 0)
 │   ├── run.sh                     # Perf-Messung + Baseline-Vergleich
 │   ├── baselines/                 # Versionierte Baseline-JSONs (z.B. 2.2.5.json)
 │   └── tests/
@@ -326,9 +338,10 @@ webtrees-tests/
     └── webtrees-tests.yaml        # GitHub Actions Workflow (Entwurf)
 ```
 
-**Begründung:** `webtrees-tests/` ist vollständig unabhängig von `smoke-tests/` (Live-Site-Tests)
-und `sitemirror/` (Produktivstand). Die webtrees-Source aus `github/webtrees/` wird per
-read-only Bind-Mount in den Container eingebunden — kein Code wird kopiert oder modifiziert.
+**Begründung:** `webtrees-testing-platform` ist ein eigenständiges Repo, unabhängig vom
+Deployment-Repo und `smoke-tests/` (Live-Site-Tests). Die webtrees-Source aus
+`../webtrees-upstream/webtrees/` wird per read-only Bind-Mount in den Container
+eingebunden — kein Code wird kopiert oder modifiziert.
 
 `artifacts/` wird in `.gitignore` eingetragen. `layer5-performance/baselines/` ist absichtlich
 versioniert — das ist der Kern des Baseline-Vergleichs.
@@ -339,7 +352,7 @@ versioniert — das ist der Kern des Baseline-Vergleichs.
 
 | Fixture | Quelle | Umfang | Zweck |
 |---|---|---|---|
-| `demo.ged` | `github/webtrees/tests/data/demo.ged` | 72 Individuen, 29 Familien (brit. Königshaus) | Primär-Fixture für alle Schichten |
+| `demo.ged` | `../webtrees-upstream/webtrees/tests/data/demo.ged` | 72 Individuen, 29 Familien (brit. Königshaus) | Primär-Fixture für alle Schichten |
 | `gedcom-l-muster.ged` | `github/gedcom_muster/muster_GEDCOM_UTF-8.ged` | 37 Individuen, 18 Familien | i18n / Deutsch-Testing |
 
 **Begründung:** `demo.ged` ist die kanonische Testdatei von webtrees selbst (verwendet in
@@ -347,7 +360,7 @@ versioniert — das ist der Kern des Baseline-Vergleichs.
 und Quellen ab. Das deutsche Muster (CC BY 4.0, Verein für Computergenealogie) ergänzt
 für Lokalisierungstests.
 
-**Setup:** Beide Dateien werden als Kopie in `webtrees-tests/fixtures/` abgelegt. Das
+**Setup:** Beide Dateien werden als Kopie in `fixtures/` abgelegt. Das
 `setup-webtrees.sh`-Skript importiert sie beim Container-Start als zwei separate Bäume
 (`demo` und `muster`).
 
@@ -400,14 +413,21 @@ Teststufe 2 mit einer eigenen `MysqlTestCase`-Basis-Klasse.
 | Aspekt | Entscheidung |
 |---|---|
 | **Tiefe** | Nur Auto-Instrumentation (PDO + PSR-18), keine manuellen Spans |
-| **Installation** | `composer require --dev` im Containerfile — kein webtrees-Core-Change |
+| **Installation** | `composer require --dev` in `setup-webtrees.sh` (vendor-Volume, nicht Image-Layer) — kein webtrees-Core-Change |
 | **Aktivierung** | ENV-Variablen in `compose.yaml` |
 | **Deaktivierung** | `OTEL_SDK_DISABLED=true` → Zero Overhead |
 | **Export lokal** | Jaeger UI (http://localhost:16686) |
 | **Export CI** | File-Exporter → JSON-Artefakt |
 | **Upstream-Konzept** | OTel als optionales Dev-Feature vorschlagen |
 
-**Composer-Pakete (im Containerfile installiert):**
+**Composer-Pakete (geplant, noch nicht implementiert):**
+
+> **Implementierungslücke (Stand 2026-03-27):** Die OTel-PHP-Pakete werden bisher weder im
+> `Containerfile.webtrees` noch in `setup-webtrees.sh` installiert. Der OTel Collector und
+> Jaeger laufen als Container, aber die PHP-seitige Auto-Instrumentation ist noch nicht aktiv.
+> Die folgenden Pakete müssen per `composer require --dev` im Container installiert werden,
+> bevor Traces aus dem PHP-Prozess erzeugt werden:
+
 ```bash
 composer require --dev \
   open-telemetry/sdk \
@@ -461,8 +481,8 @@ einer Upstream-Contribution relevant.
 
 | Aspekt | Entscheidung |
 |---|---|
-| **Datei** | `webtrees-tests/.github/workflows/webtrees-tests.yaml` |
-| **Trigger** | `push` + `pull_request` (Pfadfilter: `webtrees-tests/**`), `workflow_dispatch` |
+| **Datei** | `.github/workflows/webtrees-tests.yaml` |
+| **Trigger** | `push` + `pull_request`, `workflow_dispatch` |
 | **Matrix** | PHP 8.5 (Latest Stable, keine Vorgängerversionen) |
 | **Runner** | `ubuntu-latest` (Podman vorinstalliert) |
 | **Job-Kette** | `testumgebung` → `statischer-test` → `komponententest` → `komponentenintegrationstest` → `systemtest` → `performanztest` |
@@ -496,7 +516,7 @@ eines spezifischen webtrees-Refs vor einem Versions-Update.
 
 | Container | Image | Zweck | Host-Port | Volume-Mounts |
 |---|---|---|---|---|
-| `webtrees` | `Containerfile.webtrees` | PHP 8.5 + Apache + webtrees + OTel SDK | 8080:80 | `github/webtrees/` → `/var/www/html` (ro), Named Vol → `/var/www/html/data/` (rw), `fixtures/` → `/fixtures` (ro) |
+| `webtrees` | `Containerfile.webtrees` | PHP 8.5 + Apache mod_php + webtrees | 8080:80 | `../webtrees-upstream/webtrees/` → `/var/www/html` (ro), Named Vol → `/var/www/html/data/` (rw), `fixtures/` → `/fixtures` (ro) |
 | `mysql` | `docker.io/library/mysql:8.0` | Datenbank | 3306:3306 | Named Vol → `/var/lib/mysql` |
 | `playwright` | `Containerfile.playwright` | Node.js 22 + Chromium (headless) | — | `layer4-e2e/` + `layer5-performance/` → `/tests` (ro), `artifacts/` → `/artifacts` (rw) |
 | `otel-collector` | `docker.io/otel/opentelemetry-collector-contrib` | OTel Sidecar (OTLP gRPC) | 4317:4317 | `otel/otel-collector-config.yaml` → `/etc/otelcol/config.yaml` (ro), `artifacts/` → `/artifacts` (rw) |
@@ -766,17 +786,17 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | Teststufe | GEDCOM (G01–G23) | Suche/Nav (S01–S39) | Gesamt |
 |---|---|---|---|
 | Teststufe 1 — Komponententest | G05, G06, G11, G17, G18, G19, G22, G23 (8) | S04 (1) | **9** |
-| Teststufe 2 — Komponentenintegrationstest | G01–G04, G07–G10, G12–G16 (14) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (14) | **28** |
+| Teststufe 2 — Komponentenintegrationstest | G01–G04, G07–G10, G12–G16 (13) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (13) | **26** |
 | Teststufe 3 — Systemtest | G20, G21 (2) | S09, S13–S18, S20, S23–S39 (25) | **27** |
-| **Summe** | **24** | **40** | **64** |
+| **Summe** | **23** | **39** | **62** |
 
 ### Prioritätsverteilung
 
 | Priorität | Anzahl | Anteil |
 |---|---|---|
-| Hoch | 24 | 38% |
-| Mittel | 32 | 50% |
-| Niedrig | 8 | 13% |
+| Hoch | 26 | 42% |
+| Mittel | 32 | 52% |
+| Niedrig | 4 | 6% |
 
 ---
 
@@ -903,7 +923,7 @@ durch Artefakt-Sammlung und Claude Code CLI als Analyse-Tool.
 
 ## Testkonventionen
 
-> Verbindliche Regeln für alle PHPUnit-Tests in `webtrees-tests/` und im Upstream-Branch.
+> Verbindliche Regeln für alle PHPUnit-Tests in diesem Repo und im Upstream-Branch.
 > Basiert auf ISTQB-Grundprinzipien und Mariia Vain "Unit Testing Best Practices in PHP".
 
 ### AAA-Pattern (Arrange-Act-Assert)
@@ -1011,7 +1031,7 @@ class GedcomImportServiceTest extends MysqlTestCase
 ```
 
 **Bidirektionale Abfrage:**
-- Vorwärts (Anforderung → Test): `grep -r "G01" webtrees-tests/`
+- Vorwärts (Anforderung → Test): `grep -r "G01" layer*/`
 - Rückwärts (Test → Anforderung): `@see`-Zeile in der Testdatei
 
 Keine separate Traceability-Matrix im Dokument — die Verfolgbarkeit lebt im Code und
@@ -1022,14 +1042,13 @@ kann bei Bedarf per Skript extrahiert werden.
 ## Implementierungs-Fahrplan
 
 > Status: **Phase 1–7 implementiert und verifiziert.** Phase 5b (E2E-Routenabdeckung) geplant.
-> Alle Teststufen laufen erfolgreich im Podman-Container-Stack (28/28 Tests grün).
 
 | Phase | Status | Ergebnis |
 |---|---|---|
 | Phase 1 — Testumgebung (Container-Stack) | **Verifiziert** | 5-Container-Stack stabil (webtrees, MySQL, Playwright, OTel-Collector, Jaeger). SELinux `:z` Labels, vendor-Volume Overlay, Apache FallbackResource, PHP-Healthcheck. |
 | Phase 2 — Statischer Test | **Verifiziert** | `layer1-static/run.sh` läuft. 704 PHPStan-Findings + 2150 PHPCS-Warnings — alles upstream webtrees-Core (2.2.6-dev), kein eigener Code betroffen. |
 | Phase 3 — Komponententest | **Verifiziert** | 3278/3283 webtrees Core-Tests pass. 5 Failures in `MaintenanceModeServiceTest` (read-only Bind-Mount, erwartbar). 76 Warnings (fehlende Locale-Dateien). |
-| Phase 4 — Komponentenintegrationstest | **Verifiziert** | 12/12 eigene Tests grün (18 Assertions). `MysqlTestCase.php`, `GedcomImportTest.php`, `RelationshipDbTest.php`, `TreeOperationsTest.php`. |
+| Phase 4 — Komponentenintegrationstest | **Verifiziert** | 129 eigene Tests grün über 11 Testklassen (MysqlTestCase + 10 Tests). Umfasst GEDCOM-Import, Beziehungen, Bäume, Suche, Charts, Listen, AutoComplete, RomanNumerals, GedcomService, RelationshipService. |
 | Phase 5 — Systemtest | **Verifiziert** | 13/13 Playwright E2E-Tests grün. Login, Navigation, Individual Page, Theme-Rendering, Source List, Pedigree. |
 | Phase 5b — Systemtest (E2E-Routenabdeckung) | **Geplant** | Gap-Analyse: 14 neue Feature-Matrix-Einträge (S26–S39). 18 offene Routen für neue Spec-Dateien identifiziert. Korrekturen: S24 (Fehlzuordnung), S25 (nur Default-Theme). Fixture-XREFs: @f1@ (FamilyPage), @X1102@ (SourcePage), @X1104@ (MediaPage), @X1165@ (RepositoryPage), @X1166@ (SubmitterPage). |
 | Phase 6 — Performanztest | **Verifiziert** | 3/3 Playwright-Perf-Tests grün. Erste Baselines: Homepage 619ms, Pedigree 655ms, Suche 561ms. |
@@ -1039,23 +1058,23 @@ kann bei Bedarf per Skript extrahiert werden.
 
 ## Upstream-Contribution: Test-Stubs mit echten Tests füllen
 
-> **Separates Vorhaben**, unabhängig vom `webtrees-tests/`-Projekt.
+> **Separates Vorhaben**, unabhängig von diesem Repo.
 > Ziel: PR an `fisharebest/webtrees` — Testabdeckung im Core verbessern.
 
 ### Abgrenzung
 
-| Aspekt | `webtrees-tests/` (dieses Projekt) | Upstream-Branch (`github/webtrees/`) |
+| Aspekt | `webtrees-testing-platform/` (dieses Repo) | Upstream-Branch (`../webtrees-upstream/webtrees/`) |
 |---|---|---|
-| **Ort** | `dombrinksblagen/webtrees-tests/` | `dombrinksblagen/github/webtrees/` (Branch) |
-| **Abhängigkeit** | Bindet `github/webtrees/` nur lesend ein | Ändert webtrees-Code direkt (nur `tests/`) |
+| **Ort** | `webtrees-testing-platform/` (dieses Repo) | `../webtrees-upstream/webtrees/` (Branch) |
+| **Abhängigkeit** | Bindet `../webtrees-upstream/webtrees/` nur lesend ein | Ändert webtrees-Code direkt (nur `tests/`) |
 | **Zweck** | Eigene Testinfrastruktur (Container, OTel, Playwright) | Bestehende Stubs → echte Tests |
 | **Zielgruppe** | Eigenbedarf (Regressionstests vor Updates) | Upstream-Community (PR) |
-| **Redundanz** | Zunächst bewusst redundant | Nach Upstream-Akzeptanz: `webtrees-tests/` nutzt Core-Tests statt eigener |
+| **Redundanz** | Zunächst bewusst redundant | Nach Upstream-Akzeptanz: dieses Repo nutzt Core-Tests statt eigener |
 | **Testframework** | PHPUnit + Playwright (eigene Infra) | PHPUnit (webtrees-eigene Infra: `TestCase.php`, SQLite in-memory) |
 
 ### Vorgehen
 
-1. **Branch erstellen** in `github/webtrees/` (z. B. `fill-test-stubs`)
+1. **Branch erstellen** in `../webtrees-upstream/webtrees/` (z. B. `fill-test-stubs`)
 2. **Stubs identifizieren** — alle Testdateien mit nur `testClass()`-Methode (siehe Gap-Analyse: ~95%)
 3. **Priorisierung** — Feature-Matrizen G01–G23 und S01–S25 als Leitfaden:
    - Zuerst Komponententest-Stubs (Teststufe 1): `GedcomExportServiceTest`, `SearchServiceTest` etc.
@@ -1081,7 +1100,7 @@ kann bei Bedarf per Skript extrahiert werden.
 | Lists | 10 List-Modul-Tests | S19, S20 |
 | AutoComplete | 16 TomSelect-Handler-Tests | S21, S22 |
 
-### Abgrenzung zu `webtrees-tests/`
+### Abgrenzung zu diesem Repo
 
 - **Kein Container-Stack nötig** — webtrees Core-Tests laufen mit SQLite in-memory
 - **Kein Playwright** — nur PHPUnit, Handler-Tests über `RequestHandler`-Interface
@@ -1091,12 +1110,12 @@ kann bei Bedarf per Skript extrahiert werden.
 ### Redundanz und Rückbau
 
 Zunächst entstehen ähnliche Tests an zwei Stellen:
-- `webtrees-tests/` Teststufe 1 und 2 → eigene Testfälle
-- `github/webtrees/tests/app/` → gefüllte Stubs
+- Dieses Repo: Teststufe 1 und 2 → eigene Testfälle
+- `../webtrees-upstream/webtrees/tests/app/` → gefüllte Stubs
 
 **Nach Upstream-Akzeptanz:**
-- `webtrees-tests/` entfernt redundante Komponenten- und Komponentenintegrationstests
-- `webtrees-tests/` konzentriert sich auf Bereiche, die Upstream nicht abdeckt: Testumgebung (Container-Stack), Systemtest mit Playwright (Teststufe 3), Performance-Baselines (Performanztest), OTel-Tracing
+- Dieses Repo entfernt redundante Komponenten- und Komponentenintegrationstests
+- Dieses Repo konzentriert sich auf Bereiche, die Upstream nicht abdeckt: Testumgebung (Container-Stack), Systemtest mit Playwright (Teststufe 3), Performance-Baselines (Performanztest), OTel-Tracing
 - Die Feature-Matrizen G01–G23 und S01–S25 bleiben als Referenz erhalten
 
 ### Status
@@ -1134,8 +1153,8 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | G11 | Custom-Tags | `GedcomImportServiceTest` (media files) ✅ | — | — | **Teilweise** |
 | G12 | XREF-Eindeutigkeit | `GedcomImportServiceTest` ✅ | `GedcomImportTest` ✅ | — | **Abgedeckt** |
 | G13 | Export GEDCOM | `GedcomExportServiceTest` ✅ | `TreeOperationsTest` ✅ | — | **Abgedeckt** |
-| G14 | Export Sort by XREF | `GedcomExportServiceTest` ✅ | — | — | **Abgedeckt** |
-| G15 | Export Download-Response | `GedcomExportServiceTest` ✅ | — | — | **Abgedeckt** |
+| G14 | Export ZIP | — (upstream-Tests decken Sort by XREF ab, nicht ZIP-Format) | — | — | **Offen** |
+| G15 | Export ZIP+Media | — (upstream-Tests decken Download-Response ab, nicht ZIP+Media) | — | — | **Offen** |
 | G16 | Export Privacy | `GedcomExportServiceTest` ✅ (PRIV_HIDE; PRIV_NONE/USER → upstream Bug) | — | — | **Abgedeckt** (mit Einschränkung) |
 | G17 | Export Encoding | `GedcomExportServiceTest` (CONC) ✅ | — | — | **Teilweise** (Prio 3b) |
 | G18 | Export CONC/CONT | `GedcomExportServiceTest` ✅ | — | — | **Abgedeckt** |
@@ -1193,10 +1212,10 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 
 | Status | G-Features | S-Features (S01–S39) | Gesamt |
 |---|---|---|---|
-| **Abgedeckt** | 14 | 17 | **31** (50%) |
+| **Abgedeckt** | 12 | 17 | **29** (47%) |
 | **Teilweise** | 4 | 4 | **8** (13%) |
 | **Vorhanden** (upstream) | 1 | 0 | **1** (2%) |
-| **Offen** | 4 | 18 | **22** (35%) |
+| **Offen** | 6 | 18 | **24** (39%) |
 | Davon upstream Bug | 1 (G16 Teilaspekt) | 0 | **1** (2%) |
 
 ### Detailplan: Offene Stubs nach Arbeitspaketen
@@ -1377,6 +1396,7 @@ Korrekt sind die 5 Module-Namen im aktuellen webtrees-Code (`app/Module/`):
 *Aktualisiert: 2026-03-27 — Plan vollständig umgesetzt (Prio 2a–4). 137 Tests, 450 Assertions, 0 Failures. 23 Dateien modifiziert (7 Services, 13 Modules, 3 Handlers). Abdeckung von 30% auf 62% gesteigert. Upstream-Bug FamilyFactory::mapper() dokumentiert.*
 *Aktualisiert: 2026-03-27 — E2E-Gap-Analyse (Layer 4): Abgleich Playwright-Specs vs. WebRoutes.php (170 GET-Routen). 14 neue Feature-Matrix-Einträge (S26–S39), Korrekturen S24 (Fehlzuordnung) und S25 (nur Default-Theme). Gesamtabdeckung 50% (31/62), 22 offene Testbedingungen. Phase 5b im Implementierungs-Fahrplan ergänzt.*
 *Aktualisiert: 2026-03-27 — Detailplan Phase 5b: AP 5b-1 (Theme-Matrix 5×10, ~50 Tests) und AP 5b-2 (Routen-Specs, ~19 Tests). Theme-Korrektur: „minimal" → „colors" (kein Theme namens minimal im aktuellen webtrees). Theme-Switching via POST /theme/{name} dokumentiert.*
+*Aktualisiert: 2026-03-27 — Code-Review des Dokuments gegen vorliegenden Code. Korrekturen: (1) PHP-FPM → mod_php (Containerfile nutzt `php:8.5-apache`, nicht FPM). (2) Repo-Pfade: `webtrees-tests/` / `dombrinksblagen/` → `webtrees-testing-platform/` / `../webtrees-upstream/webtrees/` (eigenständiges Repo seit Extraktion). (3) Testfall-Zählfehler: Teststufe-2-Counts je 14→13, Summen 64→62, Prioritätsverteilung neu berechnet (Hoch 26, Mittel 32, Niedrig 4). (4) G14/G15 Abdeckungsmatrix korrigiert: Feature-Matrix definiert ZIP/ZIP+Media, upstream-Tests decken Sort-by-XREF/Download-Response ab — beides auf Offen gesetzt. (5) N2 Verzeichnisbaum auf 11 Testklassen aktualisiert, bootstrap.php und playwright.config.ts ergänzt. (6) Phase-4-Status: 12/12→129 Tests über 11 Klassen. (7) OTel-Implementierungslücke dokumentiert (Composer-Pakete nicht im Containerfile/setup-webtrees.sh). (8) Abdeckungssummary: 47% abgedeckt (29/62), 39% offen (24/62).*
 
 ---
 
@@ -1389,7 +1409,7 @@ Korrekt sind die 5 Module-Namen im aktuellen webtrees-Code (`app/Module/`):
 **Betrifft:** Nur diesen Dev Desktop (Fedora + SELinux + rootless Podman). Auf anderen Systemen ohne SELinux tritt dieser Fehler nicht auf.
 **Recovery (manuell, einmalig nach Auftreten):**
 ```bash
-chcon -R -l s0 /home/borisunckel/dombrinksblagen/github/webtrees/
+chcon -R -l s0 /home/borisunckel/phpprojects/webtrees-upstream/webtrees/
 make down && make up
 ```
 **Status:** Nicht automatisch behebbar (Host-spezifisch). Dokumentiert in CLAUDE.md unter „SELinux-Falle".
