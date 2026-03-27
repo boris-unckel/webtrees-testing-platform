@@ -413,7 +413,7 @@ Teststufe 2 mit einer eigenen `MysqlTestCase`-Basis-Klasse.
 | Aspekt | Entscheidung |
 |---|---|
 | **Tiefe** | Nur Auto-Instrumentation (PDO + PSR-18), keine manuellen Spans |
-| **Installation** | `composer require --dev` in `setup-webtrees.sh` (vendor-Volume, nicht Image-Layer) — kein webtrees-Core-Change |
+| **Installation** | `composer require --dev` in `setup-webtrees.sh` (vendor-Volume, nicht Image-Layer) — kein webtrees-Core-Change. PHP-Extensions (`grpc`, `protobuf`) im Containerfile. Siehe Phase 7a. |
 | **Aktivierung** | ENV-Variablen in `compose.yaml` |
 | **Deaktivierung** | `OTEL_SDK_DISABLED=true` → Zero Overhead |
 | **Export lokal** | Jaeger UI (http://localhost:16686) |
@@ -1041,7 +1041,9 @@ kann bei Bedarf per Skript extrahiert werden.
 
 ## Implementierungs-Fahrplan
 
-> Status: **Phase 1–7 implementiert und verifiziert.** Phase 5b (E2E-Routenabdeckung) geplant.
+> Status: **Phase 1–7 implementiert und verifiziert.** Phase 7a (OTel PHP-Instrumentation)
+> und Phase 5b (E2E-Routenabdeckung) geplant. Phase 7a hat Vorrang — OTel-Traces sind
+> Diagnose-Werkzeug für Verifikation und Bugfixing in allen Teststufen.
 
 | Phase | Status | Ergebnis |
 |---|---|---|
@@ -1050,6 +1052,7 @@ kann bei Bedarf per Skript extrahiert werden.
 | Phase 3 — Komponententest | **Verifiziert** | 3278/3283 webtrees Core-Tests pass. 5 Failures in `MaintenanceModeServiceTest` (read-only Bind-Mount, erwartbar). 76 Warnings (fehlende Locale-Dateien). |
 | Phase 4 — Komponentenintegrationstest | **Verifiziert** | 129 eigene Tests grün über 11 Testklassen (MysqlTestCase + 10 Tests). Umfasst GEDCOM-Import, Beziehungen, Bäume, Suche, Charts, Listen, AutoComplete, RomanNumerals, GedcomService, RelationshipService. |
 | Phase 5 — Systemtest | **Verifiziert** | 13/13 Playwright E2E-Tests grün. Login, Navigation, Individual Page, Theme-Rendering, Source List, Pedigree. |
+| Phase 7a — OTel PHP-Instrumentation aktivieren | **Geplant** | OTel Collector + Jaeger laufen bereits (Phase 7), aber PHP-seitige Auto-Instrumentation fehlt: Composer-Pakete nicht installiert. Vorrangig vor Phase 5b — OTel-Traces sind Diagnose-Werkzeug für Verifikation und Bugfixing in allen Teststufen. |
 | Phase 5b — Systemtest (E2E-Routenabdeckung) | **Geplant** | Gap-Analyse: 14 neue Feature-Matrix-Einträge (S26–S39). 18 offene Routen für neue Spec-Dateien identifiziert. Korrekturen: S24 (Fehlzuordnung), S25 (nur Default-Theme). Fixture-XREFs: @f1@ (FamilyPage), @X1102@ (SourcePage), @X1104@ (MediaPage), @X1165@ (RepositoryPage), @X1166@ (SubmitterPage). |
 | Phase 6 — Performanztest | **Verifiziert** | 3/3 Playwright-Perf-Tests grün. Erste Baselines: Homepage 619ms, Pedigree 655ms, Suche 561ms. |
 | Phase 7 — Querschnitt (CI/CD, OTel, KI-Debug) | **Implementiert** | `analyze-failure.sh`, `export-traces.sh`, `webtrees-tests.yaml` (GitHub Actions). OTel-Collector + Jaeger laufen. |
@@ -1310,6 +1313,91 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 
 ---
 
+## Detailplan: OTel PHP-Instrumentation aktivieren (Phase 7a)
+
+> **Scope:** Querschnitt — OTel. Aktiviert die PHP-seitige Auto-Instrumentation, die in N6
+> spezifiziert aber noch nicht implementiert ist. OTel Collector + Jaeger laufen bereits
+> als Container (Phase 7). Was fehlt: die PHP-Pakete und deren Einbindung.
+>
+> **Begründung Vorrang:** OTel-Traces sind ein Diagnose- und Analysewerkzeug, das bei der
+> Verifikation und beim Bugfixing aller Teststufen hilft (N+1-Erkennung, Query-Count,
+> Trace-Diff für Performance-Regression). Die Traces müssen verfügbar sein, bevor weitere
+> Testimplementierungen (Phase 5b) stattfinden, da sie die Grundursachenanalyse bei
+> Testfehlern wesentlich beschleunigen.
+
+### 7a-1 — OTel-Composer-Pakete im setup-webtrees.sh installieren
+
+| Aspekt | Detail |
+|---|---|
+| **Datei** | `scripts/setup-webtrees.sh` |
+| **Änderung** | Nach `composer install` einen bedingten `composer require --dev`-Block einfügen |
+| **Pakete** | `open-telemetry/sdk`, `open-telemetry/exporter-otlp`, `open-telemetry/opentelemetry-auto-pdo`, `open-telemetry/opentelemetry-auto-psr18` |
+| **Bedingung** | Nur wenn `OTEL_SDK_DISABLED` nicht `true` ist (ENV-Variable aus `compose.yaml`) |
+| **Idempotenz** | `composer require` ist idempotent — bei wiederholtem Aufruf kein Fehler |
+
+**Vorgehen:**
+```bash
+# In setup-webtrees.sh nach "composer install":
+if [ "${OTEL_SDK_DISABLED:-false}" != "true" ]; then
+    echo "[1b/4] OTel Auto-Instrumentation installieren..."
+    composer require --dev --no-interaction --no-progress \
+      open-telemetry/sdk \
+      open-telemetry/exporter-otlp \
+      open-telemetry/opentelemetry-auto-pdo \
+      open-telemetry/opentelemetry-auto-psr18 2>&1
+fi
+```
+
+**Begründung:** Installation in `setup-webtrees.sh` statt im `Containerfile.webtrees`, weil
+`composer require` in das gemountete vendor-Volume schreiben muss (nicht in den Image-Layer).
+Das vendor-Volume überlagert den read-only Bind-Mount — nur zur Laufzeit beschreibbar.
+
+### 7a-2 — OTel-PHP-Extension (protobuf + grpc) im Containerfile installieren
+
+| Aspekt | Detail |
+|---|---|
+| **Datei** | `Containerfile.webtrees` |
+| **Änderung** | `pecl install protobuf grpc` und `docker-php-ext-enable` hinzufügen |
+| **Begründung** | Der OTLP-Exporter (gRPC-Protokoll) benötigt die PHP-Extensions `grpc` und `protobuf` für performanten Transport. Ohne diese fallen OTel-Pakete auf langsames JSON/HTTP zurück oder scheitern. |
+
+**Vorgehen:**
+```dockerfile
+# Nach der bestehenden pcov-Installation:
+RUN pecl install protobuf grpc \
+    && docker-php-ext-enable protobuf grpc
+```
+
+**Alternative (leichtgewichtig):** Statt nativer gRPC-Extension das HTTP/JSON-Protokoll
+verwenden (`OTEL_EXPORTER_OTLP_PROTOCOL=http/json` in `compose.yaml`). Vorteil: keine
+zusätzlichen C-Extensions, schnellerer Build. Nachteil: höherer Overhead pro Trace-Export.
+Die Entscheidung hängt von der Build-Zeit ab (grpc-Extension kompiliert ~5 min).
+
+### 7a-3 — Verifikation: Trace-Sichtbarkeit in Jaeger
+
+| Aspekt | Detail |
+|---|---|
+| **Test** | `make setup` → Jaeger UI (http://localhost:16686) → Service "webtrees" sichtbar |
+| **Erwartung** | Traces mit PDO-Spans (DB-Queries aus GEDCOM-Import) erscheinen |
+| **Fehlerfall** | Kein Service in Jaeger → PHP-Fehlerlog prüfen (`podman-compose logs webtrees`), OTel-Collector-Log prüfen (`podman-compose logs otel-collector`) |
+
+### 7a-4 — N6-Dokumentation aktualisieren
+
+| Aspekt | Detail |
+|---|---|
+| **Datei** | `docs/testing-bigpicture-prompt.md` (Abschnitt N6) |
+| **Änderung** | Implementierungslücke-Hinweis entfernen, tatsächlichen Installationsort dokumentieren |
+
+### Voraussetzungen und Abhängigkeiten (Phase 7a)
+
+| Arbeitspaket | Benötigte Vorarbeit | Risiko |
+|---|---|---|
+| 7a-1 | Keine — `setup-webtrees.sh` existiert, vendor-Volume beschreibbar | Niedrig: `composer require` ist idempotent |
+| 7a-2 | Keine — Containerfile-Änderung, erfordert `make down && make up --build` | Mittel: grpc-Extension hat lange Kompilierzeit (~5 min). Fallback: HTTP/JSON-Protokoll |
+| 7a-3 | 7a-1 + 7a-2 müssen abgeschlossen sein | Niedrig: rein visuell |
+| 7a-4 | 7a-3 (erst nach erfolgreicher Verifikation) | Niedrig: reine Doku |
+
+---
+
 ## Detailplan: E2E-Routenabdeckung (Phase 5b)
 
 > **Scope:** Eigene Infra (Playwright, Layer 4). Erweitert die bestehenden 13 E2E-Tests
@@ -1396,7 +1484,7 @@ Korrekt sind die 5 Module-Namen im aktuellen webtrees-Code (`app/Module/`):
 *Aktualisiert: 2026-03-27 — Plan vollständig umgesetzt (Prio 2a–4). 137 Tests, 450 Assertions, 0 Failures. 23 Dateien modifiziert (7 Services, 13 Modules, 3 Handlers). Abdeckung von 30% auf 62% gesteigert. Upstream-Bug FamilyFactory::mapper() dokumentiert.*
 *Aktualisiert: 2026-03-27 — E2E-Gap-Analyse (Layer 4): Abgleich Playwright-Specs vs. WebRoutes.php (170 GET-Routen). 14 neue Feature-Matrix-Einträge (S26–S39), Korrekturen S24 (Fehlzuordnung) und S25 (nur Default-Theme). Gesamtabdeckung 50% (31/62), 22 offene Testbedingungen. Phase 5b im Implementierungs-Fahrplan ergänzt.*
 *Aktualisiert: 2026-03-27 — Detailplan Phase 5b: AP 5b-1 (Theme-Matrix 5×10, ~50 Tests) und AP 5b-2 (Routen-Specs, ~19 Tests). Theme-Korrektur: „minimal" → „colors" (kein Theme namens minimal im aktuellen webtrees). Theme-Switching via POST /theme/{name} dokumentiert.*
-*Aktualisiert: 2026-03-27 — Code-Review des Dokuments gegen vorliegenden Code. Korrekturen: (1) PHP-FPM → mod_php (Containerfile nutzt `php:8.5-apache`, nicht FPM). (2) Repo-Pfade: `webtrees-tests/` / `dombrinksblagen/` → `webtrees-testing-platform/` / `../webtrees-upstream/webtrees/` (eigenständiges Repo seit Extraktion). (3) Testfall-Zählfehler: Teststufe-2-Counts je 14→13, Summen 64→62, Prioritätsverteilung neu berechnet (Hoch 26, Mittel 32, Niedrig 4). (4) G14/G15 Abdeckungsmatrix korrigiert: Feature-Matrix definiert ZIP/ZIP+Media, upstream-Tests decken Sort-by-XREF/Download-Response ab — beides auf Offen gesetzt. (5) N2 Verzeichnisbaum auf 11 Testklassen aktualisiert, bootstrap.php und playwright.config.ts ergänzt. (6) Phase-4-Status: 12/12→129 Tests über 11 Klassen. (7) OTel-Implementierungslücke dokumentiert (Composer-Pakete nicht im Containerfile/setup-webtrees.sh). (8) Abdeckungssummary: 47% abgedeckt (29/62), 39% offen (24/62).*
+*Aktualisiert: 2026-03-27 — Code-Review des Dokuments gegen vorliegenden Code. Korrekturen: (1) PHP-FPM → mod_php (Containerfile nutzt `php:8.5-apache`, nicht FPM). (2) Repo-Pfade: `webtrees-tests/` / `dombrinksblagen/` → `webtrees-testing-platform/` / `../webtrees-upstream/webtrees/` (eigenständiges Repo seit Extraktion). (3) Testfall-Zählfehler: Teststufe-2-Counts je 14→13, Summen 64→62, Prioritätsverteilung neu berechnet (Hoch 26, Mittel 32, Niedrig 4). (4) G14/G15 Abdeckungsmatrix korrigiert: Feature-Matrix definiert ZIP/ZIP+Media, upstream-Tests decken Sort-by-XREF/Download-Response ab — beides auf Offen gesetzt. (5) N2 Verzeichnisbaum auf 11 Testklassen aktualisiert, bootstrap.php und playwright.config.ts ergänzt. (6) Phase-4-Status: 12/12→129 Tests über 11 Klassen. (7) OTel-Implementierungslücke dokumentiert (Composer-Pakete nicht im Containerfile). (8) Abdeckungssummary: 47% abgedeckt (29/62), 39% offen (24/62). (9) Phase 7a (OTel PHP-Instrumentation) als Arbeitspaket mit Vorrang vor Phase 5b definiert — OTel-Traces sind Diagnose-Werkzeug für Verifikation und Bugfixing. 4 APs: Composer-Pakete in setup-webtrees.sh (7a-1), PHP-Extensions im Containerfile (7a-2), Jaeger-Verifikation (7a-3), N6-Doku-Update (7a-4).*
 
 ---
 
