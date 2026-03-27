@@ -97,7 +97,7 @@ TESTSTUFE 3 — Systemtest (Playwright)
   - Browser: Chromium (headless)
   - Basis-URL: http://webtrees-container
   - Testfälle: Login, Navigation, Personenseite, Beziehungsdarstellung
-  - Theme-Matrix: alle Standard-Themes (webtrees, minimal, fab, clouds, xenea)
+  - Theme-Matrix: alle Standard-Themes (webtrees, clouds, colors, fab, xenea)
   - Assertions: DOM-Selektor-basiert, kein Screenshot-Vergleich
 
 QUERSCHNITT — Performanztest (Playwright-Metrics + OTel)
@@ -736,25 +736,47 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S23 | Navigation: Personenseite | XREF aufrufen → Fakten, Familien, Events korrekt dargestellt | 3 | Hoch |
 | S24 | Navigation: Familienseite | Familien-XREF → Ehepartner, Kinder, Events korrekt | 3 | Hoch |
 | S25 | Theme-Matrix (Navigation) | Jedes der 5 Standard-Themes → alle Seiten rendern fehlerfrei | 3 | Mittel |
+| S26 | Navigation: Quellenseite | Quellen-XREF aufrufen → Titel, Zitate, verknüpfte Records dargestellt | 3 | Hoch |
+| S27 | Navigation: Medienseite | Medien-XREF aufrufen → Bild/Datei-Info, verknüpfte Records dargestellt | 3 | Mittel |
+| S28 | Navigation: Notizseite | Notiz-XREF aufrufen → Notiztext dargestellt | 3 | Mittel |
+| S29 | Navigation: Aufbewahrungsort-Seite | Repository-XREF aufrufen → Name, Adresse, verknüpfte Quellen | 3 | Mittel |
+| S30 | Navigation: Einreicherseite | Submitter-XREF aufrufen → Name dargestellt | 3 | Niedrig |
+| S31 | Kalenderansicht | Kalender (Monats-/Jahresansicht) aufrufen → rendert, Events sichtbar | 3 | Hoch |
+| S32 | Anmeldeseite (Login) | /login aufrufen → Formular sichtbar, Login/Fehler funktional | 3 | Hoch |
+| S33 | Registrierungsseite | /register aufrufen → Formular sichtbar, keine HTTP-Fehler | 3 | Mittel |
+| S34 | Passwort-Zurücksetzung | /password-request aufrufen → Formular sichtbar | 3 | Mittel |
+| S35 | Benutzerseite (Meine Seite) | /my-page aufrufen → Benutzer-Blöcke gerendert, keine HTTP-Fehler | 3 | Hoch |
+| S36 | Kontaktseite | /contact aufrufen → Kontaktformular sichtbar | 3 | Mittel |
+| S37 | Berichtsliste | /report aufrufen → verfügbare Berichte gelistet | 3 | Mittel |
+| S38 | Erweiterte Suche (Seitenaufruf) | /search-advanced aufrufen → Formular mit Feldfiltern sichtbar | 3 | Hoch |
+| S39 | Phonetische Suche (Seitenaufruf) | /search-phonetic aufrufen → Formular sichtbar | 3 | Mittel |
+
+> **E2E-Gap-Analyse (2026-03-27):** Abgleich der vorhandenen Playwright-Specs (`layer4-e2e/tests/`)
+> mit den 170 GET-Routen in `WebRoutes.php` (webtrees Upstream). Von ~47 für eingeloggte
+> Nicht-Admin-Nutzer erreichbaren Seiten-Routen werden 8 URLs in den bestehenden Specs
+> abgedeckt. S26–S39 schließen die wichtigsten Lücken. Nicht aufgenommen: Editor-Formulare
+> (Add/Edit-Seiten, erfordern Schreibrechte), Admin-Panel-Seiten, AJAX-Endpoints (TomSelect),
+> Asset-Routen. Korrektur: S24 (Familienseite) war fehlzugeordnet — `navigation.spec.ts`
+> testet `/tree/demo/family-list` (→ S20), nicht `/tree/demo/family/{xref}`.
 
 ---
 
 ### Testfall-Verteilung nach Teststufe
 
-| Teststufe | GEDCOM (G01–G23) | Suche/Nav (S01–S25) | Gesamt |
+| Teststufe | GEDCOM (G01–G23) | Suche/Nav (S01–S39) | Gesamt |
 |---|---|---|---|
 | Teststufe 1 — Komponententest | G05, G06, G11, G17, G18, G19, G22, G23 (8) | S04 (1) | **9** |
 | Teststufe 2 — Komponentenintegrationstest | G01–G04, G07–G10, G12–G16 (14) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (14) | **28** |
-| Teststufe 3 — Systemtest | G20, G21 (2) | S09, S13–S18, S20, S23–S25 (11) | **13** |
-| **Summe** | **24** | **26** | **50** |
+| Teststufe 3 — Systemtest | G20, G21 (2) | S09, S13–S18, S20, S23–S39 (25) | **27** |
+| **Summe** | **24** | **40** | **64** |
 
 ### Prioritätsverteilung
 
 | Priorität | Anzahl | Anteil |
 |---|---|---|
-| Hoch | 19 | 38% |
-| Mittel | 24 | 48% |
-| Niedrig | 7 | 14% |
+| Hoch | 24 | 38% |
+| Mittel | 32 | 50% |
+| Niedrig | 8 | 13% |
 
 ---
 
@@ -781,7 +803,7 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | Statischer Test | PHPStan Level 8: 0 Errors; PHPCS PSR-12: 0 Violations |
 | Teststufe 1 — Komponententest | Alle Feature-Matrix-Komponententests grün (G05, G06, G11, G17–G19, G22, G23, S04); Anweisungsüberdeckung ≥ vorheriger Wert (Ratchet) |
 | Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, S01–S03, S05–S08, S10–S12, S19, S21, S22) |
-| Teststufe 3 — Systemtest | Alle 5 Standard-Themes rendern fehlerfrei; alle E2E-Testfälle grün (G20, G21, S09, S13–S18, S20, S23–S25) |
+| Teststufe 3 — Systemtest | Alle 5 Standard-Themes rendern fehlerfrei; alle E2E-Testfälle grün (G20, G21, S09, S13–S18, S20, S23–S39) |
 | Performanztest | Kein Szenario >20% über Baseline; kein Szenario mit >+2 DB-Queries gegenüber Baseline |
 
 ---
@@ -796,7 +818,7 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | `demo.ged` (bekannte Inhalte: 72 Individuen, 29 Familien) | G01–G04, G07–G12, S01–S03, S19 | DB-Count, Feldwerte prüfen, Beziehungsstruktur verifizieren |
 | GEDCOM 5.5.1-Standard (Kapitel 2–4) | G05, G17–G19, G22, G23 | Spec-Abgleich: Tag-Liste, Datumsformate, Encoding-Regeln, CONC/CONT |
 | webtrees-DB-Schema (`DB::MYSQL` Constraints) | G12, G13, S10 | XREF-Eindeutigkeit, Fremdschlüssel, Collation-Verhalten |
-| Erwartetes DOM (Playwright-Selektoren) | S09, S13–S18, S20, S23–S25 | Element-Existenz, Struktur, Textinhalt; kein Screenshot-Vergleich |
+| Erwartetes DOM (Playwright-Selektoren) | S09, S13–S18, S20, S23–S39 | Element-Existenz, Struktur, Textinhalt; kein Screenshot-Vergleich |
 | Vorversion (Baseline-Traces) | Performanztest | Trace-Diff: Ladezeit ≤+20%, Query-Count ≤+2 |
 
 ---
@@ -811,7 +833,7 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | **Äquivalenzklassenbildung** | G05, G08, G17, S04, S07–S08 | Eingaben mit klar abgrenzbaren Klassen: 5 GEDCOM-Datumstypen, 4 Encoding-Varianten, Suchsyntax-Varianten, 2 Soundex-Algorithmen |
 | **Grenzwertanalyse** | G18, S06, S10 | Numerische Grenzen: Zeilenlänge exakt 253/254 Zeichen (CONC/CONT), Datumstoleranz ±0/±1/±20 Jahre, Paginierung 0/1/50/51 Ergebnisse |
 | **Entscheidungstabellentest** | G16, S12 | Kombinatorik: 4 Access-Levels × 6 Record-Typen = 24 Privacy-Kombinationen; Rolle × Record-Sichtbarkeit |
-| **Anwendungsfall-Test** | G20, G21, S09, S13–S18, S23–S25 | Systemtest-Szenarien mit Nutzerinteraktion: Import-Export-Roundtrip, Chart-Rendering, Seitennavigation |
+| **Anwendungsfall-Test** | G20, G21, S09, S13–S18, S23–S39 | Systemtest-Szenarien mit Nutzerinteraktion: Import-Export-Roundtrip, Chart-Rendering, Seitennavigation, Record-Seiten, Auth-Formulare, Kalender |
 | **Erfahrungsbasierter Test** | G10, G11, S17 | Keine formale Spezifikation verfügbar: Legacy-Formate (TNG), Custom-Tags (Ancestry, FamilySearch), Nischen-Charts |
 
 ---
@@ -999,7 +1021,7 @@ kann bei Bedarf per Skript extrahiert werden.
 
 ## Implementierungs-Fahrplan
 
-> Status: **Implementiert und verifiziert.** Alle 7 Phasen abgeschlossen.
+> Status: **Phase 1–7 implementiert und verifiziert.** Phase 5b (E2E-Routenabdeckung) geplant.
 > Alle Teststufen laufen erfolgreich im Podman-Container-Stack (28/28 Tests grün).
 
 | Phase | Status | Ergebnis |
@@ -1009,6 +1031,7 @@ kann bei Bedarf per Skript extrahiert werden.
 | Phase 3 — Komponententest | **Verifiziert** | 3278/3283 webtrees Core-Tests pass. 5 Failures in `MaintenanceModeServiceTest` (read-only Bind-Mount, erwartbar). 76 Warnings (fehlende Locale-Dateien). |
 | Phase 4 — Komponentenintegrationstest | **Verifiziert** | 12/12 eigene Tests grün (18 Assertions). `MysqlTestCase.php`, `GedcomImportTest.php`, `RelationshipDbTest.php`, `TreeOperationsTest.php`. |
 | Phase 5 — Systemtest | **Verifiziert** | 13/13 Playwright E2E-Tests grün. Login, Navigation, Individual Page, Theme-Rendering, Source List, Pedigree. |
+| Phase 5b — Systemtest (E2E-Routenabdeckung) | **Geplant** | Gap-Analyse: 14 neue Feature-Matrix-Einträge (S26–S39). 18 offene Routen für neue Spec-Dateien identifiziert. Korrekturen: S24 (Fehlzuordnung), S25 (nur Default-Theme). Fixture-XREFs: @f1@ (FamilyPage), @X1102@ (SourcePage), @X1104@ (MediaPage), @X1165@ (RepositoryPage), @X1166@ (SubmitterPage). |
 | Phase 6 — Performanztest | **Verifiziert** | 3/3 Playwright-Perf-Tests grün. Erste Baselines: Homepage 619ms, Pedigree 655ms, Suche 561ms. |
 | Phase 7 — Querschnitt (CI/CD, OTel, KI-Debug) | **Implementiert** | `analyze-failure.sh`, `export-traces.sh`, `webtrees-tests.yaml` (GitHub Actions). OTel-Collector + Jaeger laufen. |
 
@@ -1122,7 +1145,7 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | G22 | Element-Validierung | — (212 Element-Tests existieren upstream) | — | — | **Vorhanden** |
 | G23 | GEDCOM 5.5.1 Compliance | — | — | — | **Offen** (Prio 4) |
 
-#### Suche und Navigation (S01–S25)
+#### Suche und Navigation (S01–S39)
 
 | # | Feature | Upstream (SQLite) | Eigene Infra (MySQL) | Eigene Infra (Playwright) | Status |
 |---|---|---|---|---|---|
@@ -1149,17 +1172,31 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S21 | AutoComplete (Personen) | `AutoCompleteSurnameTest` ✅ | — | — | **Abgedeckt** |
 | S22 | AutoComplete (Orte) | `AutoCompletePlaceTest` ✅ (match + no-match) | — | — | **Abgedeckt** |
 | S23 | Navigation: Personenseite | — | — | `individual.spec.ts` ✅ | **Abgedeckt** |
-| S24 | Navigation: Familienseite | — | — | `navigation.spec.ts` ✅ | **Abgedeckt** |
-| S25 | Theme-Matrix | — | — | `theme-matrix.spec.ts` ✅ | **Abgedeckt** |
+| S24 | Navigation: Familienseite | — | — | — (Fehlzuordnung: `navigation.spec.ts` testet Familien-*Liste* → S20) | **Offen** |
+| S25 | Theme-Matrix | — | — | `theme-matrix.spec.ts` (nur Default-Theme, 5 Seiten) | **Teilweise** |
+| S26 | Navigation: Quellenseite | — | — | — | **Offen** |
+| S27 | Navigation: Medienseite | — | — | — | **Offen** |
+| S28 | Navigation: Notizseite | — | — | — | **Offen** (kein NOTE-Record in `demo.ged`) |
+| S29 | Navigation: Aufbewahrungsort | — | — | — | **Offen** |
+| S30 | Navigation: Einreicherseite | — | — | — | **Offen** |
+| S31 | Kalenderansicht | — | — | — | **Offen** |
+| S32 | Anmeldeseite (Login) | — | — | `login.spec.ts` ✅ | **Abgedeckt** |
+| S33 | Registrierungsseite | — | — | — | **Offen** |
+| S34 | Passwort-Zurücksetzung | — | — | — | **Offen** |
+| S35 | Benutzerseite (Meine Seite) | — | — | — | **Offen** |
+| S36 | Kontaktseite | — | — | — | **Offen** |
+| S37 | Berichtsliste | — | — | — | **Offen** |
+| S38 | Erweiterte Suche (Seitenaufruf) | — | — | — | **Offen** |
+| S39 | Phonetische Suche (Seitenaufruf) | — | — | — | **Offen** |
 
 #### Zusammenfassung Abdeckung
 
-| Status | G-Features | S-Features | Gesamt |
+| Status | G-Features | S-Features (S01–S39) | Gesamt |
 |---|---|---|---|
-| **Abgedeckt** | 14 | 17 | **31** (62%) |
-| **Teilweise** | 4 | 3 | **7** (14%) |
+| **Abgedeckt** | 14 | 17 | **31** (50%) |
+| **Teilweise** | 4 | 4 | **8** (13%) |
 | **Vorhanden** (upstream) | 1 | 0 | **1** (2%) |
-| **Offen** | 4 | 5 | **9** (18%) |
+| **Offen** | 4 | 18 | **22** (35%) |
 | Davon upstream Bug | 1 (G16 Teilaspekt) | 0 | **1** (2%) |
 
 ### Detailplan: Offene Stubs nach Arbeitspaketen
@@ -1254,6 +1291,81 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 
 ---
 
+## Detailplan: E2E-Routenabdeckung (Phase 5b)
+
+> **Scope:** Eigene Infra (Playwright, Layer 4). Erweitert die bestehenden 13 E2E-Tests
+> um die vollständige Theme-Matrix (S25) und offene Routen aus der Gap-Analyse (S24, S26–S39).
+> Bezug: Implementierungs-Fahrplan Phase 5b.
+
+### 5b-1 — Theme-Matrix: 5 Themes × N Seiten (S25)
+
+> **Ziel:** S25 (Theme-Matrix) vollständig implementieren — alle 5 Standard-Themes gegen
+> Kernseiten prüfen. Rein funktional (HTTP-Status + DOM-Struktur), kein Visual Regression.
+> **Muster:** Parametrisierter `test.describe`-Block pro Theme. Theme-Umschaltung via
+> `POST /theme/{theme}` (Handler `SelectTheme`). Verifikation: CSS-Klasse `body.wt-theme-{name}`.
+> **Referenz:** Bestehende `theme-matrix.spec.ts` (5 Tests, nur Default-Theme `webtrees`).
+> **Geschätzter Umfang:** 5 Themes × 10 Seiten = ~50 parametrisierte Testfälle (1 Spec-Datei).
+
+**Korrektur Theme-Namen:** Das Dokument nennt an früherer Stelle „minimal" als Standard-Theme.
+Korrekt sind die 5 Module-Namen im aktuellen webtrees-Code (`app/Module/`):
+`webtrees` (Default), `clouds`, `colors`, `fab`, `xenea`. Kein Theme namens `minimal`.
+
+**Theme-Switching-Mechanismus (aus Code-Analyse):**
+
+| Aspekt | Detail |
+|---|---|
+| **Endpoint** | `POST /theme/{theme}` → `SelectTheme::class` |
+| **Wirkung** | Setzt `Session::put('theme', $theme)` + `$user->setPreference('theme', $theme)` |
+| **Verifikation** | `<body class="wt-global wt-theme-{name} wt-route-{route}">` (Layout `default.phtml:72`) |
+| **Rückwirkung** | Gilt für alle Folge-Requests desselben Users → kein `fullyParallel` für diese Spec |
+
+**Seiten-Auswahl für die Matrix:**
+
+| Seiten-Typ | URL | Begründung |
+|---|---|---|
+| Homepage (TreePage) | `/tree/demo` | Zentraler Einstieg, Theme-Hauptlayout |
+| Personenseite (IndividualPage) | `/tree/demo/individual/X1030` | Komplexeste Record-Seite (Tabs, Fakten, Medien) |
+| Familienseite (FamilyPage) | `/tree/demo/family/f1` | Beziehungsdarstellung, Kinder-Liste |
+| Allgemeine Suche | `/tree/demo/search-general` | Formular + Ergebnisliste |
+| Stammbaum (Pedigree) | `/tree/demo/pedigree` | Chart-Rendering (SVG/Canvas) |
+| Quellenliste | `/tree/demo/source-list` | Listen-Layout |
+| Kalender | `/tree/demo/calendar/month` | Speziallayout mit Kalender-Grid |
+| Quellenseite (SourcePage) | `/tree/demo/source/X1102` | Record-Detail |
+| Medienseite (MediaPage) | `/tree/demo/media/X1104` | Bild-Darstellung |
+| Benutzerseite (UserPage) | `/tree/demo/my-page` | Block-basiertes Layout |
+
+| AP | Datei(en) | Neue Tests | Feature-IDs | Vorgehen |
+|---|---|---|---|---|
+| 5b-1a | `theme-matrix.spec.ts` (Rewrite) | ~50 | S25 | Bestehende 5 Smoke-Tests durch parametrisierte Matrix ersetzen. Äußerer Loop: 5 Themes. Innerer Loop: 10 Seiten (s. o.). Pro Kombination: (1) `POST /theme/{theme}` im `beforeAll`, (2) `page.goto(url)` → HTTP < 500, (3) `body.wt-theme-{name}` sichtbar, (4) `main` oder `.wt-page-content` vorhanden. |
+| 5b-1b | `playwright.config.ts` | — | S25 | Timeout anpassen (50 statt 13 Tests). `workers: 1` für diese Spec erzwingen (Theme-Switch ist User-global, keine Parallelisierung). Alternative: separate Playwright-Projekte pro Theme mit `use.storageState`. |
+
+### 5b-2 — Neue Routen-Specs (S24, S26–S31, S33–S39)
+
+> **Ziel:** Offene Routen aus der E2E-Gap-Analyse mit eigenen Spec-Dateien abdecken.
+> **Muster:** Login via `beforeEach` (wie bestehende Specs), `page.goto()` → HTTP-Status + DOM.
+> **Geschätzter Umfang:** ~19 neue Tests in 5–6 neuen Spec-Dateien.
+
+| AP | Datei(en) | Neue Tests | Feature-IDs | Vorgehen |
+|---|---|---|---|---|
+| 5b-2a | `family.spec.ts` (neu) | +3 | S24 | `/tree/demo/family/f1` (Philip & Elizabeth II) → Familien-Header, Ehepartner-Namen, Kinder-Liste sichtbar. Fehlzuordnung in `navigation.spec.ts` korrigieren (S24-Annotation → S20). |
+| 5b-2b | `records.spec.ts` (neu) | +4 | S26–S30 | Quellenseite (`/source/X1102`), Medienseite (`/media/X1104`), Aufbewahrungsort (`/repository/X1165`), Einreicher (`/submitter/X1166`). S28 (Notizseite) abhängig von Fixture — `demo.ged` enthält keine NOTE-Records. |
+| 5b-2c | `calendar.spec.ts` (neu) | +2 | S31 | `/tree/demo/calendar/month` und `/tree/demo/calendar/year` → Kalender rendert. |
+| 5b-2d | `search-forms.spec.ts` (neu) | +2 | S38, S39 | `/tree/demo/search-advanced` und `/tree/demo/search-phonetic` → Formulare sichtbar. |
+| 5b-2e | `auth.spec.ts` (neu) oder `login.spec.ts` erweitern | +2 | S33, S34 | `/register` → Formular sichtbar. `/password-request` → Formular sichtbar. S32 bereits via `login.spec.ts` abgedeckt. |
+| 5b-2f | `user-pages.spec.ts` (neu) | +3 | S35, S36, S37 | `/tree/demo/my-page` → Blöcke gerendert. `/tree/demo/contact` → Kontaktformular. `/tree/demo/report` → Berichtsliste. |
+
+### Voraussetzungen und Abhängigkeiten (Phase 5b)
+
+| Arbeitspaket | Benötigte Vorarbeit | Neue Fixtures nötig? |
+|---|---|---|
+| 5b-1a | Theme-Endpoint testen: `POST /theme/clouds` → Folgerequest zeigt `wt-theme-clouds` auf `<body>`. Ggf. CSRF-Token-Handling in Playwright klären. | Nein |
+| 5b-1b | Keine | Nein |
+| 5b-2a | Fixture-XREF `@f1@` verifizieren (FamilyPage). `navigation.spec.ts` Annotation S24 → S20 korrigieren. | Nein |
+| 5b-2b | S28 (Notizseite): `demo.ged` enthält keine separaten NOTE-Records → entweder Fixture ergänzen oder Test überspringen. | **Ja** (nur für S28) |
+| 5b-2c bis 5b-2f | Keine — URLs und Fixture-XREFs in Phase 5b-Beschreibung identifiziert. | Nein |
+
+---
+
 *Erstellt: 2026-03-26 — Basis: Anforderungsgespräch (Scope, Infra, Tests, Reporting)*
 *Aktualisiert: 2026-03-26 — Infrastruktur-Entscheidungen N1–N7 dokumentiert*
 *Aktualisiert: 2026-03-26 — RE-Methodik, Gap-Analyse, Feature-Matrizen (48 Testfälle) ergänzt*
@@ -1263,6 +1375,8 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 *Aktualisiert: 2026-03-27 — Alle 7 Phasen verifiziert (28/28 Tests grün). Upstream-Stubs: 3 Service-Tests gefüllt (25 neue Tests, 148 Assertions). Stub-Inventur abgeschlossen (202 Stubs).*
 *Aktualisiert: 2026-03-27 — Vollständige Abdeckungsmatrix G01–G23/S01–S25. Detailplan für offene Stubs: 4 Prioritätsstufen, 24 Arbeitspakete, ~160 neue Tests geplant.*
 *Aktualisiert: 2026-03-27 — Plan vollständig umgesetzt (Prio 2a–4). 137 Tests, 450 Assertions, 0 Failures. 23 Dateien modifiziert (7 Services, 13 Modules, 3 Handlers). Abdeckung von 30% auf 62% gesteigert. Upstream-Bug FamilyFactory::mapper() dokumentiert.*
+*Aktualisiert: 2026-03-27 — E2E-Gap-Analyse (Layer 4): Abgleich Playwright-Specs vs. WebRoutes.php (170 GET-Routen). 14 neue Feature-Matrix-Einträge (S26–S39), Korrekturen S24 (Fehlzuordnung) und S25 (nur Default-Theme). Gesamtabdeckung 50% (31/62), 22 offene Testbedingungen. Phase 5b im Implementierungs-Fahrplan ergänzt.*
+*Aktualisiert: 2026-03-27 — Detailplan Phase 5b: AP 5b-1 (Theme-Matrix 5×10, ~50 Tests) und AP 5b-2 (Routen-Specs, ~19 Tests). Theme-Korrektur: „minimal" → „colors" (kein Theme namens minimal im aktuellen webtrees). Theme-Switching via POST /theme/{name} dokumentiert.*
 
 ---
 
