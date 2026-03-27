@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Teststufe 2 — Komponentenintegrationstest (PHPUnit + MySQL)
+  Testet webtrees mit echter MySQL-Datenbank
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.0/phpunit.xsd"
+         bootstrap="/tests/layer3-integration/bootstrap.php"
+         cacheDirectory="/tmp/phpunit-cache"
+         colors="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         beStrictAboutTestsThatDoNotTestAnything="true">
+
+    <testsuites>
+        <testsuite name="integration">
+            <directory>/tests/layer3-integration/tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <env name="MYSQL_HOST" value="mysql"/>
+        <env name="MYSQL_PORT" value="3306"/>
+        <env name="MYSQL_DATABASE" value="webtrees_test"/>
+        <env name="MYSQL_USER" value="webtrees"/>
+        <env name="MYSQL_PASSWORD" value="webtrees_test"/>
+    </php>
+
+    <source>
+        <include>
+            <directory suffix=".php">/var/www/html/app</directory>
+        </include>
+    </source>
+</phpunit>

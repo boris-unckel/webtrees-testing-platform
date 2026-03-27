@@ -1,0 +1,78 @@
+# webtrees Test-Container: PHP 8.5 + Apache + OTel Auto-Instrumentation
+# webtrees-Source wird per Bind-Mount eingebunden (read-only)
+
+FROM docker.io/library/php:8.5-apache
+
+# System-Abhängigkeiten für webtrees + OTel
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libicu-dev \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libwebp-dev \
+    libfreetype6-dev \
+    libxml2-dev \
+    libgd-dev \
+    default-mysql-client \
+    unzip \
+    git \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) \
+    intl \
+    pdo \
+    pdo_mysql \
+    gd \
+    zip \
+    exif \
+    xml \
+    && pecl install pcov \
+    && docker-php-ext-enable pcov \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Apache-Module
+RUN a2enmod rewrite
+
+# Apache-Config: AllowOverride für .htaccess + FallbackResource für webtrees-Routing
+RUN { \
+    echo '<VirtualHost *:80>'; \
+    echo '    ServerAdmin webmaster@localhost'; \
+    echo '    DocumentRoot /var/www/html'; \
+    echo '    <Directory /var/www/html>'; \
+    echo '        AllowOverride All'; \
+    echo '        Require all granted'; \
+    echo '        FallbackResource /index.php'; \
+    echo '    </Directory>'; \
+    echo '    ErrorLog ${APACHE_LOG_DIR}/error.log'; \
+    echo '    CustomLog ${APACHE_LOG_DIR}/access.log combined'; \
+    echo '</VirtualHost>'; \
+    } > /etc/apache2/sites-available/000-default.conf
+ENV APACHE_DOCUMENT_ROOT=/var/www/html
+
+# Composer installieren
+COPY --from=docker.io/library/composer:2 /usr/bin/composer /usr/bin/composer
+
+# PHP-Konfiguration für Tests
+RUN echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/webtrees-test.ini \
+    && echo "max_execution_time = 300" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
+    && echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
+    && echo "display_errors = On" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
+    && echo "log_errors = On" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
+    && echo "error_log = /var/log/php_errors.log" >> /usr/local/etc/php/conf.d/webtrees-test.ini
+
+# pcov-Konfiguration für Coverage
+RUN echo "pcov.enabled = 1" > /usr/local/etc/php/conf.d/pcov.ini \
+    && echo "pcov.directory = /var/www/html/app" >> /usr/local/etc/php/conf.d/pcov.ini
+
+# Setup-Skript kopieren
+COPY scripts/setup-webtrees.sh /usr/local/bin/setup-webtrees.sh
+RUN chmod +x /usr/local/bin/setup-webtrees.sh
+
+# data-Verzeichnis für webtrees (beschreibbar)
+RUN mkdir -p /var/www/html/data && chown www-data:www-data /var/www/html/data
+
+WORKDIR /var/www/html
+
+HEALTHCHECK --interval=5s --timeout=3s --retries=10 \
+    CMD php -r "echo 'ok';" || exit 1
+
+EXPOSE 80

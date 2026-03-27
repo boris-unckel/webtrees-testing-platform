@@ -1,0 +1,139 @@
+# webtrees Test-Stack — Podman Compose
+# 6 Container, 1 Netzwerk (webtrees-test-net)
+
+services:
+  webtrees:
+    build:
+      context: .
+      dockerfile: Containerfile.webtrees
+    container_name: webtrees
+    ports:
+      - "8080:80"
+    volumes:
+      # webtrees-Source read-only einbinden (:z für SELinux-Relabeling)
+      - ../webtrees-upstream/webtrees:/var/www/html:ro,z
+      # data- und vendor-Verzeichnis beschreibbar (überschreiben ro-Mount)
+      - webtrees-data:/var/www/html/data
+      - webtrees-vendor:/var/www/html/vendor
+      # Optionales Modul-Mounting: MODULE_PATH=/pfad/zum/modul MODULE_NAME=db_foo make test-integration
+      - ${MODULE_PATH:-/dev/null}:/var/www/html/modules_v4/${MODULE_NAME:-_none}:ro,z
+      # GEDCOM-Fixtures
+      - ./fixtures:/fixtures:ro,z
+      # Test-Layer für Container-interne Ausführung
+      - ./layer1-static:/tests/layer1-static:ro,z
+      - ./layer2-unit:/tests/layer2-unit:ro,z
+      - ./layer3-integration:/tests/layer3-integration:ro,z
+      # tests/data schreibbar (Upstream-Unit-Tests schreiben temporäre Dateien)
+      # Das Named-Volume überschreibt den ro-Mount; setup-webtrees.sh seeded es aus
+      # dem Pfad /webtrees-tests-data-seed (zweiter ro-Mount der selben Quelle).
+      - webtrees-unit-tests-data:/var/www/html/tests/data
+      # Seeding-Quelle: webtrees tests/data als ro-Mount auf separatem Pfad
+      - ../webtrees-upstream/webtrees/tests/data:/webtrees-tests-data-seed:ro,z
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-webtrees_test}
+      MYSQL_USER: ${MYSQL_USER:-webtrees}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-webtrees_test}
+      # OpenTelemetry
+      OTEL_PHP_AUTOLOAD_ENABLED: ${OTEL_PHP_AUTOLOAD_ENABLED:-true}
+      OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-webtrees}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
+      OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-grpc}
+      OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-false}
+      OTEL_TRACES_EXPORTER: ${OTEL_TRACES_EXPORTER:-otlp}
+      OTEL_METRICS_EXPORTER: ${OTEL_METRICS_EXPORTER:-none}
+      OTEL_LOGS_EXPORTER: ${OTEL_LOGS_EXPORTER:-none}
+    depends_on:
+      - mysql
+    networks:
+      - webtrees-test-net
+    healthcheck:
+      test: ["CMD", "php", "-r", "echo 'ok';"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mysql:
+    image: docker.io/library/mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-webtrees_test}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-webtrees_test}
+      MYSQL_USER: ${MYSQL_USER:-webtrees}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-webtrees_test}
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_bin
+    networks:
+      - webtrees-test-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-webtrees_test}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  playwright:
+    build:
+      context: .
+      dockerfile: Containerfile.playwright
+    container_name: playwright
+    volumes:
+      - ./layer4-e2e:/tests/e2e:ro,z
+      - ./layer5-performance:/tests/performance:ro,z
+      - ./artifacts:/artifacts:rw,z
+    environment:
+      BASE_URL: http://webtrees:80
+    depends_on:
+      - webtrees
+    networks:
+      - webtrees-test-net
+    # Kein dauerhafter Service — wird per `make test-e2e` gestartet
+    command: ["sleep", "infinity"]
+
+  otel-collector:
+    image: docker.io/otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    ports:
+      - "4317:4317"
+    volumes:
+      - ./otel/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro,z
+      - ./artifacts:/artifacts:rw,z
+    networks:
+      - webtrees-test-net
+
+  jaeger:
+    image: docker.io/jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    networks:
+      - webtrees-test-net
+
+  adminer:
+    image: docker.io/library/adminer:latest
+    container_name: adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql
+    networks:
+      - webtrees-test-net
+    profiles:
+      - debug
+
+volumes:
+  webtrees-data:
+  webtrees-vendor:
+  webtrees-unit-tests-data:
+  mysql-data:
+
+networks:
+  webtrees-test-net:
+    driver: bridge

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Teststufe 1 — Komponententest (PHPUnit)
+  SQLite in-memory, wie webtrees Core selbst
+  Testet isolierte Klassen ohne Datenbankabhängigkeit
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.0/phpunit.xsd"
+         bootstrap="/var/www/html/vendor/autoload.php"
+         cacheDirectory="/tmp/phpunit-cache"
+         colors="true"
+         failOnRisky="true"
+         failOnWarning="false"
+         beStrictAboutTestsThatDoNotTestAnything="true">
+
+    <testsuites>
+        <testsuite name="unit">
+            <!-- webtrees-eigene Tests (existierende + gefüllte Stubs) -->
+            <directory>/var/www/html/tests/app</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">/var/www/html/app</directory>
+        </include>
+    </source>
+
+    <coverage>
+        <report>
+            <html outputDirectory="/artifacts/layer2/coverage-html"/>
+            <clover outputFile="/artifacts/layer2/coverage.xml"/>
+        </report>
+    </coverage>
+</phpunit>
