@@ -533,3 +533,24 @@ Der `composer webtrees:build`-Befehl im Upstream benötigt:
 **Relevanz für Containerfile.security:** Der Build-Step kann als Multi-Stage-Build im
 Containerfile oder als separater Makefile-Step erfolgen. Die Distribution wird einmal
 gebaut und dann ins Security-Container-Image kopiert.
+
+---
+
+## Fazit — Überführung in den Planprompt
+
+Dieses Analyseprompt wurde vollständig in den eigenständigen **Planprompt**
+(`docs/security_plan_prompt.md`) überführt. Der Planprompt enthält:
+
+1. **Kontext** — Zwei-Track-Architektur, Testphilosophie, ISTQB-Einordnung
+2. **Upstream-Analyse** (komplett übernommen) — Defense-in-Depth, Wizard-Details, Middleware-Stack, Config-Template, Build-Prozess
+3. **Bedrohungsmodell** — 8 Angriffsvektoren, Scope-Abgrenzung
+4. **26 Prüfpunkte** — priorisiert als MUSS/SOLL/KANN (14 MUSS, 8 SOLL, 4 KANN)
+5. **Whitebox-Angriffsmuster** — URL-Encoding-Varianten, Path-Traversal, Wizard-Bypass
+6. **Infrastruktur-Spezifikation** — `Containerfile.security` (Multi-Stage), Compose-Profil, Makefile-Targets, Playwright-Config
+7. **Testfall-Spezifikationen** — Pseudocode für alle 26 Testfälle (Layer 3 + Layer 4)
+8. **6 Implementierungsphasen** (S1–S6) — kleinteilig, einzeln reviewbar
+9. **Upstream-Befund-Protokoll** — Issue-Template, bekannte potenzielle Befunde
+10. **Differenz Fachtest ↔ Sicherheitstest** — Komplette Vergleichstabelle
+
+Dieses Dokument ist damit abgeschlossen. Für die nächste Pipeline-Stufe (Plan → Implementierung)
+ist ausschließlich `docs/security_plan_prompt.md` relevant.
