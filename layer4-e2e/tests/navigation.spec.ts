@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 /**
  * Systemtest: Navigation und Seitenstruktur
  *
- * @see docs/testing-bigpicture-prompt.md S23, S24
+ * @see docs/testing-bigpicture-prompt.md S23, S20, S09
  */
 
 // Gemeinsamer Login vor allen Tests
@@ -28,7 +28,7 @@ test.describe('Navigation', () => {
     await expect(content.first()).toBeVisible();
   });
 
-  test('S24 — family list renders', async ({ page }) => {
+  test('S20 — family list renders', async ({ page }) => {
     await page.goto('/tree/demo/family-list');
     await page.waitForLoadState('networkidle');
 
