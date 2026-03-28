@@ -1,15 +1,47 @@
-# Planprompt — Sicherheitstests webtrees-Upstream (Distribution + Wizard)
+# Implementierungsplan — Sicherheitstests webtrees-Upstream (Distribution + Wizard)
 
-> **Zweck:** Vollständiger Implementierungsplan für Sicherheitstests, die prüfen, ob die
-> Schutzmechanismen des **webtrees-Upstream-Codes** in einer produktionsidentischen Instanz
-> greifen. Dieses Dokument ist eigenständig und enthält alle Analyse-Ergebnisse, die für
-> die Implementierung benötigt werden.
+> **Zweck:** Vollständiger, eigenständiger Implementierungsplan für Sicherheitstests, die prüfen,
+> ob die Schutzmechanismen des **webtrees-Upstream-Codes** in einer produktionsidentischen Instanz
+> greifen. Enthält alle Analyse-Ergebnisse, Infrastruktur-Spezifikationen, Testfall-Definitionen
+> und ISTQB-konforme Strukturelemente.
 >
-> **Pipeline-Position:** Idee → Analyseprompt (abgeschlossen) → **Planprompt (you are here)** → Plan → Implementierung → Ergebnisdokumentation
+> **Pipeline-Position:** Idee → Analyseprompt (abgeschlossen) → Planprompt (abgeschlossen) → **Plan (you are here)** → Implementierung → Ergebnisdokumentation
 >
 > **Datum:** 2026-03-28
 >
 > **ISTQB-Terminologie:** Glossar de_DE v4.7.1 durchgängig.
+>
+> **Statuskonzept:** Jede Phase und jeder Prüfpunkt trägt einen Status. Bei Systemabstürzen
+> oder Unterbrechungen kann die Implementierung anhand dieses Dokuments nahtlos fortgesetzt werden.
+
+---
+
+## Statuskonzept
+
+### Phasen-Status
+
+| Status | Bedeutung |
+|--------|-----------|
+| **Offen** | Noch nicht begonnen |
+| **In Arbeit** | Implementierung läuft |
+| **Implementiert** | Code geschrieben, noch nicht verifiziert |
+| **Verifiziert** | Tests laufen grün (oder rot bei dokumentiertem Upstream-Befund) |
+| **Blockiert** | Abhängigkeit nicht erfüllt |
+
+### Prüfpunkt-Status
+
+| Status | Bedeutung |
+|--------|-----------|
+| **Offen** | Test noch nicht implementiert |
+| **Implementiert** | Testcode geschrieben |
+| **Grün** | Test läuft erfolgreich |
+| **Rot (Upstream-Befund)** | Test schlägt fehl, Ursache im Upstream-Code, Issue erstellt |
+| **Rot (Eigenfehler)** | Test schlägt fehl, Ursache in eigener Infrastruktur |
+
+### Aktualisierungsregel
+
+Bei jeder Statusänderung wird die betroffene Zeile in diesem Dokument aktualisiert.
+Das Dokument ist die Single Source of Truth für den Implementierungsfortschritt.
 
 ---
 
@@ -244,37 +276,37 @@ Fachtest-Track, Credential-Stärke in Testumgebung.
 | **Mittel** | Defense-in-Depth, Zugriffskontrolle | SEC-D01–SEC-D02, SEC-M01–SEC-M03, SEC-PUB01–SEC-PUB04 | 8 |
 | **Niedrig** | Informationsleck, Härtungsempfehlung | SEC-HDR01–SEC-HDR04 | 4 |
 
-### 4.2 Feature-Matrix
+### 4.2 Feature-Matrix (mit Implementierungsstatus)
 
-| # | Feature | Abgeleitete Anforderung | Upstream-Mechanismus | Teststufe | Prio |
-|---|---------|-------------------------|----------------------|-----------|------|
-| SEC-H01 | `.htaccess` Existenz | `data/.htaccess` in Distribution vorhanden | Statische Datei im Repo | 2 | Hoch |
-| SEC-H02 | `.htaccess` Inhalt | Enthält `Require all denied` (Apache 2.4) + Legacy | Statischer Dateiinhalt | 2 | Hoch |
-| SEC-H03 | HTTP-Zugriff `data/` blockiert | `GET /data/` → HTTP 403 | `.htaccess` + `AllowOverride All` | 3 | Hoch |
-| SEC-H04 | HTTP-Zugriff `config.ini.php` blockiert | `GET /data/config.ini.php` → 403 (nicht 200, kein Dateiinhalt) | `.htaccess` blockiert gesamten Pfad | 3 | Hoch |
-| SEC-H05 | HTTP-Zugriff `data/media/` blockiert | `GET /data/media/` → 403 | `.htaccess` gilt für Unterverzeichnisse | 3 | Hoch |
-| SEC-H06 | URL-Encoding umgeht `.htaccess` nicht | Encoding-Varianten → jeweils 403 | Apache dekodiert vor `.htaccess`-Prüfung | 3 | Hoch |
-| SEC-D01 | `data/index.php` Existenz | Datei in Distribution vorhanden | Statische Datei im Repo | 2 | Mittel |
-| SEC-D02 | `data/index.php` Redirect-Logik | Enthält `header('Location: ../index.php')` | Statischer Dateiinhalt | 2 | Mittel |
-| SEC-C01 | Config PHP-Guard | Wizard-erzeugte `config.ini.php` hat `; <?php return; ?>` als erste Zeile | `SetupWizard::createConfigFile()` → Template | 2 | Hoch |
-| SEC-C02 | Config DB-Credentials | `config.ini.php` enthält dbhost, dbuser, dbpass, dbname | Wizard-Template interpoliert Formularwerte | 2 | Hoch |
-| SEC-C03 | Config Datei-Permissions | Ist-Zustand dokumentieren; world-readable = Upstream-Befund | `file_put_contents()` ohne `chmod` | 2 | Hoch |
-| SEC-M01 | Direkter Media-Zugriff blockiert | `GET /data/media/<datei>` → 403 | `.htaccess` blockiert `data/` komplett | 3 | Mittel |
-| SEC-M02 | Media-Route ohne Auth | App-Route als Visitor → 403 oder Redirect zu Login | `Auth::checkMediaAccess()` | 3 | Mittel |
-| SEC-M03 | Media-Route mit Auth | App-Route als Member → 200 | `MediaFileDownload` nach Auth-Check | 3 | Mittel |
-| SEC-PUB01 | `public/index.php` Existenz | Datei in Distribution vorhanden | Statische Datei im Repo | 2 | Mittel |
-| SEC-PUB02 | `public/index.php` keine PHP-Execution | `GET /public/index.php` → statischer Inhalt (Source sichtbar) | `PublicFiles` liefert via `file_get_contents()` | 3 | Mittel |
-| SEC-PUB03 | Kein Directory Listing `/public/` | `GET /public/` → kein Datei-Listing | `PublicFiles` matched nur Dateien | 3 | Mittel |
-| SEC-PUB04 | Path-Traversal blockiert | `GET /public/../data/config.ini.php` → kein Dateiinhalt | `!str_contains($path, '..')` | 3 | Mittel |
-| SEC-W01 | Wizard nach Setup gesperrt | `GET` auf Setup-URL → kein Setup-Formular | `ReadConfigIni`: `file_exists()` → normaler Handler | 3 | Hoch |
-| SEC-WZ01 | Wizard erscheint bei Erstaufruf | `GET /` auf frischer Instanz → Setup-Formular | `ReadConfigIni`: kein `config.ini.php` → `SetupWizard` | 3 | Hoch |
-| SEC-WZ02 | Wizard prüft Schreibrechte | Schritt 2 zeigt Erfolg (data/ beschreibbar) | `SetupWizard::checkFolderIsWritable()` | 3 | Hoch |
-| SEC-WZ03 | Wizard erzeugt `config.ini.php` | Datei existiert nach Wizard-Abschluss | `SetupWizard::createConfigFile()` | 2+3 | Hoch |
-| SEC-WZ04 | Wizard sperrt sich selbst | Kein erneuter Setup nach Abschluss | `ReadConfigIni` → `file_exists()` | 3 | Hoch |
-| SEC-HDR01 | `X-Content-Type-Options` | Header = `nosniff` | `SecurityHeaders`-Middleware | 3 | Niedrig |
-| SEC-HDR02 | `X-Frame-Options` | Header = `SAMEORIGIN` oder `DENY` | `SecurityHeaders`-Middleware | 3 | Niedrig |
-| SEC-HDR03 | `Referrer-Policy` | Header gesetzt (nicht leer) | `SecurityHeaders`-Middleware | 3 | Niedrig |
-| SEC-HDR04 | Server-Banner | Kein detaillierter Apache-Versionsstring | Apache-Konfiguration (nicht Upstream-PHP) | 3 | Niedrig |
+| # | Feature | Abgeleitete Anforderung | Upstream-Mechanismus | Teststufe | Prio | Status |
+|---|---------|-------------------------|----------------------|-----------|------|--------|
+| SEC-H01 | `.htaccess` Existenz | `data/.htaccess` in Distribution vorhanden | Statische Datei im Repo | 2 | Hoch | Offen |
+| SEC-H02 | `.htaccess` Inhalt | Enthält `Require all denied` (Apache 2.4) + Legacy | Statischer Dateiinhalt | 2 | Hoch | Offen |
+| SEC-H03 | HTTP-Zugriff `data/` blockiert | `GET /data/` → HTTP 403 | `.htaccess` + `AllowOverride All` | 3 | Hoch | Offen |
+| SEC-H04 | HTTP-Zugriff `config.ini.php` blockiert | `GET /data/config.ini.php` → 403 (nicht 200, kein Dateiinhalt) | `.htaccess` blockiert gesamten Pfad | 3 | Hoch | Offen |
+| SEC-H05 | HTTP-Zugriff `data/media/` blockiert | `GET /data/media/` → 403 | `.htaccess` gilt für Unterverzeichnisse | 3 | Hoch | Offen |
+| SEC-H06 | URL-Encoding umgeht `.htaccess` nicht | Encoding-Varianten → jeweils 403 | Apache dekodiert vor `.htaccess`-Prüfung | 3 | Hoch | Offen |
+| SEC-D01 | `data/index.php` Existenz | Datei in Distribution vorhanden | Statische Datei im Repo | 2 | Mittel | Offen |
+| SEC-D02 | `data/index.php` Redirect-Logik | Enthält `header('Location: ../index.php')` | Statischer Dateiinhalt | 2 | Mittel | Offen |
+| SEC-C01 | Config PHP-Guard | Wizard-erzeugte `config.ini.php` hat `; <?php return; ?>` als erste Zeile | `SetupWizard::createConfigFile()` → Template | 2 | Hoch | Offen |
+| SEC-C02 | Config DB-Credentials | `config.ini.php` enthält dbhost, dbuser, dbpass, dbname | Wizard-Template interpoliert Formularwerte | 2 | Hoch | Offen |
+| SEC-C03 | Config Datei-Permissions | Ist-Zustand dokumentieren; world-readable = Upstream-Befund | `file_put_contents()` ohne `chmod` | 2 | Hoch | Offen |
+| SEC-M01 | Direkter Media-Zugriff blockiert | `GET /data/media/<datei>` → 403 | `.htaccess` blockiert `data/` komplett | 3 | Mittel | Offen |
+| SEC-M02 | Media-Route ohne Auth | App-Route als Visitor → 403 oder Redirect zu Login | `Auth::checkMediaAccess()` | 3 | Mittel | Offen |
+| SEC-M03 | Media-Route mit Auth | App-Route als Member → 200 | `MediaFileDownload` nach Auth-Check | 3 | Mittel | Offen |
+| SEC-PUB01 | `public/index.php` Existenz | Datei in Distribution vorhanden | Statische Datei im Repo | 2 | Mittel | Offen |
+| SEC-PUB02 | `public/index.php` keine PHP-Execution | `GET /public/index.php` → statischer Inhalt (Source sichtbar) | `PublicFiles` liefert via `file_get_contents()` | 3 | Mittel | Offen |
+| SEC-PUB03 | Kein Directory Listing `/public/` | `GET /public/` → kein Datei-Listing | `PublicFiles` matched nur Dateien | 3 | Mittel | Offen |
+| SEC-PUB04 | Path-Traversal blockiert | `GET /public/../data/config.ini.php` → kein Dateiinhalt | `!str_contains($path, '..')` | 3 | Mittel | Offen |
+| SEC-W01 | Wizard nach Setup gesperrt | `GET` auf Setup-URL → kein Setup-Formular | `ReadConfigIni`: `file_exists()` → normaler Handler | 3 | Hoch | Offen |
+| SEC-WZ01 | Wizard erscheint bei Erstaufruf | `GET /` auf frischer Instanz → Setup-Formular | `ReadConfigIni`: kein `config.ini.php` → `SetupWizard` | 3 | Hoch | Offen |
+| SEC-WZ02 | Wizard prüft Schreibrechte | Schritt 2 zeigt Erfolg (data/ beschreibbar) | `SetupWizard::checkFolderIsWritable()` | 3 | Hoch | Offen |
+| SEC-WZ03 | Wizard erzeugt `config.ini.php` | Datei existiert nach Wizard-Abschluss | `SetupWizard::createConfigFile()` | 2+3 | Hoch | Offen |
+| SEC-WZ04 | Wizard sperrt sich selbst | Kein erneuter Setup nach Abschluss | `ReadConfigIni` → `file_exists()` | 3 | Hoch | Offen |
+| SEC-HDR01 | `X-Content-Type-Options` | Header = `nosniff` | `SecurityHeaders`-Middleware | 3 | Niedrig | Offen |
+| SEC-HDR02 | `X-Frame-Options` | Header = `SAMEORIGIN` oder `DENY` | `SecurityHeaders`-Middleware | 3 | Niedrig | Offen |
+| SEC-HDR03 | `Referrer-Policy` | Header gesetzt (nicht leer) | `SecurityHeaders`-Middleware | 3 | Niedrig | Offen |
+| SEC-HDR04 | Server-Banner | Kein detaillierter Apache-Versionsstring | Apache-Konfiguration (nicht Upstream-PHP) | 3 | Niedrig | Offen |
 
 **Anmerkung SEC-D01/SEC-D02:** Der HTTP-Redirect ist in unserem Stack nicht erreichbar, weil
 `.htaccess` vorher greift. Das ist korrektes Verhalten. Nicht als HTTP-Test, nur als
@@ -486,7 +518,7 @@ volumes:
   mysql-security-data:
 ```
 
-**Eigene MySQL-Instanz:** Sauberer Zustand fuer den Wizard. Keine Kollision mit
+**Eigene MySQL-Instanz:** Sauberer Zustand für den Wizard. Keine Kollision mit
 Fachtest-DB. Eigene Credentials (`security_test`), eigene Datenbank (`webtrees_security`).
 
 **Port 8082:** Kein Konflikt mit Fachtest (8080) oder Adminer (8081).
@@ -785,7 +817,7 @@ Test: Server-Banner
 
 | Verfahren (ISTQB) | Feature-Matrix-IDs | Begründung |
 |--------------------|-------------------|------------|
-| **Entscheidungstabellentest** | SEC-H03–SEC-H06, SEC-M01–SEC-M03 | Kombination URL-Pfad × HTTP-Methode × erwarteter Status (403/200/302). Entscheidungstabelle mit binären Bedingungen: `.htaccess` greift ja/nein × Auth vorhanden ja/nein |
+| **Entscheidungstabellentest** | SEC-H03–SEC-H06, SEC-M01–SEC-M03 | Kombination URL-Pfad x HTTP-Methode x erwarteter Status (403/200/302). Entscheidungstabelle mit binären Bedingungen: `.htaccess` greift ja/nein x Auth vorhanden ja/nein |
 | **Erfahrungsbasierter Test** | SEC-H06, SEC-PUB04 | URL-Encoding-Varianten und Path-Traversal-Muster entstammen OWASP Testing Guide und Praxiswissen. Keine formale Spezifikation für Umgehungsversuche — Whitebox-Wissen leitet die Testfälle |
 | **Anwendungsfall-Test** | SEC-WZ01–SEC-WZ04 | End-to-End-Szenario: Frische Distribution → Wizard durchlaufen → lauffähige Instanz. Nutzerinteraktion (6 Wizard-Schritte) mit definiertem Zielzustand |
 | **Äquivalenzklassenbildung** | SEC-HDR01–SEC-HDR04, SEC-PUB02–SEC-PUB03 | Header: vorhanden/korrekt vs. fehlend/falsch. `public/`-Zugriff: Datei vs. Verzeichnis vs. Traversal |
@@ -815,7 +847,7 @@ neue Zeile in der Endekriterien-Tabelle ergänzt:
 ## 11. Produktrisiken
 
 > Fortsetzung der bestehenden Produktrisiken R1–R13 aus `docs/testing-bigpicture.md`.
-> Risikobasiertes Testen (ISTQB): Wahrscheinlichkeit (W) × Auswirkung (A) → Priorität.
+> Risikobasiertes Testen (ISTQB): Wahrscheinlichkeit (W) x Auswirkung (A) → Priorität.
 
 | Risiko-ID | Risiko | W | A | Maßnahme (Feature-Matrix-IDs) |
 |-----------|--------|---|---|-------------------------------|
@@ -934,61 +966,7 @@ die Annotation auf der umschließenden `test.describe`-Ebene.
 
 ---
 
-## 15. Implementierungsreihenfolge
-
-Kleinteilig, jede Phase einzeln reviewbar.
-
-### Phase S1 — Infrastruktur (Containerfile + Compose + Makefile)
-
-**Deliverables:**
-- `Containerfile.security` (Multi-Stage-Build)
-- Compose-Erweiterung (Profil `security`, `webtrees-security`, `mysql-security`)
-- Makefile-Targets (`test-security`, `security-up`, `security-down`, `security-clean`)
-- Smoke-Test: Container startet, Wizard ist erreichbar (`GET /` → Setup-HTML)
-
-**Abnahmekriterium:** `make security-up` startet den Security-Stack, Browser zeigt Wizard.
-
-### Phase S2 — Wizard-Automatisierung (SEC-WZ01–SEC-WZ04)
-
-**Deliverables:**
-- `layer4-e2e/playwright-security.config.ts`
-- `layer4-e2e/tests/security/wizard-setup.spec.ts` (SEC-WZ01–SEC-WZ04)
-
-**Abnahmekriterium:** `make test-security` durchläuft den Wizard und verifiziert SEC-WZ01–SEC-WZ04.
-
-### Phase S3 — Dateisystem-Assertions (SEC-H01, SEC-H02, SEC-D01, SEC-D02, SEC-C01–SEC-C03, SEC-PUB01)
-
-**Deliverables:**
-- `scripts/security-filesystem-checks.sh` (9 Prüfpunkte)
-
-**Abnahmekriterium:** 9 Layer-3-Assertions grün (oder rot bei Upstream-Befund → dokumentieren).
-
-### Phase S4 — HTTP-Zugriffstests (SEC-H03–SEC-H06, SEC-PUB02–SEC-PUB04, SEC-W01)
-
-**Deliverables:**
-- `layer4-e2e/tests/security/data-access.spec.ts` (SEC-H03–SEC-H06)
-- `layer4-e2e/tests/security/public-access.spec.ts` (SEC-PUB02–SEC-PUB04)
-- `layer4-e2e/tests/security/setup-lock.spec.ts` (SEC-W01)
-
-**Abnahmekriterium:** 11+ Testfälle grün (Encoding-Varianten zählen mehrfach).
-
-### Phase S5 — Media + Security-Headers (SEC-M01–SEC-M03, SEC-HDR01–SEC-HDR04)
-
-**Deliverables:**
-- `layer4-e2e/tests/security/media-access.spec.ts` (SEC-M01–SEC-M03)
-- `layer4-e2e/tests/security/security-headers.spec.ts` (SEC-HDR01–SEC-HDR04)
-
-**Abnahmekriterium:** 7 Testfälle grün (oder rot bei Upstream-Befund).
-
-### Phase S6 — Dokumentation + Integration
-
-**Deliverables:**
-- `docs/testing-bigpicture.md` aktualisieren: Feature-Matrix Sicherheit, Endekriterien, Testorakel, Testentwurfsverfahren, Produktrisiken R14–R21
-- Ergebnisdokumentation
-
----
-
-## 16. Differenz zum Fachtest-Track
+## 15. Differenz zum Fachtest-Track
 
 | Aspekt | Fachtest-Track (bestehend) | Sicherheitstest-Track (neu) |
 |--------|---------------------------|---------------------------|
@@ -1006,7 +984,7 @@ Kleinteilig, jede Phase einzeln reviewbar.
 
 ---
 
-## 17. Abgrenzung: Was dieser Plan NICHT abdeckt
+## 16. Abgrenzung: Was dieser Plan NICHT abdeckt
 
 - **Fixen des Fachtest-Tracks:** `setup-webtrees.sh` erzeugt `config.ini.php` ohne PHP-Guard
   und das Volume überlagert Schutzdateien. Das ist bekannt, aber eigener Scope (niedrige Prio).
@@ -1017,7 +995,7 @@ Kleinteilig, jede Phase einzeln reviewbar.
 
 ---
 
-## 18. ISTQB-Terminologie — Einordnung und Abgrenzung
+## 17. ISTQB-Terminologie — Einordnung und Abgrenzung
 
 > Referenz: ISTQB-Glossar de_DE v4.7.1 (vereinbartes führendes Glossar).
 
@@ -1048,22 +1026,100 @@ methodisch dem erfahrungsbasierten Test zuzuordnen — sie basieren auf Praxiswi
 
 ---
 
-## Fazit — Überführung in den Implementierungsplan
+## 18. Implementierungsplan
 
-Dieses Dokument (Planprompt) ist abgeschlossen. Der eigenständige Implementierungsplan
-liegt unter `docs/security_plan.md` und macht dieses Dokument zum Verständnis obsolet.
+Kleinteilig, jede Phase einzeln reviewbar. Status wird in diesem Abschnitt und in der
+Feature-Matrix (Abschnitt 4.2) synchron aktualisiert.
 
-**Struktur des Plans (18 Abschnitte):**
+### Phase S1 — Infrastruktur (Containerfile + Compose + Makefile)
 
-1. **Statuskonzept** — Phasen-Status (Offen→Verifiziert) und Prüfpunkt-Status (Offen→Grün/Rot) mit Aktualisierungsregel. Single Source of Truth bei Unterbrechungen.
-2. **Kontext** (1.1–1.4) — Zwei-Track-Architektur, Testphilosophie, ISTQB-Einordnung, ID-Schema
-3. **Upstream-Analyse** (2.1–2.10) — Defense-in-Depth, Wizard, Config-Template, Media, Middleware-Stack
-4. **Bedrohungsmodell** (3.1–3.2) — 8 Angriffsvektoren V1–V8, Scope-Abgrenzung
-5. **Feature-Matrix** (4.1–4.4) — 26 Prüfpunkte mit Status-Spalte, Priorisierung, Verteilung
-6. **Whitebox-Angriffsmuster** (5.1–5.3) — URL-Encoding (9), Path-Traversal (5), Wizard-Bypass (3)
-7. **Infrastruktur** (6.1–6.5) — Containerfile, Compose, Makefile, Playwright-Config
-8. **Testfall-Spezifikationen** (7.1–7.2) — Shell-Assertions + 6 Playwright-Specs
-9. **ISTQB-Elemente** (8–14) — Testorakel, Endekriterien, Produktrisiken R14–R21, Überdeckung, Fehlermanagement, Verfolgbarkeit
-10. **Implementierungsplan** (18) — 6 Phasen S1–S6 mit Status-Tabelle pro Phase, Abhängigkeitsgraph, Phasen-Übersicht
+| Aspekt | Detail |
+|--------|--------|
+| **Status** | **Offen** |
+| **Prüfpunkte** | — (Infrastruktur, keine Feature-Matrix-IDs) |
+| **Deliverables** | `Containerfile.security` (Multi-Stage-Build), Compose-Erweiterung (Profil `security`, `webtrees-security`, `mysql-security`), Makefile-Targets (`test-security`, `security-up`, `security-down`, `security-clean`) |
+| **Abnahmekriterium** | `make security-up` startet den Security-Stack, `GET /` zeigt Setup-Wizard |
+| **Ergebnis** | — |
 
-**Statuskonzept:** Jede Phase hat eine Status-Tabelle (Status/Prüfpunkte/Deliverables/Abnahmekriterium/Ergebnis). Jeder Prüfpunkt in der Feature-Matrix hat eine Status-Spalte. Beides wird synchron aktualisiert — bei Systemabsturz reicht ein Blick ins Dokument.
+### Phase S2 — Wizard-Automatisierung (SEC-WZ01–SEC-WZ04)
+
+| Aspekt | Detail |
+|--------|--------|
+| **Status** | **Offen** |
+| **Prüfpunkte** | SEC-WZ01, SEC-WZ02, SEC-WZ03, SEC-WZ04 |
+| **Deliverables** | `layer4-e2e/playwright-security.config.ts`, `layer4-e2e/tests/security/wizard-setup.spec.ts` |
+| **Abnahmekriterium** | Wizard-Durchlauf automatisiert, SEC-WZ01–SEC-WZ04 grün |
+| **Ergebnis** | — |
+
+### Phase S3 — Dateisystem-Assertions (SEC-H01, SEC-H02, SEC-D01, SEC-D02, SEC-C01–SEC-C03, SEC-PUB01)
+
+| Aspekt | Detail |
+|--------|--------|
+| **Status** | **Offen** |
+| **Prüfpunkte** | SEC-H01, SEC-H02, SEC-D01, SEC-D02, SEC-C01, SEC-C02, SEC-C03, SEC-PUB01, SEC-WZ03 |
+| **Deliverables** | `scripts/security-filesystem-checks.sh` (9 Prüfpunkte) |
+| **Abnahmekriterium** | 9 Layer-3-Assertions grün (oder rot bei Upstream-Befund → dokumentieren) |
+| **Ergebnis** | — |
+
+### Phase S4 — HTTP-Zugriffstests (SEC-H03–SEC-H06, SEC-PUB02–SEC-PUB04, SEC-W01)
+
+| Aspekt | Detail |
+|--------|--------|
+| **Status** | **Offen** |
+| **Prüfpunkte** | SEC-H03, SEC-H04, SEC-H05, SEC-H06, SEC-PUB02, SEC-PUB03, SEC-PUB04, SEC-W01 |
+| **Deliverables** | `layer4-e2e/tests/security/data-access.spec.ts`, `layer4-e2e/tests/security/public-access.spec.ts`, `layer4-e2e/tests/security/setup-lock.spec.ts` |
+| **Abnahmekriterium** | 11+ Testfälle grün (Encoding-Varianten zählen mehrfach) |
+| **Ergebnis** | — |
+
+### Phase S5 — Media + Security-Headers (SEC-M01–SEC-M03, SEC-HDR01–SEC-HDR04)
+
+| Aspekt | Detail |
+|--------|--------|
+| **Status** | **Offen** |
+| **Prüfpunkte** | SEC-M01, SEC-M02, SEC-M03, SEC-HDR01, SEC-HDR02, SEC-HDR03, SEC-HDR04 |
+| **Deliverables** | `layer4-e2e/tests/security/media-access.spec.ts`, `layer4-e2e/tests/security/security-headers.spec.ts` |
+| **Abnahmekriterium** | 7 Testfälle grün (oder rot bei Upstream-Befund) |
+| **Ergebnis** | — |
+
+### Phase S6 — Dokumentation + Integration
+
+| Aspekt | Detail |
+|--------|--------|
+| **Status** | **Offen** |
+| **Prüfpunkte** | — (Dokumentation, keine Tests) |
+| **Deliverables** | `docs/testing-bigpicture.md` aktualisieren: Feature-Matrix Sicherheit, Endekriterien, Testorakel, Testentwurfsverfahren, Produktrisiken R14–R21. Ergebnisdokumentation. |
+| **Abnahmekriterium** | Bigpicture enthält Sicherheitsdomäne. `make test-security` in Implementierungs-Fahrplan aufgenommen. Alle 26/26 Prüfpunkte dokumentiert. |
+| **Ergebnis** | — |
+
+### Phasen-Übersicht
+
+| Phase | Inhalt | Prüfpunkte | Status |
+|-------|--------|------------|--------|
+| S1 | Infrastruktur (Containerfile + Compose + Makefile) | — | **Offen** |
+| S2 | Wizard-Automatisierung | SEC-WZ01–SEC-WZ04 | **Offen** |
+| S3 | Dateisystem-Assertions | SEC-H01, SEC-H02, SEC-D01, SEC-D02, SEC-C01–SEC-C03, SEC-PUB01, SEC-WZ03 | **Offen** |
+| S4 | HTTP-Zugriffstests | SEC-H03–SEC-H06, SEC-PUB02–SEC-PUB04, SEC-W01 | **Offen** |
+| S5 | Media + Security-Headers | SEC-M01–SEC-M03, SEC-HDR01–SEC-HDR04 | **Offen** |
+| S6 | Dokumentation + Integration | — | **Offen** |
+
+### Abhängigkeiten
+
+```
+S1 (Infrastruktur)
+ └─→ S2 (Wizard) ─── Wizard muss laufen, bevor Post-Wizard-Tests möglich sind
+      ├─→ S3 (Dateisystem) ─── SEC-C01–SEC-C03, SEC-WZ03 brauchen Wizard-Ergebnis
+      ├─→ S4 (HTTP-Zugriff) ─── Tests gegen laufende Instanz
+      └─→ S5 (Media + Headers) ─── Tests gegen laufende Instanz
+           └─→ S6 (Doku) ─── Erst nach allen Tests
+```
+
+**Anmerkung S3:** Die Dateisystem-Checks in `security-filesystem-checks.sh` haben zwei
+Ausführungszeitpunkte: VOR dem Wizard (SEC-H01, SEC-H02, SEC-D01, SEC-D02, SEC-PUB01)
+und NACH dem Wizard (SEC-C01–SEC-C03, SEC-WZ03). Das Script muss beide Zeitpunkte
+unterstützen (Parametersteuerung oder zwei Aufrufe).
+
+---
+
+## Änderungshistorie
+
+*Erstellt: 2026-03-28 — Eigenständiger Implementierungsplan auf Basis des Planprompts. Enthält Statuskonzept, alle Analyse-Ergebnisse, Infrastruktur-Spezifikationen, 26 Prüfpunkte (Feature-Matrix SEC-H01–SEC-HDR04), ISTQB-konforme Strukturelemente (Testorakel, Endekriterien, Testentwurfsverfahren, Produktrisiken R14–R21, Überdeckungsstrategie, Fehlermanagement, Testkonventionen, Verfolgbarkeit), 6 Implementierungsphasen (S1–S6) mit Abhängigkeitsgraph.*
