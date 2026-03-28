@@ -95,6 +95,20 @@ CONFIGEOF
 chown www-data:www-data "${DATA_DIR}/config.ini.php"
 chmod 600 "${DATA_DIR}/config.ini.php"
 
+# 3b. Privacy-Fixture generieren (Template → privacy-test.ged)
+echo "[3b/4] Privacy-Fixture generieren..."
+PRIVACY_TEMPLATE="${FIXTURES_DIR}/privacy-test-template.ged"
+PRIVACY_OUTPUT="${FIXTURES_DIR}/privacy-test.ged"
+if [ -f "${PRIVACY_OUTPUT}" ]; then
+    echo "  privacy-test.ged existiert bereits (vom Host generiert)"
+elif [ -f "${PRIVACY_TEMPLATE}" ]; then
+    CURRENT_YEAR=$(date +%Y)
+    perl -pe "s/__YEAR_MINUS_(\d+)__/${CURRENT_YEAR} - \$1/ge" "${PRIVACY_TEMPLATE}" > "${PRIVACY_OUTPUT}"
+    echo "  privacy-test.ged generiert (Basisjahr: ${CURRENT_YEAR})"
+else
+    echo "  WARNUNG: ${PRIVACY_TEMPLATE} nicht gefunden, uebersprungen"
+fi
+
 # 4. DB-Migration, Admin-User, GEDCOM-Import — alles in einem PHP-Aufruf
 echo "[4/4] DB-Migration, Admin-User und GEDCOM-Import..."
 php "${WEBTREES_DIR}/vendor/autoload.php" 2>/dev/null || true
@@ -177,8 +191,9 @@ $gedcomImportService = new GedcomImportService();
 $treeService = new TreeService($gedcomImportService);
 
 $fixtures = [
-    ['name' => 'demo',   'title' => 'Demo Tree',       'file' => $fixturesDir . '/demo.ged'],
-    ['name' => 'muster', 'title' => 'Muster (GEDCOM-L)', 'file' => $fixturesDir . '/gedcom-l-muster.ged'],
+    ['name' => 'demo',    'title' => 'Demo Tree',         'file' => $fixturesDir . '/demo.ged'],
+    ['name' => 'muster',  'title' => 'Muster (GEDCOM-L)', 'file' => $fixturesDir . '/gedcom-l-muster.ged'],
+    ['name' => 'privacy', 'title' => 'Privacy Test Tree', 'file' => $fixturesDir . '/privacy-test.ged'],
 ];
 
 foreach ($fixtures as $fixture) {
@@ -218,6 +233,88 @@ foreach ($fixtures as $fixture) {
     }
 
     echo "  {$count} Records importiert.\n";
+}
+
+// Test-User für Privacy-Tests anlegen (member, editor, moderator, manager, relationship)
+echo "  Privacy-Test-User anlegen...\n";
+
+$privacyTree = null;
+$demoTree = null;
+foreach (DB::table('gedcom')->get() as $row) {
+    if ($row->gedcom_name === 'privacy') {
+        $privacyTree = $treeService->find((int) $row->gedcom_id);
+    }
+    if ($row->gedcom_name === 'demo') {
+        $demoTree = $treeService->find((int) $row->gedcom_id);
+    }
+}
+
+if ($privacyTree !== null) {
+    // Privacy-Baum oeffentlich machen (private=0), damit Besucher zugreifen koennen
+    DB::table('gedcom')
+        ->where('gedcom_id', '=', $privacyTree->id())
+        ->update(['private' => 0]);
+    echo "  Privacy-Baum auf oeffentlich gesetzt (private=0).\n";
+
+    $roles = [
+        'member'    => \Fisharebest\Webtrees\Contracts\UserInterface::ROLE_MEMBER,
+        'editor'    => \Fisharebest\Webtrees\Contracts\UserInterface::ROLE_EDITOR,
+        'moderator' => \Fisharebest\Webtrees\Contracts\UserInterface::ROLE_MODERATOR,
+        'manager'   => \Fisharebest\Webtrees\Contracts\UserInterface::ROLE_MANAGER,
+    ];
+
+    foreach ($roles as $roleName => $roleConst) {
+        $username = "test-{$roleName}";
+        $testUser = $userService->findByUserName($username);
+        if ($testUser === null) {
+            $testUser = $userService->create(
+                $username,
+                'Test ' . ucfirst($roleName),
+                "test-{$roleName}@test.local",
+                'password'
+            );
+            echo "  User '{$username}' erstellt.\n";
+        }
+        $testUser->setPreference('verified', '1');
+        $testUser->setPreference('verified_by_admin', '1');
+
+        // Rolle im Privacy-Baum
+        $privacyTree->setUserPreference($testUser, \Fisharebest\Webtrees\Contracts\UserInterface::PREF_TREE_ROLE, $roleConst);
+
+        // Gleiche Rolle im Demo-Baum (falls vorhanden)
+        if ($demoTree !== null) {
+            $demoTree->setUserPreference($testUser, \Fisharebest\Webtrees\Contracts\UserInterface::PREF_TREE_ROLE, $roleConst);
+        }
+
+        // Editor: Pending Changes bleiben stehen (kein auto_accept)
+        if ($roleName === 'editor') {
+            $privacyTree->setUserPreference($testUser, 'auto_accept', '');
+            if ($demoTree !== null) {
+                $demoTree->setUserPreference($testUser, 'auto_accept', '');
+            }
+        }
+    }
+
+    // Relationship-Privacy-User (eigener User mit XREF-Verknuepfung)
+    $relUser = $userService->findByUserName('test-relationship');
+    if ($relUser === null) {
+        $relUser = $userService->create(
+            'test-relationship',
+            'Test Relationship',
+            'test-relationship@test.local',
+            'password'
+        );
+        echo "  User 'test-relationship' erstellt.\n";
+    }
+    $relUser->setPreference('verified', '1');
+    $relUser->setPreference('verified_by_admin', '1');
+    $privacyTree->setUserPreference($relUser, \Fisharebest\Webtrees\Contracts\UserInterface::PREF_TREE_ROLE, \Fisharebest\Webtrees\Contracts\UserInterface::ROLE_MEMBER);
+    $privacyTree->setUserPreference($relUser, \Fisharebest\Webtrees\Contracts\UserInterface::PREF_TREE_ACCOUNT_XREF, 'P_REL_USER');
+    $privacyTree->setUserPreference($relUser, \Fisharebest\Webtrees\Contracts\UserInterface::PREF_TREE_PATH_LENGTH, '2');
+
+    echo "  Privacy-Test-User konfiguriert.\n";
+} else {
+    echo "  WARNUNG: Privacy-Baum nicht gefunden, Test-User nicht angelegt.\n";
 }
 
 echo "  Setup abgeschlossen.\n";

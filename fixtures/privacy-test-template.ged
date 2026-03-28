@@ -1,0 +1,441 @@
+0 HEAD
+1 SOUR webtrees
+2 NAME webtrees
+2 VERS 2.2.0
+1 DEST DISKETTE
+1 DATE 28 MAR 2026
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 CHAR UTF-8
+1 FILE privacy-test-template.ged
+1 NOTE Privacy Test Fixture — dynamische Daten via __YEAR_MINUS_N__ Platzhalter
+1 SUBM @SUBM1@
+0 @SUBM1@ SUBM
+1 NAME Privacy Test Generator
+0 @P_DEAD_HISTORIC@ INDI
+1 NAME Johann /Altmann/
+2 GIVN Johann
+2 SURN Altmann
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 1780
+2 PLAC Berlin, Germany
+1 DEAT
+2 DATE 15 MAR 1850
+2 PLAC Berlin, Germany
+1 NOTE Baseline: definitiv tot, historisch. Immer sichtbar (P02, P08).
+0 @P_DEAD_EXPLICIT@ INDI
+1 NAME Maria /Bergmann/
+2 GIVN Maria
+2 SURN Bergmann
+1 SEX F
+1 DEAT Y
+1 NOTE P08: isDead()-Erkennung via DEAT Y (kein Datum).
+0 @P_DEAD_DATED@ INDI
+1 NAME Friedrich /Claussen/
+2 GIVN Friedrich
+2 SURN Claussen
+1 SEX M
+1 BIRT
+2 DATE 3 FEB __YEAR_MINUS_50__
+1 DEAT
+2 DATE 1 JAN __YEAR_MINUS_15__
+1 NOTE P06, P08: Kuerzlich verstorben mit Datum.
+0 @P_DEAD_PLACED@ INDI
+1 NAME Anna /Dressler/
+2 GIVN Anna
+2 SURN Dressler
+1 SEX F
+1 DEAT
+2 PLAC Berlin, Germany
+1 NOTE P08: isDead() via DEAT mit PLAC (kein Datum).
+0 @P_ALIVE_YOUNG@ INDI
+1 NAME Thomas /Engel/
+2 GIVN Thomas
+2 SURN Engel
+1 SEX M
+1 BIRT
+2 DATE 5 JUN __YEAR_MINUS_30__
+1 NOTE Baseline: definitiv lebend, geschuetzt (P01, P03, P10, P24, P25).
+0 @P_ALIVE_NO_DATES@ INDI
+1 NAME Sophie /Fischer/
+2 GIVN Sophie
+2 SURN Fischer
+1 SEX F
+1 NOTE P10: Keine Daten, keine Verwandten. Fallback = als lebend angenommen.
+0 @P_BOUNDARY_EXACT@ INDI
+1 NAME Heinrich /Gerber/
+2 GIVN Heinrich
+2 SURN Gerber
+1 SEX M
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_120__
+1 NOTE P04, P09: Exakt auf MAX_ALIVE_AGE=120. Grenzwert.
+0 @P_BOUNDARY_MINUS1@ INDI
+1 NAME Elise /Hartmann/
+2 GIVN Elise
+2 SURN Hartmann
+1 SEX F
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_119__
+1 NOTE P04: Noch als lebend angenommen (1 Jahr unter MAX_ALIVE_AGE).
+0 @P_BOUNDARY_PLUS1@ INDI
+1 NAME Wilhelm /Imhoff/
+2 GIVN Wilhelm
+2 SURN Imhoff
+1 SEX M
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_121__
+1 NOTE P04: Als tot angenommen (1 Jahr ueber MAX_ALIVE_AGE).
+0 @P_KEEP_BIRTH_INSIDE@ INDI
+1 NAME Lena /Jansen/
+2 GIVN Lena
+2 SURN Jansen
+1 SEX F
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_9__
+1 DEAT Y
+1 NOTE P05: Verstorben, Geburt innerhalb KEEP_ALIVE_YEARS_BIRTH=10 -> geschuetzt.
+0 @P_KEEP_BIRT_BOUND@ INDI
+1 NAME Kurt /Klein/
+2 GIVN Kurt
+2 SURN Klein
+1 SEX M
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_10__
+1 DEAT Y
+1 NOTE P05: Grenze KEEP_ALIVE_YEARS_BIRTH=10. Exakt auf Grenze.
+0 @P_KEEP_BIRTH_OUTSIDE@ INDI
+1 NAME Rosa /Lorenz/
+2 GIVN Rosa
+2 SURN Lorenz
+1 SEX F
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_11__
+1 DEAT Y
+1 NOTE P05: Ausserhalb KEEP_ALIVE_YEARS_BIRTH=10 -> nicht geschuetzt.
+0 @P_KEEP_DEATH_INSIDE@ INDI
+1 NAME Otto /Mueller/
+2 GIVN Otto
+2 SURN Mueller
+1 SEX M
+1 BIRT
+2 DATE 5 MAR __YEAR_MINUS_60__
+1 DEAT
+2 DATE 1 JAN __YEAR_MINUS_9__
+1 NOTE P06: Tod innerhalb KEEP_ALIVE_YEARS_DEATH=10 -> geschuetzt.
+0 @P_KEEP_DEAT_BOUND@ INDI
+1 NAME Greta /Neumann/
+2 GIVN Greta
+2 SURN Neumann
+1 SEX F
+1 BIRT
+2 DATE 12 APR __YEAR_MINUS_65__
+1 DEAT
+2 DATE 1 JAN __YEAR_MINUS_10__
+1 NOTE P06: Grenze KEEP_ALIVE_YEARS_DEATH=10. Exakt auf Grenze.
+0 @P_KEEP_DEATH_OUTSIDE@ INDI
+1 NAME Ernst /Ostermann/
+2 GIVN Ernst
+2 SURN Ostermann
+1 SEX M
+1 BIRT
+2 DATE 20 JUL __YEAR_MINUS_70__
+1 DEAT
+2 DATE 1 JAN __YEAR_MINUS_11__
+1 NOTE P06: Ausserhalb KEEP_ALIVE_YEARS_DEATH=10 -> nicht geschuetzt.
+0 @P_RESN_NONE@ INDI
+1 NAME Klara /Peters/
+2 GIVN Klara
+2 SURN Peters
+1 SEX F
+1 BIRT
+2 DATE 14 SEP __YEAR_MINUS_25__
+1 RESN none
+1 NOTE P16: Explizit oeffentlich trotz lebend. RESN none ueberschreibt Privacy.
+0 @P_RESN_PRIVACY@ INDI
+1 NAME Walter /Richter/
+2 GIVN Walter
+2 SURN Richter
+1 SEX M
+1 BIRT
+2 DATE 22 NOV 1960
+1 DEAT
+2 DATE 3 MAR 2020
+1 RESN privacy
+1 NOTE P17: Nur Mitglieder+ sehen den Datensatz. Besucher sieht Vertraulich.
+0 @P_RESN_CONFIDENTIAL@ INDI
+1 NAME Helga /Schreiber/
+2 GIVN Helga
+2 SURN Schreiber
+1 SEX F
+1 BIRT
+2 DATE 8 DEC 1955
+1 DEAT
+2 DATE 17 JUN 2015
+1 RESN confidential
+1 NOTE P18: Nur Verwalter/Admin sehen den Datensatz.
+0 @P_FACT_RESN_BIRT@ INDI
+1 NAME Dieter /Thiel/
+2 GIVN Dieter
+2 SURN Thiel
+1 SEX M
+1 BIRT
+2 DATE 30 AUG 1985
+2 RESN privacy
+1 DEAT
+2 DATE 5 FEB 2022
+1 NOTE P19: Person sichtbar, aber BIRT nur fuer Mitglieder+ (2 RESN privacy auf BIRT).
+0 @P_FACT_RESN_DEAT@ INDI
+1 NAME Ursula /Vogel/
+2 GIVN Ursula
+2 SURN Vogel
+1 SEX F
+1 BIRT
+2 DATE 11 JAN 1940
+1 DEAT
+2 DATE 22 OCT 2023
+2 RESN confidential
+1 NOTE P19: Person sichtbar, aber DEAT nur fuer Verwalter+ (2 RESN confidential auf DEAT).
+0 @P_RESN_LOCKED@ INDI
+1 NAME Ludwig /Wagner/
+2 GIVN Ludwig
+2 SURN Wagner
+1 SEX M
+1 BIRT
+2 DATE 4 MAY 1900
+1 DEAT
+2 DATE 18 DEC 1975
+1 RESN locked
+1 NOTE P29: RESN locked. Sichtbar fuer alle, aber nur Verwalter duerfen editieren.
+0 @P_RESN_PRIV_LOCKED@ INDI
+1 NAME Irmgard /Zimmermann/
+2 GIVN Irmgard
+2 SURN Zimmermann
+1 SEX F
+1 BIRT
+2 DATE 9 FEB 1930
+1 DEAT
+2 DATE 25 AUG 1998
+1 RESN privacy, locked
+1 NOTE P29: RESN privacy+locked. Mitglieder+ sehen, nur Verwalter editieren.
+0 @P_EDIT_TARGET@ INDI
+1 NAME Gustav /Becker/
+2 GIVN Gustav
+2 SURN Becker
+1 SEX M
+1 BIRT
+2 DATE 12 JAN 1820
+2 PLAC Hamburg, Germany
+1 DEAT
+2 DATE 3 NOV 1890
+2 PLAC Hamburg, Germany
+1 NOTE P27, P28: Historisch Verstorbene, Ziel fuer Edit-Tests (Fakt hinzufuegen/akzeptieren).
+0 @P_EVENT_OLD@ INDI
+1 NAME Karl /Braun/
+2 GIVN Karl
+2 SURN Braun
+1 SEX M
+1 OCCU Schmied
+2 DATE 1 JAN __YEAR_MINUS_125__
+1 NOTE P09: Nicht-Geburts-Event (OCCU) aelter als MAX_ALIVE_AGE -> tot.
+0 @P_REL_USER@ INDI
+1 NAME Robert /Adenauer/
+2 GIVN Robert
+2 SURN Adenauer
+1 SEX M
+1 BIRT
+2 DATE 1 MAR __YEAR_MINUS_40__
+1 FAMS @F_REL_1@
+1 FAMC @F_REL_2@
+1 NOTE P22, P23: Ankerpunkt fuer Relationship Privacy. PREF_TREE_ACCOUNT_XREF.
+0 @P_REL_CLOSE@ INDI
+1 NAME Clara /Adenauer/
+2 GIVN Clara
+2 SURN Adenauer
+1 SEX F
+1 BIRT
+2 DATE 15 JUL __YEAR_MINUS_15__
+1 FAMC @F_REL_1@
+1 NOTE P22: Nah verwandt (Kind von P_REL_USER, 2 Schritte: USER->F1->CLOSE). Innerhalb Pfadlaenge=3.
+0 @P_REL_MID1@ INDI
+1 NAME Herbert /Adenauer/
+2 GIVN Herbert
+2 SURN Adenauer
+1 SEX M
+1 BIRT
+2 DATE 20 APR __YEAR_MINUS_65__
+1 FAMS @F_REL_2@
+1 FAMC @F_REL_3@
+1 NOTE Hilfsperson: Vater von P_REL_USER.
+0 @P_REL_MID2@ INDI
+1 NAME Gertrud /Adenauer/
+2 GIVN Gertrud
+2 SURN Adenauer
+1 SEX F
+1 BIRT
+2 DATE 3 SEP __YEAR_MINUS_90__
+1 FAMS @F_REL_3@
+1 FAMS @F_REL_CHAIN@
+1 NOTE Hilfsperson: Grossvater von P_REL_USER. Auch Vater von P_REL_FAR (andere Familie).
+0 @P_REL_FAR@ INDI
+1 NAME Fritz /Adenauer/
+2 GIVN Fritz
+2 SURN Adenauer
+1 SEX M
+1 BIRT
+2 DATE 25 DEC __YEAR_MINUS_60__
+1 FAMC @F_REL_CHAIN@
+1 NOTE P22: Entfernt verwandt (6 Schritte von P_REL_USER). Ausserhalb Pfadlaenge=3.
+0 @P_REL_UNRELATED@ INDI
+1 NAME Max /Zander/
+2 GIVN Max
+2 SURN Zander
+1 SEX M
+1 BIRT
+2 DATE 8 OCT __YEAR_MINUS_35__
+1 NOTE P22: Nicht verwandt. Keine Familienverbindung zu P_REL_USER.
+0 @P_INFER_PARENT@ INDI
+1 NAME Paul /Hoffmann/
+2 GIVN Paul
+2 SURN Hoffmann
+1 SEX M
+1 FAMC @F_INFER_PARENT@
+1 NOTE P11: isDead() Inferenz via Eltern. Keine eigenen Daten.
+0 @P_INF_PARENT_HELP@ INDI
+1 NAME Georg /Hoffmann/
+2 GIVN Georg
+2 SURN Hoffmann
+1 SEX M
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_200__
+1 FAMS @F_INFER_PARENT@
+1 NOTE Hilfsperson: Vater von P_INFER_PARENT. Event > MAX_ALIVE_AGE+45 (200 > 165).
+0 @P_INF_PARENT_BOUND@ INDI
+1 NAME Eva /Krause/
+2 GIVN Eva
+2 SURN Krause
+1 SEX F
+1 FAMC @F_INF_PARENT_BOUND@
+1 NOTE P11: isDead() Inferenz Eltern an Grenze. Eltern-Event exakt bei MAX_ALIVE_AGE+45=165.
+0 @P_INF_PAR_BND_HELP@ INDI
+1 NAME Martha /Krause/
+2 GIVN Martha
+2 SURN Krause
+1 SEX F
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_165__
+1 FAMS @F_INF_PARENT_BOUND@
+1 NOTE Hilfsperson: Mutter von P_INF_PARENT_BOUND. Exakt an Grenze MAX_ALIVE_AGE+45=165.
+0 @P_INFER_SPOUSE@ INDI
+1 NAME Rudolf /Lehmann/
+2 GIVN Rudolf
+2 SURN Lehmann
+1 SEX M
+1 FAMS @F_INFER_SPOUSE@
+1 NOTE P12: isDead() Inferenz via Ehepartner. Keine eigenen datierten Events.
+0 @P_INF_SPOUSE_HELP@ INDI
+1 NAME Hilde /Lehmann/
+2 GIVN Hilde
+2 SURN Lehmann
+1 SEX F
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_170__
+1 FAMS @F_INFER_SPOUSE@
+1 NOTE Hilfsperson: Ehefrau von P_INFER_SPOUSE. Event > MAX_ALIVE_AGE+40 (170 > 160).
+0 @P_INFER_CHILD@ INDI
+1 NAME Wilhelm /Moser/
+2 GIVN Wilhelm
+2 SURN Moser
+1 SEX M
+1 FAMS @F_INFER_CHILD@
+1 NOTE P13: isDead() Inferenz via Kinder. Keine eigenen datierten Events.
+0 @P_INFER_CHILD_HELPER@ INDI
+1 NAME Hans /Moser/
+2 GIVN Hans
+2 SURN Moser
+1 SEX M
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_140__
+1 FAMC @F_INFER_CHILD@
+1 NOTE Hilfsperson: Kind von P_INFER_CHILD. Event > MAX_ALIVE_AGE-15 (140 > 105).
+0 @P_INFER_GRANDCHILD@ INDI
+1 NAME Albert /Schulz/
+2 GIVN Albert
+2 SURN Schulz
+1 SEX M
+1 FAMS @F_INF_GCHILD_PAR@
+1 NOTE P13: isDead() Inferenz via Enkel. Keine eigenen datierten Events.
+0 @P_INF_GCHILD_CHILD@ INDI
+1 NAME Werner /Schulz/
+2 GIVN Werner
+2 SURN Schulz
+1 SEX M
+1 FAMS @F_INFER_GRANDCHILD@
+1 FAMC @F_INF_GCHILD_PAR@
+1 NOTE Hilfsperson: Kind von P_INFER_GRANDCHILD, Vater des Enkels.
+0 @P_INF_GCHILD_HELP@ INDI
+1 NAME Manfred /Schulz/
+2 GIVN Manfred
+2 SURN Schulz
+1 SEX M
+1 BIRT
+2 DATE 1 JAN __YEAR_MINUS_100__
+1 FAMC @F_INFER_GRANDCHILD@
+1 NOTE Hilfsperson: Enkel von P_INFER_GRANDCHILD. Event > MAX_ALIVE_AGE-30 (100 > 90).
+0 @P_REL_USER_WIFE@ INDI
+1 NAME Sabine /Adenauer/
+2 GIVN Sabine
+2 SURN Adenauer
+1 SEX F
+1 BIRT
+2 DATE 22 JUN __YEAR_MINUS_38__
+1 FAMS @F_REL_1@
+1 NOTE Hilfsperson: Ehefrau von P_REL_USER.
+0 @F_REL_1@ FAM
+1 HUSB @P_REL_USER@
+1 WIFE @P_REL_USER_WIFE@
+1 CHIL @P_REL_CLOSE@
+1 MARR
+2 DATE 10 JUN __YEAR_MINUS_18__
+1 NOTE P22: Familie fuer nahe Beziehung (User -> Kind = 1 Schritt).
+0 @F_REL_2@ FAM
+1 HUSB @P_REL_MID1@
+1 CHIL @P_REL_USER@
+1 NOTE Hilfsfamilie: P_REL_MID1 ist Vater von P_REL_USER (2 Schritte).
+0 @F_REL_3@ FAM
+1 HUSB @P_REL_MID2@
+1 CHIL @P_REL_MID1@
+1 NOTE Hilfsfamilie: P_REL_MID2 ist Grossmutter von P_REL_USER (4 Schritte).
+0 @F_REL_CHAIN@ FAM
+1 HUSB @P_REL_MID2@
+1 CHIL @P_REL_FAR@
+1 NOTE P22: Zweite Familie von MID2. USER->F2->MID1->F3->MID2->FCHAIN->FAR = 6 Schritte.
+0 @F_INFER_PARENT@ FAM
+1 HUSB @P_INF_PARENT_HELP@
+1 CHIL @P_INFER_PARENT@
+1 NOTE P11: Eltern-Inferenz. Vater hat Event > MAX_ALIVE_AGE+45.
+0 @F_INF_PARENT_BOUND@ FAM
+1 WIFE @P_INF_PAR_BND_HELP@
+1 CHIL @P_INF_PARENT_BOUND@
+1 NOTE P11: Eltern-Inferenz an Grenze (exakt MAX_ALIVE_AGE+45=165).
+0 @F_INFER_SPOUSE@ FAM
+1 HUSB @P_INFER_SPOUSE@
+1 WIFE @P_INF_SPOUSE_HELP@
+1 MARR
+2 DATE 1 JAN __YEAR_MINUS_115__
+1 NOTE P12: Ehepartner-Inferenz. Heirat > MAX_ALIVE_AGE-10=110 UND Ehefrau-Event > MAX_ALIVE_AGE+40=160.
+0 @F_INFER_CHILD@ FAM
+1 HUSB @P_INFER_CHILD@
+1 CHIL @P_INFER_CHILD_HELPER@
+1 NOTE P13: Kinder-Inferenz. Kind hat Event > MAX_ALIVE_AGE-15=105.
+0 @F_INF_GCHILD_PAR@ FAM
+1 HUSB @P_INFER_GRANDCHILD@
+1 CHIL @P_INF_GCHILD_CHILD@
+1 NOTE P13: Enkel-Inferenz, Eltern-Familie.
+0 @F_INFER_GRANDCHILD@ FAM
+1 HUSB @P_INF_GCHILD_CHILD@
+1 CHIL @P_INF_GCHILD_HELP@
+1 NOTE P13: Enkel-Inferenz. Enkel hat Event > MAX_ALIVE_AGE-30=90.
+0 TRLR
