@@ -317,11 +317,21 @@ webtrees-testing-platform/
 │       └── TreeOperationsTest.php
 ├── layer4-e2e/
 │   ├── playwright.config.ts       # baseURL = http://webtrees:80
+│   ├── helpers/
+│   │   └── theme-switch.ts        # Shared Utility: Theme-Switching (5 Themes)
 │   └── tests/
-│       ├── login.spec.ts
-│       ├── navigation.spec.ts
-│       ├── individual.spec.ts
-│       └── theme-matrix.spec.ts
+│       ├── login.spec.ts          # S32 (theme-unabhängig)
+│       ├── auth.spec.ts           # S33, S34 (theme-unabhängig)
+│       ├── navigation.spec.ts     # S23, S20, S09 (× 5 Themes)
+│       ├── individual.spec.ts     # S23 (× 5 Themes)
+│       ├── family.spec.ts         # S24 (× 5 Themes)
+│       ├── records.spec.ts        # S26–S30 (× 5 Themes)
+│       ├── calendar.spec.ts       # S31 (× 5 Themes)
+│       ├── search-forms.spec.ts   # S38, S39 (× 5 Themes)
+│       ├── user-pages.spec.ts     # S35–S37 (× 5 Themes)
+│       ├── homepage.spec.ts       # S40 (× 5 Themes)
+│       ├── pedigree.spec.ts       # S14 (× 5 Themes)
+│       └── source-list.spec.ts    # S20 (× 5 Themes)
 ├── layer5-performance/
 │   ├── playwright.config.ts       # Performance-spezifische Config (timeout 60s, retries 0)
 │   ├── run.sh                     # Perf-Messung + Baseline-Vergleich
@@ -749,7 +759,6 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S22 | AutoComplete (Orte) | Ort eintippen → Ortsvorschläge korrekt | 2 | Mittel |
 | S23 | Navigation: Personenseite | XREF aufrufen → Fakten, Familien, Events korrekt dargestellt | 3 | Hoch |
 | S24 | Navigation: Familienseite | Familien-XREF → Ehepartner, Kinder, Events korrekt | 3 | Hoch |
-| S25 | Theme-Matrix (Navigation) | Jedes der 5 Standard-Themes → alle Seiten rendern fehlerfrei | 3 | Mittel |
 | S26 | Navigation: Quellenseite | Quellen-XREF aufrufen → Titel, Zitate, verknüpfte Records dargestellt | 3 | Hoch |
 | S27 | Navigation: Medienseite | Medien-XREF aufrufen → Bild/Datei-Info, verknüpfte Records dargestellt | 3 | Mittel |
 | S28 | Navigation: Notizseite | Notiz-XREF aufrufen → Notiztext dargestellt | 3 | Mittel |
@@ -764,6 +773,12 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S37 | Berichtsliste | /report aufrufen → verfügbare Berichte gelistet | 3 | Mittel |
 | S38 | Erweiterte Suche (Seitenaufruf) | /search-advanced aufrufen → Formular mit Feldfiltern sichtbar | 3 | Hoch |
 | S39 | Phonetische Suche (Seitenaufruf) | /search-phonetic aufrufen → Formular sichtbar | 3 | Mittel |
+| S40 | Navigation: Homepage (Baumseite) | Homepage/Baumseite aufrufen → Baumstatistik oder Willkommensblock dargestellt, keine HTTP-Fehler | 3 | Hoch |
+
+> **Querschnittsanforderung Theme-Abdeckung (Phase 5c):** Jeder Systemtest-Testfall (Teststufe 3) für tree-gebundene Seiten
+> MUSS alle 5 Standard-Themes abdecken: `webtrees`, `clouds`, `colors`, `fab`, `xenea`. Theme-Abdeckung ist keine eigene
+> Testbedingung mehr (S25 aufgelöst), sondern eine strukturelle Eigenschaft jedes Testfalls. Ausnahmen: `auth.spec.ts` (S33, S34)
+> und `login.spec.ts` (S32) — nicht tree-gebunden, kein Theme-Loop.
 
 > **E2E-Gap-Analyse (2026-03-27):** Abgleich der vorhandenen Playwright-Specs (`layer4-e2e/tests/`)
 > mit den 170 GET-Routen in `WebRoutes.php` (webtrees Upstream). Von ~47 für eingeloggte
@@ -781,7 +796,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 |---|---|---|---|
 | Teststufe 1 — Komponententest | G05, G06, G11, G17, G18, G19, G22, G23 (8) | S04 (1) | **9** |
 | Teststufe 2 — Komponentenintegrationstest | G01–G04, G07–G10, G12–G16 (13) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (13) | **26** |
-| Teststufe 3 — Systemtest | G20, G21 (2) | S09, S13–S18, S20, S23–S39 (25) | **27** |
+| Teststufe 3 — Systemtest | G20, G21 (2) | S09, S13–S18, S20, S23–S24, S26–S40 (25) | **27** |
 | **Summe** | **23** | **39** | **62** |
 
 ### Prioritätsverteilung
@@ -817,7 +832,7 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | Statischer Test | PHPStan Level 8: 0 Errors; PHPCS PSR-12: 0 Violations |
 | Teststufe 1 — Komponententest | Alle Feature-Matrix-Komponententests grün (G05, G06, G11, G17–G19, G22, G23, S04); Anweisungsüberdeckung ≥ vorheriger Wert (Ratchet) |
 | Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, S01–S03, S05–S08, S10–S12, S19, S21, S22) |
-| Teststufe 3 — Systemtest | Alle 5 Standard-Themes rendern fehlerfrei; alle E2E-Testfälle grün (G20, G21, S09, S13–S18, S20, S23–S39) |
+| Teststufe 3 — Systemtest | Alle E2E-Testfälle grün über alle 5 Standard-Themes (G20, G21, S09, S13–S18, S20, S23–S24, S26–S40); S32–S34 theme-unabhängig grün |
 | Performanztest | Kein Szenario >20% über Baseline; kein Szenario mit >+2 DB-Queries gegenüber Baseline |
 
 ---
@@ -832,7 +847,7 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | `demo.ged` (bekannte Inhalte: 72 Individuen, 29 Familien) | G01–G04, G07–G12, S01–S03, S19 | DB-Count, Feldwerte prüfen, Beziehungsstruktur verifizieren |
 | GEDCOM 5.5.1-Standard (Kapitel 2–4) | G05, G17–G19, G22, G23 | Spec-Abgleich: Tag-Liste, Datumsformate, Encoding-Regeln, CONC/CONT |
 | webtrees-DB-Schema (`DB::MYSQL` Constraints) | G12, G13, S10 | XREF-Eindeutigkeit, Fremdschlüssel, Collation-Verhalten |
-| Erwartetes DOM (Playwright-Selektoren) | S09, S13–S18, S20, S23–S39 | Element-Existenz, Struktur, Textinhalt; kein Screenshot-Vergleich |
+| Erwartetes DOM (Playwright-Selektoren) | S09, S13–S18, S20, S23–S24, S26–S40 | Element-Existenz, Struktur, Textinhalt; kein Screenshot-Vergleich |
 | Vorversion (Baseline-Traces) | Performanztest | Trace-Diff: Ladezeit ≤+20%, Query-Count ≤+2 |
 
 ---
@@ -847,7 +862,7 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | **Äquivalenzklassenbildung** | G05, G08, G17, S04, S07–S08 | Eingaben mit klar abgrenzbaren Klassen: 5 GEDCOM-Datumstypen, 4 Encoding-Varianten, Suchsyntax-Varianten, 2 Soundex-Algorithmen |
 | **Grenzwertanalyse** | G18, S06, S10 | Numerische Grenzen: Zeilenlänge exakt 253/254 Zeichen (CONC/CONT), Datumstoleranz ±0/±1/±20 Jahre, Paginierung 0/1/50/51 Ergebnisse |
 | **Entscheidungstabellentest** | G16, S12 | Kombinatorik: 4 Access-Levels × 6 Record-Typen = 24 Privacy-Kombinationen; Rolle × Record-Sichtbarkeit |
-| **Anwendungsfall-Test** | G20, G21, S09, S13–S18, S23–S39 | Systemtest-Szenarien mit Nutzerinteraktion: Import-Export-Roundtrip, Chart-Rendering, Seitennavigation, Record-Seiten, Auth-Formulare, Kalender |
+| **Anwendungsfall-Test** | G20, G21, S09, S13–S18, S23–S24, S26–S40 | Systemtest-Szenarien mit Nutzerinteraktion: Import-Export-Roundtrip, Chart-Rendering, Seitennavigation, Record-Seiten, Auth-Formulare, Kalender |
 | **Erfahrungsbasierter Test** | G10, G11, S17 | Keine formale Spezifikation verfügbar: Legacy-Formate (TNG), Custom-Tags (Ancestry, FamilySearch), Nischen-Charts |
 
 ---
@@ -889,7 +904,7 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | **Zielwert** | Kein absoluter Wert — Ratchet-Prinzip |
 | **Mechanismus** | CI prüft: aktuelle Überdeckung ≥ vorherige Überdeckung |
 | **Baseline** | Wird beim ersten vollständigen Testlauf automatisch gesetzt |
-| **Scope** | Service-Klassen der Feature-Matrizen (G01–G23, S01–S25) |
+| **Scope** | Service-Klassen der Feature-Matrizen (G01–G23, S01–S24, S26–S40) |
 | **Reporting** | Coverage-HTML als CI-Artefakt (7 Tage Retention) |
 
 **Begründung:** Das Projekt startet bei ~0% substanzieller Überdeckung (95% Stub-Tests).
@@ -1035,8 +1050,8 @@ kann bei Bedarf per Skript extrahiert werden.
 
 ## Implementierungs-Fahrplan
 
-> Status: **Phasen 1–7, 7a, 5b implementiert.** Phase 5c geplant (Theme-Integration).
-> Abdeckung 69% (43/62 Features). Verbleibend: 11 offene Features (G-Features: 6 Offen, S-Features: 5 Offen).
+> Status: **Phasen 1–7, 7a, 5b, 5c implementiert.** Abdeckung 69% (43/62 Features).
+> Verbleibend: 11 offene Features (G-Features: 6 Offen, S-Features: 5 Offen).
 
 | Phase | Status | Ergebnis |
 |---|---|---|
@@ -1044,10 +1059,10 @@ kann bei Bedarf per Skript extrahiert werden.
 | Phase 2 — Statischer Test | **Verifiziert** | `layer1-static/run.sh` läuft. 704 PHPStan-Findings + 2150 PHPCS-Warnings — alles upstream webtrees-Core (2.2.6-dev), kein eigener Code betroffen. |
 | Phase 3 — Komponententest | **Verifiziert** | 3278/3283 webtrees Core-Tests pass. 5 Failures in `MaintenanceModeServiceTest` (read-only Bind-Mount, erwartbar). 76 Warnings (fehlende Locale-Dateien). |
 | Phase 4 — Komponentenintegrationstest | **Verifiziert** | 129 eigene Tests grün über 11 Testklassen (MysqlTestCase + 10 Tests). Umfasst GEDCOM-Import, Beziehungen, Bäume, Suche, Charts, Listen, AutoComplete, RomanNumerals, GedcomService, RelationshipService. |
-| Phase 5 — Systemtest | **Verifiziert** | 13/13 Playwright E2E-Tests grün. Login, Navigation, Individual Page, Theme-Rendering, Source List, Pedigree. |
+| Phase 5 — Systemtest | **Verifiziert** | 130/130 Playwright E2E-Tests grün (Phase 5c). 12 Spec-Dateien, 25 Testbedingungen × 5 Themes + 5 theme-unabhängige. Shared Utility `theme-switch.ts`. |
 | Phase 7a — OTel PHP-Instrumentation aktivieren | **Implementiert** | PHP-Extensions (`protobuf`, `grpc`) im Containerfile. Composer-Pakete (`open-telemetry/sdk`, `exporter-otlp`, `auto-pdo`, `auto-psr18`) bedingt in `setup-webtrees.sh`. N6-Doku aktualisiert. |
 | Phase 5b — Systemtest (E2E-Routenabdeckung) | **Implementiert** | Theme-Matrix rewritten (5 Themes × 10 Seiten = 50 Tests). 6 neue Spec-Dateien: `family.spec.ts` (S24, 3 Tests), `records.spec.ts` (S26–S30, 4 Tests), `calendar.spec.ts` (S31, 2 Tests), `search-forms.spec.ts` (S38–S39, 2 Tests), `auth.spec.ts` (S33–S34, 2 Tests), `user-pages.spec.ts` (S35–S37, 3 Tests). Korrektur: `navigation.spec.ts` S24→S20. S28 übersprungen (kein NOTE-Record in `demo.ged`). |
-| Phase 5c — Systemtest (Theme-Integration in Einzel-Specs) | **Geplant** | Auflösung `theme-matrix.spec.ts` — Theme-Loop in jede tree-gebundene Spec integriert. 3 neue Specs (`homepage`, `pedigree`, `source-list`). Alle fachlichen Assertions × 5 Themes. S25 aufgelöst als Querschnittsanforderung. Shared Utility `theme-switch.ts`. Ziel: 130 Testfälle (vorher 74). |
+| Phase 5c — Systemtest (Theme-Integration in Einzel-Specs) | **Implementiert** | `theme-matrix.spec.ts` aufgelöst — Theme-Loop in jede tree-gebundene Spec integriert. 3 neue Specs (`homepage.spec.ts`, `pedigree.spec.ts`, `source-list.spec.ts`). Shared Utility `helpers/theme-switch.ts`. S25 aufgelöst als Querschnittsanforderung, S40 (Homepage) neu. 130 Testfälle (vorher 74), alle 130 grün. |
 | Phase 6 — Performanztest | **Verifiziert** | 3/3 Playwright-Perf-Tests grün. Erste Baselines: Homepage 619ms, Pedigree 655ms, Suche 561ms. |
 | Phase 7 — Querschnitt (CI/CD, OTel, KI-Debug) | **Implementiert** | `analyze-failure.sh`, `export-traces.sh`, `webtrees-tests.yaml` (GitHub Actions). OTel-Collector + Jaeger laufen. |
 
@@ -1073,7 +1088,7 @@ kann bei Bedarf per Skript extrahiert werden.
 
 1. **Branch erstellen** in `../webtrees-upstream/webtrees/` (z. B. `fill-test-stubs`)
 2. **Stubs identifizieren** — alle Testdateien mit nur `testClass()`-Methode (siehe Gap-Analyse: ~95%)
-3. **Priorisierung** — Feature-Matrizen G01–G23 und S01–S25 als Leitfaden:
+3. **Priorisierung** — Feature-Matrizen G01–G23 und S01–S24, S26–S40 als Leitfaden:
    - Zuerst Komponententest-Stubs (Teststufe 1): `GedcomExportServiceTest`, `SearchServiceTest` etc.
    - Dann Komponentenintegrationstest-Stubs (Teststufe 2): Handler-Tests für Import/Export, Suche
 4. **Tests schreiben** — innerhalb der bestehenden webtrees-Test-Infrastruktur:
@@ -1113,7 +1128,7 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 **Nach Upstream-Akzeptanz:**
 - Dieses Repo entfernt redundante Komponenten- und Komponentenintegrationstests
 - Dieses Repo konzentriert sich auf Bereiche, die Upstream nicht abdeckt: Testumgebung (Container-Stack), Systemtest mit Playwright (Teststufe 3), Performance-Baselines (Performanztest), OTel-Tracing
-- Die Feature-Matrizen G01–G23 und S01–S25 bleiben als Referenz erhalten
+- Die Feature-Matrizen G01–G23 und S01–S24, S26–S40 bleiben als Referenz erhalten
 
 ### Status
 
@@ -1178,7 +1193,7 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S11 | Cross-Tree-Suche | — | — | — | **Offen** |
 | S12 | Zugriffskontrolle (Suche) | `SearchServiceTest` ✅ (Guest vs Admin) | — | — | **Abgedeckt** |
 | S13 | Search-and-Replace | — | — | — | **Offen** |
-| S14 | Chart: Pedigree | `PedigreeChartModuleTest` ✅ (4 Styles) | — | `theme-matrix.spec.ts` ✅ | **Abgedeckt** |
+| S14 | Chart: Pedigree | `PedigreeChartModuleTest` ✅ (4 Styles) | — | `pedigree.spec.ts` ✅ (5 Themes × 2 Tests) | **Abgedeckt** |
 | S15 | Chart: Nachkommen | `DescendancyChartModuleTest` ✅ (3 Styles) | — | — | **Abgedeckt** |
 | S16 | Chart: Beziehungsfinder | `RelationshipServiceTest` ✅ (nameFromPath) | — | — | **Abgedeckt** |
 | S17 | Chart: Fächerchart | `FanChartModuleTest` ✅ | — | — | **Abgedeckt** |
@@ -1189,7 +1204,6 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S22 | AutoComplete (Orte) | `AutoCompletePlaceTest` ✅ (match + no-match) | — | — | **Abgedeckt** |
 | S23 | Navigation: Personenseite | — | — | `individual.spec.ts` ✅ | **Abgedeckt** |
 | S24 | Navigation: Familienseite | — | — | `family.spec.ts` ✅ (3 Tests) | **Abgedeckt** |
-| S25 | Theme-Matrix | — | — | `theme-matrix.spec.ts` ✅ (5 Themes × 10 Seiten = 50 Tests) | **Abgedeckt** |
 | S26 | Navigation: Quellenseite | — | — | `records.spec.ts` ✅ | **Abgedeckt** |
 | S27 | Navigation: Medienseite | — | — | `records.spec.ts` ✅ | **Abgedeckt** |
 | S28 | Navigation: Notizseite | — | — | — | **Offen** (kein NOTE-Record in `demo.ged`) |
@@ -1204,10 +1218,11 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S37 | Berichtsliste | — | — | `user-pages.spec.ts` ✅ | **Abgedeckt** |
 | S38 | Erweiterte Suche (Seitenaufruf) | — | — | `search-forms.spec.ts` ✅ | **Abgedeckt** |
 | S39 | Phonetische Suche (Seitenaufruf) | — | — | `search-forms.spec.ts` ✅ | **Abgedeckt** |
+| S40 | Navigation: Homepage (Baumseite) | — | — | `homepage.spec.ts` ✅ (5 Themes × 2 Tests) | **Abgedeckt** |
 
 #### Zusammenfassung Abdeckung
 
-| Status | G-Features | S-Features (S01–S39) | Gesamt |
+| Status | G-Features | S-Features (S01–S24, S26–S40) | Gesamt |
 |---|---|---|---|
 | **Abgedeckt** | 12 | 31 | **43** (69%) |
 | **Teilweise** | 4 | 3 | **7** (11%) |
@@ -1686,6 +1701,7 @@ bisherigen flachen Assertions.
 *Aktualisiert: 2026-03-27 — Code-Review des Dokuments gegen vorliegenden Code. Korrekturen: (1) PHP-FPM → mod_php (Containerfile nutzt `php:8.5-apache`, nicht FPM). (2) Repo-Pfade: `webtrees-tests/` / `dombrinksblagen/` → `webtrees-testing-platform/` / `../webtrees-upstream/webtrees/` (eigenständiges Repo seit Extraktion). (3) Testfall-Zählfehler: Teststufe-2-Counts je 14→13, Summen 64→62, Prioritätsverteilung neu berechnet (Hoch 26, Mittel 32, Niedrig 4). (4) G14/G15 Abdeckungsmatrix korrigiert: Feature-Matrix definiert ZIP/ZIP+Media, upstream-Tests decken Sort-by-XREF/Download-Response ab — beides auf Offen gesetzt. (5) N2 Verzeichnisbaum auf 11 Testklassen aktualisiert, bootstrap.php und playwright.config.ts ergänzt. (6) Phase-4-Status: 12/12→129 Tests über 11 Klassen. (7) OTel-Implementierungslücke dokumentiert (Composer-Pakete nicht im Containerfile). (8) Abdeckungssummary: 47% abgedeckt (29/62), 39% offen (24/62). (9) Phase 7a (OTel PHP-Instrumentation) als Arbeitspaket mit Vorrang vor Phase 5b definiert — OTel-Traces sind Diagnose-Werkzeug für Verifikation und Bugfixing. 4 APs: Composer-Pakete in setup-webtrees.sh (7a-1), PHP-Extensions im Containerfile (7a-2), Jaeger-Verifikation (7a-3), N6-Doku-Update (7a-4).*
 *Aktualisiert: 2026-03-27 — Phase 7a + 5b implementiert. (1) OTel: PHP-Extensions `protobuf`+`grpc` im Containerfile, Composer-Pakete bedingt in setup-webtrees.sh (`OTEL_SDK_DISABLED`-Check), N6-Doku aktualisiert. (2) E2E: `theme-matrix.spec.ts` komplett neu (5 Themes × 10 Seiten = 50 Tests). 6 neue Spec-Dateien: `family.spec.ts` (S24, 3 Tests), `records.spec.ts` (S26–S30, 4 Tests), `calendar.spec.ts` (S31, 2 Tests), `search-forms.spec.ts` (S38–S39, 2 Tests), `auth.spec.ts` (S33–S34, 2 Tests), `user-pages.spec.ts` (S35–S37, 3 Tests). Korrektur `navigation.spec.ts`: S24→S20. S28 offen (kein NOTE-Record). Abdeckung 69% (43/62).*
 *Aktualisiert: 2026-03-28 — Phase 5c geplant (Theme-Integration in Einzel-Specs). Auflösung `theme-matrix.spec.ts`: Theme-Loop in jede tree-gebundene Spec integrieren. 3 neue Specs (homepage, pedigree, source-list). S25 aufgelöst als Querschnittsanforderung, S40 (Homepage) als neuer Feature-Matrix-Eintrag. Shared Utility `theme-switch.ts`. 11 APs (5c-1 bis 5c-5g). Migrationsstrategie: 5 Schritte (74 → 104 → 180 → 130 Tests). Ziel: 130 Testfälle, alle fachlichen Assertions × 5 Themes.*
+*Aktualisiert: 2026-03-28 — Phase 5c implementiert. `theme-matrix.spec.ts` gelöscht, Theme-Loop in 7 bestehende Specs integriert (individual, family, records, calendar, search-forms, user-pages, navigation). 3 neue Specs: `homepage.spec.ts` (S40), `pedigree.spec.ts` (S14), `source-list.spec.ts` (S20). Shared Utility `helpers/theme-switch.ts`. S25 entfernt, S40 eingefügt. Feature-Matrix, Endekriterien, Abdeckungsmatrix, N2, Testentwurfsverfahren, Überdeckungsstrategie aktualisiert. 130/130 Tests grün. Alle 5 Layer grün (3397 Unit + 129 Integration + 130 E2E + 3 Performance).*
 
 ---
 
