@@ -39,6 +39,22 @@ else
     echo "  vendor/autoload.php existiert bereits, übersprungen"
 fi
 
+# 1b. OTel Auto-Instrumentation (bedingt)
+# composer.json liegt auf dem read-only Bind-Mount — Kopie in /tmp für Modifikation.
+# COMPOSER_VENDOR_DIR zeigt auf das beschreibbare vendor-Volume.
+if [ "${OTEL_SDK_DISABLED:-false}" != "true" ]; then
+    echo "[1b/4] OTel Auto-Instrumentation installieren..."
+    cp "${WEBTREES_DIR}/composer.json" /tmp/composer.json
+    cp "${WEBTREES_DIR}/composer.lock" /tmp/composer.lock
+    COMPOSER=/tmp/composer.json \
+    COMPOSER_VENDOR_DIR="${WEBTREES_DIR}/vendor" \
+    composer require --dev --no-interaction --no-progress \
+      open-telemetry/sdk \
+      open-telemetry/exporter-otlp \
+      open-telemetry/opentelemetry-auto-pdo \
+      open-telemetry/opentelemetry-auto-psr18 2>&1
+fi
+
 # 2. Warten auf MySQL (via PHP PDO — umgeht TLS-Probleme von mysqladmin)
 echo "[2/4] Warte auf MySQL (${MYSQL_HOST}:${MYSQL_PORT})..."
 MAX_WAIT=60

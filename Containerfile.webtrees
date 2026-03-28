@@ -25,9 +25,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zip \
     exif \
     xml \
-    && pecl install pcov \
-    && docker-php-ext-enable pcov \
+    && pecl install pcov protobuf grpc \
+    && docker-php-ext-enable pcov protobuf grpc \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# OTel Auto-Instrumentation Extension (separater Layer für Cache-Erhalt)
+RUN pecl install opentelemetry \
+    && docker-php-ext-enable opentelemetry
 
 # Apache-Module
 RUN a2enmod rewrite
