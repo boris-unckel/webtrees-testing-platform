@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 import { themes, switchTheme } from '../helpers/theme-switch';
 
 /**
- * Systemtest: Suchformulare (erweiterte + phonetische Suche)
+ * Systemtest: Quellenliste (SourceListPage)
  *
- * @see docs/testing-bigpicture-prompt.md S38, S39, AP 5c-2e
+ * @see docs/testing-bigpicture-prompt.md S20, AP 5c-3c
  */
 
 for (const theme of themes) {
@@ -21,22 +21,22 @@ for (const theme of themes) {
       await page.waitForLoadState('networkidle');
     });
 
-    test(`S38 — advanced search form renders [${theme}]`, async ({ page }) => {
-      const response = await page.goto('/tree/demo/search-advanced');
+    test(`S20 — source list loads without errors [${theme}]`, async ({ page }) => {
+      const response = await page.goto('/tree/demo/source-list');
       expect(response?.status()).toBeLessThan(500);
 
       await expect(page.locator('body')).toBeVisible();
-      const form = page.locator('form');
-      await expect(form.first()).toBeVisible();
+      const content = page.locator('main, .wt-page-content');
+      await expect(content.first()).toBeVisible();
     });
 
-    test(`S39 — phonetic search form renders [${theme}]`, async ({ page }) => {
-      const response = await page.goto('/tree/demo/search-phonetic');
-      expect(response?.status()).toBeLessThan(500);
+    test(`S20 — source list shows entries or table [${theme}]`, async ({ page }) => {
+      await page.goto('/tree/demo/source-list');
+      await page.waitForLoadState('networkidle');
 
-      await expect(page.locator('body')).toBeVisible();
-      const form = page.locator('form');
-      await expect(form.first()).toBeVisible();
+      // Listeneinträge oder Tabelle
+      const list = page.locator('table, .list-group, .wt-page-content a');
+      await expect(list.first()).toBeVisible();
     });
   });
 }

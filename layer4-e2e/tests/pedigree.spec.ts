@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 import { themes, switchTheme } from '../helpers/theme-switch';
 
 /**
- * Systemtest: Suchformulare (erweiterte + phonetische Suche)
+ * Systemtest: Stammbaum / Ahnentafel (PedigreePage)
  *
- * @see docs/testing-bigpicture-prompt.md S38, S39, AP 5c-2e
+ * @see docs/testing-bigpicture-prompt.md S14, AP 5c-3b
  */
 
 for (const theme of themes) {
@@ -21,22 +21,20 @@ for (const theme of themes) {
       await page.waitForLoadState('networkidle');
     });
 
-    test(`S38 — advanced search form renders [${theme}]`, async ({ page }) => {
-      const response = await page.goto('/tree/demo/search-advanced');
+    test(`S14 — pedigree chart loads without errors [${theme}]`, async ({ page }) => {
+      const response = await page.goto('/tree/demo/pedigree');
       expect(response?.status()).toBeLessThan(500);
 
       await expect(page.locator('body')).toBeVisible();
-      const form = page.locator('form');
-      await expect(form.first()).toBeVisible();
     });
 
-    test(`S39 — phonetic search form renders [${theme}]`, async ({ page }) => {
-      const response = await page.goto('/tree/demo/search-phonetic');
-      expect(response?.status()).toBeLessThan(500);
+    test(`S14 — pedigree chart area visible [${theme}]`, async ({ page }) => {
+      await page.goto('/tree/demo/pedigree');
+      await page.waitForLoadState('networkidle');
 
-      await expect(page.locator('body')).toBeVisible();
-      const form = page.locator('form');
-      await expect(form.first()).toBeVisible();
+      // Chart-Bereich (Canvas, SVG oder Chart-Container)
+      const chart = page.locator('.wt-chart-pedigree, .wt-chart, canvas, svg, .wt-page-content');
+      await expect(chart.first()).toBeVisible();
     });
   });
 }

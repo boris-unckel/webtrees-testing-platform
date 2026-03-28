@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 import { themes, switchTheme } from '../helpers/theme-switch';
 
 /**
- * Systemtest: Suchformulare (erweiterte + phonetische Suche)
+ * Systemtest: Homepage / Baumseite (TreePage)
  *
- * @see docs/testing-bigpicture-prompt.md S38, S39, AP 5c-2e
+ * @see docs/testing-bigpicture-prompt.md S40, AP 5c-3a
  */
 
 for (const theme of themes) {
@@ -21,22 +21,22 @@ for (const theme of themes) {
       await page.waitForLoadState('networkidle');
     });
 
-    test(`S38 — advanced search form renders [${theme}]`, async ({ page }) => {
-      const response = await page.goto('/tree/demo/search-advanced');
+    test(`S40 — homepage loads without errors [${theme}]`, async ({ page }) => {
+      const response = await page.goto('/tree/demo');
       expect(response?.status()).toBeLessThan(500);
 
       await expect(page.locator('body')).toBeVisible();
-      const form = page.locator('form');
-      await expect(form.first()).toBeVisible();
+      const content = page.locator('main, .wt-page-content');
+      await expect(content.first()).toBeVisible();
     });
 
-    test(`S39 — phonetic search form renders [${theme}]`, async ({ page }) => {
-      const response = await page.goto('/tree/demo/search-phonetic');
-      expect(response?.status()).toBeLessThan(500);
+    test(`S40 — homepage shows tree statistics or welcome block [${theme}]`, async ({ page }) => {
+      await page.goto('/tree/demo');
+      await page.waitForLoadState('networkidle');
 
-      await expect(page.locator('body')).toBeVisible();
-      const form = page.locator('form');
-      await expect(form.first()).toBeVisible();
+      // Baumstatistik oder Willkommensblock
+      const stats = page.locator('.wt-block, .wt-stats-table, .block, .card');
+      await expect(stats.first()).toBeVisible();
     });
   });
 }

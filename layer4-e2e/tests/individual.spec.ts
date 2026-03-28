@@ -1,39 +1,42 @@
 import { test, expect } from '@playwright/test';
+import { themes, switchTheme } from '../helpers/theme-switch';
 
 /**
  * Systemtest: Personenseite — Fakten, Familien, Events
  *
- * @see docs/testing-bigpicture-prompt.md S23
+ * @see docs/testing-bigpicture-prompt.md S23, AP 5c-2a
  */
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('/login/demo');
-  await page.fill('input[name="username"]', 'admin');
-  await page.fill('input[name="password"]', 'admin');
-  await page.locator('button[type="submit"]').last().click();
-  await page.waitForLoadState('networkidle');
-});
+for (const theme of themes) {
+  test.describe(`Theme: ${theme}`, () => {
+    test.beforeAll(async ({ browser }) => {
+      await switchTheme(browser, theme);
+    });
 
-test.describe('Individual Page', () => {
-  test('S23 — person page shows name and vital facts', async ({ page }) => {
-    // Erste Person im Demo-Baum aufrufen
-    await page.goto('/tree/demo/individual/X1030');
-    await page.waitForLoadState('networkidle');
+    test.beforeEach(async ({ page }) => {
+      await page.goto('/login/demo');
+      await page.fill('input[name="username"]', 'admin');
+      await page.fill('input[name="password"]', 'admin');
+      await page.locator('button[type="submit"]').last().click();
+      await page.waitForLoadState('networkidle');
+    });
 
-    // Seite muss laden
-    await expect(page.locator('body')).toBeVisible();
+    test(`S23 — person page shows name and vital facts [${theme}]`, async ({ page }) => {
+      await page.goto('/tree/demo/individual/X1030');
+      await page.waitForLoadState('networkidle');
 
-    // Name muss irgendwo sichtbar sein
-    const heading = page.locator('h2, h3, .wt-page-title');
-    await expect(heading.first()).toBeVisible();
+      await expect(page.locator('body')).toBeVisible();
+
+      const heading = page.locator('h2, h3, .wt-page-title');
+      await expect(heading.first()).toBeVisible();
+    });
+
+    test(`S23 — person page shows facts area [${theme}]`, async ({ page }) => {
+      await page.goto('/tree/demo/individual/X1030');
+      await page.waitForLoadState('networkidle');
+
+      const factsArea = page.locator('.wt-facts-table, .wt-tab-facts, .nav-tabs, table');
+      await expect(factsArea.first()).toBeVisible();
+    });
   });
-
-  test('S23 — person page shows facts area', async ({ page }) => {
-    await page.goto('/tree/demo/individual/X1030');
-    await page.waitForLoadState('networkidle');
-
-    // Fakten-Bereich oder Tabs müssen existieren
-    const factsArea = page.locator('.wt-facts-table, .wt-tab-facts, .nav-tabs, table');
-    await expect(factsArea.first()).toBeVisible();
-  });
-});
+}
