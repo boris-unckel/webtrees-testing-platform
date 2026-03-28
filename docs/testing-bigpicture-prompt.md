@@ -964,7 +964,8 @@ kann bei Bedarf per Skript extrahiert werden.
 ## Implementierungs-Fahrplan
 
 > Status: **Phasen 1–7, 7a, 5b, 5c implementiert.** Abdeckung 69% (43/62 Features).
-> Verbleibend: 11 offene Features (G-Features: 6 Offen, S-Features: 5 Offen).
+> Verbleibend: 10 offene + 7 teilweise + 1 vorhandenes Feature.
+> **Phasen 8–10 geplant** (siehe `docs/plan-phase-next-coverage.md`).
 
 | Phase | Status | Ergebnis |
 |---|---|---|
@@ -978,6 +979,10 @@ kann bei Bedarf per Skript extrahiert werden.
 | Phase 5c — Systemtest (Theme-Integration in Einzel-Specs) | **Implementiert** | `theme-matrix.spec.ts` aufgelöst — Theme-Loop in jede tree-gebundene Spec integriert. 3 neue Specs (`homepage.spec.ts`, `pedigree.spec.ts`, `source-list.spec.ts`). Shared Utility `helpers/theme-switch.ts`. S25 aufgelöst als Querschnittsanforderung, S40 (Homepage) neu. 130 Testfälle (vorher 74), alle 130 grün. |
 | Phase 6 — Performanztest | **Verifiziert** | 3/3 Playwright-Perf-Tests grün. Erste Baselines: Homepage 619ms, Pedigree 655ms, Suche 561ms. |
 | Phase 7 — Querschnitt (CI/CD, OTel, KI-Debug) | **Implementiert** | `analyze-failure.sh`, `export-traces.sh`, `webtrees-tests.yaml` (GitHub Actions). OTel-Collector + Jaeger laufen. |
+| Phase 8 — Testabdeckung steigern (Komponentenintegrationstest) | **Geplant** | 8 APs: Erweiterte Suche/Phonetik (S05–S08, S10–S11), Encoding-Import (G08), Inline-Media/Custom-Tags (G09, G11), Export ZIP (G14, G15), Export Encoding (G17), Chart-Smoke (S18), Listen-Smoke (S20), Legacy/Compliance (G10, G23). ~48 neue Tests. |
+| Phase 8a — Testabdeckung steigern (Komponententest als Nebenprodukt) | **Geplant** | Bedingt: Upstream-Stubs füllen (G11, G17, G23) nur wenn Phase 8 Erkenntnisgewinn liefert. ~6-10 Tests (bedingt). |
+| Phase 9 — Testabdeckung steigern (Systemtest) | **Geplant** | 5 APs: Fixtures generieren, Notizseite (S28), Upload-Validierung (G21), Search-and-Replace (S13), G22 Status-Update. ~20 neue Tests. |
+| Phase 10 — Abschluss (Testlauf + Fehlerbereinigung) | **Geplant** | `make test-all` über alle 5 Layer. Iterative Fehleranalyse. Abdeckungsmatrix aktualisieren. Ziel: ≥97% (60-62/62 Features). |
 
 ---
 
@@ -1196,4 +1201,5 @@ make down && make up
 *Aktualisiert: 2026-03-28 — Phase 5c geplant (Theme-Integration in Einzel-Specs). Auflösung `theme-matrix.spec.ts`: Theme-Loop in jede tree-gebundene Spec integrieren. 3 neue Specs (homepage, pedigree, source-list). S25 aufgelöst als Querschnittsanforderung, S40 (Homepage) als neuer Feature-Matrix-Eintrag. Shared Utility `theme-switch.ts`. 11 APs (5c-1 bis 5c-5g). Migrationsstrategie: 5 Schritte (74 → 104 → 180 → 130 Tests). Ziel: 130 Testfälle, alle fachlichen Assertions × 5 Themes.*
 *Aktualisiert: 2026-03-28 — Phase 5c implementiert. `theme-matrix.spec.ts` gelöscht, Theme-Loop in 7 bestehende Specs integriert (individual, family, records, calendar, search-forms, user-pages, navigation). 3 neue Specs: `homepage.spec.ts` (S40), `pedigree.spec.ts` (S14), `source-list.spec.ts` (S20). Shared Utility `helpers/theme-switch.ts`. S25 entfernt, S40 eingefügt. Feature-Matrix, Endekriterien, Abdeckungsmatrix, N2, Testentwurfsverfahren, Überdeckungsstrategie aktualisiert. 130/130 Tests grün. Alle 5 Layer grün (3397 Unit + 129 Integration + 130 E2E + 3 Performance).*
 *Aktualisiert: 2026-03-28 — Dokument-Refactoring: Abgearbeitete Detailpläne (Phase 5b, 5c, 7a, Upstream-Stubs Prio 2a–4) entfernt. AI-Diagramm-Prompt entfernt. Behobene Known Bugs entfernt, Upstream-Bug FamilyFactory::mapper() als eigener Eintrag aufgenommen. Mapping-Tabelle Layer ↔ ISTQB-Teststufe eingeführt, durchgängig ISTQB-Terminologie. Mermaid-Diagramm aktualisiert (ISTQB-Labels, Layer-Zuordnung). Upstream-Contribution auf Konzept + Ergebnis gekürzt. Testlauf-Snapshot durch Verweis auf CI-Artefakte ersetzt.*
+*Aktualisiert: 2026-03-28 — Phasen 8–10 geplant (Testabdeckung steigern). Phase 8: 8 APs Komponentenintegrationstest (~48 Tests) für 10 offene + 7 teilweise Features. Phase 8a: bedingte Upstream-Stubs (G11, G17, G23). Phase 9: 5 APs Systemtest (~20 Tests) für S28, G21, S13, G22. Phase 10: Abschluss mit `make test-all` und Fehlerbereinigung. Detailplan in `docs/plan-phase-next-coverage.md`. Ziel: ≥97% Abdeckung (60-62/62 Features).*
 
