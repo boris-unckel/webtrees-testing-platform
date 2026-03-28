@@ -20,8 +20,6 @@ use Fisharebest\Webtrees\Tree;
  *
  * @covers \Fisharebest\Webtrees\Individual::canShowByType
  * @covers \Fisharebest\Webtrees\GedcomRecord::canShowRecord
- * @see docs/plan-privacy-testing-prompt.md P01–P07, P14–P15
- * @see docs/plan-privacy-implementation.md Phase P3
  */
 class PrivacyVisibilityTest extends PrivacyTestCase
 {

@@ -6,7 +6,7 @@ import { defineConfig } from '@playwright/test';
  * Misst Ladezeiten und vergleicht mit gespeicherten Baselines.
  * Schwellwert: +20% Ladezeit = Warnung
  *
- * @see docs/testing-bigpicture-prompt.md Performanztest
+ * @see docs/testing-bigpicture.md Performanztest
  */
 export default defineConfig({
   testDir: './tests',

@@ -7,7 +7,7 @@ import { themes, switchTheme } from '../helpers/theme-switch';
  * S28 (Notizseite) nutzt muster-Tree — demo.ged enthält keine separaten NOTE-Records,
  * gedcom-l-muster.ged hat @N1@ (top-level NOTE-Record).
  *
- * @see docs/testing-bigpicture-prompt.md S26–S30, AP 5c-2c, AP 9-2
+ * @see docs/testing-bigpicture.md S26–S30, AP 5c-2c, AP 9-2
  */
 
 for (const theme of themes) {

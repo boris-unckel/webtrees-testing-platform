@@ -5,7 +5,7 @@ import { defineConfig } from '@playwright/test';
  * Browser: Chromium only, headless
  * Basis-URL: http://webtrees:80 (Container-Netzwerk)
  *
- * @see docs/testing-bigpicture-prompt.md Teststufe 3
+ * @see docs/testing-bigpicture.md Teststufe 3
  */
 export default defineConfig({
   testDir: './tests',

@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 /**
  * Systemtest: Login-Funktionalität
  *
- * @see docs/testing-bigpicture-prompt.md S23
+ * @see docs/testing-bigpicture.md S23
  */
 
 test.describe('Login', () => {

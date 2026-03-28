@@ -7,8 +7,6 @@ import { loginAsRelationshipUser, logoutRole } from '../helpers/privacy-roles';
  * Testet den Relationship-User (test-relationship) mit
  * PREF_TREE_ACCOUNT_XREF=P_REL_USER und PREF_TREE_PATH_LENGTH=2.
  *
- * @see docs/plan-privacy-testing-prompt.md P22
- * @see docs/plan-privacy-implementation.md Phase P7.5
  */
 
 test.describe('Privacy Relationship', () => {

@@ -198,9 +198,7 @@ webtrees-testing-platform/
 ├── README.md                       # Deutsch: Strategie + Quickstart
 ├── CLAUDE.md                       # AI-Kontext: Testaufruf, Layer-Architektur, SELinux
 ├── docs/
-│   ├── testing-bigpicture-prompt.md # Dieses Dokument (Teststrategie)
-│   ├── plan-privacy-testing-prompt.md # Privacy-Planungs-Prompt (P01–P29, Rollenmatrix)
-│   └── plan-privacy-implementation.md # Privacy-Umsetzungsplan (Phase P1–P9, Statustracking)
+│   └── testing-bigpicture.md       # Dieses Dokument (Teststrategie)
 ├── scripts/
 │   ├── setup-webtrees.sh          # Auto-Installer (config.ini.php, Migration, GEDCOM-Import)
 │   ├── generate-privacy-fixture.sh # Template → GEDCOM-Generator (__YEAR_MINUS_N__ ersetzen)
@@ -722,7 +720,6 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 > Abgeleitet aus Code-Analyse von `Individual::canShow()`, `Individual::canShowByType()`,
 > `Individual::isDead()`, `GedcomRecord::canEdit()`, `Fact::canEdit()`,
 > Tree-Preferences (Privacy-Einstellungen), User-Preferences (Relationship Privacy).
-> Detaillierter Planungs-Prompt: `docs/plan-privacy-testing-prompt.md`.
 >
 > Teststufen: 2 = Komponentenintegrationstest, 3 = Systemtest.
 > Rollen: B = Besucher, M = Mitglied, E = Bearbeiter, Mo = Moderator, V = Verwalter.
@@ -806,7 +803,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 Die Domäne **Beziehungsberechnung** ist bewusst als niedrigere Priorität eingestuft.
 **Privacy/Zugriffskontrolle** wurde in Phase 11 vollständig umgesetzt (P01–P29, siehe
-Feature-Matrix oben und `docs/plan-privacy-implementation.md`).
+Feature-Matrix oben).
 
 ---
 
@@ -989,7 +986,7 @@ test_conc_wrapping_at_253_chars_splits_correctly
 
 ```php
 /**
- * @see docs/testing-bigpicture-prompt.md G05
+ * @see docs/testing-bigpicture.md G05
  */
 #[DataProvider('gedcomDateProvider')]
 public function test_date_parsing_creates_correct_fields(
@@ -1032,7 +1029,7 @@ API getestet. Wenn eine private Methode schwer testbar ist, deutet das auf Refac
 ```php
 /**
  * @covers \Fisharebest\Webtrees\Services\GedcomImportService
- * @see docs/testing-bigpicture-prompt.md G01, G02, G04
+ * @see docs/testing-bigpicture.md G01, G02, G04
  */
 class GedcomImportServiceTest extends MysqlTestCase
 {
@@ -1052,7 +1049,7 @@ kann bei Bedarf per Skript extrahiert werden.
 ## Implementierungs-Fahrplan
 
 > Status: **Alle Phasen implementiert (1–11).** Abdeckung 100% (62/62 Features G+S, 29/29 Features P).
-> Detailplan und Umsetzungsbericht: Phasen 1–10 in `docs/plan-phase-next-coverage.md`, Phase 11 in `docs/plan-privacy-implementation.md`.
+> Detailplan und Umsetzungsbericht: Phasen 1–10 in `docs/plan-phase-next-coverage.md`.
 
 | Phase | Status | Ergebnis |
 |---|---|---|
@@ -1070,7 +1067,7 @@ kann bei Bedarf per Skript extrahiert werden.
 | Phase 8a — Testabdeckung steigern (Komponententest als Nebenprodukt) | **Nicht umgesetzt** | Bedingt: Kein Erkenntnisgewinn aus Phase 8, der Upstream-Stub-Befüllung erfordert. Features durch Phase 8 abgedeckt. |
 | Phase 9 — Testabdeckung steigern (Systemtest) | **Implementiert** | 5 APs: 4 Fixture-Dateien, 20 neue Tests. Notizseite (S28) auf `muster`-Tree, Upload-Validierung (G21) neue Spec, Search-and-Replace (S13) neue Spec, G22 Status-Update. |
 | Phase 10 — Abschluss (Testlauf + Fehlerbereinigung) | **Implementiert** | `make test-all` grün über alle 5 Layer. 2 Iterationsrunden Fehlerbereinigung. 62/62 Features abgedeckt (100%). |
-| Phase 11 — Privacy & Zugriffskontrolle | **Implementiert** | 108 neue Tests (82 Teststufe 2 + 26 Teststufe 3). Feature-Matrix P01–P29 vollständig abgedeckt. 3 Iterationsrunden Fehlerbereinigung, 18 Fixes. Detailplan: `docs/plan-privacy-implementation.md`. |
+| Phase 11 — Privacy & Zugriffskontrolle | **Implementiert** | 108 neue Tests (82 Teststufe 2 + 26 Teststufe 3). Feature-Matrix P01–P29 vollständig abgedeckt. 3 Iterationsrunden Fehlerbereinigung, 18 Fixes. |
 
 ---
 
@@ -1322,5 +1319,5 @@ make down && make up
 *Aktualisiert: 2026-03-28 — Dokument-Refactoring: Abgearbeitete Detailpläne (Phase 5b, 5c, 7a, Upstream-Stubs Prio 2a–4) entfernt. AI-Diagramm-Prompt entfernt. Behobene Known Bugs entfernt, Upstream-Bug FamilyFactory::mapper() als eigener Eintrag aufgenommen. Mapping-Tabelle Layer ↔ ISTQB-Teststufe eingeführt, durchgängig ISTQB-Terminologie. Mermaid-Diagramm aktualisiert (ISTQB-Labels, Layer-Zuordnung). Upstream-Contribution auf Konzept + Ergebnis gekürzt. Testlauf-Snapshot durch Verweis auf CI-Artefakte ersetzt.*
 *Aktualisiert: 2026-03-28 — Phasen 8–10 geplant (Testabdeckung steigern). Phase 8: 8 APs Komponentenintegrationstest (~48 Tests) für 10 offene + 7 teilweise Features. Phase 8a: bedingte Upstream-Stubs (G11, G17, G23). Phase 9: 5 APs Systemtest (~20 Tests) für S28, G21, S13, G22. Phase 10: Abschluss mit `make test-all` und Fehlerbereinigung. Detailplan in `docs/plan-phase-next-coverage.md`. Ziel: ≥97% Abdeckung (60-62/62 Features).*
 *Aktualisiert: 2026-03-28 — Phasen 8–10 implementiert (Testabdeckung 100%). Phase 8: 48 neue Integrationstests (AP 8-1 bis 8-8) in SearchIntegrationTest, GedcomImportTest, TreeOperationsTest, ChartModuleIntegrationTest, ListModuleIntegrationTest. Phase 8a: nicht umgesetzt (kein Erkenntnisgewinn). Phase 9: 20 neue E2E-Tests (AP 9-1 bis 9-5) — 4 Fixtures, NOTE-Test auf muster-Tree (S28), upload-validation.spec.ts (G21), search-replace.spec.ts (S13), G22 Status-Update. Phase 10: `make test-all` grün (3397 Unit + 178 Integration + 150 E2E + 3 Performance). 2 Iterationsrunden Fehlerbereinigung. Abdeckung 62/62 Features (100%). Abweichungen: G08 Encoding-Tests auf Post-Konvertierung umgestellt (importRecord macht keine Encoding-Konvertierung). 1 flaky E2E-Test (S13 Visitor, Session-Isolation). Detailbericht in `docs/plan-phase-next-coverage.md` Abschnitt 8.*
-*Aktualisiert: 2026-03-28 — Phase 11 (Privacy & Zugriffskontrolle) implementiert. Feature-Matrix P01–P29 (29 Features) eingefügt. 108 neue Tests (82 Teststufe 2 in 7 Testklassen + 26 Teststufe 3 in 6 Specs). Produktrisiken R8–R13 ergänzt. Testentwurfsverfahren (Grenzwertanalyse isDead, Äquivalenzklassen RESN, Entscheidungstabelle Rollenmatrix, paarweiser Test Preferences). Endekriterien um P01–P29 erweitert. Abdeckungsmatrix P01–P29 (29/29 abgedeckt). N2-Verzeichnisstruktur: 18 neue Dateien (Template, Generator, Basisklasse, 7 Testklassen, Helper, 6 Specs, 2 Planungsdokumente). Testorakel um Privacy-Fixture und Code-Analyse ergänzt. Gesamtabdeckung 91/91 Features (100%). Detailplan: `docs/plan-privacy-implementation.md`.*
+*Aktualisiert: 2026-03-28 — Phase 11 (Privacy & Zugriffskontrolle) implementiert. Feature-Matrix P01–P29 (29 Features) eingefügt. 108 neue Tests (82 Teststufe 2 in 7 Testklassen + 26 Teststufe 3 in 6 Specs). Produktrisiken R8–R13 ergänzt. Testentwurfsverfahren (Grenzwertanalyse isDead, Äquivalenzklassen RESN, Entscheidungstabelle Rollenmatrix, paarweiser Test Preferences). Endekriterien um P01–P29 erweitert. Abdeckungsmatrix P01–P29 (29/29 abgedeckt). N2-Verzeichnisstruktur: 18 neue Dateien (Template, Generator, Basisklasse, 7 Testklassen, Helper, 6 Specs, 2 Planungsdokumente). Testorakel um Privacy-Fixture und Code-Analyse ergänzt. Gesamtabdeckung 91/91 Features (100%).*
 

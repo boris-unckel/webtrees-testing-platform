@@ -16,8 +16,6 @@ use Fisharebest\Webtrees\Tree;
  *
  * @covers \Fisharebest\Webtrees\GedcomRecord::canShowRecord
  * @covers \Fisharebest\Webtrees\Fact::canShow
- * @see docs/plan-privacy-testing-prompt.md P16–P21
- * @see docs/plan-privacy-implementation.md Phase P4
  */
 class ResnPrivacyTest extends PrivacyTestCase
 {

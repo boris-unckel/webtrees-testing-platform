@@ -4,7 +4,7 @@ import { themes, switchTheme } from '../helpers/theme-switch';
 /**
  * Systemtest: Personenseite — Fakten, Familien, Events
  *
- * @see docs/testing-bigpicture-prompt.md S23, AP 5c-2a
+ * @see docs/testing-bigpicture.md S23, AP 5c-2a
  */
 
 for (const theme of themes) {

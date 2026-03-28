@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
  * Prüft nur, ob die Seiten erreichbar sind und Formulare rendern.
  * Keine tatsächliche Registrierung oder E-Mail-Versand.
  *
- * @see docs/testing-bigpicture-prompt.md S33, S34, AP 5b-2e
+ * @see docs/testing-bigpicture.md S33, S34, AP 5b-2e
  */
 
 test.describe('Auth Pages', () => {

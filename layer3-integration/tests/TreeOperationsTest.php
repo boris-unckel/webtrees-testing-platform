@@ -20,7 +20,7 @@ use Psr\Http\Message\StreamFactoryInterface;
  *
  * @covers \Fisharebest\Webtrees\Services\TreeService
  * @covers \Fisharebest\Webtrees\Services\GedcomExportService
- * @see docs/testing-bigpicture-prompt.md G13, G14, G15, G16, G17
+ * @see docs/testing-bigpicture.md G13, G14, G15, G16, G17
  */
 class TreeOperationsTest extends MysqlTestCase
 {

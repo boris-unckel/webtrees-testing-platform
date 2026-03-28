@@ -4,7 +4,7 @@ import { themes, switchTheme } from '../helpers/theme-switch';
 /**
  * Systemtest: Kalenderansicht (Monat + Jahr)
  *
- * @see docs/testing-bigpicture-prompt.md S31, AP 5c-2d
+ * @see docs/testing-bigpicture.md S31, AP 5c-2d
  */
 
 for (const theme of themes) {

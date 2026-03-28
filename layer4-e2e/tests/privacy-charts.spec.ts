@@ -4,8 +4,6 @@ import { loginAsRole, logoutRole } from '../helpers/privacy-roles';
 /**
  * Systemtest: Vertrauliche Boxen in Charts (P26)
  *
- * @see docs/plan-privacy-testing-prompt.md P26
- * @see docs/plan-privacy-implementation.md Phase P7.4
  */
 
 test.describe('Privacy Charts', () => {

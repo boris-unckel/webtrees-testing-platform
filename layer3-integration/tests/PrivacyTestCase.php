@@ -22,8 +22,6 @@ use Fisharebest\Webtrees\Tree;
  * - Rollen-basierte User-Erstellung
  * - Tree-Preference-Helfer
  *
- * @see docs/plan-privacy-testing-prompt.md
- * @see docs/plan-privacy-implementation.md Phase P1.4
  */
 abstract class PrivacyTestCase extends MysqlTestCase
 {

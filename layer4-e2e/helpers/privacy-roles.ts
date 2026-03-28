@@ -12,8 +12,6 @@ import { Page } from '@playwright/test';
  *
  * Besucher (visitor): kein Login, Abmeldung falls noetig.
  *
- * @see docs/plan-privacy-testing-prompt.md Rollen-Setup-Strategie
- * @see docs/plan-privacy-implementation.md Phase P1.5
  */
 
 export const privacyRoles = ['visitor', 'member', 'editor', 'moderator', 'manager'] as const;

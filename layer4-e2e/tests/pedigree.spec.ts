@@ -4,7 +4,7 @@ import { themes, switchTheme } from '../helpers/theme-switch';
 /**
  * Systemtest: Stammbaum / Ahnentafel (PedigreePage)
  *
- * @see docs/testing-bigpicture-prompt.md S14, AP 5c-3b
+ * @see docs/testing-bigpicture.md S14, AP 5c-3b
  */
 
 for (const theme of themes) {

@@ -16,7 +16,7 @@ use Fisharebest\Webtrees\Services\RelationshipService;
  * Ergänzt RelationshipDbTest (DB-Ebene) um Service-Ebene-Tests.
  *
  * @covers \Fisharebest\Webtrees\Services\RelationshipService
- * @see docs/testing-bigpicture-prompt.md S14
+ * @see docs/testing-bigpicture.md S14
  */
 class RelationshipServiceIntegrationTest extends MysqlTestCase
 {

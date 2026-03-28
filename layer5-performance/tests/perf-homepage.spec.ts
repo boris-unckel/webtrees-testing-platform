@@ -8,7 +8,7 @@ import * as path from 'path';
  * Misst Ladezeit der Startseite und vergleicht mit Baseline.
  * Schwellwert: +20% = Warnung
  *
- * @see docs/testing-bigpicture-prompt.md Performanztest
+ * @see docs/testing-bigpicture.md Performanztest
  */
 
 const BASELINE_DIR = '/tests/performance/baselines';

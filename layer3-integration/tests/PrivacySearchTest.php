@@ -18,8 +18,6 @@ use Fisharebest\Webtrees\Tree;
  * Suchergebnissen auftauchen.
  *
  * @covers \Fisharebest\Webtrees\Services\SearchService::searchIndividuals
- * @see docs/plan-privacy-testing-prompt.md P24
- * @see docs/plan-privacy-implementation.md Phase P5
  */
 class PrivacySearchTest extends PrivacyTestCase
 {

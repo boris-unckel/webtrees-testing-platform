@@ -4,7 +4,7 @@ import { themes, switchTheme } from '../helpers/theme-switch';
 /**
  * Systemtest: Benutzerseiten (Meine Seite, Kontakt, Berichte)
  *
- * @see docs/testing-bigpicture-prompt.md S35, S36, S37, AP 5c-2f
+ * @see docs/testing-bigpicture.md S35, S36, S37, AP 5c-2f
  */
 
 for (const theme of themes) {

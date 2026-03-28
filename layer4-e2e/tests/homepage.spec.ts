@@ -4,7 +4,7 @@ import { themes, switchTheme } from '../helpers/theme-switch';
 /**
  * Systemtest: Homepage / Baumseite (TreePage)
  *
- * @see docs/testing-bigpicture-prompt.md S40, AP 5c-3a
+ * @see docs/testing-bigpicture.md S40, AP 5c-3a
  */
 
 for (const theme of themes) {

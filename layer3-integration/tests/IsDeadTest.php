@@ -16,8 +16,6 @@ use Fisharebest\Webtrees\Tree;
  * Geburts-Check → Verwandten-Inferenz → Fallback (lebend).
  *
  * @covers \Fisharebest\Webtrees\Individual::isDead
- * @see docs/plan-privacy-testing-prompt.md P08–P13
- * @see docs/plan-privacy-implementation.md Phase P2
  */
 class IsDeadTest extends PrivacyTestCase
 {

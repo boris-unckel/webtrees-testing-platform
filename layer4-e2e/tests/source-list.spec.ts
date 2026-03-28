@@ -4,7 +4,7 @@ import { themes, switchTheme } from '../helpers/theme-switch';
 /**
  * Systemtest: Quellenliste (SourceListPage)
  *
- * @see docs/testing-bigpicture-prompt.md S20, AP 5c-3c
+ * @see docs/testing-bigpicture.md S20, AP 5c-3c
  */
 
 for (const theme of themes) {

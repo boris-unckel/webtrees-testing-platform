@@ -19,8 +19,6 @@ use Fisharebest\Webtrees\Tree;
  *
  * @covers \Fisharebest\Webtrees\GedcomRecord::canEdit
  * @covers \Fisharebest\Webtrees\GedcomRecord::updateRecord
- * @see docs/plan-privacy-testing-prompt.md P27–P29
- * @see docs/plan-privacy-implementation.md Phase P6
  */
 class AccessControlTest extends PrivacyTestCase
 {

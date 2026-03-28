@@ -14,7 +14,7 @@ use Fisharebest\Webtrees\Registry;
  * Verifiziert, dass createPrivacyTree() funktioniert und die
  * importierten Personen ueber Registry abrufbar sind.
  *
- * @see docs/plan-privacy-implementation.md Phase P1.4
+
  */
 class PrivacySmokeTest extends PrivacyTestCase
 {

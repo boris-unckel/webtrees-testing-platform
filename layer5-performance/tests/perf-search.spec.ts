@@ -5,7 +5,7 @@ import * as path from 'path';
 /**
  * Performanztest: Personensuche
  *
- * @see docs/testing-bigpicture-prompt.md Performanztest
+ * @see docs/testing-bigpicture.md Performanztest
  */
 
 const BASELINE_DIR = '/tests/performance/baselines';

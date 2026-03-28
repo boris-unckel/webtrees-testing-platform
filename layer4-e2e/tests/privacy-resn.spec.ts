@@ -4,8 +4,6 @@ import { loginAsRole, logoutRole } from '../helpers/privacy-roles';
 /**
  * Systemtest: RESN-Tags im Browser (P16–P19)
  *
- * @see docs/plan-privacy-testing-prompt.md P16–P19
- * @see docs/plan-privacy-implementation.md Phase P7.2
  */
 
 test.describe('Privacy RESN', () => {

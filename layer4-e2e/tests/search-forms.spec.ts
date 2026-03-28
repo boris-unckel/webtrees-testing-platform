@@ -4,7 +4,7 @@ import { themes, switchTheme } from '../helpers/theme-switch';
 /**
  * Systemtest: Suchformulare (erweiterte + phonetische Suche)
  *
- * @see docs/testing-bigpicture-prompt.md S38, S39, AP 5c-2e
+ * @see docs/testing-bigpicture.md S38, S39, AP 5c-2e
  */
 
 for (const theme of themes) {

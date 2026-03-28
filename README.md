@@ -57,6 +57,6 @@ make clean         # Stack + Volumes löschen
 
 ## Dokumentation
 
-- **Teststrategie**: `docs/testing-bigpicture-prompt.md`
+- **Teststrategie**: `docs/testing-bigpicture.md`
 - **Feature-Matrizen**: G01–G23 (GEDCOM), S01–S25 (Suche/Navigation)
 - **Architektur**: `docs/webtrees-architecture.md`

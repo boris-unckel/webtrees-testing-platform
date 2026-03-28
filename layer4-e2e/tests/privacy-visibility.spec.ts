@@ -7,8 +7,6 @@ import { loginAsRole, logoutRole, type PrivacyRole } from '../helpers/privacy-ro
  * Prueft Stammbaum-Zugang, Vertraulich-Platzhalter und Rollen-basierte
  * Sichtbarkeit im Browser.
  *
- * @see docs/plan-privacy-testing-prompt.md P01–P03, P14, P25
- * @see docs/plan-privacy-implementation.md Phase P7.1
  */
 
 test.describe('Privacy Visibility', () => {

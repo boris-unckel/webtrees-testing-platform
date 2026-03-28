@@ -4,8 +4,6 @@ import { loginAsRole, logoutRole } from '../helpers/privacy-roles';
 /**
  * Systemtest: Privacy in Suchergebnissen (P24)
  *
- * @see docs/plan-privacy-testing-prompt.md P24
- * @see docs/plan-privacy-implementation.md Phase P7.3
  */
 
 test.describe('Privacy Search', () => {

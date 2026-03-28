@@ -4,7 +4,7 @@ import { themes, switchTheme } from '../helpers/theme-switch';
 /**
  * Systemtest: Navigation und Seitenstruktur
  *
- * @see docs/testing-bigpicture-prompt.md S23, S20, S09, AP 5c-2g
+ * @see docs/testing-bigpicture.md S23, S20, S09, AP 5c-2g
  */
 
 for (const theme of themes) {

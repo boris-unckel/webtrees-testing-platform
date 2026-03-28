@@ -6,8 +6,6 @@ import { loginAsRole, logoutRole } from '../helpers/privacy-roles';
  *
  * Testet Edit-Buttons, Pending Changes und Rollensperre.
  *
- * @see docs/plan-privacy-testing-prompt.md P27–P29
- * @see docs/plan-privacy-implementation.md Phase P7.6
  */
 
 test.describe('Access Control', () => {

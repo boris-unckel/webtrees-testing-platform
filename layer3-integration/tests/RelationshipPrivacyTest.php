@@ -15,8 +15,6 @@ use Fisharebest\Webtrees\Tree;
  * Tests fuer Relationship Privacy (Pfadlaengen-basierte Sichtbarkeit).
  *
  * @covers \Fisharebest\Webtrees\Individual::canShowByType
- * @see docs/plan-privacy-testing-prompt.md P22–P23
- * @see docs/plan-privacy-implementation.md Phase P5
  */
 class RelationshipPrivacyTest extends PrivacyTestCase
 {

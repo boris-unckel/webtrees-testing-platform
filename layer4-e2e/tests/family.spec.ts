@@ -4,7 +4,7 @@ import { themes, switchTheme } from '../helpers/theme-switch';
 /**
  * Systemtest: Familienseite (FamilyPage)
  *
- * @see docs/testing-bigpicture-prompt.md S24, AP 5c-2b
+ * @see docs/testing-bigpicture.md S24, AP 5c-2b
  */
 
 for (const theme of themes) {

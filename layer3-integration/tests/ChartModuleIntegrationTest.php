@@ -38,7 +38,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @covers \Fisharebest\Webtrees\Module\LifespansChartModule
  * @covers \Fisharebest\Webtrees\Module\FamilyBookChartModule
  * @covers \Fisharebest\Webtrees\Module\RelationshipsChartModule
- * @see docs/testing-bigpicture-prompt.md S15, S16, S17, S18
+ * @see docs/testing-bigpicture.md S15, S16, S17, S18
  */
 class ChartModuleIntegrationTest extends MysqlTestCase
 {

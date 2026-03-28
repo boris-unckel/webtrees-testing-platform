@@ -22,7 +22,7 @@ use Fisharebest\Webtrees\Services\SearchService;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AutoCompletePlace
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AutoCompleteSurname
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AutoCompleteCitation
- * @see docs/testing-bigpicture-prompt.md S07, S08
+ * @see docs/testing-bigpicture.md S07, S08
  */
 class AutoCompleteIntegrationTest extends MysqlTestCase
 {
