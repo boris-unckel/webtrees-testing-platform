@@ -1035,8 +1035,8 @@ kann bei Bedarf per Skript extrahiert werden.
 
 ## Implementierungs-Fahrplan
 
-> Status: **Alle Phasen implementiert (1–7, 7a, 5b).** Abdeckung 69% (43/62 Features).
-> Verbleibend: 11 offene Features (G-Features: 6 Offen, S-Features: 5 Offen).
+> Status: **Phasen 1–7, 7a, 5b implementiert.** Phase 5c geplant (Theme-Integration).
+> Abdeckung 69% (43/62 Features). Verbleibend: 11 offene Features (G-Features: 6 Offen, S-Features: 5 Offen).
 
 | Phase | Status | Ergebnis |
 |---|---|---|
@@ -1047,6 +1047,7 @@ kann bei Bedarf per Skript extrahiert werden.
 | Phase 5 — Systemtest | **Verifiziert** | 13/13 Playwright E2E-Tests grün. Login, Navigation, Individual Page, Theme-Rendering, Source List, Pedigree. |
 | Phase 7a — OTel PHP-Instrumentation aktivieren | **Implementiert** | PHP-Extensions (`protobuf`, `grpc`) im Containerfile. Composer-Pakete (`open-telemetry/sdk`, `exporter-otlp`, `auto-pdo`, `auto-psr18`) bedingt in `setup-webtrees.sh`. N6-Doku aktualisiert. |
 | Phase 5b — Systemtest (E2E-Routenabdeckung) | **Implementiert** | Theme-Matrix rewritten (5 Themes × 10 Seiten = 50 Tests). 6 neue Spec-Dateien: `family.spec.ts` (S24, 3 Tests), `records.spec.ts` (S26–S30, 4 Tests), `calendar.spec.ts` (S31, 2 Tests), `search-forms.spec.ts` (S38–S39, 2 Tests), `auth.spec.ts` (S33–S34, 2 Tests), `user-pages.spec.ts` (S35–S37, 3 Tests). Korrektur: `navigation.spec.ts` S24→S20. S28 übersprungen (kein NOTE-Record in `demo.ged`). |
+| Phase 5c — Systemtest (Theme-Integration in Einzel-Specs) | **Geplant** | Auflösung `theme-matrix.spec.ts` — Theme-Loop in jede tree-gebundene Spec integriert. 3 neue Specs (`homepage`, `pedigree`, `source-list`). Alle fachlichen Assertions × 5 Themes. S25 aufgelöst als Querschnittsanforderung. Shared Utility `theme-switch.ts`. Ziel: 130 Testfälle (vorher 74). |
 | Phase 6 — Performanztest | **Verifiziert** | 3/3 Playwright-Perf-Tests grün. Erste Baselines: Homepage 619ms, Pedigree 655ms, Suche 561ms. |
 | Phase 7 — Querschnitt (CI/CD, OTel, KI-Debug) | **Implementiert** | `analyze-failure.sh`, `export-traces.sh`, `webtrees-tests.yaml` (GitHub Actions). OTel-Collector + Jaeger laufen. |
 
@@ -1466,6 +1467,211 @@ Korrekt sind die 5 Module-Namen im aktuellen webtrees-Code (`app/Module/`):
 
 ---
 
+## Detailplan: Theme-Integration in Einzel-Specs (Phase 5c)
+
+> **Scope:** Teststufe 3 — Systemtest (Playwright, Layer 4). Auflösung der zentralen
+> `theme-matrix.spec.ts` — Theme-Abdeckung aller 5 Standard-Themes wird als
+> Querschnittsanforderung in jede tree-gebundene Spec-Datei integriert.
+> Alle fachlichen Assertions (Heading, Facts Area, Formulare, Suchlogik) laufen
+> für jedes Theme. Kein Testabdeckungsverlust, Nettogewinn durch tiefere
+> Theme-spezifische Assertions.
+>
+> **Begründung:** Die aktuelle Struktur trennt fachliche Tests (tiefe Assertions,
+> 1 Theme) von Theme-Tests (flache Assertions, 5 Themes). Beim Warten oder
+> Erweitern der Testsuite muss ein Entwickler zwei Stellen pflegen. Nach dem
+> Refactoring sind alle Assertions an einer Stelle pro Seite — leichter lesbar
+> bei fachlichen Änderungen und bei Theme-Wartung.
+
+### Querschnittsanforderung: Theme-Abdeckung (ersetzt S25)
+
+> S25 („Theme-Matrix") wird als eigenständige Feature-Matrix-Zeile aufgelöst.
+> Stattdessen gilt folgende Querschnittsanforderung:
+
+**Jeder Systemtest-Testfall (Teststufe 3) für tree-gebundene Seiten MUSS alle
+5 Standard-Themes abdecken:** `webtrees` (Default), `clouds`, `colors`, `fab`, `xenea`.
+
+Theme-Abdeckung ist keine eigene Testbedingung mehr, sondern eine strukturelle
+Eigenschaft jedes Testfalls. Die Shared Utility (AP 5c-1) stellt den
+Theme-Switching-Mechanismus bereit.
+
+**Ausnahmen** (nicht tree-gebunden, kein Theme-Loop):
+- `auth.spec.ts` (S33 Registrierung, S34 Passwort-Zurücksetzung)
+- `login.spec.ts` (S32 Anmeldeseite)
+
+### 5c-1 — Shared Utility: Theme-Switching-Helper
+
+| Aspekt | Detail |
+|---|---|
+| **Datei** | `layer4-e2e/helpers/theme-switch.ts` (neu) |
+| **Export** | `async function switchTheme(browser: Browser, theme: string): Promise<void>` |
+| **Verhalten** | Erstellt temporären Browser-Context, loggt sich ein, navigiert zu `/tree/demo?theme=${theme}`, schließt Context. Theme wird serverseitig in User-Preferences persistiert. |
+| **Verwendung** | In jeder Spec-Datei im `test.beforeAll`-Block des Theme-`describe`. |
+
+**Signatur und Verhalten:**
+```typescript
+// layer4-e2e/helpers/theme-switch.ts
+import { Browser } from '@playwright/test';
+
+export async function switchTheme(browser: Browser, theme: string): Promise<void> {
+  const ctx = await browser.newContext({
+    baseURL: process.env.BASE_URL || 'http://webtrees:80',
+  });
+  const page = await ctx.newPage();
+  await page.goto('/login/demo');
+  await page.fill('input[name="username"]', 'admin');
+  await page.fill('input[name="password"]', 'admin');
+  await page.locator('button[type="submit"]').last().click();
+  await page.waitForLoadState('networkidle');
+  await page.goto(`/tree/demo?theme=${theme}`);
+  await page.waitForLoadState('networkidle');
+  await ctx.close();
+}
+```
+
+**Begründung:** Extrahiert den Theme-Switching-Mechanismus aus `theme-matrix.spec.ts`
+in eine wiederverwendbare Funktion. Verhindert Duplikation über 10 Spec-Dateien.
+Analoges Muster: `MysqlTestCase.php` als Shared Basis für Layer-3-Tests.
+
+### 5c-2 — Bestehende Spec-Dateien: Theme-Loop ergänzen
+
+> **Muster:** Äußerer Loop über `themes[]`, `test.describe` pro Theme mit `test.beforeAll`
+> für Theme-Switch via Shared Utility (AP 5c-1). Alle bestehenden Testbedingungen laufen
+> innerhalb des Theme-Loops. Login bleibt im `test.beforeEach`.
+
+| AP | Datei | S-Codes | Vorher | Nachher | Testbedingungen je Theme |
+|---|---|---|---|---|---|
+| 5c-2a | `individual.spec.ts` | S23 | 2 Tests (1 Theme) | 10 (5 Themes × 2) | Heading, Facts Area |
+| 5c-2b | `family.spec.ts` | S24 | 3 Tests (1 Theme) | 15 (5 Themes × 3) | Loads, Heading, Facts Area |
+| 5c-2c | `records.spec.ts` | S26–S30 | 4 Tests (1 Theme) | 20 (5 Themes × 4) | Source-Heading, Media-Heading, Repository-Heading, Submitter-Heading |
+| 5c-2d | `calendar.spec.ts` | S31 | 2 Tests (1 Theme) | 10 (5 Themes × 2) | Monatskalender-Content, Jahreskalender-Content |
+| 5c-2e | `search-forms.spec.ts` | S38, S39 | 2 Tests (1 Theme) | 10 (5 Themes × 2) | Erweitertes Suchformular, Phonetisches Suchformular |
+| 5c-2f | `user-pages.spec.ts` | S35–S37 | 3 Tests (1 Theme) | 15 (5 Themes × 3) | Meine-Seite-Content, Kontaktformular, Berichtsliste-Content |
+| 5c-2g | `navigation.spec.ts` | S23, S20, S09 | 3 Tests (1 Theme) | 15 (5 Themes × 3) | Personenliste-Content, Familienliste-Content, Quick-Search-Logik |
+
+**Summe AP 5c-2:** 19 Testbedingungen × 5 Themes = **95 Testfälle** (vorher 19)
+
+**Strukturmuster für jede Datei:**
+```typescript
+import { switchTheme } from '../helpers/theme-switch';
+
+const themes = ['webtrees', 'clouds', 'colors', 'fab', 'xenea'] as const;
+
+for (const theme of themes) {
+  test.describe(`Theme: ${theme}`, () => {
+    test.beforeAll(async ({ browser }) => {
+      await switchTheme(browser, theme);
+    });
+
+    test.beforeEach(async ({ page }) => { /* Login */ });
+
+    // ... bestehende Tests unverändert ...
+  });
+}
+```
+
+### 5c-3 — Neue Spec-Dateien
+
+> **Ziel:** 3 Seiten, die bisher nur in `theme-matrix.spec.ts` existieren, erhalten eigene
+> Spec-Dateien mit fachlich sinnvollen Assertions (über „renders" hinaus) und Theme-Loop.
+
+| AP | Datei (neu) | S-Codes | Testfälle | Testbedingungen je Theme |
+|---|---|---|---|---|
+| 5c-3a | `homepage.spec.ts` | S40 (neu) | 10 (5 Themes × 2) | (1) Seite lädt fehlerfrei (status < 500, body, content), (2) Baumstatistik oder Willkommensblock sichtbar |
+| 5c-3b | `pedigree.spec.ts` | S14 | 10 (5 Themes × 2) | (1) Chart-Seite lädt fehlerfrei (status < 500, body), (2) Chart-Bereich sichtbar (Canvas/SVG/Chart-Container) |
+| 5c-3c | `source-list.spec.ts` | S20 | 10 (5 Themes × 2) | (1) Listenseite lädt fehlerfrei (status < 500, body), (2) Listeneinträge oder Tabelle sichtbar |
+
+**Summe AP 5c-3:** 6 Testbedingungen × 5 Themes = **30 Testfälle** (vorher 0 dediziert)
+
+**Neuer Feature-Matrix-Eintrag (bei Implementierung in Feature-Matrix einfügen):**
+
+| # | Feature | Abgeleitete Anforderung | Teststufe | Prio |
+|---|---|---|---|---|
+| S40 | Navigation: Homepage (Baumseite) | Homepage/Baumseite aufrufen → Baumstatistik oder Willkommensblock dargestellt, keine HTTP-Fehler | 3 | Hoch |
+
+**Seitenabdeckung `/tree/demo/search-general`:** Diese Seite aus `theme-matrix.spec.ts` wird
+nach dem Refactoring implizit durch `navigation.spec.ts` S09 (Quick Search) abgedeckt — der
+Quick-Search-Test navigiert zur allgemeinen Suchseite und prüft die Ergebnisdarstellung.
+Durch den Theme-Loop in AP 5c-2g laufen alle 5 Theme-Varianten. Kein separater Testfall nötig.
+
+### 5c-4 — `theme-matrix.spec.ts` entfernen
+
+| AP | Datei | Aktion | Begründung |
+|---|---|---|---|
+| 5c-4a | `theme-matrix.spec.ts` | Löschen | Alle 10 Seiten × 5 Themes sind durch AP 5c-2 und 5c-3 vollständig abgedeckt. Alle Assertions (status < 500, body, content) sind in den dedizierten Specs als Teilmenge der tieferen Assertions enthalten. |
+
+### 5c-5 — Dokumentation aktualisieren
+
+> Bei Implementierung von Phase 5c müssen folgende Stellen in diesem Dokument angepasst werden:
+
+| AP | Stelle im Dokument | Änderung |
+|---|---|---|
+| 5c-5a | **Feature-Matrix: Suche und Navigation** | S25-Zeile entfernen. S40-Zeile einfügen. Querschnittsanforderung Theme-Abdeckung als Absatz über der Tabelle ergänzen. |
+| 5c-5b | **Testfall-Verteilung nach Teststufe** | Teststufe 3 Systemtest: S25 entfällt, S40 kommt hinzu → Nettoänderung 0. S-Feature-Summe bleibt 39. Gesamtsumme bleibt 62. |
+| 5c-5c | **Endekriterien — Teststufe 3** | Von „Alle 5 Standard-Themes rendern fehlerfrei; alle E2E-Testfälle grün (…S23–S39)" → „Alle E2E-Testfälle grün über alle 5 Standard-Themes (…S23–S24, S26–S40); S32–S34 theme-unabhängig grün" |
+| 5c-5d | **Abdeckungsmatrix — Suche und Navigation** | S25-Zeile entfernen. S14-Zeile: Playwright-Spalte `theme-matrix.spec.ts` → `pedigree.spec.ts`. S40-Zeile einfügen. |
+| 5c-5e | **N2 — Verzeichnisstruktur** | `layer4-e2e/tests/`: `theme-matrix.spec.ts` entfernen, `homepage.spec.ts`, `pedigree.spec.ts`, `source-list.spec.ts` hinzufügen. `layer4-e2e/helpers/theme-switch.ts` ergänzen. |
+| 5c-5f | **Testentwurfsverfahren** | S25 aus Zeile „Anwendungsfall-Test" (S23–S39) entfernen, durch S40 ersetzen → S23–S24, S26–S40. |
+| 5c-5g | **Überdeckungsstrategie** | Scope-Angabe „S01–S25" → „S01–S24, S26–S40". |
+
+### Vorher/Nachher-Vergleich Gesamttestfallzahl
+
+| Datei | Vorher | Nachher | Δ |
+|---|---|---|---|
+| `theme-matrix.spec.ts` | 50 | 0 (gelöscht) | −50 |
+| `individual.spec.ts` | 2 | 10 | +8 |
+| `family.spec.ts` | 3 | 15 | +12 |
+| `records.spec.ts` | 4 | 20 | +16 |
+| `calendar.spec.ts` | 2 | 10 | +8 |
+| `search-forms.spec.ts` | 2 | 10 | +8 |
+| `user-pages.spec.ts` | 3 | 15 | +12 |
+| `navigation.spec.ts` | 3 | 15 | +12 |
+| `homepage.spec.ts` (neu) | 0 | 10 | +10 |
+| `pedigree.spec.ts` (neu) | 0 | 10 | +10 |
+| `source-list.spec.ts` (neu) | 0 | 10 | +10 |
+| `auth.spec.ts` | 2 | 2 | 0 |
+| `login.spec.ts` | 3 | 3 | 0 |
+| **Summe** | **74** | **130** | **+56** |
+
+### Abdeckungsnachweis (Constraint: kein Testabdeckungsverlust)
+
+| Aspekt | Vorher (Phase 5b) | Nachher (Phase 5c) |
+|---|---|---|
+| Seite × Theme-Kombinationen (flache Assertions) | 50 (theme-matrix) | 0 (entfällt — durch tiefe Assertions ersetzt) |
+| Fachliche Assertions (nur Default-Theme) | 19 | 0 (entfällt — jetzt über alle Themes) |
+| Fachliche Assertions (alle 5 Themes) | 0 | 125 (25 Testbedingungen × 5 Themes) |
+| Theme-unabhängige Testfälle | 5 | 5 |
+| **Gesamt-Testfälle** | **74** | **130** |
+
+Jede Seite × Theme-Kombination aus `theme-matrix.spec.ts` ist in den dedizierten
+Specs enthalten. Zusätzlich laufen alle fachlichen Assertions (Heading, Facts,
+Formulare, Suchlogik) für alle 5 Themes — ein reiner Zugewinn gegenüber den
+bisherigen flachen Assertions.
+
+### Migrationsstrategie
+
+> Reihenfolge sichert: zu keinem Zeitpunkt geht Testabdeckung verloren.
+> Verifikation nach jedem Schritt: `make test-e2e` — Testfallzahl muss monoton steigen.
+
+| Schritt | AP | Aktion | Erwartete Testfallzahl |
+|---|---|---|---|
+| 1 | 5c-1 | Shared Utility `theme-switch.ts` erstellen | 74 (unverändert) |
+| 2 | 5c-3a–c | Neue Specs erstellen (homepage, pedigree, source-list) mit Theme-Loop | 104 (+30) |
+| 3 | 5c-2a–g | Bestehende Specs um Theme-Loop erweitern | 180 (+76) |
+| 4 | 5c-4a | `theme-matrix.spec.ts` entfernen | 130 (−50) |
+| 5 | 5c-5a–g | Dokumentation aktualisieren | 130 (unverändert) |
+
+### Voraussetzungen und Abhängigkeiten (Phase 5c)
+
+| Arbeitspaket | Benötigte Vorarbeit | Risiko |
+|---|---|---|
+| 5c-1 | Keine — Extraktion aus bestehendem Code (`theme-matrix.spec.ts` Zeile 40–54) | Niedrig |
+| 5c-2a–g | 5c-1 (Shared Utility) | Niedrig: Strukturänderung, keine neue Logik |
+| 5c-3a–c | 5c-1 (Shared Utility). Fixture-XREFs verifiziert (Phase 5b): Homepage `/tree/demo`, Pedigree `/tree/demo/pedigree`, Quellenliste `/tree/demo/source-list` | Niedrig |
+| 5c-4a | 5c-2 + 5c-3 vollständig — erst nach Verifikation aller 180 Tests | Niedrig: Löschen erst wenn Coverage gesichert |
+| 5c-5a–g | 5c-4 (Implementierung abgeschlossen) | Niedrig: Reine Dokumentation |
+
+---
+
 *Erstellt: 2026-03-26 — Basis: Anforderungsgespräch (Scope, Infra, Tests, Reporting)*
 *Aktualisiert: 2026-03-26 — Infrastruktur-Entscheidungen N1–N7 dokumentiert*
 *Aktualisiert: 2026-03-26 — RE-Methodik, Gap-Analyse, Feature-Matrizen (48 Testfälle) ergänzt*
@@ -1479,6 +1685,7 @@ Korrekt sind die 5 Module-Namen im aktuellen webtrees-Code (`app/Module/`):
 *Aktualisiert: 2026-03-27 — Detailplan Phase 5b: AP 5b-1 (Theme-Matrix 5×10, ~50 Tests) und AP 5b-2 (Routen-Specs, ~19 Tests). Theme-Korrektur: „minimal" → „colors" (kein Theme namens minimal im aktuellen webtrees). Theme-Switching via POST /theme/{name} dokumentiert.*
 *Aktualisiert: 2026-03-27 — Code-Review des Dokuments gegen vorliegenden Code. Korrekturen: (1) PHP-FPM → mod_php (Containerfile nutzt `php:8.5-apache`, nicht FPM). (2) Repo-Pfade: `webtrees-tests/` / `dombrinksblagen/` → `webtrees-testing-platform/` / `../webtrees-upstream/webtrees/` (eigenständiges Repo seit Extraktion). (3) Testfall-Zählfehler: Teststufe-2-Counts je 14→13, Summen 64→62, Prioritätsverteilung neu berechnet (Hoch 26, Mittel 32, Niedrig 4). (4) G14/G15 Abdeckungsmatrix korrigiert: Feature-Matrix definiert ZIP/ZIP+Media, upstream-Tests decken Sort-by-XREF/Download-Response ab — beides auf Offen gesetzt. (5) N2 Verzeichnisbaum auf 11 Testklassen aktualisiert, bootstrap.php und playwright.config.ts ergänzt. (6) Phase-4-Status: 12/12→129 Tests über 11 Klassen. (7) OTel-Implementierungslücke dokumentiert (Composer-Pakete nicht im Containerfile). (8) Abdeckungssummary: 47% abgedeckt (29/62), 39% offen (24/62). (9) Phase 7a (OTel PHP-Instrumentation) als Arbeitspaket mit Vorrang vor Phase 5b definiert — OTel-Traces sind Diagnose-Werkzeug für Verifikation und Bugfixing. 4 APs: Composer-Pakete in setup-webtrees.sh (7a-1), PHP-Extensions im Containerfile (7a-2), Jaeger-Verifikation (7a-3), N6-Doku-Update (7a-4).*
 *Aktualisiert: 2026-03-27 — Phase 7a + 5b implementiert. (1) OTel: PHP-Extensions `protobuf`+`grpc` im Containerfile, Composer-Pakete bedingt in setup-webtrees.sh (`OTEL_SDK_DISABLED`-Check), N6-Doku aktualisiert. (2) E2E: `theme-matrix.spec.ts` komplett neu (5 Themes × 10 Seiten = 50 Tests). 6 neue Spec-Dateien: `family.spec.ts` (S24, 3 Tests), `records.spec.ts` (S26–S30, 4 Tests), `calendar.spec.ts` (S31, 2 Tests), `search-forms.spec.ts` (S38–S39, 2 Tests), `auth.spec.ts` (S33–S34, 2 Tests), `user-pages.spec.ts` (S35–S37, 3 Tests). Korrektur `navigation.spec.ts`: S24→S20. S28 offen (kein NOTE-Record). Abdeckung 69% (43/62).*
+*Aktualisiert: 2026-03-28 — Phase 5c geplant (Theme-Integration in Einzel-Specs). Auflösung `theme-matrix.spec.ts`: Theme-Loop in jede tree-gebundene Spec integrieren. 3 neue Specs (homepage, pedigree, source-list). S25 aufgelöst als Querschnittsanforderung, S40 (Homepage) als neuer Feature-Matrix-Eintrag. Shared Utility `theme-switch.ts`. 11 APs (5c-1 bis 5c-5g). Migrationsstrategie: 5 Schritte (74 → 104 → 180 → 130 Tests). Ziel: 130 Testfälle, alle fachlichen Assertions × 5 Themes.*
 
 ---
 
