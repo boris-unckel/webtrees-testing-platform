@@ -413,28 +413,22 @@ Teststufe 2 mit einer eigenen `MysqlTestCase`-Basis-Klasse.
 | Aspekt | Entscheidung |
 |---|---|
 | **Tiefe** | Nur Auto-Instrumentation (PDO + PSR-18), keine manuellen Spans |
-| **Installation** | `composer require --dev` in `setup-webtrees.sh` (vendor-Volume, nicht Image-Layer) — kein webtrees-Core-Change. PHP-Extensions (`grpc`, `protobuf`) im Containerfile. Siehe Phase 7a. |
+| **Installation** | `composer require --dev` in `setup-webtrees.sh` (vendor-Volume, nicht Image-Layer) — kein webtrees-Core-Change. PHP-Extensions (`grpc`, `protobuf`) im Containerfile. Implementiert in Phase 7a. |
 | **Aktivierung** | ENV-Variablen in `compose.yaml` |
 | **Deaktivierung** | `OTEL_SDK_DISABLED=true` → Zero Overhead |
 | **Export lokal** | Jaeger UI (http://localhost:16686) |
 | **Export CI** | File-Exporter → JSON-Artefakt |
 | **Upstream-Konzept** | OTel als optionales Dev-Feature vorschlagen |
 
-**Composer-Pakete (geplant, noch nicht implementiert):**
+**Composer-Pakete (implementiert — Phase 7a):**
 
-> **Implementierungslücke (Stand 2026-03-27):** Die OTel-PHP-Pakete werden bisher weder im
-> `Containerfile.webtrees` noch in `setup-webtrees.sh` installiert. Der OTel Collector und
-> Jaeger laufen als Container, aber die PHP-seitige Auto-Instrumentation ist noch nicht aktiv.
-> Die folgenden Pakete müssen per `composer require --dev` im Container installiert werden,
-> bevor Traces aus dem PHP-Prozess erzeugt werden:
+- `open-telemetry/sdk`
+- `open-telemetry/exporter-otlp`
+- `open-telemetry/opentelemetry-auto-pdo`
+- `open-telemetry/opentelemetry-auto-psr18`
 
-```bash
-composer require --dev \
-  open-telemetry/sdk \
-  open-telemetry/exporter-otlp \
-  open-telemetry/opentelemetry-auto-pdo \
-  open-telemetry/opentelemetry-auto-psr18
-```
+Installation: bedingt in `setup-webtrees.sh` (nur wenn `OTEL_SDK_DISABLED != true`).
+PHP-Extensions `protobuf` + `grpc` im `Containerfile.webtrees` (via `pecl install`).
 
 **ENV-Variablen (in compose.yaml):**
 ```yaml
@@ -1041,9 +1035,8 @@ kann bei Bedarf per Skript extrahiert werden.
 
 ## Implementierungs-Fahrplan
 
-> Status: **Phase 1–7 implementiert und verifiziert.** Phase 7a (OTel PHP-Instrumentation)
-> und Phase 5b (E2E-Routenabdeckung) geplant. Phase 7a hat Vorrang — OTel-Traces sind
-> Diagnose-Werkzeug für Verifikation und Bugfixing in allen Teststufen.
+> Status: **Alle Phasen implementiert (1–7, 7a, 5b).** Abdeckung 69% (43/62 Features).
+> Verbleibend: 11 offene Features (G-Features: 6 Offen, S-Features: 5 Offen).
 
 | Phase | Status | Ergebnis |
 |---|---|---|
@@ -1052,8 +1045,8 @@ kann bei Bedarf per Skript extrahiert werden.
 | Phase 3 — Komponententest | **Verifiziert** | 3278/3283 webtrees Core-Tests pass. 5 Failures in `MaintenanceModeServiceTest` (read-only Bind-Mount, erwartbar). 76 Warnings (fehlende Locale-Dateien). |
 | Phase 4 — Komponentenintegrationstest | **Verifiziert** | 129 eigene Tests grün über 11 Testklassen (MysqlTestCase + 10 Tests). Umfasst GEDCOM-Import, Beziehungen, Bäume, Suche, Charts, Listen, AutoComplete, RomanNumerals, GedcomService, RelationshipService. |
 | Phase 5 — Systemtest | **Verifiziert** | 13/13 Playwright E2E-Tests grün. Login, Navigation, Individual Page, Theme-Rendering, Source List, Pedigree. |
-| Phase 7a — OTel PHP-Instrumentation aktivieren | **Geplant** | OTel Collector + Jaeger laufen bereits (Phase 7), aber PHP-seitige Auto-Instrumentation fehlt: Composer-Pakete nicht installiert. Vorrangig vor Phase 5b — OTel-Traces sind Diagnose-Werkzeug für Verifikation und Bugfixing in allen Teststufen. |
-| Phase 5b — Systemtest (E2E-Routenabdeckung) | **Geplant** | Gap-Analyse: 14 neue Feature-Matrix-Einträge (S26–S39). 18 offene Routen für neue Spec-Dateien identifiziert. Korrekturen: S24 (Fehlzuordnung), S25 (nur Default-Theme). Fixture-XREFs: @f1@ (FamilyPage), @X1102@ (SourcePage), @X1104@ (MediaPage), @X1165@ (RepositoryPage), @X1166@ (SubmitterPage). |
+| Phase 7a — OTel PHP-Instrumentation aktivieren | **Implementiert** | PHP-Extensions (`protobuf`, `grpc`) im Containerfile. Composer-Pakete (`open-telemetry/sdk`, `exporter-otlp`, `auto-pdo`, `auto-psr18`) bedingt in `setup-webtrees.sh`. N6-Doku aktualisiert. |
+| Phase 5b — Systemtest (E2E-Routenabdeckung) | **Implementiert** | Theme-Matrix rewritten (5 Themes × 10 Seiten = 50 Tests). 6 neue Spec-Dateien: `family.spec.ts` (S24, 3 Tests), `records.spec.ts` (S26–S30, 4 Tests), `calendar.spec.ts` (S31, 2 Tests), `search-forms.spec.ts` (S38–S39, 2 Tests), `auth.spec.ts` (S33–S34, 2 Tests), `user-pages.spec.ts` (S35–S37, 3 Tests). Korrektur: `navigation.spec.ts` S24→S20. S28 übersprungen (kein NOTE-Record in `demo.ged`). |
 | Phase 6 — Performanztest | **Verifiziert** | 3/3 Playwright-Perf-Tests grün. Erste Baselines: Homepage 619ms, Pedigree 655ms, Suche 561ms. |
 | Phase 7 — Querschnitt (CI/CD, OTel, KI-Debug) | **Implementiert** | `analyze-failure.sh`, `export-traces.sh`, `webtrees-tests.yaml` (GitHub Actions). OTel-Collector + Jaeger laufen. |
 
@@ -1194,31 +1187,31 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S21 | AutoComplete (Personen) | `AutoCompleteSurnameTest` ✅ | — | — | **Abgedeckt** |
 | S22 | AutoComplete (Orte) | `AutoCompletePlaceTest` ✅ (match + no-match) | — | — | **Abgedeckt** |
 | S23 | Navigation: Personenseite | — | — | `individual.spec.ts` ✅ | **Abgedeckt** |
-| S24 | Navigation: Familienseite | — | — | — (Fehlzuordnung: `navigation.spec.ts` testet Familien-*Liste* → S20) | **Offen** |
-| S25 | Theme-Matrix | — | — | `theme-matrix.spec.ts` (nur Default-Theme, 5 Seiten) | **Teilweise** |
-| S26 | Navigation: Quellenseite | — | — | — | **Offen** |
-| S27 | Navigation: Medienseite | — | — | — | **Offen** |
+| S24 | Navigation: Familienseite | — | — | `family.spec.ts` ✅ (3 Tests) | **Abgedeckt** |
+| S25 | Theme-Matrix | — | — | `theme-matrix.spec.ts` ✅ (5 Themes × 10 Seiten = 50 Tests) | **Abgedeckt** |
+| S26 | Navigation: Quellenseite | — | — | `records.spec.ts` ✅ | **Abgedeckt** |
+| S27 | Navigation: Medienseite | — | — | `records.spec.ts` ✅ | **Abgedeckt** |
 | S28 | Navigation: Notizseite | — | — | — | **Offen** (kein NOTE-Record in `demo.ged`) |
-| S29 | Navigation: Aufbewahrungsort | — | — | — | **Offen** |
-| S30 | Navigation: Einreicherseite | — | — | — | **Offen** |
-| S31 | Kalenderansicht | — | — | — | **Offen** |
+| S29 | Navigation: Aufbewahrungsort | — | — | `records.spec.ts` ✅ | **Abgedeckt** |
+| S30 | Navigation: Einreicherseite | — | — | `records.spec.ts` ✅ | **Abgedeckt** |
+| S31 | Kalenderansicht | — | — | `calendar.spec.ts` ✅ (Monat + Jahr) | **Abgedeckt** |
 | S32 | Anmeldeseite (Login) | — | — | `login.spec.ts` ✅ | **Abgedeckt** |
-| S33 | Registrierungsseite | — | — | — | **Offen** |
-| S34 | Passwort-Zurücksetzung | — | — | — | **Offen** |
-| S35 | Benutzerseite (Meine Seite) | — | — | — | **Offen** |
-| S36 | Kontaktseite | — | — | — | **Offen** |
-| S37 | Berichtsliste | — | — | — | **Offen** |
-| S38 | Erweiterte Suche (Seitenaufruf) | — | — | — | **Offen** |
-| S39 | Phonetische Suche (Seitenaufruf) | — | — | — | **Offen** |
+| S33 | Registrierungsseite | — | — | `auth.spec.ts` ✅ | **Abgedeckt** |
+| S34 | Passwort-Zurücksetzung | — | — | `auth.spec.ts` ✅ | **Abgedeckt** |
+| S35 | Benutzerseite (Meine Seite) | — | — | `user-pages.spec.ts` ✅ | **Abgedeckt** |
+| S36 | Kontaktseite | — | — | `user-pages.spec.ts` ✅ | **Abgedeckt** |
+| S37 | Berichtsliste | — | — | `user-pages.spec.ts` ✅ | **Abgedeckt** |
+| S38 | Erweiterte Suche (Seitenaufruf) | — | — | `search-forms.spec.ts` ✅ | **Abgedeckt** |
+| S39 | Phonetische Suche (Seitenaufruf) | — | — | `search-forms.spec.ts` ✅ | **Abgedeckt** |
 
 #### Zusammenfassung Abdeckung
 
 | Status | G-Features | S-Features (S01–S39) | Gesamt |
 |---|---|---|---|
-| **Abgedeckt** | 12 | 17 | **29** (47%) |
-| **Teilweise** | 4 | 4 | **8** (13%) |
+| **Abgedeckt** | 12 | 31 | **43** (69%) |
+| **Teilweise** | 4 | 3 | **7** (11%) |
 | **Vorhanden** (upstream) | 1 | 0 | **1** (2%) |
-| **Offen** | 6 | 18 | **24** (39%) |
+| **Offen** | 6 | 5 | **11** (18%) |
 | Davon upstream Bug | 1 (G16 Teilaspekt) | 0 | **1** (2%) |
 
 ### Detailplan: Offene Stubs nach Arbeitspaketen
@@ -1485,6 +1478,7 @@ Korrekt sind die 5 Module-Namen im aktuellen webtrees-Code (`app/Module/`):
 *Aktualisiert: 2026-03-27 — E2E-Gap-Analyse (Layer 4): Abgleich Playwright-Specs vs. WebRoutes.php (170 GET-Routen). 14 neue Feature-Matrix-Einträge (S26–S39), Korrekturen S24 (Fehlzuordnung) und S25 (nur Default-Theme). Gesamtabdeckung 50% (31/62), 22 offene Testbedingungen. Phase 5b im Implementierungs-Fahrplan ergänzt.*
 *Aktualisiert: 2026-03-27 — Detailplan Phase 5b: AP 5b-1 (Theme-Matrix 5×10, ~50 Tests) und AP 5b-2 (Routen-Specs, ~19 Tests). Theme-Korrektur: „minimal" → „colors" (kein Theme namens minimal im aktuellen webtrees). Theme-Switching via POST /theme/{name} dokumentiert.*
 *Aktualisiert: 2026-03-27 — Code-Review des Dokuments gegen vorliegenden Code. Korrekturen: (1) PHP-FPM → mod_php (Containerfile nutzt `php:8.5-apache`, nicht FPM). (2) Repo-Pfade: `webtrees-tests/` / `dombrinksblagen/` → `webtrees-testing-platform/` / `../webtrees-upstream/webtrees/` (eigenständiges Repo seit Extraktion). (3) Testfall-Zählfehler: Teststufe-2-Counts je 14→13, Summen 64→62, Prioritätsverteilung neu berechnet (Hoch 26, Mittel 32, Niedrig 4). (4) G14/G15 Abdeckungsmatrix korrigiert: Feature-Matrix definiert ZIP/ZIP+Media, upstream-Tests decken Sort-by-XREF/Download-Response ab — beides auf Offen gesetzt. (5) N2 Verzeichnisbaum auf 11 Testklassen aktualisiert, bootstrap.php und playwright.config.ts ergänzt. (6) Phase-4-Status: 12/12→129 Tests über 11 Klassen. (7) OTel-Implementierungslücke dokumentiert (Composer-Pakete nicht im Containerfile). (8) Abdeckungssummary: 47% abgedeckt (29/62), 39% offen (24/62). (9) Phase 7a (OTel PHP-Instrumentation) als Arbeitspaket mit Vorrang vor Phase 5b definiert — OTel-Traces sind Diagnose-Werkzeug für Verifikation und Bugfixing. 4 APs: Composer-Pakete in setup-webtrees.sh (7a-1), PHP-Extensions im Containerfile (7a-2), Jaeger-Verifikation (7a-3), N6-Doku-Update (7a-4).*
+*Aktualisiert: 2026-03-27 — Phase 7a + 5b implementiert. (1) OTel: PHP-Extensions `protobuf`+`grpc` im Containerfile, Composer-Pakete bedingt in setup-webtrees.sh (`OTEL_SDK_DISABLED`-Check), N6-Doku aktualisiert. (2) E2E: `theme-matrix.spec.ts` komplett neu (5 Themes × 10 Seiten = 50 Tests). 6 neue Spec-Dateien: `family.spec.ts` (S24, 3 Tests), `records.spec.ts` (S26–S30, 4 Tests), `calendar.spec.ts` (S31, 2 Tests), `search-forms.spec.ts` (S38–S39, 2 Tests), `auth.spec.ts` (S33–S34, 2 Tests), `user-pages.spec.ts` (S35–S37, 3 Tests). Korrektur `navigation.spec.ts`: S24→S20. S28 offen (kein NOTE-Record). Abdeckung 69% (43/62).*
 
 ---
 
