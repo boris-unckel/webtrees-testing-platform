@@ -7,14 +7,20 @@ declare(strict_types=1);
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\Module\BranchesListModule;
 use Fisharebest\Webtrees\Module\FamilyListModule;
 use Fisharebest\Webtrees\Module\IndividualListModule;
+use Fisharebest\Webtrees\Module\LocationListModule;
 use Fisharebest\Webtrees\Module\MediaListModule;
 use Fisharebest\Webtrees\Module\NoteListModule;
+use Fisharebest\Webtrees\Module\PlaceHierarchyListModule;
 use Fisharebest\Webtrees\Module\RepositoryListModule;
 use Fisharebest\Webtrees\Module\SourceListModule;
 use Fisharebest\Webtrees\Module\SubmitterListModule;
+use Fisharebest\Webtrees\Services\LeafletJsService;
 use Fisharebest\Webtrees\Services\LinkedRecordService;
+use Fisharebest\Webtrees\Services\ModuleService;
+use Fisharebest\Webtrees\Services\SearchService;
 
 /**
  * Komponentenintegrationstest: List-Module mit MySQL.
@@ -28,11 +34,15 @@ use Fisharebest\Webtrees\Services\LinkedRecordService;
  * @covers \Fisharebest\Webtrees\Module\NoteListModule
  * @covers \Fisharebest\Webtrees\Module\MediaListModule
  * @covers \Fisharebest\Webtrees\Module\SubmitterListModule
+ * @covers \Fisharebest\Webtrees\Module\LocationListModule
+ * @covers \Fisharebest\Webtrees\Module\PlaceHierarchyListModule
+ * @covers \Fisharebest\Webtrees\Module\BranchesListModule
  * @see docs/testing-bigpicture-prompt.md S19, S20
  */
 class ListModuleIntegrationTest extends MysqlTestCase
 {
     private const DEMO_GED = '/fixtures/demo.ged';
+    private const MUSTER_GED = '/fixtures/gedcom-l-muster.ged';
 
     // --- IndividualListModule ---
 
@@ -205,6 +215,71 @@ class ListModuleIntegrationTest extends MysqlTestCase
         $request = $this->createRequest(attributes: [
             'tree' => $this->tree,
             'user' => $admin,
+        ]);
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    // --- AP 8-7: Fehlende Listen-Smoke-Tests (S20) ---
+
+    /**
+     * S20 — Location-Liste rendert mit muster-Tree (_LOC-Records vorhanden).
+     */
+    public function test_location_list_module_renders_with_muster_tree(): void
+    {
+        $this->createTreeWithGedcom('muster', 'Muster', self::MUSTER_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $module  = new LocationListModule();
+        $request = $this->createRequest(attributes: [
+            'tree' => $this->tree,
+            'user' => $admin,
+        ]);
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * S20 — Orts-Hierarchie-Liste rendert.
+     */
+    public function test_place_hierarchy_list_module_renders(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $module  = new PlaceHierarchyListModule(
+            new LeafletJsService(new ModuleService()),
+            new ModuleService(),
+            new SearchService($this->treeService),
+        );
+        $request = $this->createRequest(attributes: [
+            'tree'     => $this->tree,
+            'user'     => $admin,
+            'place_id' => 0,
+        ]);
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * S20 — Branches-Liste rendert.
+     */
+    public function test_branches_list_module_renders(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $module  = new BranchesListModule(new ModuleService());
+        $request = $this->createRequest(attributes: [
+            'tree'    => $this->tree,
+            'user'    => $admin,
+            'surname' => 'Windsor',
         ]);
 
         $response = $module->handle($request);

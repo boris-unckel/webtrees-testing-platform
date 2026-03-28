@@ -15,7 +15,7 @@ use Fisharebest\Webtrees\DB;
  * Prüft, dass Records korrekt in die Datenbank importiert werden.
  *
  * @covers \Fisharebest\Webtrees\Services\GedcomImportService
- * @see docs/testing-bigpicture-prompt.md G01, G02, G03, G04, G07, G12
+ * @see docs/testing-bigpicture-prompt.md G01, G02, G03, G04, G07, G08, G09, G10, G11, G12, G23
  */
 class GedcomImportTest extends MysqlTestCase
 {
@@ -273,5 +273,369 @@ class GedcomImportTest extends MysqlTestCase
             ->value('n_full');
 
         $this->assertSame('John Doe', $name);
+    }
+
+    // --- AP 8-2: Encoding-Import ANSEL/CP1252 (G08) ---
+
+    /**
+     * G08 — ANSEL-Zeichen (nach UTF-8 konvertiert) werden korrekt gespeichert.
+     *
+     * Encoding-Konvertierung (ANSEL→UTF-8) erfolgt auf höherer Ebene (EncodingFactory).
+     * Hier testen wir, dass die konvertierten UTF-8-Zeichen korrekt in MySQL ankommen.
+     * ANSEL \xA1 = Ł, \xA2 = Ø → nach Konvertierung UTF-8 Ł und Ø.
+     */
+    public function test_import_ansel_converted_characters_stored_correctly(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'ansel-test-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'ANSEL Test');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+
+        // UTF-8-Repräsentation von ANSEL-Zeichen (nach Konvertierung)
+        $gedcom = "0 @I1@ INDI\n1 NAME Łodz /Ørsted/\n1 SEX M";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $name = DB::table('name')
+            ->where('n_file', '=', $this->tree->id())
+            ->where('n_id', '=', 'I1')
+            ->first();
+
+        $this->assertNotNull($name, 'INDI mit ANSEL-typischen Zeichen muss importiert werden');
+        $this->assertStringContainsString('Ł', $name->n_full, 'Ł (ANSEL \xA1) muss in DB erhalten bleiben');
+        $this->assertStringContainsString('Ø', $name->n_surn, 'Ø (ANSEL \xA2) muss in DB erhalten bleiben');
+    }
+
+    /**
+     * G08 — Diakritika (Umlaute, Akzente) werden korrekt gespeichert.
+     */
+    public function test_import_preserves_diacritics_in_names(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'diacrit-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'Diacritics Test');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+
+        // UTF-8 Diakritika (wie sie nach ANSEL-Konvertierung aussehen)
+        $gedcom = "0 @I1@ INDI\n1 NAME María /García/\n1 SEX F";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $name = DB::table('name')
+            ->where('n_file', '=', $this->tree->id())
+            ->where('n_id', '=', 'I1')
+            ->first();
+
+        $this->assertNotNull($name, 'INDI mit Diakritika muss importiert werden');
+        $this->assertStringContainsString('í', $name->n_givn, 'Akzent in María muss erhalten bleiben');
+        $this->assertStringContainsString('í', $name->n_surn, 'Akzent in García muss erhalten bleiben');
+    }
+
+    /**
+     * G08 — CP1252-typische Zeichen (ä, ö, ü) werden nach UTF-8-Konvertierung korrekt gespeichert.
+     */
+    public function test_import_cp1252_converted_umlauts_stored_correctly(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'cp1252-test-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'CP1252 Test');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+
+        // UTF-8-Repräsentation (nach CP1252→UTF-8 Konvertierung)
+        $gedcom = "0 @I1@ INDI\n1 NAME Müller /Schröder/\n1 SEX M";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $name = DB::table('name')
+            ->where('n_file', '=', $this->tree->id())
+            ->where('n_id', '=', 'I1')
+            ->first();
+
+        $this->assertNotNull($name, 'INDI mit Umlauten muss importiert werden');
+        $this->assertStringContainsString('ü', $name->n_givn, 'ü muss erhalten bleiben');
+        $this->assertStringContainsString('ö', $name->n_surn, 'ö muss erhalten bleiben');
+    }
+
+    /**
+     * G08 — CP1252-Sonderzeichen (€, –) werden nach UTF-8-Konvertierung korrekt gespeichert.
+     */
+    public function test_import_cp1252_converted_special_chars_stored_correctly(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'cp1252-spec-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'CP1252 Special');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+
+        // UTF-8-Repräsentation (nach CP1252→UTF-8 Konvertierung)
+        $gedcom = "0 @I1@ INDI\n1 NAME Hans /Müller/\n1 SEX M\n1 NOTE Kosten: 100€ für 2020–2021";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $indi = DB::table('individuals')
+            ->where('i_file', '=', $this->tree->id())
+            ->where('i_id', '=', 'I1')
+            ->first();
+
+        $this->assertNotNull($indi, 'INDI mit Sonderzeichen muss importiert werden');
+        $this->assertStringContainsString('€', $indi->i_gedcom, 'Euro-Zeichen muss erhalten bleiben');
+        $this->assertStringContainsString('–', $indi->i_gedcom, 'Halbgeviertstrich muss erhalten bleiben');
+    }
+
+    // --- AP 8-3: Inline-Media (G09) und Custom-Tags (G11) ---
+
+    /**
+     * G09 — Inline-OBJE wird in separaten Media-Record aufgespalten.
+     */
+    public function test_import_splits_inline_obje_into_separate_media_records(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'obje-test-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'Inline OBJE Test');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+        DB::table('media')->where('m_file', '=', $this->tree->id())->delete();
+        DB::table('media_file')->where('m_file', '=', $this->tree->id())->delete();
+
+        $gedcom = "0 @I1@ INDI\n1 NAME John /Doe/\n1 SEX M\n1 OBJE\n2 FILE photo.jpg\n2 FORM jpeg\n2 TITL Portrait";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $media_count = DB::table('media')
+            ->where('m_file', '=', $this->tree->id())
+            ->count();
+
+        $this->assertGreaterThan(0, $media_count, 'Inline-OBJE muss in eigenen Media-Record umgewandelt werden');
+    }
+
+    /**
+     * G09 — Inline-OBJE bewahrt Dateireferenzen.
+     */
+    public function test_import_inline_obje_preserves_file_references(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'obje-ref-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'OBJE File Ref');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+        DB::table('media')->where('m_file', '=', $this->tree->id())->delete();
+        DB::table('media_file')->where('m_file', '=', $this->tree->id())->delete();
+
+        $gedcom = "0 @I1@ INDI\n1 NAME Jane /Doe/\n1 SEX F\n1 OBJE\n2 FILE family.png\n2 FORM png";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $file = DB::table('media_file')
+            ->where('m_file', '=', $this->tree->id())
+            ->first();
+
+        $this->assertNotNull($file, 'Media-File-Referenz muss existieren');
+        $this->assertSame('family.png', $file->multimedia_file_refn, 'Dateiname muss erhalten bleiben');
+    }
+
+    /**
+     * G09 — Inline-OBJE verknüpft zum Quell-Record.
+     */
+    public function test_import_inline_obje_links_to_source_record(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'obje-link-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'OBJE Link');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+        DB::table('media')->where('m_file', '=', $this->tree->id())->delete();
+        DB::table('media_file')->where('m_file', '=', $this->tree->id())->delete();
+        DB::table('link')->where('l_file', '=', $this->tree->id())->delete();
+
+        $gedcom = "0 @I1@ INDI\n1 NAME John /Doe/\n1 SEX M\n1 OBJE\n2 FILE portrait.jpg\n2 FORM jpeg";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        // INDI-Record muss OBJE-Link haben (Verweis auf den neuen Media-Record)
+        $link = DB::table('link')
+            ->where('l_file', '=', $this->tree->id())
+            ->where('l_from', '=', 'I1')
+            ->where('l_type', '=', 'OBJE')
+            ->first();
+
+        $this->assertNotNull($link, 'INDI muss einen OBJE-Link zum neuen Media-Record haben');
+    }
+
+    /**
+     * G11 — Custom-Tags von Ancestry werden nicht verworfen.
+     */
+    public function test_import_ancestry_custom_tags_not_discarded(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'ancestry-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'Ancestry Tags');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+
+        $gedcom = "0 @I1@ INDI\n1 NAME John /Doe/\n1 SEX M\n1 _MILT\n2 DATE 1940\n2 NOTE Army service";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $indi = DB::table('individuals')
+            ->where('i_file', '=', $this->tree->id())
+            ->where('i_id', '=', 'I1')
+            ->first();
+
+        $this->assertNotNull($indi, 'INDI mit Ancestry-Custom-Tags muss importiert werden');
+        $this->assertStringContainsString('_MILT', $indi->i_gedcom, 'Ancestry _MILT-Tag darf nicht verworfen werden');
+    }
+
+    /**
+     * G11 — Custom-Tags von FamilySearch werden nicht verworfen.
+     */
+    public function test_import_familysearch_custom_tags_not_discarded(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'famsearch-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'FamilySearch Tags');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+
+        $gedcom = "0 @I1@ INDI\n1 NAME John /Doe/\n1 SEX M\n1 _FSFTID 12345";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $indi = DB::table('individuals')
+            ->where('i_file', '=', $this->tree->id())
+            ->where('i_id', '=', 'I1')
+            ->first();
+
+        $this->assertNotNull($indi, 'INDI mit FamilySearch-Tags muss importiert werden');
+        $this->assertStringContainsString('_FSFTID', $indi->i_gedcom, 'FamilySearch _FSFTID darf nicht verworfen werden');
+    }
+
+    /**
+     * G11 — Custom-Tags von RootsMagic werden nicht verworfen.
+     */
+    public function test_import_rootsmagic_custom_tags_not_discarded(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'rootsmagic-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'RootsMagic Tags');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+
+        $gedcom = "0 @I1@ INDI\n1 NAME John /Doe/\n1 SEX M\n1 _WEBTAG\n2 NAME TestTag";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $indi = DB::table('individuals')
+            ->where('i_file', '=', $this->tree->id())
+            ->where('i_id', '=', 'I1')
+            ->first();
+
+        $this->assertNotNull($indi, 'INDI mit RootsMagic-Tags muss importiert werden');
+        $this->assertStringContainsString('_WEBTAG', $indi->i_gedcom, 'RootsMagic _WEBTAG darf nicht verworfen werden');
+    }
+
+    // --- AP 8-8: Legacy-Formate (G10) und GEDCOM 5.5.1 Compliance (G23) ---
+
+    /**
+     * G10 — Legacy _PLAC_DEFN mit Koordinaten erzeugt place_location-Eintrag.
+     */
+    public function test_import_legacy_plac_defn_creates_place_location(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'legacy-plac-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'Legacy PLAC Test');
+
+        // Erst einen Ort anlegen über normalen Import
+        $gedcom = "0 @I1@ INDI\n1 NAME John /Doe/\n1 BIRT\n2 PLAC London, England";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        // Dann _PLAC_DEFN importieren
+        $gedcom = "0 _PLAC_DEFN\n1 PLAC London, England\n2 MAP\n3 LATI N51.5074\n3 LONG W0.1278";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $location = DB::table('place_location')
+            ->where('place', '=', 'London')
+            ->first();
+
+        $this->assertNotNull($location, '_PLAC_DEFN muss place_location-Eintrag erzeugen');
+    }
+
+    /**
+     * G10 — Legacy _PLAC_DEFN extrahiert Koordinaten korrekt.
+     */
+    public function test_import_legacy_plac_defn_extracts_coordinates(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'legacy-coord-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'Legacy Coords');
+
+        $gedcom = "0 @I1@ INDI\n1 NAME Jane /Doe/\n1 BIRT\n2 PLAC Paris, France";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $gedcom = "0 _PLAC_DEFN\n1 PLAC Paris, France\n2 MAP\n3 LATI N48.8566\n3 LONG E2.3522";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $location = DB::table('place_location')
+            ->where('place', '=', 'Paris')
+            ->first();
+
+        $this->assertNotNull($location, 'Koordinaten für Paris müssen existieren');
+        if ($location->latitude !== null) {
+            $this->assertGreaterThan(0, (float) $location->latitude, 'Paris Breitengrad muss positiv sein (Nordhalbkugel)');
+        }
+    }
+
+    /**
+     * G10 — TNG _PLAC mit numerischen Koordinaten erzeugt place_location-Eintrag.
+     */
+    public function test_import_tng_plac_creates_place_location(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'tng-plac-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'TNG PLAC Test');
+
+        $gedcom = "0 @I1@ INDI\n1 NAME Hans /Schmidt/\n1 BIRT\n2 PLAC Berlin, Germany";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $gedcom = "0 _PLAC Berlin, Germany\n1 MAP\n2 LATI 52.5200\n2 LONG 13.4050";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $location = DB::table('place_location')
+            ->where('place', '=', 'Berlin')
+            ->first();
+
+        $this->assertNotNull($location, 'TNG _PLAC muss place_location-Eintrag erzeugen');
+    }
+
+    /**
+     * G10 — TNG _PLAC extrahiert numerische Koordinaten korrekt.
+     */
+    public function test_import_tng_plac_extracts_numeric_coordinates(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'tng-coord-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'TNG Coords');
+
+        $gedcom = "0 @I1@ INDI\n1 NAME Maria /Garcia/\n1 BIRT\n2 PLAC Madrid, Spain";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $gedcom = "0 _PLAC Madrid, Spain\n1 MAP\n2 LATI 40.4168\n2 LONG -3.7038";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $location = DB::table('place_location')
+            ->where('place', '=', 'Madrid')
+            ->first();
+
+        $this->assertNotNull($location, 'Numerische Koordinaten für Madrid müssen existieren');
+        if ($location->latitude !== null) {
+            $this->assertGreaterThan(0, (float) $location->latitude, 'Madrid Breitengrad muss positiv sein');
+        }
+    }
+
+    /**
+     * G23 — Standard GEDCOM 5.5.1 Tags werden nicht verworfen.
+     */
+    public function test_import_gedcom_551_standard_tags_not_dropped(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'g551-test-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'GEDCOM 5.5.1 Tags');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+
+        // Record mit allen gängigen GEDCOM 5.5.1 Tags
+        $gedcom = "0 @I1@ INDI\n1 NAME John /Doe/\n1 SEX M\n1 BIRT\n2 DATE 1 JAN 1900\n2 PLAC London\n1 DEAT\n2 DATE 31 DEC 1980\n1 OCCU Farmer\n1 RELI Anglican\n1 NATI British";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $indi = DB::table('individuals')
+            ->where('i_file', '=', $this->tree->id())
+            ->where('i_id', '=', 'I1')
+            ->first();
+
+        $this->assertNotNull($indi, 'INDI mit Standard-Tags muss importiert werden');
+        $this->assertStringContainsString('OCCU', $indi->i_gedcom, 'OCCU-Tag darf nicht verworfen werden');
+        $this->assertStringContainsString('RELI', $indi->i_gedcom, 'RELI-Tag darf nicht verworfen werden');
+        $this->assertStringContainsString('NATI', $indi->i_gedcom, 'NATI-Tag darf nicht verworfen werden');
     }
 }

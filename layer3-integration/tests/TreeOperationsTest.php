@@ -20,7 +20,7 @@ use Psr\Http\Message\StreamFactoryInterface;
  *
  * @covers \Fisharebest\Webtrees\Services\TreeService
  * @covers \Fisharebest\Webtrees\Services\GedcomExportService
- * @see docs/testing-bigpicture-prompt.md G13, G16
+ * @see docs/testing-bigpicture-prompt.md G13, G14, G15, G16, G17
  */
 class TreeOperationsTest extends MysqlTestCase
 {
@@ -266,5 +266,266 @@ class TreeOperationsTest extends MysqlTestCase
 
         // Aufräumen
         $this->treeService->delete($tree);
+    }
+
+    // --- AP 8-4: Export ZIP (G14) und ZIP+Media (G15) ---
+
+    /**
+     * G14 — ZIP-Export erzeugt valides ZIP-Archiv.
+     */
+    public function test_export_zip_produces_valid_zip_archive(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $container = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $response = $exportService->downloadResponse($this->tree, false, 'UTF-8', 'none', 'CRLF', 'test', 'zip');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('application/zip', $response->getHeaderLine('content-type'));
+    }
+
+    /**
+     * G14 — ZIP-Export enthält eine GEDCOM-Datei.
+     */
+    public function test_export_zip_contains_gedcom_file(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $container = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $response = $exportService->downloadResponse($this->tree, false, 'UTF-8', 'none', 'CRLF', 'test', 'zip');
+        $body = (string) $response->getBody();
+
+        // ZIP-Datei in temp speichern und öffnen
+        $tmpFile = tempnam(sys_get_temp_dir(), 'wt-zip-');
+        file_put_contents($tmpFile, $body);
+
+        $zip = new \ZipArchive();
+        $this->assertTrue($zip->open($tmpFile) === true, 'ZIP-Archiv muss öffenbar sein');
+        $this->assertGreaterThan(0, $zip->numFiles, 'ZIP muss mindestens eine Datei enthalten');
+
+        // Prüfe ob .ged Datei vorhanden
+        $hasGedcom = false;
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            if (str_ends_with($zip->getNameIndex($i), '.ged')) {
+                $hasGedcom = true;
+                break;
+            }
+        }
+        $this->assertTrue($hasGedcom, 'ZIP muss eine .ged Datei enthalten');
+
+        $zip->close();
+        unlink($tmpFile);
+    }
+
+    /**
+     * G14 — GEDCOM-Inhalt im ZIP beginnt mit HEAD.
+     */
+    public function test_export_zip_gedcom_starts_with_head(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $container = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $response = $exportService->downloadResponse($this->tree, false, 'UTF-8', 'none', 'CRLF', 'test', 'zip');
+        $body = (string) $response->getBody();
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'wt-zip-');
+        file_put_contents($tmpFile, $body);
+
+        $zip = new \ZipArchive();
+        $zip->open($tmpFile);
+
+        // Ersten .ged Eintrag lesen
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $name = $zip->getNameIndex($i);
+            if (str_ends_with($name, '.ged')) {
+                $content = $zip->getFromIndex($i);
+                $this->assertStringStartsWith('0 HEAD', $content, 'GEDCOM im ZIP muss mit HEAD beginnen');
+                break;
+            }
+        }
+
+        $zip->close();
+        unlink($tmpFile);
+    }
+
+    /**
+     * G14 — GEDZIP-Export enthält gedcom.ged im Archiv.
+     */
+    public function test_export_gedzip_contains_gedcom_ged(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $container = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $response = $exportService->downloadResponse($this->tree, false, 'UTF-8', 'none', 'CRLF', 'test', 'gedzip');
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $body = (string) $response->getBody();
+        $tmpFile = tempnam(sys_get_temp_dir(), 'wt-gdz-');
+        file_put_contents($tmpFile, $body);
+
+        $zip = new \ZipArchive();
+        $zip->open($tmpFile);
+
+        $hasGedcomGed = false;
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            if ($zip->getNameIndex($i) === 'gedcom.ged') {
+                $hasGedcomGed = true;
+                break;
+            }
+        }
+        $this->assertTrue($hasGedcomGed, 'GEDZIP muss "gedcom.ged" enthalten');
+
+        $zip->close();
+        unlink($tmpFile);
+    }
+
+    /**
+     * G15 — ZIP+Media-Export enthält Mediendateien (oder leeres Archiv bei fehlenden Medien).
+     */
+    public function test_export_zipmedia_response_is_valid(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $container = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $response = $exportService->downloadResponse($this->tree, false, 'UTF-8', 'none', 'CRLF', 'test', 'zipmedia');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('application/zip', $response->getHeaderLine('content-type'));
+    }
+
+    /**
+     * G15 — ZIP+Media enthält mindestens die GEDCOM-Datei.
+     */
+    public function test_export_zipmedia_contains_gedcom(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $container = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $response = $exportService->downloadResponse($this->tree, false, 'UTF-8', 'none', 'CRLF', 'test', 'zipmedia');
+        $body = (string) $response->getBody();
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'wt-zm-');
+        file_put_contents($tmpFile, $body);
+
+        $zip = new \ZipArchive();
+        $zip->open($tmpFile);
+        $this->assertGreaterThan(0, $zip->numFiles, 'ZIP+Media muss Dateien enthalten');
+
+        $zip->close();
+        unlink($tmpFile);
+    }
+
+    // --- AP 8-5: Export Encoding (G17) ---
+
+    /**
+     * G17 — Export mit UTF-8 Encoding bewahrt Zeichen.
+     */
+    public function test_export_with_utf8_encoding_preserves_characters(): void
+    {
+        $this->createTreeWithGedcom('muster', 'Muster', '/fixtures/gedcom-l-muster.ged');
+        $this->createAndLoginAdmin();
+
+        $container = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $resource = $exportService->export($this->tree, encoding: 'UTF-8');
+        $exported = stream_get_contents($resource);
+
+        $this->assertStringStartsWith('0 HEAD', $exported);
+        // Muster-GEDCOM enthält deutsche Umlaute
+        $this->assertStringContainsString('1 CHAR UTF-8', $exported, 'Export muss UTF-8 deklarieren');
+    }
+
+    /**
+     * G17 — Export mit CP1252 Encoding konvertiert korrekt.
+     */
+    public function test_export_with_cp1252_encoding_converts_correctly(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'enc-cp-' . substr(md5($this->name() . microtime()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'CP1252 Export');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+
+        $gedcom = "0 @I1@ INDI\n1 NAME Hans /Müller/\n1 SEX M";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $container = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $resource = $exportService->export($this->tree, encoding: 'CP1252');
+        $exported = stream_get_contents($resource);
+
+        $this->assertStringStartsWith('0 HEAD', $exported);
+        // CP1252 ü = \xFC (ein einzelnes Byte, nicht UTF-8 \xC3\xBC)
+        $this->assertStringContainsString("\xFC", $exported, 'ü muss als CP1252-Byte \xFC exportiert werden');
+    }
+
+    /**
+     * G17 — Export mit ASCII Encoding schreibt keine Nicht-ASCII-Zeichen.
+     */
+    public function test_export_with_ascii_encoding_converts_correctly(): void
+    {
+        $this->createAndLoginAdmin();
+        $uniqueName = 'enc-ascii-' . substr(md5($this->name() . microtime()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'ASCII Export');
+        DB::table('individuals')->where('i_file', '=', $this->tree->id())->delete();
+
+        $gedcom = "0 @I1@ INDI\n1 NAME John /Doe/\n1 SEX M";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $container = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $resource = $exportService->export($this->tree, encoding: 'ASCII');
+        $exported = stream_get_contents($resource);
+
+        $this->assertStringStartsWith('0 HEAD', $exported);
+        $this->assertStringContainsString('John', $exported, 'ASCII-Export muss ASCII-Namen enthalten');
     }
 }

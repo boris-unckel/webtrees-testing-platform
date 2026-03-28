@@ -10,11 +10,17 @@ use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\Module\AncestorsChartModule;
 use Fisharebest\Webtrees\Module\CompactTreeChartModule;
 use Fisharebest\Webtrees\Module\DescendancyChartModule;
+use Fisharebest\Webtrees\Module\FamilyBookChartModule;
 use Fisharebest\Webtrees\Module\FanChartModule;
 use Fisharebest\Webtrees\Module\HourglassChartModule;
+use Fisharebest\Webtrees\Module\LifespansChartModule;
 use Fisharebest\Webtrees\Module\PedigreeChartModule;
+use Fisharebest\Webtrees\Module\RelationshipsChartModule;
+use Fisharebest\Webtrees\Module\TimelineChartModule;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\ChartService;
+use Fisharebest\Webtrees\Services\RelationshipService;
+use Fisharebest\Webtrees\Services\TreeService;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -28,7 +34,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @covers \Fisharebest\Webtrees\Module\FanChartModule
  * @covers \Fisharebest\Webtrees\Module\HourglassChartModule
  * @covers \Fisharebest\Webtrees\Module\PedigreeChartModule
- * @see docs/testing-bigpicture-prompt.md S15, S16, S17
+ * @covers \Fisharebest\Webtrees\Module\TimelineChartModule
+ * @covers \Fisharebest\Webtrees\Module\LifespansChartModule
+ * @covers \Fisharebest\Webtrees\Module\FamilyBookChartModule
+ * @covers \Fisharebest\Webtrees\Module\RelationshipsChartModule
+ * @see docs/testing-bigpicture-prompt.md S15, S16, S17, S18
  */
 class ChartModuleIntegrationTest extends MysqlTestCase
 {
@@ -236,6 +246,125 @@ class ChartModuleIntegrationTest extends MysqlTestCase
             'xref'        => 'X1030',
             'style'       => $style,
             'generations' => 4,
+        ]);
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    // --- AP 8-6: Fehlende Chart-Smoke-Tests (S18) ---
+
+    /**
+     * S18 — Timeline-Chart rendert ohne Fehler.
+     */
+    public function test_timeline_chart_renders_without_error(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $module  = new TimelineChartModule();
+        $request = $this->createRequest(
+            query: ['xrefs' => ['X1030']],
+            attributes: [
+                'tree'  => $this->tree,
+                'user'  => $admin,
+                'scale' => 10,
+            ],
+        );
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * S18 — Lifespans-Chart rendert ohne Fehler.
+     */
+    public function test_lifespan_chart_renders_without_error(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $module  = new LifespansChartModule();
+        $request = $this->createRequest(
+            query: ['xrefs' => ['X1030']],
+            attributes: [
+                'tree' => $this->tree,
+                'user' => $admin,
+            ],
+        );
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * S18 — FamilyBook-Chart rendert ohne Fehler.
+     */
+    public function test_family_book_chart_renders_without_error(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $module  = new FamilyBookChartModule();
+        $request = $this->createRequest(attributes: [
+            'tree'        => $this->tree,
+            'user'        => $admin,
+            'xref'        => 'X1030',
+            'book_size'   => 2,
+            'generations' => 2,
+            'spouses'     => false,
+        ]);
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * S18 — Relationships-Chart rendert ohne Fehler.
+     */
+    public function test_relationships_chart_renders_without_error(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $module  = new RelationshipsChartModule(
+            new RelationshipService(),
+            $this->treeService,
+        );
+        $request = $this->createRequest(attributes: [
+            'tree'      => $this->tree,
+            'user'      => $admin,
+            'xref'      => 'X1030',
+            'xref2'     => '',
+            'ancestors' => 1,
+            'recursion' => 1,
+        ]);
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * S18/S20 — Branches-Liste rendert ohne Fehler (R6-Klärung: ist ListModule, nicht Chart).
+     * Wird hier als Chart-Smoke mitgetestet, da im Plan unter S18 aufgelistet.
+     */
+    public function test_branches_list_renders_without_error(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $module  = new \Fisharebest\Webtrees\Module\BranchesListModule(
+            new \Fisharebest\Webtrees\Services\ModuleService(),
+        );
+        $request = $this->createRequest(attributes: [
+            'tree'    => $this->tree,
+            'user'    => $admin,
+            'surname' => 'Windsor',
         ]);
 
         $response = $module->handle($request);
