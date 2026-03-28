@@ -1,6 +1,9 @@
 # Laufzeit-Artefakte
 artifacts/
 
+# Generierte Fixtures (aus Template erzeugt via generate-privacy-fixture.sh)
+fixtures/privacy-test.ged
+
 # Credentials & lokale Overrides
 .env
 .env.local
