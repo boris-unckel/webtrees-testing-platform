@@ -1,8 +1,9 @@
-# Prompt: Big Picture — webtrees Teststrategie
+# Teststrategie — webtrees-testing-platform
 
-Dieser Prompt ist Ausgangsbasis für die Detailplanung. Er fasst alle getroffenen
-Entscheidungen zusammen und enthält den eigentlichen Prompt für das Architektur-Bild
-sowie ein sofort renderbares Mermaid-Diagramm.
+Dieses Dokument ist die konsolidierte Teststrategie-Dokumentation für die
+webtrees-testing-platform. Es fasst alle getroffenen Entscheidungen zusammen
+und enthält ein sofort renderbares Mermaid-Diagramm der Architektur.
+ISTQB-Terminologie (Glossar de_DE v4.7.1) ist sprachlich und inhaltlich führend.
 
 ---
 
@@ -46,111 +47,20 @@ sowie ein sofort renderbares Mermaid-Diagramm.
 
 ---
 
-## Prompt für das Big-Picture-Bild
+## Zuordnung Layer ↔ ISTQB-Teststufe
 
-> Diesen Prompt in ein AI-Diagramm-Tool (z. B. Eraser.io, Mermaid Live, ChatGPT mit
-> Code Interpreter) oder an einen AI-Assistenten eingeben, um das Architektur-Bild
-> zu erzeugen.
+> Das Projekt verwendet Code-Verzeichnisse (`layer1`–`layer5`) und Makefile-Targets
+> als organisatorische Einheiten. Die folgende Tabelle ordnet sie den ISTQB-Teststufen
+> und Querschnitten zu. Im gesamten Dokument ist die ISTQB-Terminologie führend;
+> Layer-Bezeichnungen stehen in Klammern, wo ein Bezug zum Code nötig ist.
 
----
-
-**Prompt:**
-
-```
-Erstelle ein technisches Architektur-Diagramm für eine vollständige Teststrategie
-des Open-Source-Projekts "webtrees" (PHP-Genealogie-Webapplikation).
-
-Das Diagramm soll als Schichtenmodell (von unten nach oben) aufgebaut sein:
-
-QUERSCHNITT — Testumgebung (Container-Stack)
-  - Podman Compose Stack
-  - Container: PHP + Apache mod_php (webtrees), MySQL 8, Playwright-Runner (Node.js),
-    OpenTelemetry Collector (Sidecar), Jaeger (lokales Trace-UI)
-  - Gemeinsames Netzwerk, persistente Volumes für DB und GEDCOM-Fixtures
-  - GEDCOM-Testdatei als reproduzierbarer Import-Fixture
-  - webtrees PHP-Prozess mit OTel SDK instrumentiert:
-      open-telemetry/opentelemetry-auto-pdo (DB-Queries automatisch)
-      open-telemetry/opentelemetry-auto-psr18 (HTTP-Calls automatisch)
-      OTEL_EXPORTER_OTLP_ENDPOINT zeigt auf OTel Collector im Container-Netz
-
-QUERSCHNITT — Statischer Test (kein Laufzeit-Bedarf)
-  - PHPStan (Level 8+): Typfehler, Deprecated-API
-  - PHP CodeSniffer: Coding Standard (PSR-12)
-  - Trigger: bei jedem Commit / PR
-
-TESTSTUFE 1 — Komponententest (PHPUnit, isoliert)
-  - Isolierte PHP-Klassen ohne Datenbankzugriff
-  - Fixtures/Mocks für webtrees-Interfaces
-  - Coverage-Messung via pcov
-  - Reporting: HTML + Codecov-Upload
-
-TESTSTUFE 2 — Komponentenintegrationstest (PHPUnit + echte DB)
-  - webtrees vollständig gebootet im Container
-  - Datenbank: MySQL im Container (kein SQLite-Workaround)
-  - GEDCOM-Fixture wird per webtrees-API importiert
-  - Assertions: direkter SQL-Zugriff auf DB (PDO)
-  - Testfälle: Person anlegen → DB prüfen, Beziehungen (Ehe, Kind) → DB prüfen
-  - OTel: jeder Testlauf erzeugt Span mit Test-ID als Attribut → Trace zeigt
-    welche DB-Queries pro Testfall ausgeführt wurden (N+1-Erkennung, Query-Count)
-
-TESTSTUFE 3 — Systemtest (Playwright)
-  - Browser: Chromium (headless)
-  - Basis-URL: http://webtrees-container
-  - Testfälle: Login, Navigation, Personenseite, Beziehungsdarstellung
-  - Theme-Matrix: alle Standard-Themes (webtrees, clouds, colors, fab, xenea)
-  - Assertions: DOM-Selektor-basiert, kein Screenshot-Vergleich
-
-QUERSCHNITT — Performanztest (Playwright-Metrics + OTel)
-  - Definierte Szenarien: Startseite, Personensuche, Stammbaum-Ansicht
-  - Baseline: aktuelle webtrees-Version (gespeichertes Profil + exportierte Traces)
-  - Vergleich: nach Update — Schwellwert +20% Ladezeit = Warnung
-  - Gleiche Container-Hardware, gleiche Datenmenge
-  - OTel-Mehrwert gegenüber reiner Laufzeitmessung:
-      Baseline-Trace zeigt "Startseite = 3 DB-Queries, davon 1× Full-Table-Scan"
-      Regressions-Trace zeigt "+2 Queries durch neues Feature" → Ursache sofort sichtbar
-      Trace-Diff wird als Artefakt gespeichert und an analyze-failure.sh übergeben
-
-QUERSCHNITT — CI/CD Pipeline (GitHub Actions)
-  - Jobs: statischer-test → komponententest → komponentenintegrationstest → systemtest → performanztest
-  - Artefakte: Coverage-HTML, Playwright-Report, Performance-Diff
-  - Matrix: PHP 8.5 (Latest Stable)
-  - Trigger: push, pull_request, manuell (vor Version-Update)
-
-QUERSCHNITT — OpenTelemetry (Teststufen 2–3 und Performanztest)
-  - OTel Collector als Sidecar-Container im Compose-Stack
-  - PHP Auto-Instrumentation: PDO-Queries, PSR-18 HTTP-Calls (keine Code-Änderung nötig)
-  - Trace-Export: Jaeger lokal (UI: http://localhost:16686), OTLP für CI-Artefakte
-  - Traces tragen Test-ID als Span-Attribut → Zuordnung Testfall ↔ Trace
-  - Baseline-Traces werden als JSON exportiert und versioniert gespeichert
-  - Trace-Diff zwischen webtrees-Versionen ist maschinenlesbar → Eingabe für analyze-failure.sh
-  - Für eine webtrees-Contribution: OTel-Integration als optionales Modul konzipieren
-    (ENV-Variable OTEL_SDK_DISABLED=true schaltet alles ab → kein Overhead in Produktion)
-
-QUERSCHNITT — Tracing & KI-gestützter Debug (Claude Code CLI)
-  - Jede Teststufe schreibt bei Fehler strukturierte Artefakte:
-      Statischer Test: PHPStan JSON-Output
-      Teststufe 1: PHPUnit XML-Ergebnis + PHP-Fehlerlog aus Container
-      Teststufe 2: PHPUnit XML + DB-Dump (mysqldump, nur Testschema) + PHP-Log + OTel-Trace-JSON
-      Teststufe 3: Playwright Trace (.zip), Screenshot on failure, Browser-Konsole-Log + OTel-Trace-JSON
-      Performanztest: Performance-JSON-Diff (Baseline vs. aktuell) + OTel-Trace-Diff
-  - Lokaler Einstiegspunkt: Skript `analyze-failure.sh` sammelt Artefakte des
-    letzten fehlgeschlagenen Runs und öffnet Claude Code CLI mit vorgeladenem Kontext
-  - Claude Code CLI analysiert: Fehlerursache eingrenzen, nächste Debugging-Schritte
-    vorschlagen, ggf. Fix-Kandidaten im webtrees-Quellcode lokalisieren
-  - Artefakte werden auch als GitHub-Actions-Upload gespeichert (7-Tage-Retention)
-    damit Analyse auch ohne lokalen Container-Rebuild möglich ist
-
-Visuelle Anforderungen:
-- Klare vertikale Schichtung, Pfeile zeigen Abhängigkeiten nach oben
-- Container-Stack als umrahmte Gruppe links oder unten
-- CI/CD als vertikaler Balken rechts (läuft durch alle Schichten)
-- Tracing & KI-Debug als zweiter vertikaler Balken links (läuft durch alle Schichten),
-  mit Pfeilen von jeder Teststufe nach links ("Artefakte bei Fehler")
-- Farben: Testumgebung grau, Statischer Test blau, Teststufe 1 grün, Teststufe 2 orange,
-  Teststufe 3 lila, Performanztest rot, CI/CD dunkelblau, Tracing/KI-Debug gelb, OTel türkis
-- Deutsch beschriftet
-- Stil: technisch, klar, kein Clip-Art
-```
+| Code (Makefile / Verzeichnis) | ISTQB-Teststufe / Querschnitt |
+|-------------------------------|-------------------------------|
+| `layer1-static/` / `make test-static` | Querschnitt — Statischer Test |
+| `layer2-unit/` / `make test-unit` | Teststufe 1 — Komponententest |
+| `layer3-integration/` / `make test-integration` | Teststufe 2 — Komponentenintegrationstest |
+| `layer4-e2e/` / `make test-e2e` | Teststufe 3 — Systemtest |
+| `layer5-performance/` / `make test-performance` | Querschnitt — Performanztest |
 
 ---
 
@@ -191,18 +101,18 @@ graph TB
         otelcol --> jaeger
     end
 
-    subgraph STATIC["Querschnitt — Statischer Test"]
+    subgraph STATIC["Querschnitt — Statischer Test (layer1-static)"]
         phpstan["PHPStan\nLevel 8+"]
         phpcs["PHP CodeSniffer\nPSR-12"]
     end
 
-    subgraph TS1["Teststufe 1 — Komponententest (PHPUnit)"]
+    subgraph TS1["Teststufe 1 — Komponententest (layer2-unit)"]
         unit["Isolierte Klassen\nMocks / Fixtures"]
         cov["Coverage\npcov → HTML"]
         unit --> cov
     end
 
-    subgraph TS2["Teststufe 2 — Komponentenintegrationstest (PHPUnit + DB)"]
+    subgraph TS2["Teststufe 2 — Komponentenintegrationstest (layer3-integration)"]
         import["GEDCOM-Import\nvia webtrees-API"]
         sql["SQL-Assertions\nPDO direkt"]
         rel["Beziehungen\nEhe · Kind · Eltern"]
@@ -212,14 +122,14 @@ graph TB
         import --> otel3
     end
 
-    subgraph TS3["Teststufe 3 — Systemtest (Playwright)"]
+    subgraph TS3["Teststufe 3 — Systemtest (layer4-e2e)"]
         nav["Navigation\nLogin · Suche"]
         person["Personenseite\nDarstellung"]
         themes["Theme-Matrix\nalle Standard-Themes"]
         nav --> person --> themes
     end
 
-    subgraph PERF["Querschnitt — Performanztest"]
+    subgraph PERF["Querschnitt — Performanztest (layer5-performance)"]
         baseline["Baseline-Trace\naktuelle Version"]
         compare["Trace-Diff\nnach Update"]
         threshold["Schwellwert\n+20% / +N Queries\n→ Warnung"]
@@ -244,6 +154,9 @@ graph TB
     TS3 -.->|"Job"| ci3
     PERF -.->|"Job"| ci4
 ```
+
+> **Aktuelle Testfall-Zahlen** sind volatil und daher nicht im Diagramm enthalten.
+> Stand via `make test-all` oder in den CI-Artefakten des letzten GitHub-Actions-Laufs.
 
 ---
 
@@ -607,7 +520,7 @@ Ein Code-Analyse-Skript kann diese Klassifizierung automatisieren:
 | Unterstützte Tags | `app/Elements/` (216 Klassen) vs. GEDCOM 5.5.1 Tag-Liste | Diff |
 | Encoding-Varianten | `GedcomEncodingFilter` | Code-Lesen |
 | Custom-Tags (Ancestry, FamilySearch, etc.) | `app/Gedcom.php` (13 Custom-Tag-Klassen) | Code-Lesen |
-| Zeilenlänge, CONC/CONT | `GedcomExportService::wrapLongLines()` | Unit-Test |
+| Zeilenlänge, CONC/CONT | `GedcomExportService::wrapLongLines()` | Komponententest |
 | Date-Formate | `app/Date/` Klassen | Vergleich mit GEDCOM-Spec |
 
 **Schritt 4 — Feature-Matrix aufbauen**
@@ -832,7 +745,7 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | Statischer Test | PHPStan Level 8: 0 Errors; PHPCS PSR-12: 0 Violations |
 | Teststufe 1 — Komponententest | Alle Feature-Matrix-Komponententests grün (G05, G06, G11, G17–G19, G22, G23, S04); Anweisungsüberdeckung ≥ vorheriger Wert (Ratchet) |
 | Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, S01–S03, S05–S08, S10–S12, S19, S21, S22) |
-| Teststufe 3 — Systemtest | Alle E2E-Testfälle grün über alle 5 Standard-Themes (G20, G21, S09, S13–S18, S20, S23–S24, S26–S40); S32–S34 theme-unabhängig grün |
+| Teststufe 3 — Systemtest | Alle Systemtestfälle grün über alle 5 Standard-Themes (G20, G21, S09, S13–S18, S20, S23–S24, S26–S40); S32–S34 theme-unabhängig grün |
 | Performanztest | Kein Szenario >20% über Baseline; kein Szenario mit >+2 DB-Queries gegenüber Baseline |
 
 ---
@@ -1230,462 +1143,42 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | **Offen** | 6 | 5 | **11** (18%) |
 | Davon upstream Bug | 1 (G16 Teilaspekt) | 0 | **1** (2%) |
 
-### Detailplan: Offene Stubs nach Arbeitspaketen
-
-#### Prio 2a — Service-Tests vertiefen (upstream, SQLite)
-
-> **Ziel:** Bestehende Service-Tests um fehlende Feature-Matrix-Abdeckung ergänzen.
-> **Muster:** `$uses_database = true`, `$this->importTree('demo.ged')`, DB-Queries.
-> **Geschätzter Umfang:** ~50 neue Tests.
-
-| AP | Datei | Neue Tests | Feature-IDs | Vorgehen |
-|---|---|---|---|---|
-| 2a-1 | `GedcomImportServiceTest` | +3 | G05, G06 | `importTree('demo.ged')` → DB-Queries auf `dates`-Tabelle (date1, date2 korrekt geparst), `name`-Tabelle (n_givn, n_surn, n_soundex_surn_std korrekt). |
-| 2a-2 | `GedcomExportServiceTest` | +3 | G16 | `export()` mit verschiedenen `$access_level` (PRIV_NONE, PRIV_USER, PRIV_HIDE) → prüfen, dass geschützte Records fehlen/vorhanden. Braucht Admin-User + Tree mit Privacy-Einstellungen. |
-| 2a-3 | `SearchServiceTest` | +8 | S01, S02, S04, S12 | Erweitern: `searchIndividuals` mit Mehrwort-Queries und Anführungszeichen (S04), negative Suche (kein Ergebnis), Zugriffskontrolle (S12: Visitor sieht keine privaten Records). Einzelne assert-Prüfungen statt nur `assertNotEmpty`. |
-| 2a-4 | `GedcomServiceTest` | +5 | G05 (Teilaspekt) | Stub füllen: `canonicalTag()` mit Standard-Tags und Aliasen, `readLatitude()`/`readLongitude()` mit validen/invaliden Werten. Kein DB nötig (`$uses_database = false`). |
-| 2a-5 | `RelationshipServiceTest` | +4 | — (Ergänzung) | Stub füllen: `getCloseRelationshipName()` braucht 2 `Individual`-Objekte → `importTree('demo.ged')`, bekannte Personen (Elizabeth II → Philip). `nameFromPath()` mit bekannten Beziehungspfaden. |
-
-#### Prio 2b — Handler-Tests und Chart/List-Smoke (upstream, SQLite)
-
-> **Ziel:** HTTP-Request-Handler für Import/Export/Suche/Charts/Lists testen.
-> **Muster:** `self::createRequest()` → Handler `handle($request)` → `assertSame(200, $response->getStatusCode())`.
-> **Referenz:** `StatisticsChartModuleTest.php` (225 Zeilen, DataProviders, Response-Checks).
-> **Geschätzter Umfang:** ~40 neue Tests.
-
-| AP | Datei(en) | Neue Tests | Feature-IDs | Vorgehen |
-|---|---|---|---|---|
-| 2b-1 | `ImportGedcomPageTest` | +2 | G21 | Admin-User + Tree → `handle(GET)` → 200 + HTML enthält Upload-Formular. |
-| 2b-2 | `ImportGedcomActionTest` | +2 | G21 | POST mit `createUploadedFile('demo.ged')` → Redirect/200. POST mit ungültiger Datei → Fehler. |
-| 2b-3 | `ExportGedcomClientTest`, `ExportGedcomServerTest`, `ExportGedcomPageTest` | +3 | G13, G20 | Admin + Tree → `handle(GET)` → 200/Download. Response enthält GEDCOM-Header. |
-| 2b-4 | `SearchGeneralPageTest`, `SearchGeneralActionTest` | +3 | S01, S05 | GET zeigt Suchformular. POST mit `query=Windsor` → 200 + Ergebnisse. |
-| 2b-5 | `SearchAdvancedPageTest`, `SearchAdvancedActionTest` | +3 | S05, S06 | GET zeigt erweitertes Formular. POST mit Feld-Filtern → 200. |
-| 2b-6 | `SearchPhoneticPageTest`, `SearchPhoneticActionTest` | +3 | S07, S08 | GET zeigt phonetisches Formular. POST mit Name → 200 + Ergebnisse. |
-| 2b-7 | 12 Chart-Modul-Tests (alle außer `StatisticsChartModule`) | +12 | S14–S18 | Pro Chart: `importTree` → `self::createRequest(attributes: ['tree' => $tree])` → `handle()` → `assertSame(200, ...)`. Folgt `StatisticsChartModuleTest`-Muster. Benötigt jeweils Root-Individual (`X1030` aus demo.ged) als Request-Attribut. |
-| 2b-8 | 10 List-Modul-Tests | +10 | S19, S20 | Pro Liste: `importTree` → `createRequest(attributes: ['tree' => $tree])` → `handle()` → 200. `IndividualListModule` braucht `surname`-Parameter. |
-| 2b-9 | `SearchReplacePageTest`, `SearchReplaceActionTest` | +2 | S13 | GET zeigt Replace-Formular (Admin-Recht). POST mit Ersetzung → 200. |
-
-#### Prio 3a — AutoComplete/TomSelect und Suche-Vertiefung (upstream, SQLite)
-
-> **Ziel:** AJAX-Endpoints und feinere Suchszenarien testen.
-> **Muster:** `createRequest(query: ['query' => 'wind'])` → Handler → JSON-Response mit Ergebnissen.
-> **Geschätzter Umfang:** ~25 neue Tests.
-
-| AP | Datei(en) | Neue Tests | Feature-IDs | Vorgehen |
-|---|---|---|---|---|
-| 3a-1 | 11 `TomSelect*Test` + 4 `AutoComplete*Test` | +15 | S21, S22 | Pro Handler: `importTree` → `createRequest(query: ['query' => 'bekannter Suchbegriff'])` → `handle()` → JSON-Response mit `assertJson`-Prüfung. |
-| 3a-2 | `SearchServiceTest` | +4 | S07, S08, S10 | Phonetische Suche: `searchIndividualNames` mit Soundex-Varianten. Paginierung: Suche mit limit/offset. |
-| 3a-3 | `SearchServiceTest` | +3 | S03 | Suche über Quellen, Notizen, Repositories mit gezielten Assertions (nicht nur `assertNotEmpty`). |
-| 3a-4 | `IndividualListModuleTest` | +3 | S19 | Stub füllen: Handler-Test mit `surname`-Parameter, Initialen-Filterung. Ergänzt existierenden Feature-Test. |
-
-#### Prio 3b — Encoding, Media, Cross-Tree, Sonstige (upstream, SQLite)
-
-> **Ziel:** Spezialszenarien abdecken, die Test-Fixtures oder spezielle GEDCOM-Dateien brauchen.
-> **Geschätzter Umfang:** ~15 neue Tests.
-
-| AP | Datei(en) | Neue Tests | Feature-IDs | Vorgehen |
-|---|---|---|---|---|
-| 3b-1 | `GedcomImportServiceTest` | +2 | G08 | ANSEL/CP1252-kodierte Fixture-Datei nötig (ggf. programmatisch erzeugen). Import → UTF-8 in DB prüfen. |
-| 3b-2 | `GedcomImportServiceTest` | +1 | G09 | GEDCOM mit Inline-OBJE → separates Media-Objekt in `media`-Tabelle. Fixture nötig. |
-| 3b-3 | `GedcomImportServiceTest` | +1 | G11 | GEDCOM mit Custom-Tags (_MILT, _DEG etc.) → Record importiert, Tags nicht verworfen. |
-| 3b-4 | `GedcomExportServiceTest` | +2 | G17 | Export mit Encoding ANSEL/CP1252 → Byte-Prüfung auf Nicht-UTF-8. |
-| 3b-5 | `SearchServiceTest` | +2 | S11 | `importTree` für 2 Bäume → `searchIndividuals([$tree1, $tree2], ...)` → Ergebnisse aus beiden. |
-| 3b-6 | `SearchReplaceActionTest` | +2 | S13 | Bulk-Ersetzung in GEDCOM → Ergebnis prüfen. Ohne Edit-Recht → Zugriffsfehler. |
-| 3b-7 | Chart-Smoke (FanChart, Hourglass) | +3 | S17 | Charts, die in Prio 2b nur Smoke-Tests bekommen → ggf. Parameter-Varianten (Generationstiefe). |
-| 3b-8 | `PendingChangesServiceTest` | +2 | — | Stub füllen: `pendingChangesExist()` + `acceptRecord()` → Änderung in DB sichtbar. |
-
-#### Prio 4 — Niedrigprioritäre Stubs und Compliance
-
-> **Ziel:** Restliche Service-Stubs füllen und GEDCOM-Compliance prüfen.
-> **Geschätzter Umfang:** ~30 Tests. Kann nach dem ersten PR separat erfolgen.
-
-| AP | Datei(en) | Feature-IDs | Vorgehen |
-|---|---|---|---|
-| 4-1 | `CalendarServiceTest` | — | `calendarMonthsInYear()` mit verschiedenen Kalendern. `getCalendarEvents()` + `getAnniversaryEvents()` braucht Tree + importierte Daten. |
-| 4-2 | `ChartServiceTest` | — | `sosaStradonitzAncestors()` mit Individual aus demo.ged → Collection prüfen. |
-| 4-3 | `ClipboardServiceTest` | — | `copyFact()`, `pasteFact()`, `emptyClipboard()` → Session-basiert, braucht Fact-Objekt. |
-| 4-4 | `IndividualFactsServiceTest` | — | `individualFacts()` mit Individual → Collection von Facts. Mock oder importTree nötig. |
-| 4-5 | `LinkedRecordServiceTest` | — | `linkedFamilies()`, `linkedIndividuals()` mit GedcomRecord aus importTree → Collection prüfen. |
-| 4-6 | Übrige 15 Service-Stubs | — | `AdminService`, `DataFixService`, `DatatablesService`, `HomePageService`, `HousekeepingService`, `LeafletJsService`, `MapDataService`, `MediaFileService`, `MessageService`, `MigrationService`, `RomanNumeralsService`, `ServerCheckService`, `SiteLogsService`, `CaptchaService`, `UpgradeService`. Individuell je nach API. |
-| 4-7 | G10, G23 | G10, G23 | Legacy-Format-Konvertierung und GEDCOM-5.5.1-Compliance → braucht spezialisierte Fixtures und Tag-Listen-Abgleich. |
-
-### Voraussetzungen und Abhängigkeiten
-
-| Arbeitspaket | Benötigte Vorarbeit | Neue Fixtures nötig? |
-|---|---|---|
-| 2a-1 bis 2a-5 | Keine — bestehende Tests erweitern | Nein (`demo.ged` reicht) |
-| 2b-1 bis 2b-9 | Muster aus `StatisticsChartModuleTest` verstehen | Nein |
-| 3a-1 bis 3a-4 | JSON-Response-Assertions klären (kein `assertJson` in PHPUnit) | Nein |
-| 3b-1, 3b-2 | ANSEL/CP1252-Fixture und Inline-OBJE-Fixture erzeugen | **Ja** |
-| 3b-5 | Zweite Fixture-Datei für Cross-Tree (oder `demo.ged` zweimal importieren) | Nein |
-| 4-1 bis 4-7 | Individuelle API-Analyse pro Service | Teilweise |
-
 ---
 
-## Detailplan: OTel PHP-Instrumentation aktivieren (Phase 7a)
+## Bekannte Fehler im Teststack
 
-> **Scope:** Querschnitt — OTel. Aktiviert die PHP-seitige Auto-Instrumentation, die in N6
-> spezifiziert aber noch nicht implementiert ist. OTel Collector + Jaeger laufen bereits
-> als Container (Phase 7). Was fehlt: die PHP-Pakete und deren Einbindung.
->
-> **Begründung Vorrang:** OTel-Traces sind ein Diagnose- und Analysewerkzeug, das bei der
-> Verifikation und beim Bugfixing aller Teststufen hilft (N+1-Erkennung, Query-Count,
-> Trace-Diff für Performance-Regression). Die Traces müssen verfügbar sein, bevor weitere
-> Testimplementierungen (Phase 5b) stattfinden, da sie die Grundursachenanalyse bei
-> Testfehlern wesentlich beschleunigen.
+### HOST-Bug: SELinux MCS-Label-Konflikt (Fedora/rootless Podman)
 
-### 7a-1 — OTel-Composer-Pakete im setup-webtrees.sh installieren
-
-| Aspekt | Detail |
-|---|---|
-| **Datei** | `scripts/setup-webtrees.sh` |
-| **Änderung** | Nach `composer install` einen bedingten `composer require --dev`-Block einfügen |
-| **Pakete** | `open-telemetry/sdk`, `open-telemetry/exporter-otlp`, `open-telemetry/opentelemetry-auto-pdo`, `open-telemetry/opentelemetry-auto-psr18` |
-| **Bedingung** | Nur wenn `OTEL_SDK_DISABLED` nicht `true` ist (ENV-Variable aus `compose.yaml`) |
-| **Idempotenz** | `composer require` ist idempotent — bei wiederholtem Aufruf kein Fehler |
-
-**Vorgehen:**
+**Symptom:** `podman-compose exec webtrees bash -c "ls /var/www/html"` → Permission denied
+**Ursache:** `github/webtrees` (Bind-Mount-Quelle) trägt noch MCS-Kategorien (z. B. `:c607,c731`) eines früheren Containers. Der neue Container hat andere Kategorien (z. B. `:c431,c971`) → SELinux verweigert den Zugriff.
+**Betrifft:** Nur diesen Dev Desktop (Fedora + SELinux + rootless Podman). Auf anderen Systemen ohne SELinux tritt dieser Fehler nicht auf.
+**Recovery (manuell, einmalig nach Auftreten):**
 ```bash
-# In setup-webtrees.sh nach "composer install":
-if [ "${OTEL_SDK_DISABLED:-false}" != "true" ]; then
-    echo "[1b/4] OTel Auto-Instrumentation installieren..."
-    composer require --dev --no-interaction --no-progress \
-      open-telemetry/sdk \
-      open-telemetry/exporter-otlp \
-      open-telemetry/opentelemetry-auto-pdo \
-      open-telemetry/opentelemetry-auto-psr18 2>&1
-fi
+chcon -R -l s0 /home/borisunckel/phpprojects/webtrees-upstream/webtrees/
+make down && make up
 ```
-
-**Begründung:** Installation in `setup-webtrees.sh` statt im `Containerfile.webtrees`, weil
-`composer require` in das gemountete vendor-Volume schreiben muss (nicht in den Image-Layer).
-Das vendor-Volume überlagert den read-only Bind-Mount — nur zur Laufzeit beschreibbar.
-
-### 7a-2 — OTel-PHP-Extension (protobuf + grpc) im Containerfile installieren
-
-| Aspekt | Detail |
-|---|---|
-| **Datei** | `Containerfile.webtrees` |
-| **Änderung** | `pecl install protobuf grpc` und `docker-php-ext-enable` hinzufügen |
-| **Begründung** | Der OTLP-Exporter (gRPC-Protokoll) benötigt die PHP-Extensions `grpc` und `protobuf` für performanten Transport. Ohne diese fallen OTel-Pakete auf langsames JSON/HTTP zurück oder scheitern. |
-
-**Vorgehen:**
-```dockerfile
-# Nach der bestehenden pcov-Installation:
-RUN pecl install protobuf grpc \
-    && docker-php-ext-enable protobuf grpc
-```
-
-**Alternative (leichtgewichtig):** Statt nativer gRPC-Extension das HTTP/JSON-Protokoll
-verwenden (`OTEL_EXPORTER_OTLP_PROTOCOL=http/json` in `compose.yaml`). Vorteil: keine
-zusätzlichen C-Extensions, schnellerer Build. Nachteil: höherer Overhead pro Trace-Export.
-Die Entscheidung hängt von der Build-Zeit ab (grpc-Extension kompiliert ~5 min).
-
-### 7a-3 — Verifikation: Trace-Sichtbarkeit in Jaeger
-
-| Aspekt | Detail |
-|---|---|
-| **Test** | `make setup` → Jaeger UI (http://localhost:16686) → Service "webtrees" sichtbar |
-| **Erwartung** | Traces mit PDO-Spans (DB-Queries aus GEDCOM-Import) erscheinen |
-| **Fehlerfall** | Kein Service in Jaeger → PHP-Fehlerlog prüfen (`podman-compose logs webtrees`), OTel-Collector-Log prüfen (`podman-compose logs otel-collector`) |
-
-### 7a-4 — N6-Dokumentation aktualisieren
-
-| Aspekt | Detail |
-|---|---|
-| **Datei** | `docs/testing-bigpicture-prompt.md` (Abschnitt N6) |
-| **Änderung** | Implementierungslücke-Hinweis entfernen, tatsächlichen Installationsort dokumentieren |
-
-### Voraussetzungen und Abhängigkeiten (Phase 7a)
-
-| Arbeitspaket | Benötigte Vorarbeit | Risiko |
-|---|---|---|
-| 7a-1 | Keine — `setup-webtrees.sh` existiert, vendor-Volume beschreibbar | Niedrig: `composer require` ist idempotent |
-| 7a-2 | Keine — Containerfile-Änderung, erfordert `make down && make up --build` | Mittel: grpc-Extension hat lange Kompilierzeit (~5 min). Fallback: HTTP/JSON-Protokoll |
-| 7a-3 | 7a-1 + 7a-2 müssen abgeschlossen sein | Niedrig: rein visuell |
-| 7a-4 | 7a-3 (erst nach erfolgreicher Verifikation) | Niedrig: reine Doku |
+**Status:** Nicht automatisch behebbar (Host-spezifisch). Dokumentiert in CLAUDE.md unter „SELinux-Falle".
 
 ---
 
-## Detailplan: E2E-Routenabdeckung (Phase 5b)
+### Upstream-Bug: `FamilyFactory::mapper()` TypeError bei Privat-Familien
 
-> **Scope:** Eigene Infra (Playwright, Layer 4). Erweitert die bestehenden 13 E2E-Tests
-> um die vollständige Theme-Matrix (S25) und offene Routen aus der Gap-Analyse (S24, S26–S39).
-> Bezug: Implementierungs-Fahrplan Phase 5b.
-
-### 5b-1 — Theme-Matrix: 5 Themes × N Seiten (S25)
-
-> **Ziel:** S25 (Theme-Matrix) vollständig implementieren — alle 5 Standard-Themes gegen
-> Kernseiten prüfen. Rein funktional (HTTP-Status + DOM-Struktur), kein Visual Regression.
-> **Muster:** Parametrisierter `test.describe`-Block pro Theme. Theme-Umschaltung via
-> `POST /theme/{theme}` (Handler `SelectTheme`). Verifikation: CSS-Klasse `body.wt-theme-{name}`.
-> **Referenz:** Bestehende `theme-matrix.spec.ts` (5 Tests, nur Default-Theme `webtrees`).
-> **Geschätzter Umfang:** 5 Themes × 10 Seiten = ~50 parametrisierte Testfälle (1 Spec-Datei).
-
-**Korrektur Theme-Namen:** Das Dokument nennt an früherer Stelle „minimal" als Standard-Theme.
-Korrekt sind die 5 Module-Namen im aktuellen webtrees-Code (`app/Module/`):
-`webtrees` (Default), `clouds`, `colors`, `fab`, `xenea`. Kein Theme namens `minimal`.
-
-**Theme-Switching-Mechanismus (aus Code-Analyse):**
-
-| Aspekt | Detail |
-|---|---|
-| **Endpoint** | `POST /theme/{theme}` → `SelectTheme::class` |
-| **Wirkung** | Setzt `Session::put('theme', $theme)` + `$user->setPreference('theme', $theme)` |
-| **Verifikation** | `<body class="wt-global wt-theme-{name} wt-route-{route}">` (Layout `default.phtml:72`) |
-| **Rückwirkung** | Gilt für alle Folge-Requests desselben Users → kein `fullyParallel` für diese Spec |
-
-**Seiten-Auswahl für die Matrix:**
-
-| Seiten-Typ | URL | Begründung |
-|---|---|---|
-| Homepage (TreePage) | `/tree/demo` | Zentraler Einstieg, Theme-Hauptlayout |
-| Personenseite (IndividualPage) | `/tree/demo/individual/X1030` | Komplexeste Record-Seite (Tabs, Fakten, Medien) |
-| Familienseite (FamilyPage) | `/tree/demo/family/f1` | Beziehungsdarstellung, Kinder-Liste |
-| Allgemeine Suche | `/tree/demo/search-general` | Formular + Ergebnisliste |
-| Stammbaum (Pedigree) | `/tree/demo/pedigree` | Chart-Rendering (SVG/Canvas) |
-| Quellenliste | `/tree/demo/source-list` | Listen-Layout |
-| Kalender | `/tree/demo/calendar/month` | Speziallayout mit Kalender-Grid |
-| Quellenseite (SourcePage) | `/tree/demo/source/X1102` | Record-Detail |
-| Medienseite (MediaPage) | `/tree/demo/media/X1104` | Bild-Darstellung |
-| Benutzerseite (UserPage) | `/tree/demo/my-page` | Block-basiertes Layout |
-
-| AP | Datei(en) | Neue Tests | Feature-IDs | Vorgehen |
-|---|---|---|---|---|
-| 5b-1a | `theme-matrix.spec.ts` (Rewrite) | ~50 | S25 | Bestehende 5 Smoke-Tests durch parametrisierte Matrix ersetzen. Äußerer Loop: 5 Themes. Innerer Loop: 10 Seiten (s. o.). Pro Kombination: (1) `POST /theme/{theme}` im `beforeAll`, (2) `page.goto(url)` → HTTP < 500, (3) `body.wt-theme-{name}` sichtbar, (4) `main` oder `.wt-page-content` vorhanden. |
-| 5b-1b | `playwright.config.ts` | — | S25 | Timeout anpassen (50 statt 13 Tests). `workers: 1` für diese Spec erzwingen (Theme-Switch ist User-global, keine Parallelisierung). Alternative: separate Playwright-Projekte pro Theme mit `use.storageState`. |
-
-### 5b-2 — Neue Routen-Specs (S24, S26–S31, S33–S39)
-
-> **Ziel:** Offene Routen aus der E2E-Gap-Analyse mit eigenen Spec-Dateien abdecken.
-> **Muster:** Login via `beforeEach` (wie bestehende Specs), `page.goto()` → HTTP-Status + DOM.
-> **Geschätzter Umfang:** ~19 neue Tests in 5–6 neuen Spec-Dateien.
-
-| AP | Datei(en) | Neue Tests | Feature-IDs | Vorgehen |
-|---|---|---|---|---|
-| 5b-2a | `family.spec.ts` (neu) | +3 | S24 | `/tree/demo/family/f1` (Philip & Elizabeth II) → Familien-Header, Ehepartner-Namen, Kinder-Liste sichtbar. Fehlzuordnung in `navigation.spec.ts` korrigieren (S24-Annotation → S20). |
-| 5b-2b | `records.spec.ts` (neu) | +4 | S26–S30 | Quellenseite (`/source/X1102`), Medienseite (`/media/X1104`), Aufbewahrungsort (`/repository/X1165`), Einreicher (`/submitter/X1166`). S28 (Notizseite) abhängig von Fixture — `demo.ged` enthält keine NOTE-Records. |
-| 5b-2c | `calendar.spec.ts` (neu) | +2 | S31 | `/tree/demo/calendar/month` und `/tree/demo/calendar/year` → Kalender rendert. |
-| 5b-2d | `search-forms.spec.ts` (neu) | +2 | S38, S39 | `/tree/demo/search-advanced` und `/tree/demo/search-phonetic` → Formulare sichtbar. |
-| 5b-2e | `auth.spec.ts` (neu) oder `login.spec.ts` erweitern | +2 | S33, S34 | `/register` → Formular sichtbar. `/password-request` → Formular sichtbar. S32 bereits via `login.spec.ts` abgedeckt. |
-| 5b-2f | `user-pages.spec.ts` (neu) | +3 | S35, S36, S37 | `/tree/demo/my-page` → Blöcke gerendert. `/tree/demo/contact` → Kontaktformular. `/tree/demo/report` → Berichtsliste. |
-
-### Voraussetzungen und Abhängigkeiten (Phase 5b)
-
-| Arbeitspaket | Benötigte Vorarbeit | Neue Fixtures nötig? |
-|---|---|---|
-| 5b-1a | Theme-Endpoint testen: `POST /theme/clouds` → Folgerequest zeigt `wt-theme-clouds` auf `<body>`. Ggf. CSRF-Token-Handling in Playwright klären. | Nein |
-| 5b-1b | Keine | Nein |
-| 5b-2a | Fixture-XREF `@f1@` verifizieren (FamilyPage). `navigation.spec.ts` Annotation S24 → S20 korrigieren. | Nein |
-| 5b-2b | S28 (Notizseite): `demo.ged` enthält keine separaten NOTE-Records → entweder Fixture ergänzen oder Test überspringen. | **Ja** (nur für S28) |
-| 5b-2c bis 5b-2f | Keine — URLs und Fixture-XREFs in Phase 5b-Beschreibung identifiziert. | Nein |
+**Symptom:** `TypeError` in `FamilyFactory::mapper()` beim Zugriff auf Familien mit Privacy-Level PRIV_NONE oder PRIV_USER.
+**Ursache:** Die Mapper-Funktion gibt `null` für eingeschränkte Familien zurück, ohne dass der aufrufende Code dies erwartet.
+**Betrifft:** Export mit Privacy-Filterung (G16, Access-Levels PRIV_NONE/PRIV_USER) und Citation-AutoComplete (Prio 3a).
+**Status:** Offen. Upstream-Bug bei `fisharebest/webtrees` zu melden. Tests für betroffene Access-Levels sind übersprungen (`1 Skipped`).
 
 ---
 
-## Detailplan: Theme-Integration in Einzel-Specs (Phase 5c)
+## Aktuelle Testergebnisse
 
-> **Scope:** Teststufe 3 — Systemtest (Playwright, Layer 4). Auflösung der zentralen
-> `theme-matrix.spec.ts` — Theme-Abdeckung aller 5 Standard-Themes wird als
-> Querschnittsanforderung in jede tree-gebundene Spec-Datei integriert.
-> Alle fachlichen Assertions (Heading, Facts Area, Formulare, Suchlogik) laufen
-> für jedes Theme. Kein Testabdeckungsverlust, Nettogewinn durch tiefere
-> Theme-spezifische Assertions.
->
-> **Begründung:** Die aktuelle Struktur trennt fachliche Tests (tiefe Assertions,
-> 1 Theme) von Theme-Tests (flache Assertions, 5 Themes). Beim Warten oder
-> Erweitern der Testsuite muss ein Entwickler zwei Stellen pflegen. Nach dem
-> Refactoring sind alle Assertions an einer Stelle pro Seite — leichter lesbar
-> bei fachlichen Änderungen und bei Theme-Wartung.
-
-### Querschnittsanforderung: Theme-Abdeckung (ersetzt S25)
-
-> S25 („Theme-Matrix") wird als eigenständige Feature-Matrix-Zeile aufgelöst.
-> Stattdessen gilt folgende Querschnittsanforderung:
-
-**Jeder Systemtest-Testfall (Teststufe 3) für tree-gebundene Seiten MUSS alle
-5 Standard-Themes abdecken:** `webtrees` (Default), `clouds`, `colors`, `fab`, `xenea`.
-
-Theme-Abdeckung ist keine eigene Testbedingung mehr, sondern eine strukturelle
-Eigenschaft jedes Testfalls. Die Shared Utility (AP 5c-1) stellt den
-Theme-Switching-Mechanismus bereit.
-
-**Ausnahmen** (nicht tree-gebunden, kein Theme-Loop):
-- `auth.spec.ts` (S33 Registrierung, S34 Passwort-Zurücksetzung)
-- `login.spec.ts` (S32 Anmeldeseite)
-
-### 5c-1 — Shared Utility: Theme-Switching-Helper
-
-| Aspekt | Detail |
-|---|---|
-| **Datei** | `layer4-e2e/helpers/theme-switch.ts` (neu) |
-| **Export** | `async function switchTheme(browser: Browser, theme: string): Promise<void>` |
-| **Verhalten** | Erstellt temporären Browser-Context, loggt sich ein, navigiert zu `/tree/demo?theme=${theme}`, schließt Context. Theme wird serverseitig in User-Preferences persistiert. |
-| **Verwendung** | In jeder Spec-Datei im `test.beforeAll`-Block des Theme-`describe`. |
-
-**Signatur und Verhalten:**
-```typescript
-// layer4-e2e/helpers/theme-switch.ts
-import { Browser } from '@playwright/test';
-
-export async function switchTheme(browser: Browser, theme: string): Promise<void> {
-  const ctx = await browser.newContext({
-    baseURL: process.env.BASE_URL || 'http://webtrees:80',
-  });
-  const page = await ctx.newPage();
-  await page.goto('/login/demo');
-  await page.fill('input[name="username"]', 'admin');
-  await page.fill('input[name="password"]', 'admin');
-  await page.locator('button[type="submit"]').last().click();
-  await page.waitForLoadState('networkidle');
-  await page.goto(`/tree/demo?theme=${theme}`);
-  await page.waitForLoadState('networkidle');
-  await ctx.close();
-}
-```
-
-**Begründung:** Extrahiert den Theme-Switching-Mechanismus aus `theme-matrix.spec.ts`
-in eine wiederverwendbare Funktion. Verhindert Duplikation über 10 Spec-Dateien.
-Analoges Muster: `MysqlTestCase.php` als Shared Basis für Layer-3-Tests.
-
-### 5c-2 — Bestehende Spec-Dateien: Theme-Loop ergänzen
-
-> **Muster:** Äußerer Loop über `themes[]`, `test.describe` pro Theme mit `test.beforeAll`
-> für Theme-Switch via Shared Utility (AP 5c-1). Alle bestehenden Testbedingungen laufen
-> innerhalb des Theme-Loops. Login bleibt im `test.beforeEach`.
-
-| AP | Datei | S-Codes | Vorher | Nachher | Testbedingungen je Theme |
-|---|---|---|---|---|---|
-| 5c-2a | `individual.spec.ts` | S23 | 2 Tests (1 Theme) | 10 (5 Themes × 2) | Heading, Facts Area |
-| 5c-2b | `family.spec.ts` | S24 | 3 Tests (1 Theme) | 15 (5 Themes × 3) | Loads, Heading, Facts Area |
-| 5c-2c | `records.spec.ts` | S26–S30 | 4 Tests (1 Theme) | 20 (5 Themes × 4) | Source-Heading, Media-Heading, Repository-Heading, Submitter-Heading |
-| 5c-2d | `calendar.spec.ts` | S31 | 2 Tests (1 Theme) | 10 (5 Themes × 2) | Monatskalender-Content, Jahreskalender-Content |
-| 5c-2e | `search-forms.spec.ts` | S38, S39 | 2 Tests (1 Theme) | 10 (5 Themes × 2) | Erweitertes Suchformular, Phonetisches Suchformular |
-| 5c-2f | `user-pages.spec.ts` | S35–S37 | 3 Tests (1 Theme) | 15 (5 Themes × 3) | Meine-Seite-Content, Kontaktformular, Berichtsliste-Content |
-| 5c-2g | `navigation.spec.ts` | S23, S20, S09 | 3 Tests (1 Theme) | 15 (5 Themes × 3) | Personenliste-Content, Familienliste-Content, Quick-Search-Logik |
-
-**Summe AP 5c-2:** 19 Testbedingungen × 5 Themes = **95 Testfälle** (vorher 19)
-
-**Strukturmuster für jede Datei:**
-```typescript
-import { switchTheme } from '../helpers/theme-switch';
-
-const themes = ['webtrees', 'clouds', 'colors', 'fab', 'xenea'] as const;
-
-for (const theme of themes) {
-  test.describe(`Theme: ${theme}`, () => {
-    test.beforeAll(async ({ browser }) => {
-      await switchTheme(browser, theme);
-    });
-
-    test.beforeEach(async ({ page }) => { /* Login */ });
-
-    // ... bestehende Tests unverändert ...
-  });
-}
-```
-
-### 5c-3 — Neue Spec-Dateien
-
-> **Ziel:** 3 Seiten, die bisher nur in `theme-matrix.spec.ts` existieren, erhalten eigene
-> Spec-Dateien mit fachlich sinnvollen Assertions (über „renders" hinaus) und Theme-Loop.
-
-| AP | Datei (neu) | S-Codes | Testfälle | Testbedingungen je Theme |
-|---|---|---|---|---|
-| 5c-3a | `homepage.spec.ts` | S40 (neu) | 10 (5 Themes × 2) | (1) Seite lädt fehlerfrei (status < 500, body, content), (2) Baumstatistik oder Willkommensblock sichtbar |
-| 5c-3b | `pedigree.spec.ts` | S14 | 10 (5 Themes × 2) | (1) Chart-Seite lädt fehlerfrei (status < 500, body), (2) Chart-Bereich sichtbar (Canvas/SVG/Chart-Container) |
-| 5c-3c | `source-list.spec.ts` | S20 | 10 (5 Themes × 2) | (1) Listenseite lädt fehlerfrei (status < 500, body), (2) Listeneinträge oder Tabelle sichtbar |
-
-**Summe AP 5c-3:** 6 Testbedingungen × 5 Themes = **30 Testfälle** (vorher 0 dediziert)
-
-**Neuer Feature-Matrix-Eintrag (bei Implementierung in Feature-Matrix einfügen):**
-
-| # | Feature | Abgeleitete Anforderung | Teststufe | Prio |
-|---|---|---|---|---|
-| S40 | Navigation: Homepage (Baumseite) | Homepage/Baumseite aufrufen → Baumstatistik oder Willkommensblock dargestellt, keine HTTP-Fehler | 3 | Hoch |
-
-**Seitenabdeckung `/tree/demo/search-general`:** Diese Seite aus `theme-matrix.spec.ts` wird
-nach dem Refactoring implizit durch `navigation.spec.ts` S09 (Quick Search) abgedeckt — der
-Quick-Search-Test navigiert zur allgemeinen Suchseite und prüft die Ergebnisdarstellung.
-Durch den Theme-Loop in AP 5c-2g laufen alle 5 Theme-Varianten. Kein separater Testfall nötig.
-
-### 5c-4 — `theme-matrix.spec.ts` entfernen
-
-| AP | Datei | Aktion | Begründung |
-|---|---|---|---|
-| 5c-4a | `theme-matrix.spec.ts` | Löschen | Alle 10 Seiten × 5 Themes sind durch AP 5c-2 und 5c-3 vollständig abgedeckt. Alle Assertions (status < 500, body, content) sind in den dedizierten Specs als Teilmenge der tieferen Assertions enthalten. |
-
-### 5c-5 — Dokumentation aktualisieren
-
-> Bei Implementierung von Phase 5c müssen folgende Stellen in diesem Dokument angepasst werden:
-
-| AP | Stelle im Dokument | Änderung |
-|---|---|---|
-| 5c-5a | **Feature-Matrix: Suche und Navigation** | S25-Zeile entfernen. S40-Zeile einfügen. Querschnittsanforderung Theme-Abdeckung als Absatz über der Tabelle ergänzen. |
-| 5c-5b | **Testfall-Verteilung nach Teststufe** | Teststufe 3 Systemtest: S25 entfällt, S40 kommt hinzu → Nettoänderung 0. S-Feature-Summe bleibt 39. Gesamtsumme bleibt 62. |
-| 5c-5c | **Endekriterien — Teststufe 3** | Von „Alle 5 Standard-Themes rendern fehlerfrei; alle E2E-Testfälle grün (…S23–S39)" → „Alle E2E-Testfälle grün über alle 5 Standard-Themes (…S23–S24, S26–S40); S32–S34 theme-unabhängig grün" |
-| 5c-5d | **Abdeckungsmatrix — Suche und Navigation** | S25-Zeile entfernen. S14-Zeile: Playwright-Spalte `theme-matrix.spec.ts` → `pedigree.spec.ts`. S40-Zeile einfügen. |
-| 5c-5e | **N2 — Verzeichnisstruktur** | `layer4-e2e/tests/`: `theme-matrix.spec.ts` entfernen, `homepage.spec.ts`, `pedigree.spec.ts`, `source-list.spec.ts` hinzufügen. `layer4-e2e/helpers/theme-switch.ts` ergänzen. |
-| 5c-5f | **Testentwurfsverfahren** | S25 aus Zeile „Anwendungsfall-Test" (S23–S39) entfernen, durch S40 ersetzen → S23–S24, S26–S40. |
-| 5c-5g | **Überdeckungsstrategie** | Scope-Angabe „S01–S25" → „S01–S24, S26–S40". |
-
-### Vorher/Nachher-Vergleich Gesamttestfallzahl
-
-| Datei | Vorher | Nachher | Δ |
-|---|---|---|---|
-| `theme-matrix.spec.ts` | 50 | 0 (gelöscht) | −50 |
-| `individual.spec.ts` | 2 | 10 | +8 |
-| `family.spec.ts` | 3 | 15 | +12 |
-| `records.spec.ts` | 4 | 20 | +16 |
-| `calendar.spec.ts` | 2 | 10 | +8 |
-| `search-forms.spec.ts` | 2 | 10 | +8 |
-| `user-pages.spec.ts` | 3 | 15 | +12 |
-| `navigation.spec.ts` | 3 | 15 | +12 |
-| `homepage.spec.ts` (neu) | 0 | 10 | +10 |
-| `pedigree.spec.ts` (neu) | 0 | 10 | +10 |
-| `source-list.spec.ts` (neu) | 0 | 10 | +10 |
-| `auth.spec.ts` | 2 | 2 | 0 |
-| `login.spec.ts` | 3 | 3 | 0 |
-| **Summe** | **74** | **130** | **+56** |
-
-### Abdeckungsnachweis (Constraint: kein Testabdeckungsverlust)
-
-| Aspekt | Vorher (Phase 5b) | Nachher (Phase 5c) |
-|---|---|---|
-| Seite × Theme-Kombinationen (flache Assertions) | 50 (theme-matrix) | 0 (entfällt — durch tiefe Assertions ersetzt) |
-| Fachliche Assertions (nur Default-Theme) | 19 | 0 (entfällt — jetzt über alle Themes) |
-| Fachliche Assertions (alle 5 Themes) | 0 | 125 (25 Testbedingungen × 5 Themes) |
-| Theme-unabhängige Testfälle | 5 | 5 |
-| **Gesamt-Testfälle** | **74** | **130** |
-
-Jede Seite × Theme-Kombination aus `theme-matrix.spec.ts` ist in den dedizierten
-Specs enthalten. Zusätzlich laufen alle fachlichen Assertions (Heading, Facts,
-Formulare, Suchlogik) für alle 5 Themes — ein reiner Zugewinn gegenüber den
-bisherigen flachen Assertions.
-
-### Migrationsstrategie
-
-> Reihenfolge sichert: zu keinem Zeitpunkt geht Testabdeckung verloren.
-> Verifikation nach jedem Schritt: `make test-e2e` — Testfallzahl muss monoton steigen.
-
-| Schritt | AP | Aktion | Erwartete Testfallzahl |
-|---|---|---|---|
-| 1 | 5c-1 | Shared Utility `theme-switch.ts` erstellen | 74 (unverändert) |
-| 2 | 5c-3a–c | Neue Specs erstellen (homepage, pedigree, source-list) mit Theme-Loop | 104 (+30) |
-| 3 | 5c-2a–g | Bestehende Specs um Theme-Loop erweitern | 180 (+76) |
-| 4 | 5c-4a | `theme-matrix.spec.ts` entfernen | 130 (−50) |
-| 5 | 5c-5a–g | Dokumentation aktualisieren | 130 (unverändert) |
-
-### Voraussetzungen und Abhängigkeiten (Phase 5c)
-
-| Arbeitspaket | Benötigte Vorarbeit | Risiko |
-|---|---|---|
-| 5c-1 | Keine — Extraktion aus bestehendem Code (`theme-matrix.spec.ts` Zeile 40–54) | Niedrig |
-| 5c-2a–g | 5c-1 (Shared Utility) | Niedrig: Strukturänderung, keine neue Logik |
-| 5c-3a–c | 5c-1 (Shared Utility). Fixture-XREFs verifiziert (Phase 5b): Homepage `/tree/demo`, Pedigree `/tree/demo/pedigree`, Quellenliste `/tree/demo/source-list` | Niedrig |
-| 5c-4a | 5c-2 + 5c-3 vollständig — erst nach Verifikation aller 180 Tests | Niedrig: Löschen erst wenn Coverage gesichert |
-| 5c-5a–g | 5c-4 (Implementierung abgeschlossen) | Niedrig: Reine Dokumentation |
+**Aktuelle Testergebnisse** finden sich in den CI-Artefakten des letzten GitHub-Actions-Laufs
+(7 Tage Retention) oder lokal via `make test-all`. Die Artefakte pro Teststufe liegen in
+`artifacts/layer1/` bis `artifacts/layer5/`.
 
 ---
+
+## Änderungshistorie
 
 *Erstellt: 2026-03-26 — Basis: Anforderungsgespräch (Scope, Infra, Tests, Reporting)*
 *Aktualisiert: 2026-03-26 — Infrastruktur-Entscheidungen N1–N7 dokumentiert*
@@ -1702,90 +1195,5 @@ bisherigen flachen Assertions.
 *Aktualisiert: 2026-03-27 — Phase 7a + 5b implementiert. (1) OTel: PHP-Extensions `protobuf`+`grpc` im Containerfile, Composer-Pakete bedingt in setup-webtrees.sh (`OTEL_SDK_DISABLED`-Check), N6-Doku aktualisiert. (2) E2E: `theme-matrix.spec.ts` komplett neu (5 Themes × 10 Seiten = 50 Tests). 6 neue Spec-Dateien: `family.spec.ts` (S24, 3 Tests), `records.spec.ts` (S26–S30, 4 Tests), `calendar.spec.ts` (S31, 2 Tests), `search-forms.spec.ts` (S38–S39, 2 Tests), `auth.spec.ts` (S33–S34, 2 Tests), `user-pages.spec.ts` (S35–S37, 3 Tests). Korrektur `navigation.spec.ts`: S24→S20. S28 offen (kein NOTE-Record). Abdeckung 69% (43/62).*
 *Aktualisiert: 2026-03-28 — Phase 5c geplant (Theme-Integration in Einzel-Specs). Auflösung `theme-matrix.spec.ts`: Theme-Loop in jede tree-gebundene Spec integrieren. 3 neue Specs (homepage, pedigree, source-list). S25 aufgelöst als Querschnittsanforderung, S40 (Homepage) als neuer Feature-Matrix-Eintrag. Shared Utility `theme-switch.ts`. 11 APs (5c-1 bis 5c-5g). Migrationsstrategie: 5 Schritte (74 → 104 → 180 → 130 Tests). Ziel: 130 Testfälle, alle fachlichen Assertions × 5 Themes.*
 *Aktualisiert: 2026-03-28 — Phase 5c implementiert. `theme-matrix.spec.ts` gelöscht, Theme-Loop in 7 bestehende Specs integriert (individual, family, records, calendar, search-forms, user-pages, navigation). 3 neue Specs: `homepage.spec.ts` (S40), `pedigree.spec.ts` (S14), `source-list.spec.ts` (S20). Shared Utility `helpers/theme-switch.ts`. S25 entfernt, S40 eingefügt. Feature-Matrix, Endekriterien, Abdeckungsmatrix, N2, Testentwurfsverfahren, Überdeckungsstrategie aktualisiert. 130/130 Tests grün. Alle 5 Layer grün (3397 Unit + 129 Integration + 130 E2E + 3 Performance).*
+*Aktualisiert: 2026-03-28 — Dokument-Refactoring: Abgearbeitete Detailpläne (Phase 5b, 5c, 7a, Upstream-Stubs Prio 2a–4) entfernt. AI-Diagramm-Prompt entfernt. Behobene Known Bugs entfernt, Upstream-Bug FamilyFactory::mapper() als eigener Eintrag aufgenommen. Mapping-Tabelle Layer ↔ ISTQB-Teststufe eingeführt, durchgängig ISTQB-Terminologie. Mermaid-Diagramm aktualisiert (ISTQB-Labels, Layer-Zuordnung). Upstream-Contribution auf Konzept + Ergebnis gekürzt. Testlauf-Snapshot durch Verweis auf CI-Artefakte ersetzt.*
 
----
-
-## Bekannte Fehler im Teststack (Stand 2026-03-27)
-
-### HOST-Bug: SELinux MCS-Label-Konflikt (Fedora/rootless Podman)
-
-**Symptom:** `podman-compose exec webtrees bash -c "ls /var/www/html"` → Permission denied
-**Ursache:** `github/webtrees` (Bind-Mount-Quelle) trägt noch MCS-Kategorien (z. B. `:c607,c731`) eines früheren Containers. Der neue Container hat andere Kategorien (z. B. `:c431,c971`) → SELinux verweigert den Zugriff.
-**Betrifft:** Nur diesen Dev Desktop (Fedora + SELinux + rootless Podman). Auf anderen Systemen ohne SELinux tritt dieser Fehler nicht auf.
-**Recovery (manuell, einmalig nach Auftreten):**
-```bash
-chcon -R -l s0 /home/borisunckel/phpprojects/webtrees-upstream/webtrees/
-make down && make up
-```
-**Status:** Nicht automatisch behebbar (Host-spezifisch). Dokumentiert in CLAUDE.md unter „SELinux-Falle".
-
----
-
-### GUEST-Bug (behoben): Layer-2-Unit-Tests — `tests/data/` read-only
-
-**Symptom:** 5 Failures in `MaintenanceModeServiceTest` — `file_put_contents(): Read-only file system`
-**Ursache:** `tests/data/` liegt innerhalb des `:ro,z` Bind-Mounts (`github/webtrees → /var/www/html`). Die Upstream-Webtrees-Unit-Tests schreiben temporäre Dateien in dieses Verzeichnis.
-**Betrifft:** Alle Systeme (Guest-Bug).
-**Fix:** In `compose.yaml` ein beschreibbares Named-Volume für `/var/www/html/tests/data` eingehängt:
-```yaml
-- webtrees-unit-tests-data:/var/www/html/tests/data
-```
-**Status:** ✅ Behoben in diesem Commit.
-
----
-
-### GUEST-Bug (behoben): Layer-4/5-E2E/Performance — `@playwright/test` nicht gefunden
-
-**Symptom:** `npx playwright test` → `Cannot find module '@playwright/test'`
-**Ursache:** `Containerfile.playwright` installierte `@playwright/test` in `/tmp/node_modules` (statt im WORKDIR `/tests`). `npx playwright test` lud einen frischen `playwright`-Wrapper herunter, der `@playwright/test` nicht in `/tmp` fand.
-**Betrifft:** Alle Systeme (Guest-Bug).
-**Fix:** `Containerfile.playwright` installiert `npm`-Pakete jetzt im WORKDIR `/tests`:
-```dockerfile
-# vorher: cd /tmp && npm install
-# nachher:
-RUN echo '{...}' > package.json && npm install
-```
-**Status:** ✅ Behoben in diesem Commit.
-
----
-
-### GUEST-Bug (behoben): Layer-1-Statischer Test — PHPStan mit `--level=8` statt Level 2
-
-**Symptom:** 712 PHPStan-Fehler im upstream webtrees dev-Branch
-**Ursache:** `layer1-static/run.sh` überschrieb das konfigurierte Level (Level 2 + Baseline aus `phpstan.neon.dist`) mit `--level=8`. Der dev-Branch besteht Level 8 nicht (erwartet).
-**Betrifft:** Alle Systeme (Guest-Bug).
-**Fix:** `--level=8` entfernt. PHPStan verwendet jetzt `phpstan.neon.dist` unverändert (Level 2 + Baseline). Layer 1 ist informell (exit 0) — upstream-Fehler sind keine Regressionen eigener Module.
-**Status:** ✅ Behoben in diesem Commit. Layer 1 meldet 3 upstream-Fehler und 2151 PHPCS-Verstöße (informell, kein CI-Gate).
-
----
-
-### GUEST-Bug (behoben): Layer-2-Unit-Tests — Mehrere Folgefehler beim non-root-Betrieb
-
-**Symptom (nach der Volume-Seeding-Lösung):**
-- `MaintenanceModeServiceTest::testOfflineFileIsUnreadable` schlägt fehl: `is_readable()` gibt als root `true` für chmod-0-Dateien zurück
-- `UpgradeWizardStepTest` schlägt fehl: `data/tmp/` und `data/*.ged` von früheren root-Läufen blockieren www-data
-- PHPUnit-Warnings aus fehlenden kompilierten Sprachdateien (`resources/lang/*/messages.php`) führen zu exit 1 durch `failOnWarning="true"`
-
-**Ursachen:**
-1. `is_readable()` liefert für root immer `true` — Tests erwarten non-root-Verhalten
-2. Test-Artefakte aus root-Läufen in `data/` bleiben bestehen
-3. Sprachdateien im dev-Branch nicht kompiliert (`.po` vorhanden, `.php` fehlt)
-
-**Fixes:**
-- `layer2-unit/run.sh`: phpunit läuft jetzt als `www-data` (`su -s /bin/bash www-data -c ...`)
-- `layer2-unit/run.sh`: Aufräumen von `data/tmp/` und `data/*.ged` vor jedem Lauf
-- `layer2-unit/phpunit-unit.xml`: `failOnWarning="false"` (Sprachdatei-Warnings sind upstream dev-Branch-Artefakte)
-
-**Status:** ✅ Behoben in diesem Commit. 3397 Tests, 0 Failures, 70 Warnings (Sprachdateien), 1 Skipped.
-
----
-
-### Ergebnis Testlauf (2026-03-27 nach allen Fixes)
-
-| Layer | Tests | Ergebnis |
-|-------|-------|----------|
-| Layer 1 (Statisch) | PHPStan + PHPCS | ✅ exit 0 (informell: 3 PHPStan, 2151 PHPCS — upstream) |
-| Layer 2 (Unit) | 3397 | ✅ 0 Failures, 70 Warnings (Sprachdateien upstream), 1 Skipped |
-| Layer 3 (Integration) | 129 | ✅ 0 Failures, 1 Skipped |
-| Layer 4 (E2E) | 13 | ✅ 13 passed |
-| Layer 5 (Performance) | 3 | ✅ 3 passed |

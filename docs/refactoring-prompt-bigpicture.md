@@ -204,3 +204,31 @@ ISTQB-konform geschärft, wo nötig. Erwartete Struktur nach dem Refactoring:
 5. **Dokumentgröße signifikant reduziert** (Ziel: ~50–60% der bisherigen Größe)
 6. **Keine inhaltlichen Verluste** bei: Designentscheidungen, Feature-Matrizen,
    Abdeckungsmatrizen, Infrastruktur-Entscheidungen, Testkonventionen, ISTQB-Abschnitten
+
+---
+
+## Ergebnis (2026-03-28)
+
+### Durchgeführte Änderungen (A–H)
+
+| Abschnitt | Ergebnis |
+|-----------|----------|
+| **A — Entfernen** | AI-Diagramm-Prompt, Detailpläne (Phase 7a, 5b, 5c, Upstream-Stubs Prio 2a–4), 4 behobene GUEST-Bugs, Testlauf-Snapshot entfernt |
+| **B — Mapping-Tabelle** | Neue Zuordnung Layer ↔ ISTQB-Teststufe eingefügt (nach Designentscheidungen, vor Mermaid) |
+| **C — Mermaid** | 5 Subgraph-Titel auf ISTQB + Layer-Referenz aktualisiert. Hinweis auf volatile Testfall-Zahlen ergänzt |
+| **D — Known Bugs** | Auf 2 offene reduziert: SELinux HOST-Bug + neuer FamilyFactory Upstream-Bug |
+| **E — Upstream-Contribution** | Detailplan-Tabellen (Prio 2a–4) + Voraussetzungen entfernt. Konzept + Ergebnis-Summary bleiben |
+| **F — Änderungshistorie** | 15 Einträge in eigenen Abschnitt am Dokumentende verschoben + neuer Refactoring-Eintrag |
+| **G — Konsistenzprüfung** | Code ↔ Doku verifiziert: N2, Makefile, compose.yaml, Fixtures, E2E-Specs, OTel — keine Divergenzen |
+| **H — ISTQB-Terminologie** | „Unit-Test" → „Komponententest", „E2E-Testfälle" → „Systemtestfälle". Neue Abschnitte: Aktuelle Testergebnisse (CI-Verweis) |
+
+### Verifikation
+
+| Prüfpunkt | Status |
+|-----------|--------|
+| Feature-Matrix-IDs G01–G23, S01–S40 vollständig | ✓ |
+| Keine verwaisten Referenzen auf entfernte Abschnitte | ✓ |
+| ISTQB-Terminologie durchgängig | ✓ |
+| Mermaid syntaktisch korrekt | ✓ |
+| Dokumentgröße reduziert | 1791 → 1199 Zeilen (−33%), 107 → 71 KB (−34%) |
+| Keine inhaltlichen Verluste | ✓ (Designentscheidungen, Feature-Matrizen, Abdeckungsmatrizen, N1–N7, Testkonventionen, ISTQB-Abschnitte erhalten) |
