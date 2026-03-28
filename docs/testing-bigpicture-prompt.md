@@ -198,15 +198,19 @@ webtrees-testing-platform/
 ├── README.md                       # Deutsch: Strategie + Quickstart
 ├── CLAUDE.md                       # AI-Kontext: Testaufruf, Layer-Architektur, SELinux
 ├── docs/
-│   └── testing-bigpicture-prompt.md # Dieses Dokument (Teststrategie)
+│   ├── testing-bigpicture-prompt.md # Dieses Dokument (Teststrategie)
+│   ├── plan-privacy-testing-prompt.md # Privacy-Planungs-Prompt (P01–P29, Rollenmatrix)
+│   └── plan-privacy-implementation.md # Privacy-Umsetzungsplan (Phase P1–P9, Statustracking)
 ├── scripts/
 │   ├── setup-webtrees.sh          # Auto-Installer (config.ini.php, Migration, GEDCOM-Import)
+│   ├── generate-privacy-fixture.sh # Template → GEDCOM-Generator (__YEAR_MINUS_N__ ersetzen)
 │   ├── analyze-failure.sh         # Artefakt-Sammler → Claude Code CLI
 │   ├── export-traces.sh           # OTel-Traces als JSON exportieren
 │   └── wait-for-it.sh            # TCP-Port-Readiness-Check (vendored)
 ├── fixtures/
 │   ├── demo.ged                   # webtrees Core (72 Individuen, 29 Familien)
 │   ├── gedcom-l-muster.ged       # Deutsches Muster (CC BY 4.0, 37 Individuen)
+│   ├── privacy-test-template.ged  # Privacy-GEDCOM-Template (30+ Personen, __YEAR_MINUS_N__)
 │   ├── invalid-empty.txt          # Leere Datei (0 Bytes) — Upload-Validierung (G21)
 │   ├── invalid-text.txt           # Textdatei (kein GEDCOM) — Upload-Validierung (G21)
 │   ├── invalid-no-head.ged        # GEDCOM ohne HEAD — Upload-Validierung (G21)
@@ -220,8 +224,9 @@ webtrees-testing-platform/
 │   ├── run.sh                     # PHPUnit Integration-Suite
 │   ├── phpunit-integration.xml    # Config (MySQL)
 │   ├── bootstrap.php              # Autoloader (webtrees + DombrinksBlagen-Namespace)
-│   └── tests/                     # 11 Testklassen (MysqlTestCase + 10 Tests, 178 Testfälle)
+│   └── tests/                     # 19 Testklassen (2 Basis + 17 Tests, 274 Testfälle)
 │       ├── MysqlTestCase.php
+│       ├── PrivacyTestCase.php    # Basisklasse Privacy-Tests (GEDCOM-Generator, Rollen-Helper)
 │       ├── AutoCompleteIntegrationTest.php
 │       ├── ChartModuleIntegrationTest.php
 │       ├── GedcomImportTest.php
@@ -231,11 +236,19 @@ webtrees-testing-platform/
 │       ├── RelationshipServiceIntegrationTest.php
 │       ├── RomanNumeralsIntegrationTest.php
 │       ├── SearchIntegrationTest.php
-│       └── TreeOperationsTest.php
+│       ├── TreeOperationsTest.php
+│       ├── PrivacySmokeTest.php   # P1 Infrastruktur-Smoke (5 Tests)
+│       ├── IsDeadTest.php         # P08–P13 isDead()-Algorithmus (17 Tests)
+│       ├── PrivacyVisibilityTest.php # P01–P07, P14–P15 Sichtbarkeit (22 Tests)
+│       ├── ResnPrivacyTest.php    # P16–P21 RESN + default_resn (16 Tests)
+│       ├── RelationshipPrivacyTest.php # P22–P23 Relationship Privacy (5 Tests)
+│       ├── PrivacySearchTest.php  # P24 Privacy in Suchergebnissen (5 Tests)
+│       └── AccessControlTest.php  # P27–P29 Zugriffskontrolle (12 Tests)
 ├── layer4-e2e/
 │   ├── playwright.config.ts       # baseURL = http://webtrees:80
 │   ├── helpers/
-│   │   └── theme-switch.ts        # Shared Utility: Theme-Switching (5 Themes)
+│   │   ├── theme-switch.ts        # Shared Utility: Theme-Switching (5 Themes)
+│   │   └── privacy-roles.ts      # Privacy-Rollen-Login (visitor, member, editor, moderator, manager, relationship)
 │   └── tests/
 │       ├── login.spec.ts          # S32 (theme-unabhängig)
 │       ├── auth.spec.ts           # S33, S34 (theme-unabhängig)
@@ -250,7 +263,13 @@ webtrees-testing-platform/
 │       ├── pedigree.spec.ts       # S14 (× 5 Themes)
 │       ├── source-list.spec.ts    # S20 (× 5 Themes)
 │       ├── upload-validation.spec.ts # G21 (Admin, kein Theme-Loop)
-│       └── search-replace.spec.ts # S13 (× 5 Themes + 1 Visitor)
+│       ├── search-replace.spec.ts # S13 (× 5 Themes + 1 Visitor)
+│       ├── privacy-visibility.spec.ts # P02–P03, P14, P25 (5 Tests)
+│       ├── privacy-resn.spec.ts   # P16–P19 (7 Tests)
+│       ├── privacy-search.spec.ts # P24 (4 Tests)
+│       ├── privacy-charts.spec.ts # P26 (2 Tests)
+│       ├── privacy-relationship.spec.ts # P22 (3 Tests)
+│       └── access-control.spec.ts # P27–P29 (5 Tests)
 ├── layer5-performance/
 │   ├── playwright.config.ts       # Performance-spezifische Config (timeout 60s, retries 0)
 │   ├── run.sh                     # Perf-Messung + Baseline-Vergleich
@@ -283,15 +302,16 @@ versioniert — das ist der Kern des Baseline-Vergleichs.
 |---|---|---|---|
 | `demo.ged` | `../webtrees-upstream/webtrees/tests/data/demo.ged` | 72 Individuen, 29 Familien (brit. Königshaus) | Primär-Fixture für alle Schichten |
 | `gedcom-l-muster.ged` | `github/gedcom_muster/muster_GEDCOM_UTF-8.ged` | 37 Individuen, 18 Familien | i18n / Deutsch-Testing |
+| `privacy-test-template.ged` | Eigene Erstellung | 30+ Individuen, 7+ Familien (dynamische Datums-Platzhalter) | Privacy & Zugriffskontrolle (P01–P29) |
 
 **Begründung:** `demo.ged` ist die kanonische Testdatei von webtrees selbst (verwendet in
 `ImportGedcomTest`). Sie deckt Mehrgenerationen-Beziehungen, mehrere Ehen, Medien-Referenzen
 und Quellen ab. Das deutsche Muster (CC BY 4.0, Verein für Computergenealogie) ergänzt
 für Lokalisierungstests.
 
-**Setup:** Beide Dateien werden als Kopie in `fixtures/` abgelegt. Das
-`setup-webtrees.sh`-Skript importiert sie beim Container-Start als zwei separate Bäume
-(`demo` und `muster`).
+**Setup:** Alle Fixture-Dateien liegen in `fixtures/`. Das `setup-webtrees.sh`-Skript
+importiert sie beim Container-Start als drei separate Bäume (`demo`, `muster`, `privacy`).
+Die Privacy-Fixture wird dynamisch aus dem Template generiert (`generate-privacy-fixture.sh`).
 
 ---
 
@@ -477,8 +497,9 @@ Collation `utf8mb4_bin` entspricht `DB::COLLATION_UTF8[DB::MYSQL]` in webtrees C
 1. `composer install` im Container (Dependencies in gemountetes Volume)
 2. `data/config.ini.php` generieren (MySQL-Credentials des Containers)
 3. DB-Migration via `MigrationService::updateSchema()`
-4. GEDCOM-Import: `demo.ged` → Baum `demo`, `gedcom-l-muster.ged` → Baum `muster`
-5. Test-Admin-User anlegen (`admin` / `admin`)
+4. Privacy-Fixture generieren (`generate-privacy-fixture.sh`)
+5. GEDCOM-Import: `demo.ged` → Baum `demo`, `gedcom-l-muster.ged` → Baum `muster`, `privacy-test.ged` → Baum `privacy`
+6. Test-User anlegen: Admin (`admin`), 4 rollenbasierte User (member, editor, moderator, manager), Relationship-Privacy-User (`test-relationship`)
 
 Der Setup-Wizard wird vollständig umgangen (programmatischer Install).
 
@@ -694,6 +715,50 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S39 | Phonetische Suche (Seitenaufruf) | /search-phonetic aufrufen → Formular sichtbar | 3 | Mittel |
 | S40 | Navigation: Homepage (Baumseite) | Homepage/Baumseite aufrufen → Baumstatistik oder Willkommensblock dargestellt, keine HTTP-Fehler | 3 | Hoch |
 
+---
+
+### Feature-Matrix: Datenschutz & Zugriffskontrolle
+
+> Abgeleitet aus Code-Analyse von `Individual::canShow()`, `Individual::canShowByType()`,
+> `Individual::isDead()`, `GedcomRecord::canEdit()`, `Fact::canEdit()`,
+> Tree-Preferences (Privacy-Einstellungen), User-Preferences (Relationship Privacy).
+> Detaillierter Planungs-Prompt: `docs/plan-privacy-testing-prompt.md`.
+>
+> Teststufen: 2 = Komponentenintegrationstest, 3 = Systemtest.
+> Rollen: B = Besucher, M = Mitglied, E = Bearbeiter, Mo = Moderator, V = Verwalter.
+
+| # | Feature | Abgeleitete Anforderung | Rollen | Teststufe | Prio |
+|---|---|---|---|---|---|
+| P01 | Stammbaum-Sichtbarkeit | `REQUIRE_AUTHENTICATION=1`: Besucher sieht keine Daten. `=0`: Besucher sieht öffentliche Daten. | B, M | 2, 3 | Hoch |
+| P02 | Verstorbene Personen zeigen | `SHOW_DEAD_PEOPLE=PRIV_PRIVATE`: Besucher sieht Verstorbene. `=PRIV_USER`: Nur Mitglieder+. | B, M, V | 2, 3 | Hoch |
+| P03 | Lebende Personen zeigen (Override) | `HIDE_LIVE_PEOPLE=0`: Privacy deaktiviert. `=1`: Privacy aktiv. | B, M, V | 2, 3 | Hoch |
+| P04 | MAX_ALIVE_AGE — Altersgrenze | Grenzwertanalyse: Person geboren vor genau 120 Jahren (Grenze), ±1 Jahr. | B, M | 2 | Hoch |
+| P05 | KEEP_ALIVE_YEARS_BIRTH | Verstorbene mit Geburt innerhalb N Jahren bleibt geschützt. Grenzwert: ==N, ==N+1. | B, M | 2 | Hoch |
+| P06 | KEEP_ALIVE_YEARS_DEATH | Verstorbene mit Tod innerhalb N Jahren bleibt geschützt. Grenzwert: ==N, ==N+1. | B, M | 2 | Hoch |
+| P07 | KEEP_ALIVE kombiniert | Beide KEEP_ALIVE gesetzt — OR-Logik. | B, M | 2 | Mittel |
+| P08 | isDead(): Expliziter Tod | `1 DEAT Y` / `1 DEAT\n2 DATE` / `1 DEAT\n2 PLAC` → `isDead()=true`. | — | 2 | Hoch |
+| P09 | isDead(): Datiertes Event > MAX_ALIVE_AGE | Irgendein Event älter als MAX_ALIVE_AGE → tot. Grenzwert ±1. | — | 2 | Hoch |
+| P10 | isDead(): Geburt vorhanden + jung | Geburtsdatum < MAX_ALIVE_AGE, kein DEAT → `isDead()=false`. | — | 2 | Hoch |
+| P11 | isDead(): Inferenz Eltern | Eltern-Events > MAX_ALIVE_AGE+45 → tot. Grenzwert. | — | 2 | Hoch |
+| P12 | isDead(): Inferenz Ehepartner | Heirat > MAX_ALIVE_AGE−10 oder Ehepartner-Event > MAX_ALIVE_AGE+40 → tot. | — | 2 | Mittel |
+| P13 | isDead(): Inferenz Kinder/Enkel | Kinder-Event > MAX_ALIVE_AGE−15, Enkel-Event > MAX_ALIVE_AGE−30 → tot. | — | 2 | Mittel |
+| P14 | Namen vertraulicher Personen | `SHOW_LIVING_NAMES` × 3 Stufen (PRIV_PRIVATE, PRIV_USER, PRIV_NONE). | B, M, V | 2, 3 | Hoch |
+| P15 | Vertrauliche Beziehungen | `SHOW_PRIVATE_RELATIONSHIPS=1`: leere Boxen in Charts. `=0`: komplett ausgeblendet. | B, M | 2, 3 | Mittel |
+| P16 | RESN none (Record) | `1 RESN none` → für alle sichtbar, überschreibt isDead()-Logik. | B, M, V | 2, 3 | Hoch |
+| P17 | RESN privacy (Record) | `1 RESN privacy` → nur Mitglieder+ sehen Record. | B, M, V | 2, 3 | Hoch |
+| P18 | RESN confidential (Record) | `1 RESN confidential` → nur Verwalter/Admin sehen Record. | B, M, V | 2, 3 | Hoch |
+| P19 | RESN auf Fakten-Ebene | `2 RESN privacy` auf BIRT → Person sichtbar, Fakt nur für M+. `2 RESN confidential` auf DEAT → nur für V+. | B, M, V | 2, 3 | Hoch |
+| P20 | default_resn (Individuum) | DB-Eintrag `xref=..., tag_type=NULL` → gesamter Record eingeschränkt. | B, M, V | 2 | Mittel |
+| P21 | default_resn (Faktentyp) | DB-Eintrag `tag_type=BIRT` → alle BIRT eingeschränkt. Kombiniert: `xref+tag_type`. | B, M, V | 2 | Mittel |
+| P22 | Relationship Privacy (Pfadlänge) | `PREF_TREE_PATH_LENGTH=2`: nahe Verwandte sichtbar, entfernte/unverwandte nicht. `=0`: deaktiviert. | M | 2, 3 | Mittel |
+| P23 | Relationship Privacy (kein XREF) | Pfadlänge > 0, aber kein `PREF_TREE_ACCOUNT_XREF` → Fallback: alles sichtbar. | M | 2 | Mittel |
+| P24 | Privacy in Suchergebnissen | Geschützte Person nicht in Suchergebnissen für Besucher. Für Mitglieder+: enthalten. | B, M, V | 2, 3 | Hoch |
+| P25 | Personenseite: Vertraulich-Platzhalter | Besucher → „Vertraulich"/„Private". Name ggf. sichtbar (SHOW_LIVING_NAMES). | B, M, V | 3 | Hoch |
+| P26 | Charts: Vertrauliche Boxen | Ahnentafel mit vertraulichen Personen → leere Boxen oder ausgeblendet. | B, M | 3 | Mittel |
+| P27 | Bearbeiter: Datensatz bearbeiten | Fakt hinzufügen → pending change in DB. `auto_accept` → sofort akzeptiert. | E | 2, 3 | Hoch |
+| P28 | Moderator: Änderungen akzeptieren | Moderator akzeptiert/verwirft Pending Change → DB-Status aktualisiert. | Mo | 2, 3 | Hoch |
+| P29 | RESN locked / Zugriffsverbot | B/M: kein Edit. E auf RESN-locked: kein Edit. V: Edit erlaubt. `privacy, locked`: additiv. | B, M, E, V | 2, 3 | Hoch |
+
 > **Querschnittsanforderung Theme-Abdeckung (Phase 5c):** Jeder Systemtest-Testfall (Teststufe 3) für tree-gebundene Seiten
 > MUSS alle 5 Standard-Themes abdecken: `webtrees`, `clouds`, `colors`, `fab`, `xenea`. Theme-Abdeckung ist keine eigene
 > Testbedingung mehr (S25 aufgelöst), sondern eine strukturelle Eigenschaft jedes Testfalls. Ausnahmen: `auth.spec.ts` (S33, S34)
@@ -711,20 +776,23 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 ### Testfall-Verteilung nach Teststufe
 
-| Teststufe | GEDCOM (G01–G23) | Suche/Nav (S01–S39) | Gesamt |
-|---|---|---|---|
-| Teststufe 1 — Komponententest | G05, G06, G11, G17, G18, G19, G22, G23 (8) | S04 (1) | **9** |
-| Teststufe 2 — Komponentenintegrationstest | G01–G04, G07–G10, G12–G16 (13) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (13) | **26** |
-| Teststufe 3 — Systemtest | G20, G21 (2) | S09, S13–S18, S20, S23–S24, S26–S40 (25) | **27** |
-| **Summe** | **23** | **39** | **62** |
+| Teststufe | GEDCOM (G01–G23) | Suche/Nav (S01–S39) | Privacy (P01–P29) | Gesamt |
+|---|---|---|---|---|
+| Teststufe 1 — Komponententest | G05, G06, G11, G17, G18, G19, G22, G23 (8) | S04 (1) | — | **9** |
+| Teststufe 2 — Komponentenintegrationstest | G01–G04, G07–G10, G12–G16 (13) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (13) | P01–P24, P27–P29 (27) | **53** |
+| Teststufe 3 — Systemtest | G20, G21 (2) | S09, S13–S18, S20, S23–S24, S26–S40 (25) | P01–P03, P14–P19, P22, P24–P29 (18) | **45** |
+| **Nur Teststufe 2** | — | — | P04–P13, P20–P21, P23 (13) | — |
+| **Nur Teststufe 3** | — | — | P25, P26 (2) | — |
+| **Beide Teststufen** | — | — | 14 Features (P01–P03, P14–P19, P22, P24, P27–P29) | — |
+| **Summe** | **23** | **39** | **29** | **91** |
 
 ### Prioritätsverteilung
 
-| Priorität | Anzahl | Anteil |
-|---|---|---|
-| Hoch | 26 | 42% |
-| Mittel | 32 | 52% |
-| Niedrig | 4 | 6% |
+| Priorität | G+S | P | Gesamt | Anteil |
+|---|---|---|---|---|
+| Hoch | 26 | 19 | **45** | 49% |
+| Mittel | 32 | 10 | **42** | 46% |
+| Niedrig | 4 | 0 | **4** | 4% |
 
 ---
 
@@ -736,8 +804,9 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | **Gap-Analyse existierende Tests** | Priorisierung — Stub-Tests = ungetestet = hohe Prio | Assertionsdichte messen, Stubs identifizieren |
 | **GEDCOM 5.5.1 Standard** | Compliance — Tag-Abdeckung, Encoding, Date-Formate | Element-Klassen vs. Standard-Tags abgleichen |
 
-Die Domänen **Beziehungsberechnung** und **Privacy/Zugriffskontrolle** sind bewusst als
-niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt werden.
+Die Domäne **Beziehungsberechnung** ist bewusst als niedrigere Priorität eingestuft.
+**Privacy/Zugriffskontrolle** wurde in Phase 11 vollständig umgesetzt (P01–P29, siehe
+Feature-Matrix oben und `docs/plan-privacy-implementation.md`).
 
 ---
 
@@ -750,8 +819,8 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 |---|---|
 | Statischer Test | PHPStan Level 8: 0 Errors; PHPCS PSR-12: 0 Violations |
 | Teststufe 1 — Komponententest | Alle Feature-Matrix-Komponententests grün (G05, G06, G11, G17–G19, G22, G23, S04); Anweisungsüberdeckung ≥ vorheriger Wert (Ratchet) |
-| Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, S01–S03, S05–S08, S10–S12, S19, S21, S22) |
-| Teststufe 3 — Systemtest | Alle Systemtestfälle grün über alle 5 Standard-Themes (G20, G21, S09, S13–S18, S20, S23–S24, S26–S40); S32–S34 theme-unabhängig grün |
+| Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, S01–S03, S05–S08, S10–S12, S19, S21, S22, P01–P24, P27–P29) |
+| Teststufe 3 — Systemtest | Alle Systemtestfälle grün über alle 5 Standard-Themes (G20, G21, S09, S13–S18, S20, S23–S24, S26–S40); S32–S34 theme-unabhängig grün; Privacy-Systemtests grün (P01–P03, P14–P19, P22, P24–P29) |
 | Performanztest | Kein Szenario >20% über Baseline; kein Szenario mit >+2 DB-Queries gegenüber Baseline |
 
 ---
@@ -766,8 +835,10 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | `demo.ged` (bekannte Inhalte: 72 Individuen, 29 Familien) | G01–G04, G07–G12, S01–S03, S19 | DB-Count, Feldwerte prüfen, Beziehungsstruktur verifizieren |
 | GEDCOM 5.5.1-Standard (Kapitel 2–4) | G05, G17–G19, G22, G23 | Spec-Abgleich: Tag-Liste, Datumsformate, Encoding-Regeln, CONC/CONT |
 | webtrees-DB-Schema (`DB::MYSQL` Constraints) | G12, G13, S10 | XREF-Eindeutigkeit, Fremdschlüssel, Collation-Verhalten |
-| Erwartetes DOM (Playwright-Selektoren) | S09, S13–S18, S20, S23–S24, S26–S40 | Element-Existenz, Struktur, Textinhalt; kein Screenshot-Vergleich |
+| Erwartetes DOM (Playwright-Selektoren) | S09, S13–S18, S20, S23–S24, S26–S40, P25–P29 | Element-Existenz, Struktur, Textinhalt; kein Screenshot-Vergleich |
 | Vorversion (Baseline-Traces) | Performanztest | Trace-Diff: Ladezeit ≤+20%, Query-Count ≤+2 |
+| `privacy-test-template.ged` (30+ Personen, dynamische Daten) | P01–P24, P27–P29 | DB-Sichtbarkeit per `canShow()`/`canEdit()`, Rollen × Einstellungen × Personenzustand |
+| webtrees Privacy-Quellcode (`Individual::canShowByType()`, `isDead()`, `GedcomRecord::canEdit()`) | P01–P29 | Code-Analyse: Rollenmatrix, Grenzwerte, Inferenz-Logik als Orakel |
 
 ---
 
@@ -783,6 +854,11 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | **Entscheidungstabellentest** | G16, S12 | Kombinatorik: 4 Access-Levels × 6 Record-Typen = 24 Privacy-Kombinationen; Rolle × Record-Sichtbarkeit |
 | **Anwendungsfall-Test** | G20, G21, S09, S13–S18, S23–S24, S26–S40 | Systemtest-Szenarien mit Nutzerinteraktion: Import-Export-Roundtrip, Chart-Rendering, Seitennavigation, Record-Seiten, Auth-Formulare, Kalender |
 | **Erfahrungsbasierter Test** | G10, G11, S17 | Keine formale Spezifikation verfügbar: Legacy-Formate (TNG), Custom-Tags (Ancestry, FamilySearch), Nischen-Charts |
+| **Grenzwertanalyse** | P04–P06, P08–P13 | Datumsgrenzen: MAX_ALIVE_AGE ±1, KEEP_ALIVE ±1, isDead()-Inferenz-Offsets (Eltern +45, Ehepartner −10/+40, Kinder −15, Enkel −30) |
+| **Äquivalenzklassenbildung** | P16–P19, P20–P21 | RESN-Werte (none, privacy, confidential) × Rollen; default_resn-Typen (xref, tag_type, xref+tag_type) |
+| **Entscheidungstabellentest** | P14–P15, P24 | SHOW_LIVING_NAMES (3 Stufen) × Rollen; Suche × Privacy-Zustand × Rolle |
+| **Anwendungsfall-Test** | P25–P29 | End-to-End-Szenarien: Seitenaufruf → Sichtbarkeitsprüfung → Edit → Pending Change → DB-Persistenz |
+| **Paarweiser Test** | P01–P03 | Kombinatorik: REQUIRE_AUTHENTICATION × HIDE_LIVE_PEOPLE × SHOW_DEAD_PEOPLE × Rolle — paarweise statt volles Produkt |
 
 ---
 
@@ -801,6 +877,12 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | R5 | Charts rendern fehlerhaft nach Update | Mittel | Mittel | S14, S16, S18 (Hoch/Mittel) |
 | R6 | Encoding-Konvertierung fehlerhaft (Zeichenverlust) | Niedrig | Hoch | G07, G08, G17 (Hoch/Mittel) |
 | R7 | Performance-Regression nach webtrees-Update | Mittel | Mittel | Performanztest mit Baseline-Vergleich |
+| R8 | Privacy-Leak: Lebende Person für Besucher sichtbar | Mittel | Kritisch | P01–P07, P10–P11, P22–P24 |
+| R9 | Privacy-Leak: Vertrauliche Fakten (Geburtsdatum, SSN) sichtbar | Niedrig | Kritisch | P17–P19 |
+| R10 | isDead()-Fehlklassifikation an Datumsgrenzen | Mittel | Hoch | P08–P13 |
+| R11 | RESN-Tags werden ignoriert oder falsch interpretiert | Niedrig | Hoch | P16–P21 |
+| R12 | Bearbeiter kann ohne Berechtigung Daten ändern | Niedrig | Hoch | P27–P29 |
+| R13 | Relationship Privacy zeigt entfernte/unverwandte Personen | Niedrig | Mittel | P22–P23 |
 
 ### Projektrisiken
 
@@ -823,7 +905,7 @@ niedrigere Priorität eingestuft, können aber in einer späteren Phase ergänzt
 | **Zielwert** | Kein absoluter Wert — Ratchet-Prinzip |
 | **Mechanismus** | CI prüft: aktuelle Überdeckung ≥ vorherige Überdeckung |
 | **Baseline** | Wird beim ersten vollständigen Testlauf automatisch gesetzt |
-| **Scope** | Service-Klassen der Feature-Matrizen (G01–G23, S01–S24, S26–S40) |
+| **Scope** | Service-Klassen der Feature-Matrizen (G01–G23, S01–S24, S26–S40, P01–P29) |
 | **Reporting** | Coverage-HTML als CI-Artefakt (7 Tage Retention) |
 
 **Begründung:** Das Projekt startet bei ~0% substanzieller Überdeckung (95% Stub-Tests).
@@ -969,8 +1051,8 @@ kann bei Bedarf per Skript extrahiert werden.
 
 ## Implementierungs-Fahrplan
 
-> Status: **Alle Phasen implementiert (1–10).** Abdeckung 100% (62/62 Features).
-> Detailplan und Umsetzungsbericht: `docs/plan-phase-next-coverage.md`.
+> Status: **Alle Phasen implementiert (1–11).** Abdeckung 100% (62/62 Features G+S, 29/29 Features P).
+> Detailplan und Umsetzungsbericht: Phasen 1–10 in `docs/plan-phase-next-coverage.md`, Phase 11 in `docs/plan-privacy-implementation.md`.
 
 | Phase | Status | Ergebnis |
 |---|---|---|
@@ -988,6 +1070,7 @@ kann bei Bedarf per Skript extrahiert werden.
 | Phase 8a — Testabdeckung steigern (Komponententest als Nebenprodukt) | **Nicht umgesetzt** | Bedingt: Kein Erkenntnisgewinn aus Phase 8, der Upstream-Stub-Befüllung erfordert. Features durch Phase 8 abgedeckt. |
 | Phase 9 — Testabdeckung steigern (Systemtest) | **Implementiert** | 5 APs: 4 Fixture-Dateien, 20 neue Tests. Notizseite (S28) auf `muster`-Tree, Upload-Validierung (G21) neue Spec, Search-and-Replace (S13) neue Spec, G22 Status-Update. |
 | Phase 10 — Abschluss (Testlauf + Fehlerbereinigung) | **Implementiert** | `make test-all` grün über alle 5 Layer. 2 Iterationsrunden Fehlerbereinigung. 62/62 Features abgedeckt (100%). |
+| Phase 11 — Privacy & Zugriffskontrolle | **Implementiert** | 108 neue Tests (82 Teststufe 2 + 26 Teststufe 3). Feature-Matrix P01–P29 vollständig abgedeckt. 3 Iterationsrunden Fehlerbereinigung, 18 Fixes. Detailplan: `docs/plan-privacy-implementation.md`. |
 
 ---
 
@@ -1143,12 +1226,46 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S39 | Phonetische Suche (Seitenaufruf) | — | — | `search-forms.spec.ts` ✅ | **Abgedeckt** |
 | S40 | Navigation: Homepage (Baumseite) | — | — | `homepage.spec.ts` ✅ (5 Themes × 2 Tests) | **Abgedeckt** |
 
+#### Datenschutz & Zugriffskontrolle (P01–P29)
+
+| # | Feature | Eigene Infra (MySQL) | Eigene Infra (Playwright) | Status |
+|---|---|---|---|---|
+| P01 | Stammbaum-Sichtbarkeit | `PrivacyVisibilityTest` ✅ | `privacy-visibility.spec.ts` ✅ | **Abgedeckt** |
+| P02 | Verstorbene Personen zeigen | `PrivacyVisibilityTest` ✅ | `privacy-visibility.spec.ts` ✅ | **Abgedeckt** |
+| P03 | Lebende Personen zeigen (Override) | `PrivacyVisibilityTest` ✅ | `privacy-visibility.spec.ts` ✅ | **Abgedeckt** |
+| P04 | MAX_ALIVE_AGE — Altersgrenze | `IsDeadTest` + `PrivacyVisibilityTest` ✅ | — | **Abgedeckt** |
+| P05 | KEEP_ALIVE_YEARS_BIRTH | `PrivacyVisibilityTest` ✅ | — | **Abgedeckt** |
+| P06 | KEEP_ALIVE_YEARS_DEATH | `PrivacyVisibilityTest` ✅ | — | **Abgedeckt** |
+| P07 | KEEP_ALIVE kombiniert | `PrivacyVisibilityTest` ✅ | — | **Abgedeckt** |
+| P08 | isDead(): Expliziter Tod | `IsDeadTest` ✅ | — | **Abgedeckt** |
+| P09 | isDead(): Datiertes Event > MAX_ALIVE_AGE | `IsDeadTest` ✅ | — | **Abgedeckt** |
+| P10 | isDead(): Geburt vorhanden + jung | `IsDeadTest` ✅ | — | **Abgedeckt** |
+| P11 | isDead(): Inferenz Eltern | `IsDeadTest` ✅ | — | **Abgedeckt** |
+| P12 | isDead(): Inferenz Ehepartner | `IsDeadTest` ✅ | — | **Abgedeckt** |
+| P13 | isDead(): Inferenz Kinder/Enkel | `IsDeadTest` ✅ | — | **Abgedeckt** |
+| P14 | Namen vertraulicher Personen | `PrivacyVisibilityTest` ✅ | `privacy-visibility.spec.ts` ✅ | **Abgedeckt** |
+| P15 | Vertrauliche Beziehungen | `PrivacyVisibilityTest` ✅ | — | **Abgedeckt** |
+| P16 | RESN none (Record) | `ResnPrivacyTest` ✅ | `privacy-resn.spec.ts` ✅ | **Abgedeckt** |
+| P17 | RESN privacy (Record) | `ResnPrivacyTest` ✅ | `privacy-resn.spec.ts` ✅ | **Abgedeckt** |
+| P18 | RESN confidential (Record) | `ResnPrivacyTest` ✅ | `privacy-resn.spec.ts` ✅ | **Abgedeckt** |
+| P19 | RESN auf Fakten-Ebene | `ResnPrivacyTest` ✅ | `privacy-resn.spec.ts` ✅ | **Abgedeckt** |
+| P20 | default_resn (Individuum) | `ResnPrivacyTest` ✅ | — | **Abgedeckt** |
+| P21 | default_resn (Faktentyp) | `ResnPrivacyTest` ✅ | — | **Abgedeckt** |
+| P22 | Relationship Privacy (Pfadlänge) | `RelationshipPrivacyTest` ✅ | `privacy-relationship.spec.ts` ✅ | **Abgedeckt** |
+| P23 | Relationship Privacy (kein XREF) | `RelationshipPrivacyTest` ✅ | — | **Abgedeckt** |
+| P24 | Privacy in Suchergebnissen | `PrivacySearchTest` ✅ | `privacy-search.spec.ts` ✅ | **Abgedeckt** |
+| P25 | Personenseite: Vertraulich-Platzhalter | — | `privacy-visibility.spec.ts` ✅ | **Abgedeckt** |
+| P26 | Charts: Vertrauliche Boxen | — | `privacy-charts.spec.ts` ✅ | **Abgedeckt** |
+| P27 | Bearbeiter: Datensatz bearbeiten | `AccessControlTest` ✅ | `access-control.spec.ts` ✅ | **Abgedeckt** |
+| P28 | Moderator: Änderungen akzeptieren | `AccessControlTest` ✅ | `access-control.spec.ts` ✅ | **Abgedeckt** |
+| P29 | RESN locked / Zugriffsverbot | `AccessControlTest` ✅ | `access-control.spec.ts` ✅ | **Abgedeckt** |
+
 #### Zusammenfassung Abdeckung
 
-| Status | G-Features | S-Features (S01–S24, S26–S40) | Gesamt |
-|---|---|---|---|
-| **Abgedeckt** | 23 | 39 | **62** (100%) |
-| Davon mit Einschränkung (Upstream-Bug) | 1 (G16: PRIV_NONE/PRIV_USER) | 0 | **1** (2%) |
+| Status | G-Features | S-Features (S01–S24, S26–S40) | P-Features (P01–P29) | Gesamt |
+|---|---|---|---|---|
+| **Abgedeckt** | 23 | 39 | 29 | **91** (100%) |
+| Davon mit Einschränkung (Upstream-Bug) | 1 (G16: PRIV_NONE/PRIV_USER) | 0 | 0 | **1** (1%) |
 
 ---
 
@@ -1205,4 +1322,5 @@ make down && make up
 *Aktualisiert: 2026-03-28 — Dokument-Refactoring: Abgearbeitete Detailpläne (Phase 5b, 5c, 7a, Upstream-Stubs Prio 2a–4) entfernt. AI-Diagramm-Prompt entfernt. Behobene Known Bugs entfernt, Upstream-Bug FamilyFactory::mapper() als eigener Eintrag aufgenommen. Mapping-Tabelle Layer ↔ ISTQB-Teststufe eingeführt, durchgängig ISTQB-Terminologie. Mermaid-Diagramm aktualisiert (ISTQB-Labels, Layer-Zuordnung). Upstream-Contribution auf Konzept + Ergebnis gekürzt. Testlauf-Snapshot durch Verweis auf CI-Artefakte ersetzt.*
 *Aktualisiert: 2026-03-28 — Phasen 8–10 geplant (Testabdeckung steigern). Phase 8: 8 APs Komponentenintegrationstest (~48 Tests) für 10 offene + 7 teilweise Features. Phase 8a: bedingte Upstream-Stubs (G11, G17, G23). Phase 9: 5 APs Systemtest (~20 Tests) für S28, G21, S13, G22. Phase 10: Abschluss mit `make test-all` und Fehlerbereinigung. Detailplan in `docs/plan-phase-next-coverage.md`. Ziel: ≥97% Abdeckung (60-62/62 Features).*
 *Aktualisiert: 2026-03-28 — Phasen 8–10 implementiert (Testabdeckung 100%). Phase 8: 48 neue Integrationstests (AP 8-1 bis 8-8) in SearchIntegrationTest, GedcomImportTest, TreeOperationsTest, ChartModuleIntegrationTest, ListModuleIntegrationTest. Phase 8a: nicht umgesetzt (kein Erkenntnisgewinn). Phase 9: 20 neue E2E-Tests (AP 9-1 bis 9-5) — 4 Fixtures, NOTE-Test auf muster-Tree (S28), upload-validation.spec.ts (G21), search-replace.spec.ts (S13), G22 Status-Update. Phase 10: `make test-all` grün (3397 Unit + 178 Integration + 150 E2E + 3 Performance). 2 Iterationsrunden Fehlerbereinigung. Abdeckung 62/62 Features (100%). Abweichungen: G08 Encoding-Tests auf Post-Konvertierung umgestellt (importRecord macht keine Encoding-Konvertierung). 1 flaky E2E-Test (S13 Visitor, Session-Isolation). Detailbericht in `docs/plan-phase-next-coverage.md` Abschnitt 8.*
+*Aktualisiert: 2026-03-28 — Phase 11 (Privacy & Zugriffskontrolle) implementiert. Feature-Matrix P01–P29 (29 Features) eingefügt. 108 neue Tests (82 Teststufe 2 in 7 Testklassen + 26 Teststufe 3 in 6 Specs). Produktrisiken R8–R13 ergänzt. Testentwurfsverfahren (Grenzwertanalyse isDead, Äquivalenzklassen RESN, Entscheidungstabelle Rollenmatrix, paarweiser Test Preferences). Endekriterien um P01–P29 erweitert. Abdeckungsmatrix P01–P29 (29/29 abgedeckt). N2-Verzeichnisstruktur: 18 neue Dateien (Template, Generator, Basisklasse, 7 Testklassen, Helper, 6 Specs, 2 Planungsdokumente). Testorakel um Privacy-Fixture und Code-Analyse ergänzt. Gesamtabdeckung 91/91 Features (100%). Detailplan: `docs/plan-privacy-implementation.md`.*
 
