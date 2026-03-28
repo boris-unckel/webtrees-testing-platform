@@ -756,3 +756,33 @@ wenn alle Familienmitglieder privat sind. Dies tritt bei `PRIV_NONE` und
   dokumentiert und als `markTestSkipped()` behandelt, bis der Bug upstream gefixt ist.
 - **Kein Workaround in der Fixture nötig** — die Tests testen die Privacy-Logik,
   nicht die Export-Pipeline.
+
+---
+
+## Umsetzungsplan — Zusammenfassung
+
+> Detaillierter Implementierungsplan mit Statustracking: `docs/plan-privacy-implementation.md`.
+
+### Phasenübersicht
+
+| Phase | Inhalt | Arbeitspakete |
+|---|---|---|
+| **P1** — Fixture & Infrastruktur | GEDCOM-Template, Generator-Skript, Setup-Erweiterung, PrivacyTestCase, Playwright-Helper, bestehende Tests verifizieren | 6 APs |
+| **P2** — isDead()-Tests | Expliziter Tod, Grenzwertanalyse, Verwandten-Inferenz | 4 APs |
+| **P3** — Visibility-Tests | Stammbaum-Sichtbarkeit, Verstorbene, KEEP_ALIVE, Namen/Beziehungen | 5 APs |
+| **P4** — RESN-Tests | Record-RESN, Fact-RESN, default_resn | 4 APs |
+| **P5** — Relationship & Suche | Pfadlänge, Suchergebnis-Privacy | 3 APs |
+| **P6** — Zugriffskontrolle | Edit, Accept, Locked, auto_accept | 4 APs |
+| **P7** — Systemtests (Playwright) | 6 Spec-Dateien, alle Rollen im Browser | 7 APs |
+| **P8** — Kompletttest & Fehlerbereinigung | `make test-all`, Iterationsrunden | 3 APs |
+| **P9** — Dokumentation | `testing-bigpicture-prompt.md` an 10 Stellen aktualisieren | 8 APs |
+
+### Tracking-Features
+
+- Statuslegende mit Symbolen (⬜ Geplant / 🔄 In Arbeit / ✅ Erledigt / ⏭️ Übersprungen / 🐛 Blockiert)
+- Jede Phase hat einen Abschluss-Checkpoint mit Test-Ergebniszahlen
+- Fehlerbereinigung mit nummerierten Iterationsrunden
+- Ergebnisprotokoll-Tabellen (pro Layer, pro Testklasse)
+- Bug-Tracker-Tabelle
+- Fazit-Sektion mit quantitativer Metrik-Tabelle und qualitativer Bewertung
+- Checkliste für die 10 Aktualisierungsstellen in `testing-bigpicture-prompt.md`
