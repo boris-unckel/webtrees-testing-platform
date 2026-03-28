@@ -16,7 +16,8 @@ services:
       - webtrees-data:/var/www/html/data
       - webtrees-vendor:/var/www/html/vendor
       # Optionales Modul-Mounting: MODULE_PATH=/pfad/zum/modul MODULE_NAME=db_foo make test-integration
-      - ${MODULE_PATH:-/dev/null}:/var/www/html/modules_v4/${MODULE_NAME:-_none}:ro,z
+      # Default: leeres Verzeichnis statt /dev/null (SELinux lsetxattr auf /dev/null nicht erlaubt)
+      - ${MODULE_PATH:-./.empty-module}:/var/www/html/modules_v4/${MODULE_NAME:-_none}:ro,z
       # GEDCOM-Fixtures
       - ./fixtures:/fixtures:ro,z
       # Test-Layer für Container-interne Ausführung
