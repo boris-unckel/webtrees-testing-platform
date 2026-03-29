@@ -20,6 +20,8 @@ services:
       # Optionales Modul-Mounting: MODULE_PATH=/pfad/zum/modul MODULE_NAME=db_foo make test-integration
       # Default: leeres Verzeichnis statt /dev/null (SELinux lsetxattr auf /dev/null nicht erlaubt)
       - ${MODULE_PATH:-./.empty-module}:/var/www/html/modules_v4/${MODULE_NAME:-_none}:ro,z
+      # OTel-Spans-Modul (semantische Spans + Baggage-Konvertierung)
+      - ./modules/otel-spans:/var/www/html/modules_v4/otel_spans:ro,z
       # GEDCOM-Fixtures
       - ./fixtures:/fixtures:ro,z
       # Test-Layer für Container-interne Ausführung
@@ -41,8 +43,8 @@ services:
       # OpenTelemetry
       OTEL_PHP_AUTOLOAD_ENABLED: ${OTEL_PHP_AUTOLOAD_ENABLED:-true}
       OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-webtrees}
-      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
-      OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-grpc}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}
+      OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}
       OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-false}
       OTEL_TRACES_EXPORTER: ${OTEL_TRACES_EXPORTER:-otlp}
       OTEL_METRICS_EXPORTER: ${OTEL_METRICS_EXPORTER:-none}
@@ -58,7 +60,7 @@ services:
       retries: 10
 
   mysql:
-    image: docker.io/library/mysql:8.0
+    image: docker.io/library/mysql:lts
     container_name: mysql
     ports:
       - "3306:3306"
@@ -72,6 +74,9 @@ services:
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_bin
+      --performance-schema-instrument='stage/%=ON'
+      --performance-schema-consumer-events-stages-current=ON
+      --performance-schema-consumer-events-stages-history=ON
     networks:
       - webtrees-test-net
     healthcheck:
@@ -99,10 +104,11 @@ services:
     command: ["sleep", "infinity"]
 
   otel-collector:
-    image: docker.io/otel/opentelemetry-collector-contrib:latest
+    image: docker.io/otel/opentelemetry-collector-contrib:0.148.0
     container_name: otel-collector
     ports:
       - "4317:4317"
+      - "4318:4318"
     volumes:
       - ./otel/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro,z
       - ./artifacts:/artifacts:rw,z
@@ -110,12 +116,10 @@ services:
       - webtrees-test-net
 
   jaeger:
-    image: docker.io/jaegertracing/all-in-one:latest
+    image: docker.io/jaegertracing/jaeger:2.16.0
     container_name: jaeger
     ports:
       - "16686:16686"
-    environment:
-      COLLECTOR_OTLP_ENABLED: "true"
     networks:
       - webtrees-test-net
 
@@ -153,7 +157,7 @@ services:
       retries: 10
 
   mysql-security:
-    image: docker.io/library/mysql:8.0
+    image: docker.io/library/mysql:lts
     container_name: mysql-security
     profiles:
       - security
