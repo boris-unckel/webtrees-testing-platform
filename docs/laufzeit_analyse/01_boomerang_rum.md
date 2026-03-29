@@ -247,24 +247,20 @@ Falls neben OTel-Traces auch die klassischen Boomerang-Beacons gewünscht sind (
 
 ---
 
-## 4. Offene Punkte
+## 4. Offene Punkte — Entscheidungsstatus
 
-### 4.1 Vor Implementierung zu klären
+### 4.1 Entschieden
 
-1. **JS-Injection-Methode:** Wie werden die Script-Tags in die webtrees-HTML-Seiten injiziert? Optionen:
-   - Apache `mod_substitute` (Container-seitig, kein Eingriff in webtrees-Source)
-   - Custom webtrees-Modul (sauberer, aber mehr Aufwand)
-   - Playwright-seitige Injection (`page.addScriptTag()` — nur für E2E-Tests, nicht für manuelles Browsen)
-   → Bewertung in A2 (Injection-Bewertung)
+1. **JS-Injection-Methode:** → **mod_substitute (Ansatz B)** gewaehlt (A2, Abschnitt 3.1). Begruendung: maximale Layout-Abdeckung inkl. Admin-Panel, minimaler Aufwand, keine webtrees-API-Abhaengigkeit. Upgrade-Pfad auf webtrees-Modul (Ansatz A) bleibt offen fuer spaeter.
 
-2. **beacon_url Handling:** Boomerang erfordert `beacon_url`. Wenn kein Beacon-Receiver läuft, erzeugt Boomerang 404-Fehler im Browser-Netzwerk-Tab und möglicherweise Konsolen-Warnungen. Zu prüfen: Kann `beacon_url` auf `about:blank` oder leer gesetzt werden, ohne dass Boomerang abbricht?
+2. **beacon_url Handling:** → **`beacon_url: '/beacon/'` — 404-Fehler akzeptiert.** Boomerang erfordert eine URL; eine nicht-existierende erzeugt 404-Fehler im Netzwerk-Tab, blockiert aber weder Seitenaufbau noch OTel-Traces. Im Testkontext akzeptabel. Die OTel-Traces gehen ueber `collectorConfiguration.url` direkt an den Collector — der Beacon-Kanal ist fuer den Anwendungsfall irrelevant.
 
-3. **CORS im Container-Netzwerk:** Wenn Tests innerhalb des Containers laufen (Playwright-Container → webtrees-Container), ist der Browser-Origin `http://webtrees:80`. Die CORS-Config muss beide Szenarien abdecken (Host-Browser `http://localhost:8080` UND Container-Browser).
+3. **CORS im Container-Netzwerk:** → **Geloest in Collector-Config** (A9, Abschnitt 1.6). `allowed_origins` fuer `http://localhost:8080` (Host-Browser) und `http://webtrees:80` (Container-Browser/Playwright).
 
-4. **Server-Timing Header für verteiltes Tracing:** Das OTel-Plugin kann `Server-Timing`-Response-Header parsen, um Browser-Traces mit Backend-Traces zu verknüpfen. Der webtrees-Container sendet bereits OTel-Traces via PHP. Zu klären: Emittiert das PHP-OTel-SDK automatisch `Server-Timing`-Header? Falls nicht, wäre eine Apache-Config oder PHP-Middleware nötig.
+4. **Server-Timing Header:** → **Aufgeschoben.** PHP OTel SDK emittiert standardmaessig keinen `Server-Timing`-Header. Wird Voraussetzung fuer Option A (Playwright Root-Span), initial nicht benoetigt (A6, Abschnitt 4.3).
 
-5. **zone.js Seiteneffekte:** Das OTel-Plugin-Bundle enthält zone.js (Angular-Abhängigkeit), das `setTimeout`, `Promise`, `EventTarget.addEventListener` und andere Browser-APIs global patcht. In einem webtrees-Kontext (jQuery-basiert, kein SPA-Framework) sollte das harmlos sein, muss aber verifiziert werden.
+5. **zone.js Seiteneffekte:** → **Akzeptiert fuer Testkontext.** webtrees ist kein SPA; jQuery-basiert; zone.js-Patches auf `setTimeout`, `Promise`, `addEventListener` sollten harmlos sein. Verifizierung bei Implementierung.
 
-6. **Größe der Boomerang-Plugins:** Unminifizierte synchrone Ladung von boomerang.js (5360 Zeilen) + 5 Plugins + OTel-Bundle (639 KB) ergibt erheblichen Overhead. Für einen Test-Stack akzeptabel, aber die Seitenlade-Performance wird beeinflusst — die RUM-Messungen messen also eine durch RUM-Instrumentation veränderte Performance. Zu entscheiden: Ist das für den Anwendungsfall akzeptabel?
+6. **Boomerang-Plugin-Groesse:** → **Akzeptiert fuer Testkontext.** ~850 KB Gesamtgroesse (unminified Boomerang + Plugins + OTel-Bundle) beeinflusst die gemessene Performance, ist aber als konstanter Offset fuer alle Testlaeufe akzeptabel. Die RUM-Messungen messen eine durch RUM-Instrumentation veraenderte Performance — das ist ein bekannter Observer-Effekt, der dokumentiert wird.
 
-7. **Collector-Image-Pinning:** Das aktuelle `compose.yaml` verwendet `otel/opentelemetry-collector-contrib:latest`. Dies sollte unabhängig von Boomerang auf eine spezifische Version gepinnt werden.
+7. **Collector-Image-Pinning:** → **Entschieden** (A9, Abschnitt 1.4). Collector und Jaeger werden auf spezifische Versionen gepinnt. Konkrete Versionen werden zum Implementierungszeitpunkt gewaehlt.

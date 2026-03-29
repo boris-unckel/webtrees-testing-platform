@@ -208,21 +208,23 @@ Keine Änderungen an `compose.yaml`, `Containerfile.webtrees` oder OTel-Collecto
 
 ---
 
-## 4. Offene Punkte
+## 4. Offene Punkte — Entscheidungsstatus
 
-### 4.1 Vor Implementierung zu klären
+### 4.1 Entschieden
 
-1. **PHP OTel Auto-Instrumentation Verhalten:** Verifizieren, dass die `opentelemetry` PECL-Extension (installiert in `Containerfile.webtrees`) tatsächlich `traceparent` aus eingehenden HTTP-Headern liest und als Parent-Context für den Root-Server-Span verwendet. Dies ist erwartetes Verhalten, sollte aber empirisch mit der aktuellen Version bestätigt werden.
+1. **Browser-seitige traceparent-Erzeugung:** → **Kein traceparent initial** (A6, Abschnitt 3.1). Korrelation ueber W3C Baggage (`test.run_id`, `test.case_id`). Option A (Playwright Root-Span mit traceparent) als Ausbaustufe anerkannt.
 
-2. **Baggage-Extraktion in PHP:** Das PHP OTel SDK sollte automatisch Baggage-Context aus dem `baggage` HTTP-Header propagieren. Verifizieren, dass `test.run_id` und `test.case_id` aus dem Baggage-Header in PHP-Code zugänglich sind (z.B. via `Baggage::getCurrent()->getEntry('test.run_id')`) und als Span-Attribute gesetzt werden können.
+### 4.2 Bei Implementierung zu verifizieren
 
-3. **Browser-seitige traceparent-Erzeugung:** Boomerang kann `traceparent`-Header für Navigation-Requests injizieren, aber für Playwright-Tests mit Fetch/XHR muss der Test-Code explizit den `traceparent`-Header setzen. Browser-Instrumentierungs-Strategie klären (→ A6: Baggage-Propagation).
+2. **PHP OTel Auto-Instrumentation:** Verifizieren, dass die PECL-Extension `traceparent` aus HTTP-Headern als Parent-Context uebernimmt. Erwartetes Verhalten, empirisch zu bestaetigen.
 
-### 4.2 Zukunftsüberlegungen
+3. **Baggage-Extraktion in PHP:** Verifizieren, dass `Baggage::getCurrent()->getEntry('test.run_id')` funktioniert. Wird in A6/A7 adressiert (V1, V5, V6 in A9).
 
-4. **Falls Apache-Level-Spans später benötigt werden:** Das OpenTelemetry Nginx-Modul (`nginx/v0.1.1`) bietet proper Pre-built Binaries für multiple Plattformen inklusive Debian. Ein Wechsel von `php:8.5-apache` zu `php:8.5-fpm` hinter einem Nginx Reverse-Proxy würde saubere Webserver-Instrumentierung ermöglichen. Dies ist eine größere architektonische Änderung, hat aber deutlich bessere Tooling-Unterstützung.
+### 4.3 Aufgeschoben
 
-5. **ARM64-Support:** Keines der Apache OTel-Module unterstützt ARM64. Falls die Testing-Plattform auf Apple Silicon (via Podman) laufen soll, wäre das ein Blocker.
+4. **Nginx als Alternative:** Falls Apache-Level-Spans spaeter benoetigt werden, waere ein Wechsel auf `php:8.5-fpm` hinter Nginx Reverse-Proxy moeglich. Das OTel Nginx-Modul hat Pre-built Binaries fuer Debian. Groessere architektonische Aenderung.
+
+5. **ARM64-Support:** Fuer Fedora/x86-64 irrelevant. Relevant falls Apple Silicon.
 
 ---
 

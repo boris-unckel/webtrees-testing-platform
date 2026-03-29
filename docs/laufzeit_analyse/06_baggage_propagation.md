@@ -452,37 +452,33 @@ Keine Änderung nötig für Baggage-Propagation (Konvertierung erfolgt PHP-seiti
 
 ---
 
-## 4. Offene Punkte
+## 4. Offene Punkte — Entscheidungsstatus
 
-### 4.1 Vor Implementierung zu klären
+### 4.1 Entschieden
 
-1. **OTEL_PROPAGATORS Default verifizieren:** Im Container prüfen, ob Default `tracecontext,baggage` gilt. Falls nicht: explizit in `compose.yaml` setzen.
+1. **Interaktion Playwright `setExtraHTTPHeaders` mit Boomerang:** → **Kein Konflikt.** Playwright setzt `baggage` auf Request-Level; der Browser ergaenzt nicht zusaetzlich. Boomerangs OTel-Plugin propagiert Baggage auf XHR/Fetch, aber Playwright-Header hat Vorrang auf Navigation-Requests.
 
-2. **Baggage::getCurrent() im Middleware-Kontext:** Verifizieren, dass Auto-Instrumentation den Baggage-Context propagiert, bevor das Custom-Modul ausgeführt wird.
+2. **Boomerang-Spans ohne test.run_id:** → **Option (a): Akzeptiert.** Browser-Spans werden ueber temporale Korrelation (Zeitfenster) zugeordnet. Bei `workers: 1` ist Ueberlappung unwahrscheinlich. Option (b) (dynamische `commonAttributes` via Server-Rendering) wuerde webtrees-Modul (Ansatz A) erfordern — initial zu aufwaendig.
 
-3. **Percent-Encoding-Roundtrip:** Testen, dass URL-encoded `test.case_id`-Werte korrekt durch den Stack fließen. `Entry::getValue()` liefert den **encoded** Wert — OTel-Modul muss `urldecode()` anwenden.
+3. **Resource-Attribute Unterscheidung:** → **Geklaert.** PHP-Spans: `service.name=webtrees`; Boomerang-Spans: `service.name=webtrees-browser`. Auswertungs-Script (A8) nutzt `service.name` fuer Layer-Zuordnung.
 
-4. **Interaktion Playwright `setExtraHTTPHeaders` mit Boomerang:** Wenn beide `baggage`-Header setzen, werden sie gemäß HTTP-Spec zusammengeführt (Komma-separiert). In der Praxis: Playwright setzt auf Request-Level, Browser ergänzt nicht zusätzlich.
+4. **Implementierungsreihenfolge:** → **S5 (OTel-Spans-Modul) vor S7 (Baggage-Fixture).** Das Modul muss existieren, bevor die Fixture Baggage-Header setzt, da sonst keine Konvertierung zu Span-Attributen stattfindet.
 
-### 4.2 Abhängigkeiten
+### 4.2 Bei Implementierung zu verifizieren
 
-5. **A7 (OTel-Spans-Modul):** Baggage-zu-Span-Attribute-Konvertierung ist Erweiterung des A7-Moduls. **Implementierungsreihenfolge: A7 vor A6.**
+5. **OTEL_PROPAGATORS Default:** Im Container pruefen, ob Default `tracecontext,baggage` gilt. Falls nicht: explizit `OTEL_PROPAGATORS=tracecontext,baggage` in `compose.yaml` setzen.
 
-6. **Boomerang-Spans:** Browser-Spans werden NICHT automatisch mit `test.run_id` angereichert. Optionen:
-   - (a) Akzeptieren — Zeitkorrelation reicht
-   - (b) In Boomerang-Config `commonAttributes` dynamisch setzen (erfordert Server-seitiges Rendering → webtrees-Modul A2)
+6. **Baggage::getCurrent() im Middleware-Kontext:** Verifizieren, dass Auto-Instrumentation den Baggage-Context propagiert, bevor das OTel-Spans-Modul in der inneren Pipeline ausfuehrt.
 
-7. **Resource-Attribute:** Für die Auswertung (A8) unterscheidbar durch:
-   - PHP-Spans: `service.name=webtrees`
-   - Boomerang-Spans: `service.name=webtrees-browser`
+7. **Percent-Encoding-Roundtrip:** Testen, dass URL-encoded `test.case_id`-Werte korrekt durch den Stack fliessen. `Entry::getValue()` liefert den **encoded** Wert — OTel-Modul muss `urldecode()` anwenden.
 
-### 4.3 Ausbaustufe: Trace-Hierarchie via Playwright Root-Span (Option A)
+### 4.3 Aufgeschoben: Trace-Hierarchie via Playwright Root-Span (Option A)
 
-8. **Playwright OTel SDK:** Falls die Auswertung (A8) kausale Verknüpfung über Attribute hinaus erfordert, kann der Playwright-Container um `@opentelemetry/sdk-node` erweitert werden. Die resultierende Kette (Playwright-Span → Boomerang-Span → PHP-Span → DB-Spans) erfordert zusätzlich:
-   - **Server-Timing-Header:** PHP muss den Trace-Context im `Server-Timing`-Response-Header emittieren, damit Boomerangs `instrumentation-document-load` den Browser-Span mit dem Server-Span verknüpfen kann.
-   - **Dynamische traceparent-Erzeugung:** `page.route()` statt `setExtraHTTPHeaders` für per-Request Span-ID-Generierung.
-   - **BOOMR.addVar()-Komplementarität:** Unabhängig von der Trace-Hierarchie kann `BOOMR.addVar()` die Test-Korrelation in den Boomerang-Beacons tragen — als Fallback-Kanal, der keine OTel-Infrastruktur voraussetzt.
-   - Die bestehende Baggage-Infrastruktur (Fixture, PHP-Modul, Makefile) bleibt vollständig erhalten — Option A ist eine zusätzliche Schicht, kein Umbau.
+8. **Playwright OTel SDK:** Falls die Auswertung (A8) kausale Verknuepfung ueber Attribute hinaus erfordert, kann der Playwright-Container um `@opentelemetry/sdk-node` erweitert werden. Die resultierende Kette (Playwright-Span → Boomerang-Span → PHP-Span → DB-Spans) erfordert zusaetzlich:
+   - **Server-Timing-Header:** PHP muss den Trace-Context im `Server-Timing`-Response-Header emittieren, damit Boomerangs `instrumentation-document-load` den Browser-Span mit dem Server-Span verknuepfen kann.
+   - **Dynamische traceparent-Erzeugung:** `page.route()` statt `setExtraHTTPHeaders` fuer per-Request Span-ID-Generierung.
+   - **BOOMR.addVar()-Komplementaritaet:** Unabhaengig von der Trace-Hierarchie kann `BOOMR.addVar()` die Test-Korrelation in den Boomerang-Beacons tragen — als Fallback-Kanal, der keine OTel-Infrastruktur voraussetzt.
+   - Die bestehende Baggage-Infrastruktur (Fixture, PHP-Modul, Makefile) bleibt vollstaendig erhalten — Option A ist eine zusaetzliche Schicht, kein Umbau.
 
 ---
 

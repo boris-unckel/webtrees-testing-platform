@@ -314,25 +314,25 @@ Nur sinnvoll, wenn ausgehende HTTP-Calls (Geocoding, Upgrade-Check) beobachtet w
 
 ---
 
-## 4. Offene Punkte
+## 4. Offene Punkte — Entscheidungsstatus
 
-### 4.1 Vor Implementierung zu klären
+### 4.1 Entschieden
 
-1. **Modul-Platzierung:** Soll das `otel-spans`-Modul als eigenes Verzeichnis in der Testing-Plattform leben (z.B. `modules/otel-spans/`) und per Volume-Mount eingebunden werden? Oder direkt in einem `modules_v4/`-Verzeichnis innerhalb der Plattform, das per Volume überlagert wird?
+1. **Modul-Platzierung:** → **`modules/otel-spans/`** im Repo-Root der Testing-Plattform. Volume-Mount in `compose.yaml` nach `modules_v4/otel_spans/` (A9, Abschnitt 1.6). Konsistent mit bestehendem `MODULE_PATH`-Pattern.
 
-2. **Span-Name-Konvention:** Soll der Span-Name dem OpenTelemetry HTTP Semantic Convention folgen (`HTTP GET /tree/{tree}/individual/{xref}`) oder eine eigene Benennung verwenden (`webtrees.view_individual`)?
+2. **Span-Name-Konvention:** → **`webtrees.<action>`-Pattern** (z.B. `webtrees.view_individual`, `webtrees.search_general`). Begruendung: `auto-psr15` liefert bereits den generischen HTTP-Span (`HTTP GET /tree/{tree}/individual/{xref}`); das Custom-Modul muss semantischen Mehrwert liefern, keine Duplikation.
 
-3. **Granularität der Route-Map:** Sollen alle ~80 Routes gemappt werden, oder nur die im Scope genannten (View Individual, View Family, Search, Edit)?
+3. **Granularitaet der Route-Map:** → **Umfassende Route-Map (~50 Routes)** in 6 Kategorien. Ungemappte Routes (z.B. Autocomplete, TomSelect, Static Files) werden ignoriert — `auto-psr15` deckt sie weiterhin generisch ab. Die konkrete Map siehe Anhang: Erweiterte Route-Map.
 
-4. **Interaktion mit `auto-psr15`:** Wenn sowohl `auto-psr15` als auch das Custom-Modul Spans erzeugen, entstehen zwei Spans pro Request (einer generisch, einer semantisch). Ist das gewünscht, oder soll das Custom-Modul den PSR-15-Span als Parent verwenden und ihn mit Attributen anreichern statt einen eigenen zu erzeugen?
+4. **Interaktion mit `auto-psr15`:** → **Beide Spans, Custom als Child.** `auto-psr15` erzeugt den generischen Request-Root-Span (HTTP Method, URL, Status Code). Das OTel-Spans-Modul erzeugt einen semantischen Child-Span mit `webtrees.action`, `webtrees.tree`, `webtrees.xref`. Die Dopplung ist akzeptabel und erwuenscht: der PSR-15-Span liefert technische HTTP-Metriken, der Custom-Span liefert geschaeftliche Semantik (A9, R14).
 
-5. **Query-Parameter in Spans:** Sollen Suchbegriffe (`query=...`) als Span-Attribute erfasst werden? Datenschutz-Implikation: Suchbegriffe könnten Personennamen enthalten. In einer reinen Testing-Plattform mit Testdaten ist das unproblematisch, sollte aber dokumentiert werden.
+5. **Query-Parameter in Spans:** → **Ja, im Testkontext akzeptabel.** Suchbegriffe (`query=...`) werden als Span-Attribut `webtrees.query` erfasst. Begruendung: Die Testing-Plattform verwendet ausschliesslich Testdaten (keine realen Personendaten). Dies wird im Modul-Code dokumentiert.
 
-### 4.2 Technische Validierung nötig
+### 4.2 Bei Implementierung zu verifizieren
 
-6. **ext-opentelemetry Kompatibilität mit PHP 8.5:** Der Container nutzt `php:8.5-apache`. Die `pecl install opentelemetry` im Containerfile bestätigt, dass die Extension gebaut wird. Ob `auto-psr15` 1.2.0 mit PHP 8.5 kompatibel ist, muss getestet werden (Requirement: `php: ^8.1`).
+6. **ext-opentelemetry Kompatibilitaet mit PHP 8.5:** `auto-psr15` 1.2.0 hat Requirement `php: ^8.1` — sollte mit 8.5 kompatibel sein. Verifizierung beim ersten `composer require`.
 
-7. **Aura Router Route-Objekt in Attributen:** Die Route wird als Request-Attribut `route` gespeichert, aber der Validator erwartet ein `Route`-Objekt. Ob das Custom-Modul direkt `$request->getAttribute('route')` oder `Validator::attributes($request)->route()` verwenden soll, hängt davon ab, ob das Modul die webtrees Validator-Klasse nutzen darf (Autoload-Abhängigkeit vorhanden, da das Modul im webtrees-Kontext läuft).
+7. **Aura Router Route-Objekt:** Das Modul laeuft im webtrees-Kontext (Autoload verfuegbar). Empfehlung: `Validator::attributes($request)->route()` verwenden — konsistent mit dem HitCountFooterModule-Muster. Fallback auf `$request->getAttribute('route')` falls Validator nicht verfuegbar.
 
 ---
 
@@ -360,6 +360,117 @@ HTTP Request
                                                     EditFactAction::handle()
                                                     ...
 ```
+
+---
+
+## Anhang: Erweiterte Route-Map (~50 Routes in 6 Kategorien)
+
+Die folgende Map definiert die `ROUTE_MAP`-Konstante des OTel-Spans-Moduls. Ungemappte Routes (Autocomplete, TomSelect, Static Files, Admin-Routen) werden ignoriert — `auto-psr15` deckt sie weiterhin generisch ab.
+
+### Kategorie 1: Record-Ansicht (View) — 13 Routes
+
+| Handler-Klasse | `webtrees.action` | `webtrees.type` |
+|---|---|---|
+| `IndividualPage::class` | `view_individual` | `query` |
+| `FamilyPage::class` | `view_family` | `query` |
+| `SourcePage::class` | `view_source` | `query` |
+| `MediaPage::class` | `view_media` | `query` |
+| `NotePage::class` | `view_note` | `query` |
+| `SharedNotePage::class` | `view_shared_note` | `query` |
+| `RepositoryPage::class` | `view_repository` | `query` |
+| `LocationPage::class` | `view_location` | `query` |
+| `SubmitterPage::class` | `view_submitter` | `query` |
+| `SubmissionPage::class` | `view_submission` | `query` |
+| `HeaderPage::class` | `view_header` | `query` |
+| `GedcomRecordPage::class` | `view_record` | `query` |
+| `TreePage::class` | `view_tree` | `query` |
+
+### Kategorie 2: Suche (Search) — 8 Routes
+
+| Handler-Klasse | `webtrees.action` | `webtrees.type` |
+|---|---|---|
+| `SearchGeneralPage::class` | `search_general` | `query` |
+| `SearchGeneralAction::class` | `search_general` | `query` |
+| `SearchAdvancedPage::class` | `search_advanced` | `query` |
+| `SearchAdvancedAction::class` | `search_advanced` | `query` |
+| `SearchPhoneticPage::class` | `search_phonetic` | `query` |
+| `SearchPhoneticAction::class` | `search_phonetic` | `query` |
+| `SearchQuickAction::class` | `search_quick` | `query` |
+| `SearchReplacePage::class` | `search_replace_form` | `edit` |
+
+### Kategorie 3: Bearbeitung (Edit) — 12 Routes
+
+| Handler-Klasse | `webtrees.action` | `webtrees.type` |
+|---|---|---|
+| `EditFactPage::class` | `edit_fact_form` | `edit` |
+| `EditFactAction::class` | `edit_fact_save` | `edit` |
+| `EditRecordPage::class` | `edit_record_form` | `edit` |
+| `EditRecordAction::class` | `edit_record_save` | `edit` |
+| `EditRawFactPage::class` | `edit_raw_fact_form` | `edit` |
+| `EditRawFactAction::class` | `edit_raw_fact_save` | `edit` |
+| `EditRawRecordPage::class` | `edit_raw_record_form` | `edit` |
+| `EditRawRecordAction::class` | `edit_raw_record_save` | `edit` |
+| `EditNotePage::class` | `edit_note_form` | `edit` |
+| `EditNoteAction::class` | `edit_note_save` | `edit` |
+| `DeleteRecord::class` | `delete_record` | `edit` |
+| `DeleteFact::class` | `delete_fact` | `edit` |
+
+### Kategorie 4: Erstellung (Create) — 8 Routes
+
+| Handler-Klasse | `webtrees.action` | `webtrees.type` |
+|---|---|---|
+| `CreateMediaObjectAction::class` | `create_media` | `edit` |
+| `CreateNoteAction::class` | `create_note` | `edit` |
+| `CreateSourceAction::class` | `create_source` | `edit` |
+| `CreateRepositoryAction::class` | `create_repository` | `edit` |
+| `CreateLocationAction::class` | `create_location` | `edit` |
+| `CreateSubmitterAction::class` | `create_submitter` | `edit` |
+| `AddNewFact::class` | `add_fact_form` | `edit` |
+| `AddUnlinkedAction::class` | `create_individual` | `edit` |
+
+### Kategorie 5: Beziehungen (Relationships) — 10 Routes
+
+| Handler-Klasse | `webtrees.action` | `webtrees.type` |
+|---|---|---|
+| `AddChildToIndividualPage::class` | `add_child_form` | `edit` |
+| `AddChildToIndividualAction::class` | `add_child_save` | `edit` |
+| `AddSpouseToIndividualPage::class` | `add_spouse_form` | `edit` |
+| `AddSpouseToIndividualAction::class` | `add_spouse_save` | `edit` |
+| `AddParentToIndividualPage::class` | `add_parent_form` | `edit` |
+| `AddParentToIndividualAction::class` | `add_parent_save` | `edit` |
+| `AddChildToFamilyAction::class` | `add_child_to_family` | `edit` |
+| `AddSpouseToFamilyAction::class` | `add_spouse_to_family` | `edit` |
+| `LinkChildToFamilyAction::class` | `link_child_to_family` | `edit` |
+| `LinkSpouseToIndividualAction::class` | `link_spouse` | `edit` |
+
+### Kategorie 6: Navigation & Berichte — 5 Routes
+
+| Handler-Klasse | `webtrees.action` | `webtrees.type` |
+|---|---|---|
+| `CalendarPage::class` | `calendar` | `query` |
+| `ReportListPage::class` | `report_list` | `query` |
+| `ReportGenerate::class` | `report_generate` | `query` |
+| `ContactPage::class` | `contact_form` | `query` |
+| `PendingChanges::class` | `pending_changes` | `query` |
+
+### Zusammenfassung
+
+| Kategorie | Anzahl | Typ |
+|---|---|---|
+| Record-Ansicht | 13 | `query` |
+| Suche | 8 | `query` (7) + `edit` (1) |
+| Bearbeitung | 12 | `edit` |
+| Erstellung | 8 | `edit` |
+| Beziehungen | 10 | `edit` |
+| Navigation & Berichte | 5 | `query` |
+| **Gesamt** | **56** | **query: 25, edit: 31** |
+
+**Design-Prinzipien:**
+- Nur POST-Actions der Create-/Relationship-Modale aufgenommen (nicht die GET-Modal-Seiten) — die Modals sind AJAX-Aufrufe, der semantische Wert liegt in der Save-Aktion
+- Search-Pages und -Actions teilen sich denselben `webtrees.action`-Wert (GET zeigt Formular, POST fuehrt Suche aus — gleiche Semantik)
+- `SearchReplacePage` als `edit` klassifiziert, da es eine schreibende Operation vorbereitet
+- Admin-Routen (ControlPanel, Modules*, Users*, Site*) bewusst ausgelassen — nicht im Scope "Nutzerinteraktion"
+- TomSelect/Autocomplete ausgelassen — hochfrequente AJAX-Calls ohne eigenen semantischen Wert
 
 ---
 

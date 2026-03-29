@@ -52,6 +52,13 @@ Playwright (Baggage) → Browser/Boomerang (RUM) → Apache httpd (OTel Modul)
                     → Automatisierte Auswertung je Testlauf/Testfall
 ```
 
+> **Analyse-Ergebnis (A9):** Der Zielzustand ist nicht vollstaendig erreichbar.
+> Apache httpd OTel-Modul entfaellt (kein Pre-built Binary), MySQL Telemetry
+> Plugin entfaellt (Enterprise-only). Erreichbare Architektur:
+> `Playwright (Baggage) → Boomerang (RUM) → Apache (transparent) → PHP (OTel) → MySQL (PerfSchema)`
+> Korrelation via W3C Baggage (`test.run_id`, `test.case_id`).
+> Siehe Abschnitt 7 fuer die vollstaendige Ergebnis-Zusammenfassung.
+
 ---
 
 ## 2. Analyseabschnitte
@@ -136,6 +143,10 @@ Die Analyse soll beide Ansätze anhand folgender Kriterien bewerten:
 **Anforderung:** Nur Pre-Built Binaries aus vertrauenswürdigen Original-Quellen.
 Kein Kompilieren aus Source im Container-Build.
 
+> **Analyse-Ergebnis (A3):** Kein kompatibles Pre-built Binary fuer `php:8.5-apache`
+> (Debian Bookworm). Apache wird als transparenter Proxy ohne OTel-Modul betrieben.
+> traceparent/baggage-Header fliessen unveraendert an PHP weiter.
+
 **Analysefragen:**
 
 #### 2.2.1 Binary-Verfügbarkeit
@@ -185,6 +196,10 @@ Falls kein Pre-Built Binary verfügbar ist:
 
 **Entscheidung:** MySQL-Version wird von 8.0 auf 9.x angehoben.
 Showstopper-Warnung, falls bekannt.
+
+> **Analyse-Ergebnis (A4):** Telemetry Trace Plugin ist **Enterprise-only** (Showstopper).
+> MySQL-Version-Entscheidung: **8.4 LTS** statt 9.x — kein Vorteil durch Innovation-Release,
+> da das Plugin in keiner Community-Version verfuegbar ist.
 
 **Analysefragen:**
 
@@ -547,15 +562,15 @@ Testfall: search results load time
 **Anforderung:** Module/Frameworks/APIs müssen mit Versionen referenziert und
 dynamisch je Testlauf im Setup berücksichtigt werden. Keine Repo-Kopien.
 
-| Komponente | Versionierung |
-|---|---|
-| Boomerang JS | npm/GitHub Release, Pin auf Minor-Version |
-| Boomerang OTel Plugin | npm/GitHub Release, Pin auf Version |
-| Apache OTel Modul (.so) | GitHub Release, Pin auf Version |
-| MySQL Docker Image | `mysql:9.x.y` statt `mysql:9.x` |
-| OTel Collector | Pin auf Version statt `:latest` |
-| Jaeger | Pin auf Version statt `:latest` |
-| PHP OTel Composer-Pakete | Bereits via Composer versioniert |
+| Komponente | Versionierung | Analyse-Ergebnis |
+|---|---|---|
+| Boomerang JS | npm-Registry-Tarball, Pin auf Version | `boomerangjs@1.815.1` (A1) |
+| Boomerang OTel Plugin | GitHub Release, Pin auf Version | `2.0.0-2` (A1) |
+| ~~Apache OTel Modul (.so)~~ | ~~GitHub Release, Pin auf Version~~ | **Entfaellt** — kein kompatibles Binary (A3) |
+| MySQL Docker Image | `mysql:lts` (= 8.4.x) | Geaendert: 8.4 LTS statt 9.x (A4) |
+| OTel Collector | Pin auf Version statt `:latest` | Zum Implementierungszeitpunkt pinnen (A9) |
+| Jaeger | Pin auf Version statt `:latest` | Zum Implementierungszeitpunkt pinnen (A9) |
+| PHP OTel Composer-Pakete | Bereits via Composer versioniert | + `auto-psr15` neu (A7) |
 
 **Analysefragen:**
 - Wie werden Versionen zentral verwaltet? `.env`? `versions.env`? Makefile-Variablen?
@@ -652,3 +667,75 @@ Nach Abschluss aller Abschnitte:
 - Produktiv-Deployment
 - Metriken und Logs (nur Traces)
 - Änderungen am webtrees-Upstream-Code
+
+---
+
+## 7. Ergebnis der Analyse (Stand 2026-03-29)
+
+**Status: Alle 9 Analyseabschnitte (A1–A9) abgeschlossen.**
+
+Die Analysedokumente liegen unter `docs/laufzeit_analyse/01_boomerang_rum.md` bis `09_querschnitt.md`.
+
+### 7.1 Architekturentscheidungen — Abweichungen vom Zielzustand
+
+Der in Abschnitt 1.4 definierte Zielzustand ist **nicht vollstaendig erreichbar**. Drei der fuenf Instrumentierungsschichten mussten angepasst werden:
+
+| Schicht | Zielzustand (Prompt 1.4) | Ergebnis | Begruendung |
+|---|---|---|---|
+| Browser (RUM) | Boomerang + OTel-Plugin → Collector | **Machbar** — via mod_substitute injiziert | A1, A2 |
+| Apache httpd | OTel-Modul fuer Server-Spans | **Entfaellt** — kein kompatibles Pre-built Binary fuer Debian Bookworm | A3 |
+| PHP Backend | Auto + Custom Spans | **Machbar** — auto-psr15 + Custom OTel-Spans-Modul | A7 |
+| MySQL Server | Telemetry Trace Plugin → Collector | **Entfaellt** — Enterprise-only, nicht in Community Edition | A4 |
+| MySQL PerfSchema | (nicht im Prompt) | **Ergaenzt** — aggregierte Query-Statistiken als Kompensation | A5 |
+
+| Aspekt | Zielzustand (Prompt) | Ergebnis |
+|---|---|---|
+| MySQL-Version | 9.x (Innovation) | **8.4 LTS** — Telemetry-Plugin ohnehin nicht verfuegbar, LTS bietet 8-Jahres-Support (A4) |
+| Korrelation | W3C Trace Context + Baggage (durchgehend) | **W3C Baggage only** — kein durchgehender traceparent; Korrelation ueber test.run_id/test.case_id Attribute (A6) |
+| Trace-Kette | Playwright → Boomerang → Apache → PHP → MySQL | **Playwright → Boomerang → Apache (transparent) → PHP → MySQL (PerfSchema)** — Apache und MySQL ohne OTel-Spans (A9) |
+| Auswertung | Script mit Layer-Aufschluesselung | **Python-Script** — angepasst an tatsaechlich verfuegbare Span-Quellen (kein Apache/MySQL Layer) (A8) |
+
+### 7.2 Implementierungsplan (Zusammenfassung aus A9)
+
+10 Schritte in 5 Phasen, Gesamtaufwand: ~4–7 Personentage.
+
+| Phase | Schritte | Aufwand | Kerninhalt |
+|---|---|---|---|
+| 1 Infrastruktur | S1–S4 | 0.5 PT | MySQL 8.4, Image-Pinning, HTTP-Receiver, auto-psr15 |
+| 2 PHP-Instrumentierung | S5 | 0.5–1 PT | OTel-Spans-Modul (semantische Attribute, Baggage-Konvertierung) |
+| 3 Testlauf-Korrelation | S7–S8 | 0.75 PT | Playwright Baggage-Fixture, PerfSchema-Extraktion |
+| 4 Auswertung | S9–S10 | 1–2 PT | Trace-Report-Script, Makefile-Integration |
+| 5 Browser-RUM | S6 | 1–2 PT | Boomerang + mod_substitute |
+
+Kritischer Pfad: S4 → S5 → S7 → S9
+
+### 7.3 Offene Punkte — Status
+
+- **14 Punkte entschieden** (E1–E14, siehe A9 Abschnitt 8.1)
+- **7 Punkte bei Implementierung zu verifizieren** (V1–V7, siehe A9 Abschnitt 8.2)
+- **5 Punkte aufgeschoben** (S1–S5, siehe A9 Abschnitt 8.3)
+- **0 Punkte blockierend offen**
+
+### 7.4 Abnahmekriterien
+
+Die Implementierung gilt als abgeschlossen, wenn folgende Kriterien erfuellt sind:
+
+1. **Jaeger UI zeigt Spans:** PHP-Spans (auto-psr15, auto-pdo, Custom OTel-Spans-Modul) und Browser-Spans (Boomerang) sind in der Jaeger-Oberflaeche sichtbar und inspizierbar.
+2. **Korrelationskette funktioniert:** Browser-Span und PHP-Spans gehoeren zur selben Trace (ueber W3C Baggage `test.run_id` korreliert). Die Span-Hierarchie ist korrekt: Request-Root-Span → Custom-Span → DB-Spans.
+3. **Testfallzuordnung funktioniert:** Jeder Playwright-Testfall setzt `test.run_id` und `test.case_id` als Baggage-Header. Diese Werte erscheinen als Span-Attribute in Jaeger und ermoeglichen die Filterung nach Testfall.
+4. **Auswertung moeglich:** Das Trace-Report-Script (`trace-report.py`) kann die OTLP-NDJSON-Daten parsen, Spans nach Testfall gruppieren und eine Layer-Aufschluesselung (Browser, PHP, DB) ausgeben. PerfSchema-Daten ergaenzen den Report um MySQL-seitige Statistiken.
+
+### 7.5 Scope
+
+Alle 5 Phasen des Implementierungsplans (S1–S10) sind im Scope:
+- Phase 1: Infrastruktur (S1–S4)
+- Phase 2: PHP-Instrumentierung (S5)
+- Phase 3: Testlauf-Korrelation (S7–S8)
+- Phase 4: Auswertung (S9–S10)
+- Phase 5: Browser-RUM (S6)
+
+Der Planprompt darf keine Git-Strategie (Commits, Feature-Branches) vorschreiben.
+
+### 7.6 Naechster Schritt
+
+Aus diesem Analyseprompt und den Ergebnissen in A1–A9 kann ein **Implementierungs-Planprompt** erstellt werden. Alle Architekturentscheidungen sind getroffen, alle blockierenden Fragen beantwortet.

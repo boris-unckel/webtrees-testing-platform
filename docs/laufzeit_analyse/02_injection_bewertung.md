@@ -341,31 +341,33 @@ Unabhängig von A oder B empfohlen für Layer 5 (Performance-Tests): minimale Pl
 
 ---
 
-## 4. Offene Punkte
+## 4. Offene Punkte — Entscheidungsstatus
 
-### 4.1 Vor Implementierung zu klären
+### 4.1 Entschieden
 
-1. **beacon_url `/dev/null`:** Verifizieren, dass Boomerang mit einer nicht-existierenden beacon_url keine Fehler wirft. Alternative: `beacon_url: 'about:blank'` oder `beacon_url: false`.
+1. **beacon_url:** → **`beacon_url: '/beacon/'` — 404-Fehler akzeptiert** (A1, Abschnitt 4.1.2). Boomerang erfordert eine URL; die OTel-Traces gehen ueber `collectorConfiguration.url` direkt an den Collector. Der Beacon-Kanal ist irrelevant.
 
-2. **Collector-URL im Container-Netzwerk vs. Host:** Browser im Playwright-Container → `http://otel-collector:4318/v1/traces` (Container-Netzwerk). Manuelles Browsen vom Host → `http://localhost:4318/v1/traces`. Die `boomerang-init.js` muss die URL dynamisch bestimmen oder es werden zwei Konfigurationen gepflegt.
+2. **Collector-URL Container vs. Host:** → **Dynamische Erkennung in `boomerang-init.js`.** JavaScript-Snippet erkennt den Hostname: `window.location.hostname === 'localhost'` → `http://localhost:4318/v1/traces`; sonst `http://otel-collector:4318/v1/traces`. Deckt Host-Browser und Playwright-Container-Browser ab.
 
-3. **mod_substitute und FallbackResource:** Prüfen, ob mod_substitute korrekt mit `FallbackResource /index.php` interagiert (interner Subrequest).
+3. **JS-Dateien im Container:** → **COPY im Containerfile** (reproduzierbar). Boomerang-Download via `curl` auf npm-Registry-Tarball-URL, OTel-Plugin via `curl` von GitHub Release. Keine npm-Runtime im Build noetig.
 
-4. **JS-Dateien im Container:** Entscheidung: COPY im Containerfile (reproduzierbar) ODER Volume-Mount aus dem Repo (flexibler).
+4. **OTel Collector HTTP-Receiver:** → **Geloest** (A9, Abschnitt 1.6). HTTP-Receiver auf Port 4318 mit CORS, Port-Mapping in `compose.yaml`.
 
-5. **OTel Collector HTTP-Receiver:** Voraussetzung für beide Ansätze: HTTP-Receiver auf Port 4318 mit CORS. Änderung an `otel/otel-collector-config.yaml` und `compose.yaml` nötig.
+5. **Deaktivierbarkeit:** → **Via `OTEL_SDK_DISABLED`**. Apache `<If>`-Direktive prueft die bestehende Umgebungsvariable; bei `true` wird die mod_substitute-Regel nicht angewendet. Keine separate Variable noetig.
 
-6. **Deaktivierbarkeit:** Soll Boomerang per Environment-Variable deaktivierbar sein?
+6. **Admin-Panel-Abdeckung:** → **Durch mod_substitute abgedeckt.** Der gewahlte Ansatz B deckt alle Layouts inkl. Admin-Panel ab — die Einschraenkung von Ansatz A (ModuleCustomInterface-Filter) ist damit irrelevant.
 
-7. **Admin-Panel-Abdeckung (bei Modul-Ansatz):** Falls später gewählt, muss die Admin-Layout-Einschränkung akzeptiert werden. Workaround ist nicht möglich, da `modules_v4/`-Module `ModuleCustomInterface` implementieren müssen.
+7. **Boomerang-Version-Pinning:** → **curl auf npm-Registry-Tarball** mit SHA256-Checksum im Containerfile. URL-Format: `https://registry.npmjs.org/boomerangjs/-/boomerangjs-${VERSION}.tgz`.
 
-### 4.2 Nicht-blockierend
+### 4.2 Bei Implementierung zu verifizieren
 
-8. **Server-Timing Header:** PHP OTel SDK emittiert standardmäßig KEINEN `Server-Timing`-Response-Header. Für Browser↔Server-Trace-Verknüpfung müsste dies nachgerüstet werden. Priorität: Niedrig.
+8. **mod_substitute und FallbackResource:** Pruefen, ob mod_substitute korrekt mit `FallbackResource /index.php` interagiert (interner Subrequest). Falls nicht: Substitute-Regel auf `<Location "/">` beschraenken.
 
-9. **Content-Security-Policy:** Aktuell kein CSP-Header gesetzt. Falls später gesetzt, müssen `/rum/`-Script-Quellen erlaubt werden.
+### 4.3 Aufgeschoben (nicht blockierend)
 
-10. **Boomerang-Version-Pinning:** npm-Paket `boomerangjs@1.815.1` muss vor dem Container-Build heruntergeladen werden (npm-ci in Build-Stage oder wget aus npm-Registry-Tarball).
+9. **Server-Timing Header:** Aufgeschoben — wird Voraussetzung fuer Option A (A6, Abschnitt 4.3).
+
+10. **Content-Security-Policy:** Aktuell kein CSP-Header gesetzt. Falls spaeter eingefuehrt: `/rum/`-Script-Quellen erlauben.
 
 ---
 

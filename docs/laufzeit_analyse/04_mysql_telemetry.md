@@ -227,31 +227,27 @@ Diese könnten als separate Erweiterung in den Stack integriert werden (→ sieh
 
 ---
 
-## 4. Offene Punkte
+## 4. Offene Punkte — Entscheidungsstatus
 
-### Vor Implementierung zu klären
+### 4.1 Entschieden
 
-1. **Healthcheck-Kompatibilität:** Der aktuelle Healthcheck verwendet `mysqladmin ping` mit Root-Passwort. Bei MySQL 8.4+ mit `caching_sha2_password` muss geprüft werden, ob der `default-mysql-client` aus dem Debian-Paket dies unterstützt. Alternative: Healthcheck via `mysqladmin ping --protocol=tcp -h localhost`.
+1. **`mysql-security`-Service:** → **Parallel aktualisieren** auf `mysql:lts` (A9, Abschnitt 1.6). Aenderung in `compose.yaml` gemeinsam mit dem Haupt-MySQL-Service.
 
-2. **`mysql-security`-Service:** Der Security-Track in `compose.yaml` (Zeile 155–176) verwendet ebenfalls `mysql:8.0`. Muss parallel aktualisiert werden.
+2. **InnoDB-Default-Aenderungen in 8.4:** → **Akzeptiert.** Fuer funktionale Tests irrelevant. Performance-Tests (Layer 5) muessen mit 8.4-Baselines arbeiten — alte 8.0-Baselines sind nach Upgrade nicht mehr gueltig.
 
-3. **InnoDB-Default-Änderungen in 8.4:**
-   - `innodb_adaptive_hash_index`: ON → OFF
-   - `innodb_change_buffering`: all → none
-   - `innodb_io_capacity`: 200 → 10000
-   - `innodb_flush_method`: fsync → O_DIRECT
+### 4.2 Bei Implementierung zu verifizieren
 
-   Diese ändern das Performance-Profil. Für Tests irrelevant, aber die Performance-Tests (Layer 5) könnten andere Baselines ergeben.
+3. **Healthcheck-Kompatibilitaet:** `mysqladmin ping` mit Root-Passwort und `caching_sha2_password` in MySQL 8.4 pruefen. Alternative: `mysqladmin ping --protocol=tcp -h localhost`.
 
-4. **`mysql_native_password`-Healthcheck im Security-Service:** Zeile 172 verwendet `mysqladmin ping -h localhost` ohne Passwort. Bei 8.4+ funktioniert das nur, wenn der Root-User über Unix-Socket authentifiziert oder das Passwort mitgegeben wird.
+4. **Security-Service Healthcheck:** Zeile 172 verwendet `mysqladmin ping -h localhost` ohne Passwort. Bei 8.4+ verifizieren.
 
-5. **Upstream-webtrees-Kompatibilität verifizieren:** Die Upstream-CI (`upstream/webtrees/.github/workflows/phpunit.yaml`) sollte auf die dort getesteten MySQL-Versionen geprüft werden, um Regressions-Risiken einzuschätzen.
+5. **Upstream-webtrees-Kompatibilitaet:** Upstream-CI auf getestete MySQL-Versionen pruefen.
 
-### Nicht weiter zu verfolgen
+### 4.3 Nicht weiter zu verfolgen
 
-- **MySQL Telemetry Trace Plugin:** Enterprise-only, keine Community-Alternative. Investition in Recherche oder Workarounds ist nicht sinnvoll.
-- **MySQL 9.x für die Testplattform:** Kein Vorteil gegenüber 8.4 LTS, da das Telemetry-Plugin der einzige Grund für 9.x war.
-- **End-to-End Trace Propagation PHP→MySQL:** Architektonisch nicht unterstützt, auch nicht mit Enterprise-Lizenz.
+- **MySQL Telemetry Trace Plugin:** Enterprise-only, keine Community-Alternative.
+- **MySQL 9.x fuer die Testplattform:** Kein Vorteil gegenueber 8.4 LTS.
+- **End-to-End Trace Propagation PHP→MySQL:** Architektonisch nicht unterstuetzt.
 
 ---
 

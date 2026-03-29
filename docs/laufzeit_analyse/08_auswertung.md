@@ -1013,26 +1013,23 @@ Die Einbettung des Auswertungs-Scripts in den Gesamtablauf:
 
 ---
 
-## 4. Offene Punkte
+## 4. Offene Punkte — Entscheidungsstatus
 
-### 4.1 Vor Implementierung zu klaeren
+### 4.1 Entschieden
 
-1. **`traces.json` Rotation:** Soll die Datei vor jedem Testlauf geleert werden? Aktuell waechst sie unbegrenzt. Optionen:
-   - (a) `truncate -s 0 artifacts/traces.json` im Makefile-Target vor dem Testlauf
-   - (b) Kein Reset — das Script filtert nach `test.run_id`
-   - (c) OTel Collector File-Exporter mit `rotation`-Config (erfordert Collector-Contrib-Features)
+1. **`traces.json` Rotation:** → **Option (b): Kein Reset.** Das Script filtert nach `test.run_id` — die Datei kann beliebig wachsen. `make clean` loescht alles. Kein `truncate` noetig.
 
-   Empfehlung: Option (b) fuer Einfachheit. Die Datei wird durch `make clean` geloescht.
+2. **`run_id`-Weitergabe:** → **Shell-Variable im Makefile-Target.** Bei integrierten Targets (z.B. `test-e2e`) wird `RUN_ID` intern erzeugt und an Testlauf + Report uebergeben (siehe Abschnitt 3.4). Bei separaten `make trace-report`-Aufrufen uebergibt der User die UUID explizit.
 
-2. **`run_id`-Weitergabe:** Wie wird die in uuidgen erzeugte `RUN_ID` vom Makefile an den Report-Aufruf weitergegeben? Das Makefile muss die UUID in einer Variable halten, die sowohl dem Testlauf als auch dem Report zur Verfuegung steht. Bei separaten `make`-Aufrufen muss der User die UUID manuell uebergeben.
+3. **Python-Version:** → **Python 3.9+ (Type-Hints `list[Span]`).** Fedora 43 hat Python 3.13, Debian Bookworm hat Python 3.11. Beide kompatibel. Keine externen Pakete noetig.
 
-3. **Python-Version:** Das Script nutzt `list[Span]` Type-Hints (Python 3.9+) und `match`-freie Syntax. Fedora hat Python 3.12+, Debian Bookworm (Playwright-Container) hat Python 3.11. Beide sind kompatibel.
+4. **jq als Fallback:** → **Nein.** Python 3 ist auf Fedora und Debian Bookworm Standard. Kein Fallback-Script.
 
-4. **jq als Fallback:** Soll ein minimales bash+jq-Script als Fallback bereitgestellt werden, falls Python nicht verfuegbar ist? Empfehlung: Nein — auf Fedora und Debian Bookworm ist Python 3 Standard.
+5. **Playwright-HTML-Report-Integration:** → **Nein.** Der Trace-Report bleibt ein separates Artefakt unter `artifacts/`. Eine Playwright-Reporter-Extension waere signifikanter Aufwand bei geringem Mehrwert.
 
-5. **File-Exporter Flush-Timing:** Der OTel Collector File-Exporter flusht Spans moeglicherweise nicht sofort auf Disk. Zwischen Testlauf-Ende und Report-Generierung muss sichergestellt sein, dass alle Spans geschrieben wurden. Der Collector flusht beim Batch-Export (Default: alle 5 Sekunden). In der Praxis reicht der Zeitabstand zwischen Testlauf-Ende und manuellem `make trace-report`-Aufruf aus. Bei automatischer Integration (Phase 2+) koennte ein `sleep 3` noetig sein.
+### 4.2 Bei Implementierung zu beachten
 
-6. **Playwright-HTML-Report-Integration:** Der Prompt fragt, ob der Trace-Report in den Playwright-HTML-Report eingebettet werden soll. Empfehlung: Nein. Der Playwright-Report hat ein eigenes Format und API. Eine Einbettung wuerde eine Playwright-Reporter-Extension erfordern (signifikanter Aufwand, geringer Mehrwert). Der Trace-Report bleibt ein separates Artefakt.
+6. **File-Exporter Flush-Timing:** Der OTel Collector flusht Spans im Batch-Export (Default: alle 5 Sekunden). Bei automatischer Integration (Report direkt nach Testlauf) ggf. `sleep 5` oder Collector-Flush-Config anpassen. Bei manuellem `make trace-report` ist das Timing unkritisch.
 
 ### 4.2 Abhaengigkeiten
 

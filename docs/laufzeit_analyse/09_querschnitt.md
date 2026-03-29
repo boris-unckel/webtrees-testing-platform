@@ -637,49 +637,48 @@ Alle vier Schritte in einem Commit:
 
 ---
 
-## 8. Offene Punkte
+## 8. Offene Punkte — Konsolidierter Entscheidungsstatus
 
-### 8.1 Vor Beginn der Implementierung zu klaeren
+### 8.1 Entschieden (nicht mehr offen)
 
-1. **OTel Collector Version pinnen:** Die konkrete Version des OTel Collector Contrib-Images muss gewaehlt werden. Empfehlung: Die zum Zeitpunkt der Implementierung aktuelle stabile Version verwenden und dokumentieren.
+| # | Punkt | Entscheidung | Referenz |
+|---|---|---|---|
+| E1 | OTel Collector Version pinnen | Aktuelle stabile Version zum Implementierungszeitpunkt | A9, 1.4 |
+| E2 | Jaeger Version pinnen | Aktuelle stabile Version zum Implementierungszeitpunkt | A9, 1.4 |
+| E3 | Boomerang Download-Methode | `curl` auf npm-Registry-Tarball-URL (kein npm im Build) | A2, 4.1.7 |
+| E4 | Boomerang `beacon_url` | `/beacon/` — 404-Fehler akzeptiert, OTel-Traces ueber Collector | A1, 4.1.2 |
+| E5 | Span-Name-Konvention | `webtrees.<action>` (z.B. `webtrees.view_individual`) | A7, 4.1.2 |
+| E6 | Route-Map-Granularitaet | Initial ~20 scope-relevante Routes, erweiterbar | A7, 4.1.3 |
+| E7 | OTel-Spans-Modul Platzierung | `modules/otel-spans/` im Repo-Root, Volume-Mount nach `modules_v4/otel_spans/` | A7, 4.1.1 |
+| E8 | Boomerang-Deaktivierung | Via `OTEL_SDK_DISABLED` (Apache `<If>`-Direktive) | A2, 4.1.5 |
+| E9 | Collector-URL Container vs. Host | Dynamische JS-Erkennung in `boomerang-init.js` via `window.location.hostname` | A2, 4.1.2 |
+| E10 | auto-psr15 + Custom Module | Beide Spans — PSR-15 generisch (Parent), Custom semantisch (Child) | A7, 4.1.4 |
+| E11 | Query-Parameter in Spans | Ja — Testkontext mit Testdaten, dokumentieren | A7, 4.1.5 |
+| E12 | traces.json Rotation | Kein Reset — Filterung nach test.run_id; `make clean` loescht alles | A8, 4.1.1 |
+| E13 | Playwright-HTML-Report | Keine Integration — Trace-Report bleibt separates Artefakt | A8, 4.1.5 |
+| E14 | JS-Dateien im Container | COPY im Containerfile (reproduzierbar) | A2, 4.1.4 |
 
-2. **Jaeger Version pinnen:** Analog zum Collector. Empfehlung: Aktuelle stabile Version.
+### 8.2 Bei Implementierung zu verifizieren
 
-3. **Boomerang npm-Download vs. curl:** Entscheidung, ob `npm pack` (erfordert npm im Build) oder `curl` auf die npm-Registry-Tarball-URL (kein npm noetig) verwendet wird. curl ist einfacher und hat weniger Abhaengigkeiten.
+| # | Punkt | Was zu pruefen ist | Referenz |
+|---|---|---|---|
+| V1 | OTEL_PROPAGATORS Default | Im Container pruefen ob Default `tracecontext,baggage` gilt; falls nicht: explizit in `compose.yaml` | A6, 4.1.1 |
+| V2 | ext-opentelemetry + PHP 8.5 | `auto-psr15` 1.2.0 Kompatibilitaet mit PHP 8.5 beim `composer require` | A7, 4.2.6 |
+| V3 | mod_substitute + FallbackResource | Korrekte Interaktion mit `FallbackResource /index.php` (interner Subrequest) | A2, 4.2.8 |
+| V4 | MySQL 8.4 Healthcheck | `mysqladmin ping` mit `caching_sha2_password` | A4, 4.1.1 |
+| V5 | Baggage::getCurrent() Timing | Baggage-Context muss propagiert sein bevor OTel-Spans-Modul ausfuehrt | A6, 4.1.2 |
+| V6 | Percent-Encoding Roundtrip | URL-encoded `test.case_id` korrekt durch Stack; `urldecode()` im Modul | A6, 4.1.3 |
+| V7 | File-Exporter Flush-Timing | Collector-Flush vor Report-Generierung; ggf. `sleep 5` bei automatischer Integration | A8, 4.2.6 |
 
-4. **Boomerang `beacon_url`:** Verifizieren, dass Boomerang mit `beacon_url: '/dev/null'` (oder einer nicht-existierenden URL) keine blockierenden Fehler erzeugt (A1, Abschnitt 4.1.2).
+### 8.3 Aufgeschoben (nicht blockierend, spaetere Phasen)
 
-5. **OTEL_PROPAGATORS Default:** Im laufenden Container pruefen, ob der Default `tracecontext,baggage` gilt, oder ob `OTEL_PROPAGATORS` explizit in `compose.yaml` gesetzt werden muss (A6, Abschnitt 4.1.1).
-
-6. **Span-Name-Konvention:** Entscheidung, ob das OTel-Spans-Modul die OpenTelemetry HTTP Semantic Convention (`HTTP GET /tree/{tree}/individual/{xref}`) oder eigene Benennung (`webtrees.view_individual`) verwendet (A7, Abschnitt 4.1.2).
-
-7. **Route-Map-Granularitaet:** Entscheidung, ob initial alle ~80 Routes oder nur die im Scope genannten (~20 Routes) gemappt werden (A7, Abschnitt 4.1.3).
-
-8. **OTel-Spans-Modul Platzierung:** Entscheidung ueber das Verzeichnis: `modules/otel-spans/` (im Repo-Root) oder `otel/otel-spans-module/` (im otel-Verzeichnis). Empfehlung: `modules/otel-spans/`, da es ein webtrees-Modul ist.
-
-9. **Boomerang-Deaktivierung:** Entscheidung, ob Boomerang-Injection per `OTEL_SDK_DISABLED` oder per eigener Environment-Variable (`BOOMERANG_ENABLED`) gesteuert wird.
-
-### 8.2 Waehrend der Implementierung zu verifizieren
-
-10. **ext-opentelemetry Kompatibilitaet mit PHP 8.5:** Pruefen, ob `auto-psr15` 1.2.0 mit PHP 8.5 kompatibel ist (A7, Abschnitt 4.2.6).
-
-11. **mod_substitute und FallbackResource:** Pruefen, ob mod_substitute korrekt mit `FallbackResource /index.php` interagiert (A2, Abschnitt 4.1.3).
-
-12. **Collector-URL im Container-Netzwerk vs. Host:** Boomerang im Browser verwendet `http://localhost:4318/v1/traces` (Host-Zugriff) vs. Playwright-Browser im Container verwendet `http://otel-collector:4318/v1/traces` (Container-Netzwerk). Die `boomerang-init.js` muss ggf. dynamisch konfigurierbar sein (A2, Abschnitt 4.1.2).
-
-13. **MySQL 8.4 Healthcheck:** Verifizieren, dass der bestehende `mysqladmin ping`-Healthcheck mit MySQL 8.4 und `caching_sha2_password` funktioniert (A4, Abschnitt 4.1).
-
-### 8.3 Nicht blockierend (spaeter)
-
-14. **Server-Timing Header:** PHP OTel SDK emittiert standardmaessig keinen `Server-Timing`-Response-Header. Fuer Browser↔Server-Trace-Verknuepfung waere dies nachzuruesten. **Wird Voraussetzung fuer Option A** (Playwright Root-Span): Boomerangs `instrumentation-document-load` benoetigt den Server-Timing-Rueckkanal, um Browser-Spans mit dem Server-Span im selben Trace-Baum zu verknuepfen (A6, Abschnitt 1.3). Prioritaet: Niedrig (initial), steigt bei Umstieg auf Option A.
-
-15. **Content-Security-Policy:** Aktuell kein CSP-Header gesetzt. Falls spaeter eingefuehrt, muessen `/rum/`-Script-Quellen erlaubt werden (A2, Abschnitt 4.2.9).
-
-16. **Baseline-Vergleich (PerfSchema):** Automatischer Schwellwert-Vergleich mit konfigurierbaren Toleranzen. Phase 3 des PerfSchema-Plans (A5, Abschnitt 3). Aufwand: ~8 Stunden.
-
-17. **Digest-Text-Matching (PDO ↔ PerfSchema):** Korrelation zwischen PDO-Span `db.statement` und PerfSchema `DIGEST_TEXT`. Phase 4 des Trace-Report-Plans (A8, Abschnitt 3.7). Aufwand: ~6 Stunden.
-
-18. **ARM64-Support:** Keines der analysierten OTel-Binaries unterstuetzt ARM64 (A3, Abschnitt 4.2.5). Falls die Testing-Plattform auf Apple Silicon laufen soll, muesste dies beruecksichtigt werden. Fuer den aktuellen Fedora/x86-64-Einsatz irrelevant.
+| # | Punkt | Kontext | Prioritaet |
+|---|---|---|---|
+| S1 | Server-Timing Header | Voraussetzung fuer Option A (Playwright Root-Span, A6 Abschnitt 1.3/4.3) | Niedrig → steigt bei Option A |
+| S2 | Content-Security-Policy | Falls CSP eingefuehrt: `/rum/`-Script-Quellen erlauben | Niedrig |
+| S3 | PerfSchema Baseline-Vergleich | Automatische Schwellwerte (A5, Phase 3). ~8h Aufwand | Mittel |
+| S4 | Digest-Text-Matching | PDO-Span ↔ PerfSchema Korrelation (A8, Phase 4). ~6h Aufwand | Mittel |
+| S5 | ARM64-Support | Fuer Fedora/x86-64 irrelevant; relevant falls Apple Silicon | Niedrig |
 
 ---
 

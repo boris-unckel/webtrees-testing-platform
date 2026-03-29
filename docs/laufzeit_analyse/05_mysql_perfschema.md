@@ -46,7 +46,7 @@ SHOW ENGINE PERFORMANCE_SCHEMA STATUS;
 - Wait-Instrumentierung (Default OFF): 5–15% Overhead bei voller Aktivierung
 - Stage-Instrumentierung (Default OFF): 5–10% Overhead
 
-Für den Testkontext ist der Statement-Overhead akzeptabel, da er für alle Testläufe konstant ist.
+Fuer den Testkontext sind sowohl Statement- als auch Stage-Overhead akzeptabel, da sie fuer alle Testlaeufe konstant sind und die Messung nicht verfaelschen. Die Stage-Instrumentierung wird aktiviert (siehe Empfohlene Konfiguration).
 
 #### Relevante Performance Schema Tabellen
 
@@ -464,25 +464,27 @@ test-integration:
 
 ---
 
-## 4. Offene Punkte
+## 4. Offene Punkte — Entscheidungsstatus
 
-### Vor Implementierung zu klären
+### 4.1 Entschieden
 
-1. **Root-Passwort als Variable:** Umgebungsvariable `${MYSQL_ROOT_PASSWORD:-webtrees_test}` — konsistent mit compose.yaml.
+1. **Root-Passwort als Variable:** → `${MYSQL_ROOT_PASSWORD:-webtrees_test}` — konsistent mit compose.yaml. Im Testkontext akzeptabel.
 
-2. **`wait/io/table/sql/handler` Default-Status:** Im laufenden Container verifizieren:
+2. **Artefakt-Volume:** → Extraktion ueber Stdout-Redirect von `podman-compose exec` (kein zusaetzlicher Volume-Mount noetig).
+
+3. **Layer-Parameter:** → `scripts/extract-perfschema.sh layer3` — CLI-Argument bestimmt Zielverzeichnis unter `artifacts/`.
+
+4. **TRUNCATE-Zeitpunkt:** → Separates Skript `scripts/truncate-perfschema.sh`, aufgerufen vor dem Testlauf. Root-Zugriff erforderlich.
+
+5. **Security-Track:** → Extraktionsskript akzeptiert Container-Namen als Parameter. Default: `mysql`; fuer Security-Track: `mysql-security`.
+
+### 4.2 Bei Implementierung zu verifizieren
+
+6. **`wait/io/table/sql/handler` Default-Status:** Im laufenden Container verifizieren:
    ```sql
    SELECT NAME, ENABLED, TIMED FROM performance_schema.setup_instruments
    WHERE NAME = 'wait/io/table/sql/handler';
    ```
-
-3. **Artefakt-Volume:** Extraktion über Stdout-Redirect von `podman-compose exec` (kein zusätzlicher Volume-Mount).
-
-4. **Layer-Parameter:** `scripts/extract-perfschema.sh layer3` — CLI-Argument bestimmt Zielverzeichnis.
-
-5. **TRUNCATE-Zeitpunkt:** Separates Skript `scripts/truncate-perfschema.sh`, aufgerufen vor dem Testlauf.
-
-6. **Security-Track:** `mysql-security`-Service nutzt separate MySQL-Instanz. Extraktionsskript muss Container-Namen als Parameter akzeptieren.
 
 ### Nicht weiter zu verfolgen
 
