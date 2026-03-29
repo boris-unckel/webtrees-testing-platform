@@ -129,11 +129,56 @@ services:
     profiles:
       - debug
 
+  # --- Sicherheitstest-Track (Distribution + Wizard) ---
+  # @see docs/security_plan.md Abschnitt 6.3
+
+  webtrees-security:
+    image: webtrees-security
+    container_name: webtrees-security
+    profiles:
+      - security
+    ports:
+      - "8082:80"
+    depends_on:
+      mysql-security:
+        condition: service_healthy
+    networks:
+      - webtrees-test-net
+    healthcheck:
+      test: ["CMD", "php", "-r", "echo 'ok';"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mysql-security:
+    image: docker.io/library/mysql:8.0
+    container_name: mysql-security
+    profiles:
+      - security
+    environment:
+      MYSQL_ROOT_PASSWORD: security_test
+      MYSQL_DATABASE: webtrees_security
+      MYSQL_USER: webtrees
+      MYSQL_PASSWORD: security_test
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_bin
+    networks:
+      - webtrees-test-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - mysql-security-data:/var/lib/mysql
+
 volumes:
   webtrees-data:
   webtrees-vendor:
   webtrees-unit-tests-data:
   mysql-data:
+  mysql-security-data:
 
 networks:
   webtrees-test-net:

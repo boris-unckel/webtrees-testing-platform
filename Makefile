@@ -3,8 +3,9 @@
 
 COMPOSE = podman-compose -f compose.yaml
 COMPOSE_DEBUG = podman-compose -f compose.yaml --profile debug
+COMPOSE_SECURITY = podman-compose -f compose.yaml --profile security
 
-.PHONY: help up down clean setup test-all test-static test-unit test-integration test-e2e test-performance logs status
+.PHONY: help up down clean setup test-all test-static test-unit test-integration test-e2e test-performance security-build test-security security-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -43,6 +44,28 @@ test-e2e: ## Teststufe 3 — Systemtest (Playwright)
 
 test-performance: ## Performanztest (Playwright-Metrics + Baseline-Vergleich)
 	$(COMPOSE) exec playwright npx playwright test --config=/tests/performance/playwright.config.ts
+
+security-build: ## Security-Image bauen (Distribution-Build)
+	scripts/build-security-image.sh
+
+test-security: security-build ## Sicherheitstest (Distribution + Wizard + Prüfpunkte)
+	$(COMPOSE_SECURITY) up -d webtrees-security mysql-security playwright
+	scripts/security-filesystem-checks.sh --pre-wizard
+	$(COMPOSE_SECURITY) exec playwright npx playwright test \
+	    --config=/tests/e2e/playwright-security.config.ts
+	scripts/security-filesystem-checks.sh --post-wizard
+	-podman stop webtrees-security mysql-security 2>/dev/null
+	-podman rm -f webtrees-security mysql-security 2>/dev/null
+
+security-up: security-build ## Security-Stack starten (ohne Tests)
+	$(COMPOSE_SECURITY) up -d webtrees-security mysql-security
+
+security-down: ## Security-Stack stoppen + entfernen
+	-podman stop webtrees-security mysql-security 2>/dev/null
+	-podman rm -f webtrees-security mysql-security 2>/dev/null
+
+security-clean: security-down ## Security-Stack stoppen + Volumes löschen
+	-podman volume rm -f webtrees-testing-platform_mysql-security-data 2>/dev/null
 
 logs: ## Container-Logs anzeigen
 	$(COMPOSE) logs -f

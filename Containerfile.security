@@ -1,0 +1,71 @@
+# Sicherheitstest-Container: Distribution-Build + produktionsidentisches Apache+PHP
+# Zwei-Track-Architektur: Dieser Container ist UNABHÄNGIG vom Fachtest-Container.
+#
+# Stage 1: Distribution bauen (composer webtrees:build)
+# Stage 2: Produktionsidentischer Apache+PHP mit entpackter Distribution
+#
+# @see docs/security_plan.md Abschnitt 6.2
+
+# === Stage 1: Distribution bauen ===
+FROM docker.io/library/php:8.5-cli AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git unzip zip nodejs npm perl \
+    libicu-dev libzip-dev libpng-dev libjpeg-dev libwebp-dev \
+    libfreetype6-dev libxml2-dev libgd-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) intl gd zip \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=docker.io/library/composer:2 /usr/bin/composer /usr/bin/composer
+
+# Upstream-Source wird per --volume beim Build gemountet (scripts/build-security-image.sh).
+# Kopie nötig, weil composer webtrees:build das Arbeitsverzeichnis modifiziert.
+RUN mkdir -p /build && cp -a /webtrees-src-mount /build/webtrees-src
+WORKDIR /build/webtrees-src
+
+# Asset-Compilation (npm)
+RUN npm ci && npm run production
+
+# Dependencies installieren (inkl. Dev für composer webtrees:build)
+RUN composer install --no-interaction
+
+# Distribution bauen (composer webtrees:build)
+# git archive braucht ein funktionierendes Git-Repo; die Kopie enthält .git
+RUN composer webtrees:build
+
+# ZIP entpacken
+RUN unzip -q webtrees-*.zip -d /build/dist
+
+# === Stage 2: Produktionsidentischer Container ===
+FROM docker.io/library/php:8.5-apache
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libicu-dev libzip-dev libpng-dev libjpeg-dev libwebp-dev \
+    libfreetype6-dev libxml2-dev libgd-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) intl pdo pdo_mysql gd zip exif xml \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Apache-Konfiguration (identisch zum Fachtest-Container)
+RUN a2enmod rewrite
+COPY <<'VHOST' /etc/apache2/sites-available/000-default.conf
+<VirtualHost *:80>
+    DocumentRoot /var/www/html
+    <Directory /var/www/html>
+        AllowOverride All
+        Require all granted
+        FallbackResource /index.php
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+VHOST
+
+# Distribution aus Stage 1 kopieren
+COPY --from=builder /build/dist/webtrees/ /var/www/html/
+
+# data/ beschreibbar für Wizard (www-data)
+RUN chown -R www-data:www-data /var/www/html/data
+
+EXPOSE 80

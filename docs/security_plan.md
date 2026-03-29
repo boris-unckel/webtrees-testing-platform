@@ -280,33 +280,33 @@ Fachtest-Track, Credential-Stärke in Testumgebung.
 
 | # | Feature | Abgeleitete Anforderung | Upstream-Mechanismus | Teststufe | Prio | Status |
 |---|---------|-------------------------|----------------------|-----------|------|--------|
-| SEC-H01 | `.htaccess` Existenz | `data/.htaccess` in Distribution vorhanden | Statische Datei im Repo | 2 | Hoch | Offen |
-| SEC-H02 | `.htaccess` Inhalt | Enthält `Require all denied` (Apache 2.4) + Legacy | Statischer Dateiinhalt | 2 | Hoch | Offen |
-| SEC-H03 | HTTP-Zugriff `data/` blockiert | `GET /data/` → HTTP 403 | `.htaccess` + `AllowOverride All` | 3 | Hoch | Offen |
-| SEC-H04 | HTTP-Zugriff `config.ini.php` blockiert | `GET /data/config.ini.php` → 403 (nicht 200, kein Dateiinhalt) | `.htaccess` blockiert gesamten Pfad | 3 | Hoch | Offen |
-| SEC-H05 | HTTP-Zugriff `data/media/` blockiert | `GET /data/media/` → 403 | `.htaccess` gilt für Unterverzeichnisse | 3 | Hoch | Offen |
-| SEC-H06 | URL-Encoding umgeht `.htaccess` nicht | Encoding-Varianten → jeweils 403 | Apache dekodiert vor `.htaccess`-Prüfung | 3 | Hoch | Offen |
-| SEC-D01 | `data/index.php` Existenz | Datei in Distribution vorhanden | Statische Datei im Repo | 2 | Mittel | Offen |
-| SEC-D02 | `data/index.php` Redirect-Logik | Enthält `header('Location: ../index.php')` | Statischer Dateiinhalt | 2 | Mittel | Offen |
-| SEC-C01 | Config PHP-Guard | Wizard-erzeugte `config.ini.php` hat `; <?php return; ?>` als erste Zeile | `SetupWizard::createConfigFile()` → Template | 2 | Hoch | Offen |
-| SEC-C02 | Config DB-Credentials | `config.ini.php` enthält dbhost, dbuser, dbpass, dbname | Wizard-Template interpoliert Formularwerte | 2 | Hoch | Offen |
-| SEC-C03 | Config Datei-Permissions | Ist-Zustand dokumentieren; world-readable = Upstream-Befund | `file_put_contents()` ohne `chmod` | 2 | Hoch | Offen |
-| SEC-M01 | Direkter Media-Zugriff blockiert | `GET /data/media/<datei>` → 403 | `.htaccess` blockiert `data/` komplett | 3 | Mittel | Offen |
-| SEC-M02 | Media-Route ohne Auth | App-Route als Visitor → 403 oder Redirect zu Login | `Auth::checkMediaAccess()` | 3 | Mittel | Offen |
-| SEC-M03 | Media-Route mit Auth | App-Route als Member → 200 | `MediaFileDownload` nach Auth-Check | 3 | Mittel | Offen |
-| SEC-PUB01 | `public/index.php` Existenz | Datei in Distribution vorhanden | Statische Datei im Repo | 2 | Mittel | Offen |
-| SEC-PUB02 | `public/index.php` keine PHP-Execution | `GET /public/index.php` → statischer Inhalt (Source sichtbar) | `PublicFiles` liefert via `file_get_contents()` | 3 | Mittel | Offen |
-| SEC-PUB03 | Kein Directory Listing `/public/` | `GET /public/` → kein Datei-Listing | `PublicFiles` matched nur Dateien | 3 | Mittel | Offen |
-| SEC-PUB04 | Path-Traversal blockiert | `GET /public/../data/config.ini.php` → kein Dateiinhalt | `!str_contains($path, '..')` | 3 | Mittel | Offen |
-| SEC-W01 | Wizard nach Setup gesperrt | `GET` auf Setup-URL → kein Setup-Formular | `ReadConfigIni`: `file_exists()` → normaler Handler | 3 | Hoch | Offen |
-| SEC-WZ01 | Wizard erscheint bei Erstaufruf | `GET /` auf frischer Instanz → Setup-Formular | `ReadConfigIni`: kein `config.ini.php` → `SetupWizard` | 3 | Hoch | Offen |
-| SEC-WZ02 | Wizard prüft Schreibrechte | Schritt 2 zeigt Erfolg (data/ beschreibbar) | `SetupWizard::checkFolderIsWritable()` | 3 | Hoch | Offen |
-| SEC-WZ03 | Wizard erzeugt `config.ini.php` | Datei existiert nach Wizard-Abschluss | `SetupWizard::createConfigFile()` | 2+3 | Hoch | Offen |
-| SEC-WZ04 | Wizard sperrt sich selbst | Kein erneuter Setup nach Abschluss | `ReadConfigIni` → `file_exists()` | 3 | Hoch | Offen |
-| SEC-HDR01 | `X-Content-Type-Options` | Header = `nosniff` | `SecurityHeaders`-Middleware | 3 | Niedrig | Offen |
-| SEC-HDR02 | `X-Frame-Options` | Header = `SAMEORIGIN` oder `DENY` | `SecurityHeaders`-Middleware | 3 | Niedrig | Offen |
-| SEC-HDR03 | `Referrer-Policy` | Header gesetzt (nicht leer) | `SecurityHeaders`-Middleware | 3 | Niedrig | Offen |
-| SEC-HDR04 | Server-Banner | Kein detaillierter Apache-Versionsstring | Apache-Konfiguration (nicht Upstream-PHP) | 3 | Niedrig | Offen |
+| SEC-H01 | `.htaccess` Existenz | `data/.htaccess` in Distribution vorhanden | Statische Datei im Repo | 2 | Hoch | Grün |
+| SEC-H02 | `.htaccess` Inhalt | Enthält `Require all denied` (Apache 2.4) + Legacy | Statischer Dateiinhalt | 2 | Hoch | Grün |
+| SEC-H03 | HTTP-Zugriff `data/` blockiert | `GET /data/` → HTTP 403 | `.htaccess` + `AllowOverride All` | 3 | Hoch | Grün |
+| SEC-H04 | HTTP-Zugriff `config.ini.php` blockiert | `GET /data/config.ini.php` → 403 (nicht 200, kein Dateiinhalt) | `.htaccess` blockiert gesamten Pfad | 3 | Hoch | Grün |
+| SEC-H05 | HTTP-Zugriff `data/media/` blockiert | `GET /data/media/` → 403 | `.htaccess` gilt für Unterverzeichnisse | 3 | Hoch | Grün |
+| SEC-H06 | URL-Encoding umgeht `.htaccess` nicht | Encoding-Varianten → jeweils 403 | Apache dekodiert vor `.htaccess`-Prüfung | 3 | Hoch | Grün |
+| SEC-D01 | `data/index.php` Existenz | Datei in Distribution vorhanden | Statische Datei im Repo | 2 | Mittel | Grün |
+| SEC-D02 | `data/index.php` Redirect-Logik | Enthält `header('Location: ../index.php')` | Statischer Dateiinhalt | 2 | Mittel | Grün |
+| SEC-C01 | Config PHP-Guard | Wizard-erzeugte `config.ini.php` hat `; <?php return; ?>` als erste Zeile | `SetupWizard::createConfigFile()` → Template | 2 | Hoch | Grün |
+| SEC-C02 | Config DB-Credentials | `config.ini.php` enthält dbhost, dbuser, dbpass, dbname | Wizard-Template interpoliert Formularwerte | 2 | Hoch | Grün |
+| SEC-C03 | Config Datei-Permissions | Ist-Zustand dokumentieren; world-readable = Upstream-Befund | `file_put_contents()` ohne `chmod` | 2 | Hoch | Rot (Upstream-Befund) |
+| SEC-M01 | Direkter Media-Zugriff blockiert | `GET /data/media/<datei>` → 403 | `.htaccess` blockiert `data/` komplett | 3 | Mittel | Grün |
+| SEC-M02 | Media-Route ohne Auth | App-Route als Visitor → 403 oder Redirect zu Login | `Auth::checkMediaAccess()` | 3 | Mittel | Grün |
+| SEC-M03 | Media-Route mit Auth | App-Route als Member → 200 | `MediaFileDownload` nach Auth-Check | 3 | Mittel | Grün |
+| SEC-PUB01 | `public/index.php` Existenz | Datei in Distribution vorhanden | Statische Datei im Repo | 2 | Mittel | Grün |
+| SEC-PUB02 | `public/index.php` keine PHP-Execution | `GET /public/index.php` → statischer Inhalt (Source sichtbar) | `PublicFiles` liefert via `file_get_contents()` | 3 | Mittel | Grün |
+| SEC-PUB03 | Kein Directory Listing `/public/` | `GET /public/` → kein Datei-Listing | `PublicFiles` matched nur Dateien | 3 | Mittel | Grün |
+| SEC-PUB04 | Path-Traversal blockiert | `GET /public/../data/config.ini.php` → kein Dateiinhalt | `!str_contains($path, '..')` | 3 | Mittel | Grün |
+| SEC-W01 | Wizard nach Setup gesperrt | `GET` auf Setup-URL → kein Setup-Formular | `ReadConfigIni`: `file_exists()` → normaler Handler | 3 | Hoch | Grün |
+| SEC-WZ01 | Wizard erscheint bei Erstaufruf | `GET /` auf frischer Instanz → Setup-Formular | `ReadConfigIni`: kein `config.ini.php` → `SetupWizard` | 3 | Hoch | Grün |
+| SEC-WZ02 | Wizard prüft Schreibrechte | Schritt 2 zeigt Erfolg (data/ beschreibbar) | `SetupWizard::checkFolderIsWritable()` | 3 | Hoch | Grün |
+| SEC-WZ03 | Wizard erzeugt `config.ini.php` | Datei existiert nach Wizard-Abschluss | `SetupWizard::createConfigFile()` | 2+3 | Hoch | Grün |
+| SEC-WZ04 | Wizard sperrt sich selbst | Kein erneuter Setup nach Abschluss | `ReadConfigIni` → `file_exists()` | 3 | Hoch | Grün |
+| SEC-HDR01 | `X-Content-Type-Options` | Header = `nosniff` | `SecurityHeaders`-Middleware | 3 | Niedrig | Grün |
+| SEC-HDR02 | `X-Frame-Options` | Header = `SAMEORIGIN` oder `DENY` | `SecurityHeaders`-Middleware | 3 | Niedrig | Grün |
+| SEC-HDR03 | `Referrer-Policy` | Header gesetzt (nicht leer) | `SecurityHeaders`-Middleware | 3 | Niedrig | Grün |
+| SEC-HDR04 | Server-Banner | Kein detaillierter Apache-Versionsstring | Apache-Konfiguration (nicht Upstream-PHP) | 3 | Niedrig | Rot (Deployment-Empfehlung) |
 
 **Anmerkung SEC-D01/SEC-D02:** Der HTTP-Redirect ist in unserem Stack nicht erreichbar, weil
 `.htaccess` vorher greift. Das ist korrektes Verhalten. Nicht als HTTP-Test, nur als
@@ -1035,51 +1035,51 @@ Feature-Matrix (Abschnitt 4.2) synchron aktualisiert.
 
 | Aspekt | Detail |
 |--------|--------|
-| **Status** | **Offen** |
+| **Status** | **Verifiziert** |
 | **Prüfpunkte** | — (Infrastruktur, keine Feature-Matrix-IDs) |
-| **Deliverables** | `Containerfile.security` (Multi-Stage-Build), Compose-Erweiterung (Profil `security`, `webtrees-security`, `mysql-security`), Makefile-Targets (`test-security`, `security-up`, `security-down`, `security-clean`) |
+| **Deliverables** | `Containerfile.security` (Multi-Stage-Build), `scripts/build-security-image.sh` (Build-Helper), Compose-Erweiterung (Profil `security`, `webtrees-security`, `mysql-security`), Makefile-Targets (`security-build`, `test-security`, `security-up`, `security-down`, `security-clean`) |
 | **Abnahmekriterium** | `make security-up` startet den Security-Stack, `GET /` zeigt Setup-Wizard |
-| **Ergebnis** | — |
+| **Ergebnis** | Verifiziert: HTTP 200, "Setup wizard for webtrees" auf http://localhost:8082/ |
 
 ### Phase S2 — Wizard-Automatisierung (SEC-WZ01–SEC-WZ04)
 
 | Aspekt | Detail |
 |--------|--------|
-| **Status** | **Offen** |
+| **Status** | **Verifiziert** |
 | **Prüfpunkte** | SEC-WZ01, SEC-WZ02, SEC-WZ03, SEC-WZ04 |
 | **Deliverables** | `layer4-e2e/playwright-security.config.ts`, `layer4-e2e/tests/security/wizard-setup.spec.ts` |
 | **Abnahmekriterium** | Wizard-Durchlauf automatisiert, SEC-WZ01–SEC-WZ04 grün |
-| **Ergebnis** | — |
+| **Ergebnis** | 4/4 Tests grün |
 
 ### Phase S3 — Dateisystem-Assertions (SEC-H01, SEC-H02, SEC-D01, SEC-D02, SEC-C01–SEC-C03, SEC-PUB01)
 
 | Aspekt | Detail |
 |--------|--------|
-| **Status** | **Offen** |
+| **Status** | **Verifiziert** |
 | **Prüfpunkte** | SEC-H01, SEC-H02, SEC-D01, SEC-D02, SEC-C01, SEC-C02, SEC-C03, SEC-PUB01, SEC-WZ03 |
 | **Deliverables** | `scripts/security-filesystem-checks.sh` (9 Prüfpunkte) |
 | **Abnahmekriterium** | 9 Layer-3-Assertions grün (oder rot bei Upstream-Befund → dokumentieren) |
-| **Ergebnis** | — |
+| **Ergebnis** | 8/9 grün, SEC-C03 rot (Upstream-Befund: config.ini.php world-readable 644) |
 
 ### Phase S4 — HTTP-Zugriffstests (SEC-H03–SEC-H06, SEC-PUB02–SEC-PUB04, SEC-W01)
 
 | Aspekt | Detail |
 |--------|--------|
-| **Status** | **Offen** |
+| **Status** | **Verifiziert** |
 | **Prüfpunkte** | SEC-H03, SEC-H04, SEC-H05, SEC-H06, SEC-PUB02, SEC-PUB03, SEC-PUB04, SEC-W01 |
 | **Deliverables** | `layer4-e2e/tests/security/data-access.spec.ts`, `layer4-e2e/tests/security/public-access.spec.ts`, `layer4-e2e/tests/security/setup-lock.spec.ts` |
 | **Abnahmekriterium** | 11+ Testfälle grün (Encoding-Varianten zählen mehrfach) |
-| **Ergebnis** | — |
+| **Ergebnis** | 20/20 Tests grün (inkl. 7 URL-Encoding-Varianten, 5 Path-Traversal-Varianten) |
 
 ### Phase S5 — Media + Security-Headers (SEC-M01–SEC-M03, SEC-HDR01–SEC-HDR04)
 
 | Aspekt | Detail |
 |--------|--------|
-| **Status** | **Offen** |
+| **Status** | **Verifiziert** |
 | **Prüfpunkte** | SEC-M01, SEC-M02, SEC-M03, SEC-HDR01, SEC-HDR02, SEC-HDR03, SEC-HDR04 |
 | **Deliverables** | `layer4-e2e/tests/security/media-access.spec.ts`, `layer4-e2e/tests/security/security-headers.spec.ts` |
 | **Abnahmekriterium** | 7 Testfälle grün (oder rot bei Upstream-Befund) |
-| **Ergebnis** | — |
+| **Ergebnis** | 6/7 grün, SEC-HDR04 rot (Deployment-Empfehlung: Apache Server-Banner enthält Version) |
 
 ### Phase S6 — Dokumentation + Integration
 
@@ -1095,11 +1095,11 @@ Feature-Matrix (Abschnitt 4.2) synchron aktualisiert.
 
 | Phase | Inhalt | Prüfpunkte | Status |
 |-------|--------|------------|--------|
-| S1 | Infrastruktur (Containerfile + Compose + Makefile) | — | **Offen** |
-| S2 | Wizard-Automatisierung | SEC-WZ01–SEC-WZ04 | **Offen** |
-| S3 | Dateisystem-Assertions | SEC-H01, SEC-H02, SEC-D01, SEC-D02, SEC-C01–SEC-C03, SEC-PUB01, SEC-WZ03 | **Offen** |
-| S4 | HTTP-Zugriffstests | SEC-H03–SEC-H06, SEC-PUB02–SEC-PUB04, SEC-W01 | **Offen** |
-| S5 | Media + Security-Headers | SEC-M01–SEC-M03, SEC-HDR01–SEC-HDR04 | **Offen** |
+| S1 | Infrastruktur (Containerfile + Compose + Makefile) | — | **Verifiziert** |
+| S2 | Wizard-Automatisierung | SEC-WZ01–SEC-WZ04 | **Verifiziert** |
+| S3 | Dateisystem-Assertions | SEC-H01, SEC-H02, SEC-D01, SEC-D02, SEC-C01–SEC-C03, SEC-PUB01, SEC-WZ03 | **Verifiziert** |
+| S4 | HTTP-Zugriffstests | SEC-H03–SEC-H06, SEC-PUB02–SEC-PUB04, SEC-W01 | **Verifiziert** |
+| S5 | Media + Security-Headers | SEC-M01–SEC-M03, SEC-HDR01–SEC-HDR04 | **Verifiziert** |
 | S6 | Dokumentation + Integration | — | **Offen** |
 
 ### Abhängigkeiten

@@ -9,6 +9,7 @@ import { defineConfig } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  testIgnore: '**/security/**',
   timeout: 30_000,
   retries: 1,
   workers: 1, // Sequentiell — shared State (Login-Session)
