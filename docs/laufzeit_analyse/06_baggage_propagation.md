@@ -87,24 +87,105 @@ export { expect } from '@playwright/test';
 
 **Benötigte npm-Pakete:** `@opentelemetry/api`, `@opentelemetry/sdk-node`, `@opentelemetry/exporter-trace-otlp-http`, `@opentelemetry/resources`
 
-**Vorteile:** Saubere Trace-Hierarchie (Playwright-Span → PHP-Span → DB-Spans)
-**Nachteile:** Erhöhte Komplexität, Collector braucht HTTP-Receiver auf 4318
+**Trace-Kette:** Playwright-Span → Boomerang-Span → PHP-Span → DB-Spans
+
+Diese Option ist die **systematisch korrekte** Lösung für eine vollständige End-to-End-Trace-Korrelation, weil sie die tatsächliche Kausalitätskette abbildet: Der Test-Orchestrator (Playwright) ist die wahre Ursache jeder Interaktion. Wird dies mit der Browser-Instrumentierung durch Boomerang kombiniert, entsteht eine lückenlose, vierstufige Span-Hierarchie:
+
+```
+Playwright Root-Span (test: "homepage loads without errors")
+  ├── Boomerang documentFetch (Browser → Server, via traceparent)
+  │     └── PHP Request-Span (Server, Child des propagierten traceparent)
+  │           ├── PDO Span (SELECT users ...)
+  │           ├── PDO Span (SELECT trees ...)
+  │           └── PDO Span (SELECT modules ...)
+  ├── Boomerang documentLoad (Browser-seitiges Timing)
+  │     └── resourceFetch Spans (CSS, JS, Bilder)
+  └── Boomerang XHR/Fetch Spans (AJAX-Requests nach Page-Load)
+        └── PHP Request-Span (nachfolgende Requests)
+              └── PDO Spans
+```
+
+**Technische Voraussetzungen für die Kette:**
+
+| Hop | Mechanismus | Voraussetzung |
+|---|---|---|
+| Playwright → Browser | `traceparent` via `setExtraHTTPHeaders` oder `page.route()` | OTel SDK in Node.js erzeugt Span + Header pro Navigation |
+| Playwright → PHP | `traceparent` als HTTP-Header auf `page.goto()` | PHP `TraceContextPropagator` (Default aktiv) |
+| PHP → Boomerang (Rückkanal) | `Server-Timing`-Response-Header mit Trace-Context | PHP-seitige Emission oder Apache-Config nötig |
+| Boomerang → gleicher Trace | `@opentelemetry/instrumentation-document-load` liest `Server-Timing` | Plugin-Konfiguration, Server-Timing-Header vorhanden |
+| Boomerang → PHP (XHR/Fetch) | W3C Trace Context Propagation (automatisch via OTel-Plugin) | CORS erlaubt `traceparent`-Header |
+
+**Herausforderung — initialer Page-Load:** Bei `page.goto()` setzt Playwright den `traceparent` auf den HTTP-Request. PHP empfängt ihn und erzeugt einen Child-Span. Boomerang im Browser kennt den `traceparent` jedoch nicht direkt — es initialisiert sich erst NACH dem Page-Load. Die Verknüpfung des Browser-seitigen Document-Load-Spans mit dem Server-Span erfolgt über den **Rückkanal**: PHP sendet den Trace-Context im `Server-Timing`-Response-Header, den Boomerangs `instrumentation-document-load` ausliest. Damit entsteht die Verbindung Playwright-Span → PHP-Span ← Boomerang-Span innerhalb desselben Trace-Baums.
+
+**Herausforderung — pro-Request Span-Erzeugung:** Anders als `baggage` (pro Testfall konstant) muss `traceparent` pro HTTP-Request eine neue Span-ID enthalten. `setExtraHTTPHeaders` setzt einen statischen Header — für echtes Per-Request-Tracing müsste `page.route()` mit dynamischer Header-Generierung verwendet werden:
+
+```typescript
+await page.route('**/*', async (route) => {
+  const span = tracer.startSpan(`browser: ${route.request().url()}`);
+  const ctx = trace.setSpan(context.active(), span);
+  const traceparent = /* traceparent aus ctx erzeugen */;
+  await route.continue({
+    headers: { ...route.request().headers(), traceparent }
+  });
+  span.end();
+});
+```
+
+Dies erhöht die Komplexität erheblich gegenüber dem statischen `setExtraHTTPHeaders`-Ansatz.
+
+**Ergänzung durch BOOMR.addVar():** Unabhängig von der Trace-Hierarchie kann Boomerangs `BOOMR.addVar()`-API (vgl. [Boomerang Tutorial: Adding Arbitrary Data to Beacons](https://akamai.github.io/boomerang/oss/tutorial-howto-add-arbitrary-data-to-the-beacon.html)) die Test-Korrelation in den proprietären Beacons tragen:
+
+```javascript
+BOOMR.addVar({ "test.run_id": runId, "test.case_id": testTitle });
+```
+
+Diese Daten landen ausschließlich in den Boomerang-Beacons (URI-encoded als Query-Parameter), NICHT in den OTel-Spans. Für die OTel-Span-Anreicherung im Browser ist `commonAttributes` in der Plugin-Konfiguration zuständig. `BOOMR.addVar()` bildet somit einen **komplementären Korrelationskanal**, der auch ohne funktionierendes OTel-Tracing die Testfall-Zuordnung sicherstellt.
+
+**Vorteile:**
+- Kausal korrekte Trace-Hierarchie (ein Trace pro Testinteraktion)
+- Vollständige Parent-Child-Korrelation ohne nachträgliche Attribut-Suche
+- Jaeger zeigt den gesamten Request-Lifecycle in einer Trace-Ansicht
+- Boomerang-Spans (Browser-Timing) und PHP-Spans (Server-Timing) in einem gemeinsamen Trace
+- Komplementäre Beacon-Korrelation via `BOOMR.addVar()` als Fallback-Kanal
+
+**Nachteile:**
+- Erhöhte Komplexität: OTel SDK im Playwright-Container, Server-Timing-Emission in PHP
+- Collector braucht HTTP-Receiver auf 4318
+- Per-Request `traceparent`-Erzeugung erfordert `page.route()` statt einfachem `setExtraHTTPHeaders`
+- Server-Timing-Header muss PHP-seitig emittiert werden (nicht automatisch im PHP OTel SDK)
+- Boomerang-Verknüpfung via Server-Timing ist von Issue #40 (Propagation mit XHR/Fetch) potenziell betroffen
 
 #### Option B: Boomerang erzeugt Root-Span im Browser
 
-**Vorteile:** Keine OTel-SDK-Integration in Playwright nötig
-**Nachteile:** Initiale Navigation (`page.goto()`) vor Boomerang-Laden → kein Browser-Span für den ersten Request. Kein Testfall-Level-Span.
+**Vorteile:** Keine OTel-SDK-Integration in Playwright nötig. Boomerang erzeugt automatisch Spans für Document Load, XHR/Fetch und User Interactions.
+
+**Nachteile:** Initiale Navigation (`page.goto()`) vor Boomerang-Laden → kein Browser-Span für den ersten HTTP-Request. Kein Testfall-Level-Span. Die Trace-Kette beginnt erst ab dem Zeitpunkt, an dem Boomerang initialisiert ist — der kausal erste Schritt (Playwright-Aktion) bleibt unsichtbar. Für nachfolgende XHR/Fetch-Requests funktioniert die Propagation (Boomerang-Span → PHP-Span → DB-Spans), sofern CORS `traceparent` erlaubt.
 
 #### Option C: PHP erzeugt Root-Span (kein Browser-Span)
 
-**Vorteile:** Einfachste Option, keine Änderungen an Playwright/Boomerang
-**Nachteile:** Kein Browser-Level-Span, jeder Request = neuer Trace, keine Parent-Child-Korrelation
+**Vorteile:** Einfachste Option, keine Änderungen an Playwright/Boomerang.
+
+**Nachteile:** Kein Browser-Level-Span, jeder Request = neuer Trace, keine Parent-Child-Korrelation. Die Trace-Hierarchie bildet nur den Server-Teil ab — Browser-Ladezeiten und Netzwerk-Latenz sind nicht im Trace sichtbar.
+
+#### Einordnung der Optionen
+
+| Kriterium | Option A (Playwright Root) | Option B (Boomerang Root) | Option C (PHP Root) |
+|---|---|---|---|
+| Kausalitätskette vollständig | **Ja** (4 Stufen) | Teilweise (ohne initialen Load) | Nein (nur Server) |
+| Komplexität | Hoch | Mittel | Niedrig |
+| Implementierungsaufwand | Hoch (OTel SDK + Server-Timing + `page.route()`) | Mittel (CORS-Config) | Gering |
+| Ein Trace pro Testfall | **Ja** | Nur für Post-Init-Requests | Nein (1 Trace pro Request) |
+| Browser-Timing im Trace | **Ja** | Ja (ab Init) | Nein |
+| Abhängigkeit von Server-Timing | Ja (für Rückkanal) | Optional | Nein |
+| Komplementär mit Baggage | **Ja** (Baggage + Traces) | Ja | Ja |
 
 #### Empfehlung: Vereinfachter Ansatz — kein Playwright OTel SDK
 
-Korrelation über `test.run_id` und `test.case_id` als Span-Attribute statt über Trace-Parent-Child-Beziehungen. PHP erzeugt pro Request automatisch einen Root-Span (wenn kein `traceparent` gesendet wird). Jeder Root-Span wird mit Baggage-Attributen angereichert.
+Für die initiale Implementierung: Korrelation über `test.run_id` und `test.case_id` als Span-Attribute statt über Trace-Parent-Child-Beziehungen. PHP erzeugt pro Request automatisch einen Root-Span (wenn kein `traceparent` gesendet wird). Jeder Root-Span wird mit Baggage-Attributen angereichert.
 
 **Kein OTel SDK im Playwright-Container nötig** — drastische Komplexitätsreduktion.
+
+Option A bleibt die **systematisch korrekte Ausbaustufe**. Die Baggage-basierte Korrelation ist als Fundament so konzipiert, dass ein späterer Umstieg auf Option A ohne Umbau der bestehenden Infrastruktur möglich ist: Baggage-Header, Span-Attribute und `BOOMR.addVar()`-Beacon-Daten bleiben erhalten — die `traceparent`-Kette kommt als zusätzliche Schicht hinzu.
 
 **Trace-Hierarchie pro Testfall (ohne Playwright OTel SDK):**
 
@@ -121,10 +202,11 @@ Testfall: "homepage loads without errors [minimal]"
   |     |-- PDO Span (×3)
   |
   |-- Boomerang-Spans (separater Trace, unkorreliert über Trace-ID)
-        |-- Document Load  {service.name=webtrees-browser}
+  |     |-- Document Load  {service.name=webtrees-browser}
+  |
+  Korrelation über gemeinsames Attribut test.run_id + test.case_id
+  (+ optional: BOOMR.addVar() in Beacons als komplementärer Kanal)
 ```
-
-Korrelation über gemeinsames Attribut `test.run_id` + `test.case_id`.
 
 ### 1.4 Boomerang OTel Plugin und Baggage
 
@@ -133,6 +215,8 @@ Das Plugin basiert auf `@opentelemetry/sdk-trace-web`. Seit Version 2.x ist der 
 **Aber:** Da Playwright `baggage` als HTTP-Header auf ALLE Requests setzt, ist die Browser-seitige Baggage-Propagation für den Testfall-Korrelations-Zweck irrelevant.
 
 **Boomerang-Spans und Baggage:** Baggage wird NICHT automatisch als Span-Attribute gesetzt. Baggage ist Propagation-Context, nicht Span-Content.
+
+**BOOMR.addVar() — Beacon-Anreicherung (vgl. [Boomerang Tutorial](https://akamai.github.io/boomerang/oss/tutorial-howto-add-arbitrary-data-to-the-beacon.html)):** Boomerang bietet mit `BOOMR.addVar()` eine API zum Anreichern der proprietären Beacons mit beliebigen Key-Value-Paaren. Keys und Values werden URI-encoded und als Query-Parameter im Beacon übertragen. `BOOMR.removeVar()` erlaubt das gezielte Entfernen einzelner Einträge. **Wichtig:** `addVar()`-Daten landen ausschließlich in den Boomerang-Beacons — NICHT in den OTel-Spans. Für die OTel-Span-Anreicherung im Browser ist `commonAttributes` in der OTel-Plugin-Konfiguration zuständig. Die beiden Mechanismen sind komplementär: `commonAttributes` für OTel-Trace-Korrelation, `addVar()` für Beacon-Korrelation.
 
 ### 1.5 OTel Collector: Baggage-zu-Span-Attribute Konvertierung
 
@@ -257,6 +341,25 @@ Da `workers: 1` konfiguriert ist: ein run_id pro Testlauf = ein run_id pro Worke
 | Boomerang-Spans nicht korrelierbar | Mittel | Hoch | Akzeptiert — Korrelation über `test.run_id` |
 | `setExtraHTTPHeaders` auf Subresources | Niedrig | Sicher | Irrelevant — PHP ignoriert Baggage auf statischen Ressourcen |
 
+### 2.6 Bewertung: Baggage-Korrelation vs. Trace-Hierarchie (Option A)
+
+Die Baggage-basierte Korrelation (empfohlener Ansatz) und die Trace-Hierarchie via Playwright Root-Span (Option A) schließen sich nicht gegenseitig aus — sie adressieren unterschiedliche Aspekte:
+
+| Aspekt | Baggage-Korrelation | Trace-Hierarchie (Option A) |
+|---|---|---|
+| **Korrelationsmechanismus** | Gemeinsame Attribute (`test.run_id`) | Parent-Child-Beziehung im Trace-Baum |
+| **Abfrage in Jaeger** | Tag-Suche: `test.run_id=X` → Liste unabhängiger Traces | Trace-Suche: ein Trace zeigt die gesamte Kette |
+| **Kausalität sichtbar** | Nein — zeitliche Nähe, aber keine explizite Beziehung | **Ja** — Playwright → Boomerang → PHP → DB |
+| **Boomerang-Integration** | Separater Trace, Korrelation nur über Attribute | Im selben Trace via Server-Timing-Rückkanal |
+| **Beacon-Daten (BOOMR.addVar)** | Komplementär nutzbar | Komplementär nutzbar |
+| **Implementierungsaufwand** | Gering (Fixture + ~10 Zeilen PHP) | Hoch (OTel SDK + Server-Timing + `page.route()`) |
+
+**Kernfrage:** Reicht Attribut-basierte Korrelation für die Auswertung (A8), oder braucht die Analyse die kausale Verknüpfung?
+
+Für die initiale Implementierung reicht die Attribut-Korrelation: Das Auswertungs-Script kann über `test.run_id` alle Spans eines Testlaufs aggregieren und die Laufzeiten berechnen. Die Baggage-Infrastruktur (Fixture, PHP-Modul, Makefile) ist als Fundament konzipiert, das bei einem späteren Umstieg auf Option A vollständig erhalten bleibt.
+
+Option A wird relevant, wenn die Trace-Analyse eine **request-übergreifende Kausalitätskette** erfordert — etwa um zu unterscheiden, ob eine Latenz im Browser-Rendering, in der Netzwerk-Übertragung oder im PHP-Backend entsteht. Die vierstufige Kette (Playwright-Span → Boomerang-Span → PHP-Span → DB-Spans) bildet genau diese Kausalität ab.
+
 ---
 
 ## 3. Empfehlung
@@ -373,9 +476,13 @@ Keine Änderung nötig für Baggage-Propagation (Konvertierung erfolgt PHP-seiti
    - PHP-Spans: `service.name=webtrees`
    - Boomerang-Spans: `service.name=webtrees-browser`
 
-### 4.3 Zukunftsoptionen
+### 4.3 Ausbaustufe: Trace-Hierarchie via Playwright Root-Span (Option A)
 
-8. **Playwright OTel SDK (Ausbaustufe):** Falls End-to-End-Traces mit Parent-Child gewünscht, kann Playwright-Container um `@opentelemetry/sdk-node` erweitert werden. Baggage-Infrastruktur bleibt identisch.
+8. **Playwright OTel SDK:** Falls die Auswertung (A8) kausale Verknüpfung über Attribute hinaus erfordert, kann der Playwright-Container um `@opentelemetry/sdk-node` erweitert werden. Die resultierende Kette (Playwright-Span → Boomerang-Span → PHP-Span → DB-Spans) erfordert zusätzlich:
+   - **Server-Timing-Header:** PHP muss den Trace-Context im `Server-Timing`-Response-Header emittieren, damit Boomerangs `instrumentation-document-load` den Browser-Span mit dem Server-Span verknüpfen kann.
+   - **Dynamische traceparent-Erzeugung:** `page.route()` statt `setExtraHTTPHeaders` für per-Request Span-ID-Generierung.
+   - **BOOMR.addVar()-Komplementarität:** Unabhängig von der Trace-Hierarchie kann `BOOMR.addVar()` die Test-Korrelation in den Boomerang-Beacons tragen — als Fallback-Kanal, der keine OTel-Infrastruktur voraussetzt.
+   - Die bestehende Baggage-Infrastruktur (Fixture, PHP-Modul, Makefile) bleibt vollständig erhalten — Option A ist eine zusätzliche Schicht, kein Umbau.
 
 ---
 
@@ -400,4 +507,4 @@ test.case_id = homepage loads without errors
 
 ---
 
-*Analyse basiert auf: W3C Baggage Specification (W3C Recommendation, November 2023), OpenTelemetry PHP SDK API, OpenTelemetry JavaScript SDK, Playwright Test API, und den Analysen A1, A3, A4, A7.*
+*Analyse basiert auf: W3C Baggage Specification (W3C Recommendation, November 2023), OpenTelemetry PHP SDK API, OpenTelemetry JavaScript SDK, Playwright Test API, [Boomerang Tutorial: Adding Arbitrary Data to Beacons](https://akamai.github.io/boomerang/oss/tutorial-howto-add-arbitrary-data-to-the-beacon.html), und den Analysen A1, A3, A4, A7.*

@@ -16,7 +16,7 @@ Die Analysen A1 bis A8 haben den technisch erreichbaren Zielzustand vollstaendig
 | MySQL Server | Telemetry Trace Plugin → Collector | **Nicht machbar** — Enterprise-only | A4 |
 | MySQL PerfSchema | Aggregierte Query-Statistiken | **Machbar** — als separater Extraktionsschritt | A5 |
 
-**Korrelationsmechanismus:** W3C Baggage (`test.run_id`, `test.case_id`) statt vollstaendigem Trace-Context-Propagation ueber alle Schichten. Kein Playwright OTel SDK noetig (A6, Abschnitt 3.1).
+**Korrelationsmechanismus:** W3C Baggage (`test.run_id`, `test.case_id`) statt vollstaendigem Trace-Context-Propagation ueber alle Schichten. Kein Playwright OTel SDK in der initialen Implementierung (A6, Abschnitt 3.1). Option A (Playwright Root-Span mit vierstufiger Trace-Kette: Playwright-Span → Boomerang-Span → PHP-Span → DB-Spans) ist als systematisch korrekte Ausbaustufe anerkannt (A6, Abschnitt 1.3/2.6). Komplementaer: `BOOMR.addVar()` traegt die Test-Korrelation in den Boomerang-Beacons unabhaengig von der OTel-Trace-Hierarchie (A6, Abschnitt 1.4).
 
 **Auswertung:** Python-basiertes Trace-Report-Script mit OTLP-NDJSON-Parsing und optionaler PerfSchema-Integration (A8, Abschnitt 3.1).
 
@@ -69,8 +69,8 @@ Der Analyseprompt (Abschnitt 1.4) definierte als Zielzustand eine durchgehende K
 |---|---|---|---|
 | Kein Apache-Server-Span | Kein Pre-built Binary fuer Debian Bookworm (A3, Abschnitt 2.1) | Keine Sichtbarkeit von Apache-interner Verarbeitungszeit (mod_rewrite, Output-Filter) | Vernachlaessigbar — Apache-Overhead < 1ms fuer typische Requests (A3, Abschnitt 2.4) |
 | Kein MySQL-Server-Span | Enterprise-only Plugin (A4, Abschnitt 2.3.2) | Keine serverseitigen Query-Ausfuehrungsdetails in Traces | PerfSchema liefert aggregierte Statistiken (A5); PDO-Spans liefern Query-Dauer PHP-seitig |
-| Keine End-to-End Trace-ID-Propagation | Apache transparent, MySQL nicht propagationsfaehig | Separate Traces statt einer durchgehenden Trace-Kette | Baggage-Korrelation ueber `test.run_id` (A6) |
-| Boomerang-Spans nicht testfallkorreliert | Kein `test.run_id`-Attribut in Browser-Spans (A6, Abschnitt 2.5) | Browser-Spans nur ueber Zeitfenster zuordenbar | Temporale Korrelation, akzeptable Genauigkeit bei `workers: 1` (A8, Abschnitt 1.3) |
+| Keine End-to-End Trace-ID-Propagation | Apache transparent, MySQL nicht propagationsfaehig | Separate Traces statt einer durchgehenden Trace-Kette | Baggage-Korrelation ueber `test.run_id` (A6); Ausbaustufe Option A (Playwright Root-Span) wuerde kausale Trace-Kette ueber Browser und PHP herstellen (A6, Abschnitt 1.3/2.6) |
+| Boomerang-Spans nicht testfallkorreliert | Kein `test.run_id`-Attribut in Browser-Spans (A6, Abschnitt 2.5) | Browser-Spans nur ueber Zeitfenster zuordenbar | Temporale Korrelation bei `workers: 1` (A8, Abschnitt 1.3); komplementaer: `BOOMR.addVar()` traegt Test-Korrelation in Beacons (A6, Abschnitt 1.4); Option A wuerde Boomerang-Spans via Server-Timing in den Playwright-Trace einbinden |
 
 **Bewertung:** Die Luecken sind fuer eine Testing-Plattform akzeptabel. Die PHP-Schicht ist der primaere Instrumentierungspunkt — dort fallen > 95% der messbaren Verarbeitungszeit an. Apache und MySQL sind entweder transparent (Apache) oder ueber Hilfsmechanismen (PerfSchema) abgedeckt.
 
@@ -374,14 +374,25 @@ Playwright → Boomerang → Apache (OTel) → PHP (OTel) → MySQL (Telemetry)
     korreliert via W3C Trace Context + Baggage
 ```
 
-**Tatsaechlich erreichbar:**
+**Tatsaechlich erreichbar (initiale Implementierung):**
 ```
 Playwright → Boomerang → Apache (transparent) → PHP (OTel) → MySQL (PerfSchema)
     korreliert via W3C Baggage (test.run_id, test.case_id)
+    + BOOMR.addVar() fuer Beacon-Korrelation (komplementaerer Kanal)
     PerfSchema: Aggregat-Korrelation (Zeitfenster + Digest-Text)
 ```
 
-Die Vereinfachung reduziert die Komplexitaet erheblich: kein Apache-Binary-Management, kein Enterprise-Lizenz-Problem, kein Playwright-OTel-SDK. Die Korrelation ueber Baggage statt vollstaendiger Trace-Hierarchie ist fuer eine Testing-Plattform ausreichend.
+**Erreichbar als Ausbaustufe (Option A, A6 Abschnitt 1.3/2.6):**
+```
+Playwright (OTel SDK) → Boomerang (via Server-Timing) → PHP (OTel) → DB-Spans
+    korreliert via traceparent (kausale Parent-Child-Beziehung)
+    + W3C Baggage (test.run_id, test.case_id) bleibt als Fundament
+    + BOOMR.addVar() fuer Beacon-Korrelation (unabhaengig von OTel)
+```
+
+Die initiale Vereinfachung reduziert die Komplexitaet erheblich: kein Apache-Binary-Management, kein Enterprise-Lizenz-Problem, kein Playwright-OTel-SDK. Die Korrelation ueber Baggage statt vollstaendiger Trace-Hierarchie ist fuer den initialen Einsatz als Testing-Plattform ausreichend.
+
+Option A (Playwright Root-Span) ist als systematisch korrekte Ausbaustufe anerkannt: Die vierstufige Trace-Kette (Playwright-Span → Boomerang-Span → PHP-Span → DB-Spans) bildet die tatsaechliche Kausalitaet ab und wird relevant, wenn die Trace-Analyse request-uebergreifende Latenz-Attribution erfordert (A6, Abschnitt 2.6). Die Baggage-Infrastruktur ist so konzipiert, dass ein spaeterer Umstieg auf Option A keine bestehende Funktionalitaet umbaut — die `traceparent`-Kette kommt als zusaetzliche Schicht hinzu.
 
 ### 2.3 Aufwand-Nutzen-Bewertung
 
@@ -618,7 +629,7 @@ Alle vier Schritte in einem Commit:
 |---|---|
 | Apache OTel-Modul | Kein kompatibles Pre-built Binary (A3) |
 | MySQL Telemetry Plugin | Enterprise-only (A4) |
-| Playwright OTel SDK (Node.js) | Unnoetige Komplexitaet; Baggage-only reicht (A6) |
+| Playwright OTel SDK (Node.js) | Initial aufgeschoben — Baggage-Korrelation reicht fuer den initialen Einsatz; als systematisch korrekte Ausbaustufe (Option A) anerkannt fuer kausale Trace-Kette (A6, Abschnitt 1.3/2.6) |
 | End-to-End Trace-ID-Propagation PHP→MySQL | Architektonisch nicht moeglich (A4, Abschnitt 2.3.3) |
 | mysqld_exporter (Prometheus) | Redundant — PerfSchema-SQL liefert dieselben Daten (A5) |
 | Boomerang Beacon-Receiver | Nicht noetig — OTel-Traces reichen aus (A1, Abschnitt 3) |
@@ -660,7 +671,7 @@ Alle vier Schritte in einem Commit:
 
 ### 8.3 Nicht blockierend (spaeter)
 
-14. **Server-Timing Header:** PHP OTel SDK emittiert standardmaessig keinen `Server-Timing`-Response-Header. Fuer Browser↔Server-Trace-Verknuepfung waere dies nachzuruesten. Prioritaet: Niedrig (A1, Abschnitt 4.1.4).
+14. **Server-Timing Header:** PHP OTel SDK emittiert standardmaessig keinen `Server-Timing`-Response-Header. Fuer Browser↔Server-Trace-Verknuepfung waere dies nachzuruesten. **Wird Voraussetzung fuer Option A** (Playwright Root-Span): Boomerangs `instrumentation-document-load` benoetigt den Server-Timing-Rueckkanal, um Browser-Spans mit dem Server-Span im selben Trace-Baum zu verknuepfen (A6, Abschnitt 1.3). Prioritaet: Niedrig (initial), steigt bei Umstieg auf Option A.
 
 15. **Content-Security-Policy:** Aktuell kein CSP-Header gesetzt. Falls spaeter eingefuehrt, muessen `/rum/`-Script-Quellen erlaubt werden (A2, Abschnitt 4.2.9).
 
