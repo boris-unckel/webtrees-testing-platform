@@ -47,9 +47,19 @@ Nach jedem AP bleibt der Stack funktionsfähig.
 
 ---
 
+## Statuskonzept
+
+Jedes Arbeitspaket und jeder Einzelschritt trägt seinen Status inline.
+Bei Abbruch oder Systemabsturz ist der Wiederaufnahmepunkt direkt am
+betroffenen AP/Schritt ablesbar.
+
+**Statuswerte:** `offen` · `aktiv` · `verifiziert` · `blockiert: <Grund>`
+
+---
+
 ## Arbeitspakete
 
-### AP 1: `.gitignore` erweitern
+### AP 1: `.gitignore` erweitern — `offen`
 
 **Dateien:** `.gitignore`
 
@@ -64,7 +74,7 @@ upstream/
 
 ---
 
-### AP 2: `scripts/clone-upstream.sh` erstellen
+### AP 2: `scripts/clone-upstream.sh` erstellen — `offen`
 
 **Dateien:** `scripts/clone-upstream.sh` (neu)
 
@@ -118,7 +128,7 @@ WEBTREES_SOURCE=./upstream/webtrees scripts/clone-upstream.sh  # überspringt
 
 ---
 
-### AP 3: `.env.example` erweitern
+### AP 3: `.env.example` erweitern — `offen`
 
 **Dateien:** `.env.example`
 
@@ -141,15 +151,20 @@ setzen `WEBTREES_SOURCE=/pfad/zum/checkout` in ihrer `.env`.
 
 ---
 
-### AP 4: Makefile erweitern
+### AP 4: Makefile erweitern — `offen`
 
 **Dateien:** `Makefile`
 
 **Änderungen:**
 
-1. Neues Target `clone-upstream` hinzufügen
-2. `up` und `up-debug` als abhängig von `clone-upstream` deklarieren
-3. `.PHONY`-Liste erweitern
+1. Neues Target `clone-upstream` hinzufügen — `offen`
+2. `up`, `up-debug` und `security-build` als abhängig von `clone-upstream` deklarieren — `offen`
+3. `.PHONY`-Liste erweitern — `offen`
+
+**Begründung für `security-build`:** `make test-security` → `security-build` →
+`build-security-image.sh` braucht `WEBTREES_SOURCE`. Ohne `clone-upstream` als
+Abhängigkeit schlägt ein direkter Aufruf von `make test-security` fehl, wenn
+vorher kein `make up` oder `make setup` gelaufen ist.
 
 **Code-Skizze (Diff):**
 
@@ -170,6 +185,9 @@ up: clone-upstream ## Stack starten (alle Container)
 up-debug: clone-upstream ## Stack starten inkl. Adminer (Debug-Profil)
 	$(COMPOSE_DEBUG) up -d --build
 	@echo "..."
+
+security-build: clone-upstream ## Security-Image bauen (Distribution-Build)
+	scripts/build-security-image.sh
 ```
 
 **Begründung:** `up` → `clone-upstream` stellt sicher, dass die Source vor
@@ -181,7 +199,7 @@ ersten Schritt.
 
 ---
 
-### AP 5: `compose.yaml` dynamisieren
+### AP 5: `compose.yaml` dynamisieren — `offen`
 
 **Dateien:** `compose.yaml`
 
@@ -210,7 +228,7 @@ curl -f http://localhost:8080/
 
 ---
 
-### AP 6: `scripts/build-security-image.sh` — Default-Pfad anpassen
+### AP 6: `scripts/build-security-image.sh` — Default-Pfad anpassen — `offen`
 
 **Dateien:** `scripts/build-security-image.sh`
 
@@ -232,7 +250,7 @@ Fallback-Pfad ändert sich.
 
 ---
 
-### AP 7: GitHub-Actions-Workflow konsolidieren
+### AP 7: GitHub-Actions-Workflow konsolidieren — `offen`
 
 **Dateien:** `.github/workflows/webtrees-tests.yaml`
 
@@ -247,12 +265,12 @@ Fallback-Pfad ändert sich.
 
 **Strukturelle Änderungen:**
 
-1. `defaults.run.working-directory` entfernen
-2. `on.push.paths` und `on.pull_request.paths` entfernen (oder auf `**` setzen)
-3. Separaten `actions/checkout` für webtrees entfernen
+1. `defaults.run.working-directory` entfernen — `offen`
+2. `on.push.paths` und `on.pull_request.paths` entfernen (oder auf `**` setzen) — `offen`
+3. Separaten `actions/checkout` für webtrees entfernen — `offen`
 4. Stattdessen `WEBTREES_REF` als Umgebungsvariable setzen und `make setup`
-   den Clone überlassen
-5. Jobs vereinfachen — jeder Job:
+   den Clone überlassen — `offen`
+5. Jobs vereinfachen — jeder Job: — `offen`
    - `actions/checkout@v4` (dieses Repo)
    - `pip install podman-compose`
    - `make setup` (klont Upstream automatisch, startet Stack, richtet ein)
@@ -310,7 +328,7 @@ gh workflow view webtrees-tests.yaml  # oder: yamllint
 
 ---
 
-### AP 8: `CLAUDE.md` neutralisieren
+### AP 8: `CLAUDE.md` neutralisieren — `offen`
 
 **Dateien:** `CLAUDE.md`
 
@@ -331,7 +349,7 @@ klont automatisch, das ist der gewünschte Workflow.
 
 ---
 
-### AP 9: `docs/testing-bigpicture.md` neutralisieren
+### AP 9: `docs/testing-bigpicture.md` neutralisieren — `offen`
 
 **Dateien:** `docs/testing-bigpicture.md`
 
@@ -357,7 +375,7 @@ ergänzt die vollständige Enumeration:
 
 ---
 
-### AP 10: `README.md` aktualisieren
+### AP 10: `README.md` aktualisieren — `offen`
 
 **Dateien:** `README.md`
 
@@ -390,38 +408,38 @@ WEBTREES_SOURCE=/pfad/zum/vorhandenen/checkout
 
 ---
 
-### AP 11: Gesamtverifikation
+### AP 11: Gesamtverifikation — `offen`
 
 **Vorgehen:**
 
-1. **Clean-State-Test** (simuliert neuen Nutzer):
+1. **Clean-State-Test** (simuliert neuen Nutzer) — `offen`
    ```bash
    rm -rf upstream/          # Falls vorhanden
    make clean                # Volumes entfernen
    make setup                # Muss Upstream klonen + Stack starten + einrichten
    ```
 
-2. **Testlauf:**
+2. **Testlauf** — `offen`
    ```bash
    make test-all             # Alle Stufen: static, unit, integration, e2e, performance
    ```
    Gemäß CLAUDE.md mit `run_in_background: true` ausführen (> 10 min möglich).
 
-3. **Override-Test** (simuliert bestehenden Nutzer):
+3. **Override-Test** (simuliert bestehenden Nutzer) — `offen`
    ```bash
    WEBTREES_SOURCE=../webtrees-upstream/webtrees make down
    WEBTREES_SOURCE=../webtrees-upstream/webtrees make setup
    WEBTREES_SOURCE=../webtrees-upstream/webtrees make test-unit
    ```
 
-4. **Grep-Prüfung** (keine alten Pfade in Code/Doku):
+4. **Grep-Prüfung** (keine alten Pfade in Code/Doku) — `offen`
    ```bash
    grep -rn 'webtrees-upstream' --include='*.yaml' --include='*.sh' --include='*.md' \
      --exclude-dir=upstream --exclude='testing_autonom_plan*.md'
    # Erlaubt: nur Changelog-Einträge in testing-bigpicture.md
    ```
 
-5. **Security-Track:**
+5. **Security-Track** — `offen`
    ```bash
    make test-security
    ```
