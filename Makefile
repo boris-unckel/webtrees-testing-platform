@@ -7,7 +7,7 @@ COMPOSE = podman-compose -f compose.yaml
 COMPOSE_DEBUG = podman-compose -f compose.yaml --profile debug
 COMPOSE_SECURITY = podman-compose -f compose.yaml --profile security
 
-.PHONY: help clone-upstream up down clean setup test-all test-static test-unit test-integration test-e2e test-performance security-build test-security security-up security-down security-clean logs status
+.PHONY: help clone-upstream up down clean setup test-all test-static test-unit test-integration test-e2e test-performance perfschema-truncate perfschema-extract trace-report security-build test-security security-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -44,11 +44,42 @@ test-unit: ## Teststufe 1 — Komponententest (PHPUnit, isoliert)
 test-integration: ## Teststufe 2 — Komponentenintegrationstest (PHPUnit + MySQL)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer3-integration/run.sh
 
-test-e2e: ## Teststufe 3 — Systemtest (Playwright)
-	$(COMPOSE) exec playwright npx playwright test --config=/tests/e2e/playwright.config.ts
+test-e2e: ## Teststufe 3 — Systemtest (Playwright) mit OTel-Korrelation
+	@RUN_ID=$$(uuidgen); \
+	echo "Testlauf: $$RUN_ID"; \
+	scripts/truncate-perfschema.sh || true; \
+	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright npx playwright test \
+	    --config=/tests/e2e/playwright.config.ts; \
+	scripts/extract-perfschema.sh layer4 || true; \
+	scripts/trace-report.sh --run-id $$RUN_ID --layer 4 \
+	    --output-json artifacts/trace-report-$$RUN_ID.json || true
 
-test-performance: ## Performanztest (Playwright-Metrics + Baseline-Vergleich)
-	$(COMPOSE) exec playwright npx playwright test --config=/tests/performance/playwright.config.ts
+test-performance: ## Performanztest (Playwright-Metrics + Baseline-Vergleich + OTel)
+	@RUN_ID=$$(uuidgen); \
+	echo "Testlauf: $$RUN_ID"; \
+	scripts/truncate-perfschema.sh || true; \
+	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright npx playwright test \
+	    --config=/tests/performance/playwright.config.ts; \
+	scripts/extract-perfschema.sh layer5 || true; \
+	scripts/trace-report.sh --run-id $$RUN_ID --layer 5 \
+	    --output-json artifacts/trace-report-$$RUN_ID.json || true
+
+perfschema-truncate: ## PerfSchema-Daten zuruecksetzen
+	scripts/truncate-perfschema.sh
+
+perfschema-extract: ## PerfSchema-Daten extrahieren (LAYER=layer3|layer4|layer5)
+	scripts/extract-perfschema.sh $(LAYER)
+
+trace-report: ## Trace-Report generieren (RUN_ID=... LAYER=3|4|5)
+	@if [ -z "$(RUN_ID)" ]; then \
+	    echo "Fehler: RUN_ID nicht gesetzt. Aufruf: make trace-report RUN_ID=<uuid> [LAYER=3|4|5]"; \
+	    exit 1; \
+	fi
+	scripts/trace-report.sh \
+	    --run-id "$(RUN_ID)" \
+	    --traces-file artifacts/traces.json \
+	    $(if $(LAYER),--layer $(LAYER)) \
+	    --output-json artifacts/trace-report-$(RUN_ID).json
 
 security-build: clone-upstream ## Security-Image bauen (Distribution-Build)
 	scripts/build-security-image.sh
