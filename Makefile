@@ -5,16 +5,19 @@ COMPOSE = podman-compose -f compose.yaml
 COMPOSE_DEBUG = podman-compose -f compose.yaml --profile debug
 COMPOSE_SECURITY = podman-compose -f compose.yaml --profile security
 
-.PHONY: help up down clean setup test-all test-static test-unit test-integration test-e2e test-performance security-build test-security security-up security-down security-clean logs status
+.PHONY: help clone-upstream up down clean setup test-all test-static test-unit test-integration test-e2e test-performance security-build test-security security-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-up: ## Stack starten (alle Container)
+clone-upstream: ## webtrees-Source klonen (falls nicht vorhanden)
+	scripts/clone-upstream.sh
+
+up: clone-upstream ## Stack starten (alle Container)
 	$(COMPOSE) up -d --build
 	@echo "Stack gestartet. webtrees: http://localhost:8080 | Jaeger: http://localhost:16686"
 
-up-debug: ## Stack starten inkl. Adminer (Debug-Profil)
+up-debug: clone-upstream ## Stack starten inkl. Adminer (Debug-Profil)
 	$(COMPOSE_DEBUG) up -d --build
 	@echo "Stack gestartet. webtrees: http://localhost:8080 | Adminer: http://localhost:8081 | Jaeger: http://localhost:16686"
 
@@ -45,7 +48,7 @@ test-e2e: ## Teststufe 3 — Systemtest (Playwright)
 test-performance: ## Performanztest (Playwright-Metrics + Baseline-Vergleich)
 	$(COMPOSE) exec playwright npx playwright test --config=/tests/performance/playwright.config.ts
 
-security-build: ## Security-Image bauen (Distribution-Build)
+security-build: clone-upstream ## Security-Image bauen (Distribution-Build)
 	scripts/build-security-image.sh
 
 test-security: security-build ## Sicherheitstest (Distribution + Wizard + Prüfpunkte)

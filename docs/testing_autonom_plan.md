@@ -59,7 +59,7 @@ betroffenen AP/Schritt ablesbar.
 
 ## Arbeitspakete
 
-### AP 1: `.gitignore` erweitern — `offen`
+### AP 1: `.gitignore` erweitern — `verifiziert`
 
 **Dateien:** `.gitignore`
 
@@ -74,7 +74,7 @@ upstream/
 
 ---
 
-### AP 2: `scripts/clone-upstream.sh` erstellen — `offen`
+### AP 2: `scripts/clone-upstream.sh` erstellen — `verifiziert`
 
 **Dateien:** `scripts/clone-upstream.sh` (neu)
 
@@ -128,7 +128,7 @@ WEBTREES_SOURCE=./upstream/webtrees scripts/clone-upstream.sh  # überspringt
 
 ---
 
-### AP 3: `.env.example` erweitern — `offen`
+### AP 3: `.env.example` erweitern — `verifiziert`
 
 **Dateien:** `.env.example`
 
@@ -151,15 +151,15 @@ setzen `WEBTREES_SOURCE=/pfad/zum/checkout` in ihrer `.env`.
 
 ---
 
-### AP 4: Makefile erweitern — `offen`
+### AP 4: Makefile erweitern — `verifiziert`
 
 **Dateien:** `Makefile`
 
 **Änderungen:**
 
-1. Neues Target `clone-upstream` hinzufügen — `offen`
-2. `up`, `up-debug` und `security-build` als abhängig von `clone-upstream` deklarieren — `offen`
-3. `.PHONY`-Liste erweitern — `offen`
+1. Neues Target `clone-upstream` hinzufügen — `verifiziert`
+2. `up`, `up-debug` und `security-build` als abhängig von `clone-upstream` deklarieren — `verifiziert`
+3. `.PHONY`-Liste erweitern — `verifiziert`
 
 **Begründung für `security-build`:** `make test-security` → `security-build` →
 `build-security-image.sh` braucht `WEBTREES_SOURCE`. Ohne `clone-upstream` als
@@ -199,7 +199,7 @@ ersten Schritt.
 
 ---
 
-### AP 5: `compose.yaml` dynamisieren — `offen`
+### AP 5: `compose.yaml` dynamisieren — `verifiziert`
 
 **Dateien:** `compose.yaml`
 
@@ -228,7 +228,7 @@ curl -f http://localhost:8080/
 
 ---
 
-### AP 6: `scripts/build-security-image.sh` — Default-Pfad anpassen — `offen`
+### AP 6: `scripts/build-security-image.sh` — Default-Pfad anpassen — `verifiziert`
 
 **Dateien:** `scripts/build-security-image.sh`
 
@@ -250,7 +250,7 @@ Fallback-Pfad ändert sich.
 
 ---
 
-### AP 7: GitHub-Actions-Workflow konsolidieren — `offen`
+### AP 7: GitHub-Actions-Workflow konsolidieren — `verifiziert`
 
 **Dateien:** `.github/workflows/webtrees-tests.yaml`
 
@@ -265,12 +265,12 @@ Fallback-Pfad ändert sich.
 
 **Strukturelle Änderungen:**
 
-1. `defaults.run.working-directory` entfernen — `offen`
-2. `on.push.paths` und `on.pull_request.paths` entfernen (oder auf `**` setzen) — `offen`
-3. Separaten `actions/checkout` für webtrees entfernen — `offen`
+1. `defaults.run.working-directory` entfernen — `verifiziert`
+2. `on.push.paths` und `on.pull_request.paths` entfernen (oder auf `**` setzen) — `verifiziert`
+3. Separaten `actions/checkout` für webtrees entfernen — `verifiziert`
 4. Stattdessen `WEBTREES_REF` als Umgebungsvariable setzen und `make setup`
-   den Clone überlassen — `offen`
-5. Jobs vereinfachen — jeder Job: — `offen`
+   den Clone überlassen — `verifiziert`
+5. Jobs vereinfachen — jeder Job: — `verifiziert`
    - `actions/checkout@v4` (dieses Repo)
    - `pip install podman-compose`
    - `make setup` (klont Upstream automatisch, startet Stack, richtet ein)
@@ -328,7 +328,7 @@ gh workflow view webtrees-tests.yaml  # oder: yamllint
 
 ---
 
-### AP 8: `CLAUDE.md` neutralisieren — `offen`
+### AP 8: `CLAUDE.md` neutralisieren — `verifiziert`
 
 **Dateien:** `CLAUDE.md`
 
@@ -349,7 +349,7 @@ klont automatisch, das ist der gewünschte Workflow.
 
 ---
 
-### AP 9: `docs/testing-bigpicture.md` neutralisieren — `offen`
+### AP 9: `docs/testing-bigpicture.md` neutralisieren — `verifiziert`
 
 **Dateien:** `docs/testing-bigpicture.md`
 
@@ -375,7 +375,7 @@ ergänzt die vollständige Enumeration:
 
 ---
 
-### AP 10: `README.md` aktualisieren — `offen`
+### AP 10: `README.md` aktualisieren — `verifiziert`
 
 **Dateien:** `README.md`
 
@@ -408,38 +408,38 @@ WEBTREES_SOURCE=/pfad/zum/vorhandenen/checkout
 
 ---
 
-### AP 11: Gesamtverifikation — `offen`
+### AP 11: Gesamtverifikation — `verifiziert`
 
 **Vorgehen:**
 
-1. **Clean-State-Test** (simuliert neuen Nutzer) — `offen`
+1. **Clean-State-Test** (simuliert neuen Nutzer) — `verifiziert`
    ```bash
    rm -rf upstream/          # Falls vorhanden
    make clean                # Volumes entfernen
    make setup                # Muss Upstream klonen + Stack starten + einrichten
    ```
 
-2. **Testlauf** — `offen`
+2. **Testlauf** — `verifiziert`
    ```bash
    make test-all             # Alle Stufen: static, unit, integration, e2e, performance
    ```
    Gemäß CLAUDE.md mit `run_in_background: true` ausführen (> 10 min möglich).
 
-3. **Override-Test** (simuliert bestehenden Nutzer) — `offen`
+3. **Override-Test** (simuliert bestehenden Nutzer) — `verifiziert`
    ```bash
    WEBTREES_SOURCE=../webtrees-upstream/webtrees make down
    WEBTREES_SOURCE=../webtrees-upstream/webtrees make setup
    WEBTREES_SOURCE=../webtrees-upstream/webtrees make test-unit
    ```
 
-4. **Grep-Prüfung** (keine alten Pfade in Code/Doku) — `offen`
+4. **Grep-Prüfung** (keine alten Pfade in Code/Doku) — `verifiziert`
    ```bash
    grep -rn 'webtrees-upstream' --include='*.yaml' --include='*.sh' --include='*.md' \
      --exclude-dir=upstream --exclude='testing_autonom_plan*.md'
    # Erlaubt: nur Changelog-Einträge in testing-bigpicture.md
    ```
 
-5. **Security-Track** — `offen`
+5. **Security-Track** — `verifiziert`
    ```bash
    make test-security
    ```
@@ -544,8 +544,44 @@ make clean && make setup && make test-all
 
 ---
 
+## Fazit / Status
+
+Alle 11 Arbeitspakete sind implementiert und verifiziert.
+
+**Geänderte/neue Dateien:**
+
+| Datei | Änderung |
+|---|---|
+| `.gitignore` | `upstream/` hinzugefügt |
+| `scripts/clone-upstream.sh` | Neues idempotentes Clone-Script |
+| `.env.example` | 3 neue Variablen dokumentiert (`WEBTREES_SOURCE`, `WEBTREES_REPO`, `WEBTREES_REF`) |
+| `Makefile` | `clone-upstream` Target + Abhängigkeitskette (`up`, `up-debug`, `security-build`) |
+| `compose.yaml` | 2 Volume-Pfade dynamisiert (`${WEBTREES_SOURCE:-./upstream/webtrees}`) |
+| `scripts/build-security-image.sh` | Default-Pfad angepasst (`upstream/webtrees` statt `../webtrees-upstream/webtrees`) |
+| `.github/workflows/webtrees-tests.yaml` | Konsolidiert (broken `working-directory`, `paths`-Filter und separaten Checkout entfernt) |
+| `CLAUDE.md` | 5 Stellen neutralisiert (keine hardcoded User-Pfade mehr) |
+| `docs/testing-bigpicture.md` | 8 Stellen neutralisiert + `upstream/` im Verzeichnisbaum ergänzt |
+| `README.md` | Schnellstart aktualisiert + Abschnitt „Eigener webtrees-Checkout" |
+
+**Testergebnisse (frische Umgebung, 2026-03-29):**
+
+| Stufe | Ergebnis |
+|---|---|
+| Statischer Test | PASSED |
+| Komponententest | 3283 Tests, 150398 Assertions, 70 Warnings |
+| Komponentenintegrationstest | 274 Tests, 827 Assertions, 1 Skipped (bekannter Upstream-Bug) |
+| Systemtest (E2E) | 175 passed, 1 flaky (bekanntes Issue) |
+| Performanztest | 3 passed |
+| Sicherheitstest | 30 passed, 1 skipped (SEC-HDR04 Upstream-Befund) |
+
+---
+
 ## Änderungshistorie
 
 *Erstellt: 2026-03-29 — Initialer Implementierungsplan. 11 Arbeitspakete,
 Abhängigkeitsreihenfolge, Code-Skizzen, Risiko-Analyse, Migrationsleitfaden.
 Basiert auf Analyseprompt `docs/testing_autonom_plan_prompt.md`.*
+
+*Umgesetzt: 2026-03-29 — Alle 11 APs implementiert und auf frischer Umgebung verifiziert.
+Einzelläufe (static, unit, integration) + Gesamtlauf (`make test-all`) + Sicherheitstests
+(`make test-security`) bestanden.*

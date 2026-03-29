@@ -2,72 +2,25 @@ name: webtrees Tests
 
 on:
   push:
-    paths:
-      - 'webtrees-tests/**'
   pull_request:
-    paths:
-      - 'webtrees-tests/**'
   workflow_dispatch:
     inputs:
       webtrees_ref:
-        description: 'webtrees git ref to test (branch, tag, commit)'
+        description: 'webtrees git ref to test (branch, tag)'
         default: 'main'
 
-defaults:
-  run:
-    working-directory: webtrees-tests
-
 jobs:
-  testumgebung:
-    name: Testumgebung aufbauen
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Checkout webtrees
-        uses: actions/checkout@v4
-        with:
-          repository: fisharebest/webtrees
-          ref: ${{ github.event.inputs.webtrees_ref || 'main' }}
-          path: github/webtrees
-
-      - name: Install podman-compose
-        run: pip install podman-compose
-
-      - name: Build and start containers
-        run: |
-          cp .env.example .env
-          podman-compose up -d --build
-
-      - name: Setup webtrees
-        run: podman-compose exec -T webtrees /usr/local/bin/setup-webtrees.sh
-
-      - name: Verify stack health
-        run: |
-          podman-compose ps
-          curl -f http://localhost:8080/ || exit 1
-
   statischer-test:
     name: Statischer Test
-    needs: testumgebung
     runs-on: ubuntu-latest
+    env:
+      WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout webtrees
-        uses: actions/checkout@v4
-        with:
-          repository: fisharebest/webtrees
-          ref: ${{ github.event.inputs.webtrees_ref || 'main' }}
-          path: github/webtrees
       - name: Install podman-compose
         run: pip install podman-compose
-      - name: Start stack
-        run: |
-          cp .env.example .env
-          podman-compose up -d --build
-          podman-compose exec -T webtrees /usr/local/bin/setup-webtrees.sh
+      - name: Setup
+        run: make setup
       - name: Run static analysis
         run: make test-static
       - name: Upload artifacts
@@ -75,28 +28,21 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: static-analysis
-          path: webtrees-tests/artifacts/layer1/
+          path: artifacts/layer1/
           retention-days: 7
 
   komponententest:
     name: Komponententest (PHPUnit)
     needs: statischer-test
     runs-on: ubuntu-latest
+    env:
+      WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout webtrees
-        uses: actions/checkout@v4
-        with:
-          repository: fisharebest/webtrees
-          ref: ${{ github.event.inputs.webtrees_ref || 'main' }}
-          path: github/webtrees
       - name: Install podman-compose
         run: pip install podman-compose
-      - name: Start stack
-        run: |
-          cp .env.example .env
-          podman-compose up -d --build
-          podman-compose exec -T webtrees /usr/local/bin/setup-webtrees.sh
+      - name: Setup
+        run: make setup
       - name: Run unit tests
         run: make test-unit
       - name: Upload coverage
@@ -104,28 +50,21 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: unit-coverage
-          path: webtrees-tests/artifacts/layer2/
+          path: artifacts/layer2/
           retention-days: 7
 
   komponentenintegrationstest:
     name: Komponentenintegrationstest (PHPUnit + MySQL)
     needs: komponententest
     runs-on: ubuntu-latest
+    env:
+      WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout webtrees
-        uses: actions/checkout@v4
-        with:
-          repository: fisharebest/webtrees
-          ref: ${{ github.event.inputs.webtrees_ref || 'main' }}
-          path: github/webtrees
       - name: Install podman-compose
         run: pip install podman-compose
-      - name: Start stack
-        run: |
-          cp .env.example .env
-          podman-compose up -d --build
-          podman-compose exec -T webtrees /usr/local/bin/setup-webtrees.sh
+      - name: Setup
+        run: make setup
       - name: Run integration tests
         run: make test-integration
       - name: Upload artifacts
@@ -133,28 +72,21 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: integration-results
-          path: webtrees-tests/artifacts/layer3/
+          path: artifacts/layer3/
           retention-days: 7
 
   systemtest:
     name: Systemtest (Playwright)
     needs: komponentenintegrationstest
     runs-on: ubuntu-latest
+    env:
+      WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout webtrees
-        uses: actions/checkout@v4
-        with:
-          repository: fisharebest/webtrees
-          ref: ${{ github.event.inputs.webtrees_ref || 'main' }}
-          path: github/webtrees
       - name: Install podman-compose
         run: pip install podman-compose
-      - name: Start stack
-        run: |
-          cp .env.example .env
-          podman-compose up -d --build
-          podman-compose exec -T webtrees /usr/local/bin/setup-webtrees.sh
+      - name: Setup
+        run: make setup
       - name: Run E2E tests
         run: make test-e2e
       - name: Upload Playwright report
@@ -162,28 +94,21 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: webtrees-tests/artifacts/layer4/
+          path: artifacts/layer4/
           retention-days: 7
 
   performanztest:
     name: Performanztest
     needs: systemtest
     runs-on: ubuntu-latest
+    env:
+      WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout webtrees
-        uses: actions/checkout@v4
-        with:
-          repository: fisharebest/webtrees
-          ref: ${{ github.event.inputs.webtrees_ref || 'main' }}
-          path: github/webtrees
       - name: Install podman-compose
         run: pip install podman-compose
-      - name: Start stack
-        run: |
-          cp .env.example .env
-          podman-compose up -d --build
-          podman-compose exec -T webtrees /usr/local/bin/setup-webtrees.sh
+      - name: Setup
+        run: make setup
       - name: Run performance tests
         run: make test-performance
       - name: Upload performance results
@@ -191,5 +116,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: performance-results
-          path: webtrees-tests/artifacts/layer5/
+          path: artifacts/layer5/
           retention-days: 7

@@ -1,6 +1,9 @@
 # Laufzeit-Artefakte
 artifacts/
 
+# Upstream-Clone (automatisch via make setup / scripts/clone-upstream.sh)
+upstream/
+
 # Generierte Fixtures (aus Template erzeugt via generate-privacy-fixture.sh)
 fixtures/privacy-test.ged
 

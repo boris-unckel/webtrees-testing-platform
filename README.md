@@ -5,14 +5,19 @@ Vollständige Teststrategie für das Open-Source-Projekt [webtrees](https://gith
 ## Schnellstart
 
 ```bash
-# 1. Umgebungsvariablen
-cp .env.example .env
+git clone <dieses-repo>
+cd webtrees-testing-platform
+cp .env.example .env       # Defaults anpassen (optional)
+make setup                 # klont webtrees-Upstream, startet Stack, richtet ein
+make test-all              # Alle Teststufen ausführen
+```
 
-# 2. Stack starten + webtrees einrichten
-make setup
+### Eigener webtrees-Checkout
 
-# 3. Alle Tests ausführen
-make test-all
+Wer einen vorhandenen webtrees-Checkout nutzen möchte, setzt in `.env`:
+
+```env
+WEBTREES_SOURCE=/pfad/zum/vorhandenen/checkout
 ```
 
 ## Teststufen

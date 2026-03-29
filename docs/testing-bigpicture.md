@@ -33,7 +33,7 @@ ISTQB-Terminologie (Glossar de_DE v4.7.1) ist sprachlich und inhaltlich führend
 | **Prioritäts-Domänen** | GEDCOM Import/Export (23 Testfälle), Suche & Navigation (39 Testfälle)      |
 | **Testfall-Format**  | Feature-Matrix: Code-Stelle → Anforderung → Testart → Teststufe → Priorität |
 | **Wartbarkeit**      | Höchste Priorität — monatelange Pause darf kein Blocker sein                 |
-| **Upstream-Tests**   | Separater Branch in `../webtrees-upstream/webtrees/` — Stubs mit echten Tests füllen, als PR an webtrees Core; zunächst redundant, nach Upstream-Akzeptanz rückbaubar |
+| **Upstream-Tests**   | Separater Branch im lokalen webtrees-Checkout (`${WEBTREES_SOURCE}`) — Stubs mit echten Tests füllen, als PR an webtrees Core; zunächst redundant, nach Upstream-Akzeptanz rückbaubar |
 | **Terminologie**     | ISTQB-Glossar (de_DE) v4.7.1 durchgängig — Komponententest, Komponentenintegrationstest, Systemtest, Testart |
 | **Stufenstruktur**   | 3 Teststufen (Komponenten-, Komponentenintegrations-, Systemtest) + Querschnitte (Testumgebung, Statischer Test, Performanztest, CI/CD, OTel, KI-Debug) |
 | **Endekriterien**    | Pro Teststufe definiert; Eingangskriterien implizit durch sequentielle Job-Kette |
@@ -303,6 +303,8 @@ webtrees-testing-platform/
 │       └── perf-pedigree.spec.ts
 ├── otel/
 │   └── otel-collector-config.yaml # Collector-Pipeline (OTLP → Jaeger + File)
+├── upstream/                      # gitignored — automatisch geklonter webtrees-Checkout
+│   └── webtrees/                  # (via scripts/clone-upstream.sh)
 ├── artifacts/                     # gitignored — Laufzeit-Artefakte
 │   ├── layer1/ … layer5/
 └── .github/workflows/
@@ -310,8 +312,7 @@ webtrees-testing-platform/
 ```
 
 **Begründung:** `webtrees-testing-platform` ist ein eigenständiges Repo, unabhängig vom
-Deployment-Repo und `smoke-tests/` (Live-Site-Tests). Die webtrees-Source aus
-`../webtrees-upstream/webtrees/` wird per read-only Bind-Mount in den Container
+Deployment-Repo und `smoke-tests/` (Live-Site-Tests). Die webtrees-Source (Default: `./upstream/webtrees`, konfigurierbar via `WEBTREES_SOURCE`) wird per read-only Bind-Mount in den Container
 eingebunden — kein Code wird kopiert oder modifiziert.
 
 `artifacts/` wird in `.gitignore` eingetragen. `layer5-performance/baselines/` ist absichtlich
@@ -323,7 +324,7 @@ versioniert — das ist der Kern des Baseline-Vergleichs.
 
 | Fixture | Quelle | Umfang | Zweck |
 |---|---|---|---|
-| `demo.ged` | `../webtrees-upstream/webtrees/tests/data/demo.ged` | 72 Individuen, 29 Familien (brit. Königshaus) | Primär-Fixture für alle Schichten |
+| `demo.ged` | `${WEBTREES_SOURCE}/tests/data/demo.ged` | 72 Individuen, 29 Familien (brit. Königshaus) | Primär-Fixture für alle Schichten |
 | `gedcom-l-muster.ged` | `github/gedcom_muster/muster_GEDCOM_UTF-8.ged` | 37 Individuen, 18 Familien | i18n / Deutsch-Testing |
 | `privacy-test-template.ged` | Eigene Erstellung | 30+ Individuen, 7+ Familien (dynamische Datums-Platzhalter) | Privacy & Zugriffskontrolle (P01–P29) |
 
@@ -487,7 +488,7 @@ eines spezifischen webtrees-Refs vor einem Versions-Update.
 
 | Container | Image | Zweck | Host-Port | Volume-Mounts |
 |---|---|---|---|---|
-| `webtrees` | `Containerfile.webtrees` | PHP 8.5 + Apache mod_php + webtrees | 8080:80 | `../webtrees-upstream/webtrees/` → `/var/www/html` (ro), Named Vol → `/var/www/html/data/` (rw), `fixtures/` → `/fixtures` (ro) |
+| `webtrees` | `Containerfile.webtrees` | PHP 8.5 + Apache mod_php + webtrees | 8080:80 | `${WEBTREES_SOURCE}` → `/var/www/html` (ro), Named Vol → `/var/www/html/data/` (rw), `fixtures/` → `/fixtures` (ro) |
 | `mysql` | `docker.io/library/mysql:8.0` | Datenbank | 3306:3306 | Named Vol → `/var/lib/mysql` |
 | `playwright` | `Containerfile.playwright` | Node.js 22 + Chromium (headless) | — | `layer4-e2e/` + `layer5-performance/` → `/tests` (ro), `artifacts/` → `/artifacts` (rw) |
 | `otel-collector` | `docker.io/otel/opentelemetry-collector-contrib` | OTel Sidecar (OTLP gRPC) | 4317:4317 | `otel/otel-collector-config.yaml` → `/etc/otelcol/config.yaml` (ro), `artifacts/` → `/artifacts` (rw) |
@@ -1203,10 +1204,10 @@ kann bei Bedarf per Skript extrahiert werden.
 
 ### Abgrenzung
 
-| Aspekt | `webtrees-testing-platform/` (dieses Repo) | Upstream-Branch (`../webtrees-upstream/webtrees/`) |
+| Aspekt | `webtrees-testing-platform/` (dieses Repo) | Upstream-Branch (`${WEBTREES_SOURCE}`) |
 |---|---|---|
-| **Ort** | `webtrees-testing-platform/` (dieses Repo) | `../webtrees-upstream/webtrees/` (Branch) |
-| **Abhängigkeit** | Bindet `../webtrees-upstream/webtrees/` nur lesend ein | Ändert webtrees-Code direkt (nur `tests/`) |
+| **Ort** | `webtrees-testing-platform/` (dieses Repo) | `${WEBTREES_SOURCE}` (Default `./upstream/webtrees`) |
+| **Abhängigkeit** | Bindet `${WEBTREES_SOURCE}` nur lesend ein | Ändert webtrees-Code direkt (nur `tests/`) |
 | **Zweck** | Eigene Testinfrastruktur (Container, OTel, Playwright) | Bestehende Stubs → echte Tests |
 | **Zielgruppe** | Eigenbedarf (Regressionstests vor Updates) | Upstream-Community (PR) |
 | **Redundanz** | Zunächst bewusst redundant | Nach Upstream-Akzeptanz: dieses Repo nutzt Core-Tests statt eigener |
@@ -1214,7 +1215,7 @@ kann bei Bedarf per Skript extrahiert werden.
 
 ### Vorgehen
 
-1. **Branch erstellen** in `../webtrees-upstream/webtrees/` (z. B. `fill-test-stubs`)
+1. **Branch erstellen** im lokalen webtrees-Checkout (`${WEBTREES_SOURCE}`, z. B. `fill-test-stubs`)
 2. **Stubs identifizieren** — alle Testdateien mit nur `testClass()`-Methode (siehe Gap-Analyse: ~95%)
 3. **Priorisierung** — Feature-Matrizen G01–G23 und S01–S24, S26–S40 als Leitfaden:
    - Zuerst Komponententest-Stubs (Teststufe 1): `GedcomExportServiceTest`, `SearchServiceTest` etc.
@@ -1251,7 +1252,7 @@ kann bei Bedarf per Skript extrahiert werden.
 
 Zunächst entstehen ähnliche Tests an zwei Stellen:
 - Dieses Repo: Teststufe 1 und 2 → eigene Testfälle
-- `../webtrees-upstream/webtrees/tests/app/` → gefüllte Stubs
+- `${WEBTREES_SOURCE}/tests/app/` → gefüllte Stubs
 
 **Nach Upstream-Akzeptanz:**
 - Dieses Repo entfernt redundante Komponenten- und Komponentenintegrationstests
@@ -1433,7 +1434,7 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 **Betrifft:** Nur diesen Dev Desktop (Fedora + SELinux + rootless Podman). Auf anderen Systemen ohne SELinux tritt dieser Fehler nicht auf.
 **Recovery (manuell, einmalig nach Auftreten):**
 ```bash
-chcon -R -l s0 /home/borisunckel/phpprojects/webtrees-upstream/webtrees/
+chcon -R -l s0 /pfad/zum/webtrees-checkout/
 make down && make up
 ```
 **Status:** Nicht automatisch behebbar (Host-spezifisch). Dokumentiert in CLAUDE.md unter „SELinux-Falle".

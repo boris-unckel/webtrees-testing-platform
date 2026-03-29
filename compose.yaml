@@ -10,8 +10,8 @@ services:
     ports:
       - "8080:80"
     volumes:
-      # webtrees-Source read-only einbinden (:z für SELinux-Relabeling)
-      - ../webtrees-upstream/webtrees:/var/www/html:ro,z
+      # webtrees-Source read-only einbinden (WEBTREES_SOURCE, Default: ./upstream/webtrees)
+      - ${WEBTREES_SOURCE:-./upstream/webtrees}:/var/www/html:ro,z
       # data- und vendor-Verzeichnis beschreibbar (überschreiben ro-Mount)
       - webtrees-data:/var/www/html/data
       - webtrees-vendor:/var/www/html/vendor
@@ -29,7 +29,7 @@ services:
       # dem Pfad /webtrees-tests-data-seed (zweiter ro-Mount der selben Quelle).
       - webtrees-unit-tests-data:/var/www/html/tests/data
       # Seeding-Quelle: webtrees tests/data als ro-Mount auf separatem Pfad
-      - ../webtrees-upstream/webtrees/tests/data:/webtrees-tests-data-seed:ro,z
+      - ${WEBTREES_SOURCE:-./upstream/webtrees}/tests/data:/webtrees-tests-data-seed:ro,z
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: "3306"

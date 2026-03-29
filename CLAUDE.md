@@ -2,11 +2,11 @@
 
 Dieses Repo enthält die **Test-Infrastruktur** für webtrees-Module und den webtrees-Core.
 
-**Nicht der Produktivserver.** Nicht `dombrinksblagen/`. Für Post-Deploy-Tests liegt `smoke-tests/` im Deployment-Repo.
+**Nicht der Produktivserver.** Nicht das Deployment-Repo. Für Post-Deploy-Tests liegt `smoke-tests/` im Deployment-Repo.
 
 ## Kontext
 
-Der Podman-Compose-Stack bringt einen vollständigen webtrees-Stack lokal hoch (Apache, MySQL, optional OpenTelemetry). Die webtrees-Source wird aus `../webtrees-upstream/webtrees/` eingebunden — kein eigener Clone hier.
+Der Podman-Compose-Stack bringt einen vollständigen webtrees-Stack lokal hoch (Apache, MySQL, optional OpenTelemetry). Die webtrees-Source wird automatisch geklont (`make setup`) oder über `WEBTREES_SOURCE` konfiguriert.
 
 ## Kanonischer Testaufruf
 
@@ -24,7 +24,7 @@ make down               # Stack herunterfahren
 Ein Modul aus einem anderen Repo (z. B. `webtrees-db-recaptcha`) kann in den laufenden Stack eingehängt werden:
 
 ```bash
-MODULE_PATH=/home/borisunckel/phpprojects/webtrees-db-recaptcha \
+MODULE_PATH=/pfad/zum/modul-repo/webtrees-db-recaptcha \
   MODULE_NAME=db_recaptcha \
   make test-integration
 ```
@@ -33,7 +33,7 @@ Der Pfad `MODULE_PATH` zeigt auf das Repo-Root des Moduls. `MODULE_NAME` ist der
 
 ## SELinux-Falle (Fedora/rootless Podman)
 
-**Niemals** `podman run -v /pfad/zu/webtrees-upstream/webtrees:/...:Z` (großes `Z`) auf Verzeichnisse, die der Compose-Stack gleichzeitig mountet. Das `:Z`-Flag setzt ein privates SELinux-Label und entzieht dem Compose-Container den Zugriff.
+**Niemals** `podman run -v /pfad/zum/webtrees-source:/...:Z` (großes `Z`) auf Verzeichnisse, die der Compose-Stack gleichzeitig mountet. Das `:Z`-Flag setzt ein privates SELinux-Label und entzieht dem Compose-Container den Zugriff.
 
 Für ad-hoc-Befehle immer `podman-compose exec webtrees php ...` statt `podman run`.
 
@@ -54,9 +54,9 @@ make down && make up && make setup
 
 ## Abhängigkeiten
 
-| Pfad (außerhalb dieses Repos) | Zweck |
+| Pfad | Zweck |
 |---|---|
-| `../webtrees-upstream/webtrees/` | webtrees-Source (read-only Mount in den Container) |
+| `./upstream/webtrees` (Default) oder `${WEBTREES_SOURCE}` | webtrees-Source (read-only Mount in den Container, automatisch geklont) |
 | `../webtrees-db-*/` | Module unter Test (optional via `MODULE_PATH`) |
 
 ## Testausführung — Parallelitäts- und Timeout-Regeln
