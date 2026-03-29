@@ -34,7 +34,7 @@ RUN pecl install opentelemetry \
     && docker-php-ext-enable opentelemetry
 
 # Apache-Module
-RUN a2enmod rewrite
+RUN a2enmod rewrite substitute
 
 # Apache-Config: AllowOverride für .htaccess + FallbackResource für webtrees-Routing
 RUN { \
@@ -51,6 +51,29 @@ RUN { \
     echo '</VirtualHost>'; \
     } > /etc/apache2/sites-available/000-default.conf
 ENV APACHE_DOCUMENT_ROOT=/var/www/html
+
+# Boomerang RUM + OTel-Plugin
+ARG BOOMERANG_VERSION=1.815.1
+ARG BOOMERANG_OTEL_VERSION=2.0.0-2
+
+RUN mkdir -p /opt/rum/plugins \
+    && curl -fSL -o /tmp/boomerang.tgz \
+       "https://registry.npmjs.org/boomerangjs/-/boomerangjs-${BOOMERANG_VERSION}.tgz" \
+    && tar xzf /tmp/boomerang.tgz -C /tmp \
+    && cp /tmp/package/boomerang.js /opt/rum/ \
+    && cp /tmp/package/plugins/rt.js /opt/rum/plugins/ \
+    && cp /tmp/package/plugins/navtiming.js /opt/rum/plugins/ \
+    && cp /tmp/package/plugins/restiming.js /opt/rum/plugins/ \
+    && cp /tmp/package/plugins/painttiming.js /opt/rum/plugins/ \
+    && cp /tmp/package/plugins/eventtiming.js /opt/rum/plugins/ \
+    && rm -rf /tmp/boomerang.tgz /tmp/package
+
+RUN curl -fSL -o /opt/rum/boomerang-opentelemetry.js \
+    "https://github.com/inspectIT/boomerang-opentelemetry-plugin/releases/download/${BOOMERANG_OTEL_VERSION}/boomerang-opentelemetry.js"
+
+COPY otel/boomerang-init.js /opt/rum/
+COPY otel/boomerang-apache.conf /etc/apache2/conf-available/boomerang.conf
+RUN a2enconf boomerang
 
 # Composer installieren
 COPY --from=docker.io/library/composer:2 /usr/bin/composer /usr/bin/composer
