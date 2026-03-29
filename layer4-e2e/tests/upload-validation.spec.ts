@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../helpers/otel-fixture';
 
 /**
  * Systemtest: Upload-Validierung (GEDCOM-Import)
