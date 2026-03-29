@@ -59,6 +59,22 @@ make down && make up && make setup
 | `../webtrees-upstream/webtrees/` | webtrees-Source (read-only Mount in den Container) |
 | `../webtrees-db-*/` | Module unter Test (optional via `MODULE_PATH`) |
 
+## Testausführung — Parallelitäts- und Timeout-Regeln
+
+**Exklusive Ausführung:** Es darf immer nur genau eine Teststufe gleichzeitig laufen und von einer Teststufe nur genau ein Lauf gleichzeitig. Die Container teilen sich Zustand (MySQL, webtrees-Daten) — parallele Läufe erzeugen Race-Conditions und unvorhersehbare Ergebnisse.
+
+**Keine Timeout-Limits auf lang laufende Tests:** Die Komponentenintegrationstests (Layer 3) und Systemtests (Layer 4) können deutlich länger als 10 Minuten dauern. Das Bash-Tool hat ein Maximum von 600 s — das reicht für diese Tests nicht aus. Deshalb:
+
+- Lang laufende Tests (`make test-integration`, `make test-e2e`, `make test-all`) immer mit `run_in_background: true` starten und auf die Fertigmeldung warten.
+- **Kein** `timeout`-Parameter setzen, der die Laufzeit künstlich beschränkt.
+
+**Iteratives Test-/Fixing-Vorgehen:** Vor dem Start eines neuen Testlaufs sicherstellen, dass kein vorheriger Lauf noch aktiv ist. Wenn ein vorheriger Lauf noch läuft:
+
+1. Entweder auf dessen Abschluss warten, oder
+2. den laufenden Prozess gezielt per `kill` beenden (PID über `pgrep -f` ermitteln), bevor der nächste Lauf gestartet wird.
+
+Niemals einen neuen Testlauf starten, während ein alter noch im Container aktiv ist.
+
 ## Git
 
 Commits müssen GPG-signiert sein (`commit.gpgsign=true` global gesetzt).
