@@ -10,7 +10,7 @@
 FROM docker.io/library/php:8.5-cli AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git unzip zip nodejs npm perl \
+    git unzip zip nodejs npm \
     libicu-dev libzip-dev libpng-dev libjpeg-dev libwebp-dev \
     libfreetype6-dev libxml2-dev libgd-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \

@@ -91,6 +91,10 @@ Jede neue Sourcecode-Datei (.php, .ts, .sh, .yaml, .xml, Makefile) und jede neue
 | `.xml` | `<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->` | Nach `<?xml?>` |
 | `Makefile` | `# SPDX-License-Identifier: AGPL-3.0-or-later` | Erste Zeile |
 
+## Kein Perl
+
+Perl darf in diesem Projekt nicht verwendet werden — auch nicht als Einzeiler in Shell-Skripten. Textersetzungen und Templating in Bash mit nativen Mitteln (`BASH_REMATCH`, Parameter-Expansion, `sed`) lösen.
+
 ## Git
 
 Commits müssen GPG-signiert sein (`commit.gpgsign=true` global gesetzt).

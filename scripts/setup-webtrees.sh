@@ -105,7 +105,13 @@ if [ -f "${PRIVACY_OUTPUT}" ]; then
     echo "  privacy-test.ged existiert bereits (vom Host generiert)"
 elif [ -f "${PRIVACY_TEMPLATE}" ]; then
     CURRENT_YEAR=$(date +%Y)
-    perl -pe "s/__YEAR_MINUS_(\d+)__/${CURRENT_YEAR} - \$1/ge" "${PRIVACY_TEMPLATE}" > "${PRIVACY_OUTPUT}"
+    content=$(<"${PRIVACY_TEMPLATE}")
+    while [[ "${content}" =~ __YEAR_MINUS_([0-9]+)__ ]]; do
+        offset="${BASH_REMATCH[1]}"
+        replacement=$(( CURRENT_YEAR - offset ))
+        content="${content//__YEAR_MINUS_${offset}__/${replacement}}"
+    done
+    printf '%s\n' "${content}" > "${PRIVACY_OUTPUT}"
     echo "  privacy-test.ged generiert (Basisjahr: ${CURRENT_YEAR})"
 else
     echo "  WARNUNG: ${PRIVACY_TEMPLATE} nicht gefunden, uebersprungen"

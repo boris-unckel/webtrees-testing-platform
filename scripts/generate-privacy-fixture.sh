@@ -20,8 +20,13 @@ fi
 
 CURRENT_YEAR=$(date +%Y)
 
-# Alle __YEAR_MINUS_N__ Platzhalter ersetzen
-# Perl-Einzeiler: ersetzt jeden Platzhalter durch das berechnete Jahr
-perl -pe "s/__YEAR_MINUS_(\d+)__/${CURRENT_YEAR} - \$1/ge" "${TEMPLATE}" > "${OUTPUT}"
+# Alle __YEAR_MINUS_N__ Platzhalter ersetzen (reines Bash, kein Perl nötig)
+content=$(<"${TEMPLATE}")
+while [[ "${content}" =~ __YEAR_MINUS_([0-9]+)__ ]]; do
+    offset="${BASH_REMATCH[1]}"
+    replacement=$(( CURRENT_YEAR - offset ))
+    content="${content//__YEAR_MINUS_${offset}__/${replacement}}"
+done
+printf '%s\n' "${content}" > "${OUTPUT}"
 
 echo "privacy-test.ged generiert (Basisjahr: ${CURRENT_YEAR})"
