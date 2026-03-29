@@ -41,7 +41,7 @@ test.describe.serial('Setup-Wizard', () => {
     await page.fill('input[name="dbhost"]', 'mysql-security');
     await page.fill('input[name="dbport"]', '3306');
     await page.fill('input[name="dbuser"]', 'webtrees');
-    await page.fill('input[name="dbpass"]', 'security_test');
+    await page.fill('input[name="dbpass"]', process.env.MYSQL_SECURITY_PASSWORD!);
     await page.fill('input[name="dbname"]', 'webtrees_security');
     await page.fill('input[name="tblpfx"]', 'wt_');
     await page.click('button[name="step"][value="5"]');

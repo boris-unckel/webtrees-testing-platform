@@ -356,3 +356,44 @@ Verifizierung des kompletten Flows:
 6. `make up` → neue Passwörter generiert, Stack startet konsistent
 7. Manueller Test: Passwort-Feld in `.env` leeren → `make up` generiert nur dieses neu
 8. Manueller Test: `.env` löschen + `make setup` ohne `make up` → Abbruch (`.env` fehlt)
+
+## Umsetzungsstatus
+
+**Status: umgesetzt** (2026-03-29)
+
+### Neue Dateien (3)
+
+| Datei | Zweck |
+|---|---|
+| `scripts/generate-passwords.sh` | Generator: 6 Passwort-Variablen, alphanumerisch 24 Zeichen, patcht `.env` selektiv |
+| `layer4-e2e/helpers/auth.ts` | Exportiert `ADMIN_PASSWORD` + `TEST_USER_PASSWORD` aus Env |
+| `layer5-performance/helpers/auth.ts` | Exportiert `ADMIN_PASSWORD` aus Env |
+
+### Geaenderte Dateien (29)
+
+| Bereich | Dateien | Aenderung |
+|---|---|---|
+| Infrastruktur | `.env.example` | Passwoerter leer, neue Variablen, Doku-Header |
+| | `Makefile` | `-include .env`, `export`, `generate-passwords`-Target, `clean` setzt Passwoerter zurueck, `mysql-shell`/`db-dump` dynamisch, `help` mit `-h` (grep Dateinamen-Prefix) |
+| | `compose.yaml` | Alle Fallbacks entfernt, Healthcheck ohne Passwort, Security-Track eigene Variablen, App-Passwoerter an webtrees+playwright |
+| Shell-Skripte | `setup-webtrees.sh` | Guards, Env-Passwoerter, Passwort-Update bei bestehendem User |
+| | `truncate-perfschema.sh`, `extract-perfschema.sh` | Fallbacks entfernt, Guards |
+| | `layer3-integration/run.sh` | Fallback entfernt |
+| PHP-Tests | `MysqlTestCase.php`, `PrivacyTestCase.php` | `?: 'webtrees_test'`/`'password'` durch Env mit RuntimeException |
+| E2E-Tests | 13 layer4 + 3 layer5 Testdateien | `'admin'` → `ADMIN_PASSWORD` import |
+| | `privacy-roles.ts` | `'password'` → `TEST_USER_PASSWORD` |
+| | `theme-switch.ts` | `'admin'` → `ADMIN_PASSWORD` |
+| | `wizard-setup.spec.ts` | `'security_test'` → `process.env.MYSQL_SECURITY_PASSWORD` |
+| Doku | `README.md` | Schnellstart aktualisiert, Passwort-Abschnitt |
+
+### Zusaetzliche Massnahmen (nicht im Plan)
+
+- **Passwort-Update fuer bestehende User:** `setup-webtrees.sh` aktualisiert das
+  Passwort-Hash bestehender User per `DB::table('user')->update(...)` bei jedem Lauf.
+  Damit bleiben Passwoerter nach `make clean` + Neugenerierung konsistent, auch wenn
+  die MySQL-Volumes nicht geloescht wurden.
+- **Fehlende Keys in `.env`:** Der Generator fuegt Keys, die in `.env` nicht existieren,
+  automatisch hinzu (Upgrade-Pfad von altem `.env`-Format).
+- **`make help` Fix:** `-include .env` fuegt `.env` zu `$(MAKEFILE_LIST)` hinzu, wodurch
+  `grep` Dateinamen-Prefixe ausgibt. Behoben durch `-h`-Flag.
+- **`test-security` / `security-up`:** `generate-passwords` als Dependency ergaenzt.

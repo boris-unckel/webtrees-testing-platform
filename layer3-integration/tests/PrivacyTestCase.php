@@ -88,7 +88,7 @@ abstract class PrivacyTestCase extends MysqlTestCase
             "test-{$role}-{$uniqueId}",
             'Test ' . ucfirst($role),
             "test-{$role}-{$uniqueId}@test.local",
-            'password'
+            getenv('WEBTREES_TEST_USER_PASSWORD') ?: throw new \RuntimeException('WEBTREES_TEST_USER_PASSWORD nicht gesetzt')
         );
         $user->setPreference('verified', '1');
         $user->setPreference('verified_by_admin', '1');

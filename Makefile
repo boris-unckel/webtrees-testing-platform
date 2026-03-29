@@ -3,32 +3,46 @@
 # webtrees Test-Stack — Makefile
 # Alle Targets verwenden podman-compose
 
+-include .env
+export
+
 COMPOSE = podman-compose -f compose.yaml
 COMPOSE_DEBUG = podman-compose -f compose.yaml --profile debug
 COMPOSE_SECURITY = podman-compose -f compose.yaml --profile security
 
-.PHONY: help clone-upstream up down clean setup test-all test-static test-unit test-integration test-e2e test-performance perfschema-truncate perfschema-extract trace-report security-build test-security security-up security-down security-clean logs status
+.PHONY: help clone-upstream generate-passwords up down clean setup test-all test-static test-unit test-integration test-e2e test-performance perfschema-truncate perfschema-extract trace-report security-build test-security security-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 clone-upstream: ## webtrees-Source klonen (falls nicht vorhanden)
 	scripts/clone-upstream.sh
 
-up: clone-upstream ## Stack starten (alle Container)
+generate-passwords: ## Passwoerter in .env generieren (falls leer)
+	scripts/generate-passwords.sh
+
+up: clone-upstream generate-passwords ## Stack starten (alle Container)
 	$(COMPOSE) up -d --build
 	@echo "Stack gestartet. webtrees: http://localhost:8080 | Jaeger: http://localhost:16686"
 
-up-debug: clone-upstream ## Stack starten inkl. Adminer (Debug-Profil)
+up-debug: clone-upstream generate-passwords ## Stack starten inkl. Adminer (Debug-Profil)
 	$(COMPOSE_DEBUG) up -d --build
 	@echo "Stack gestartet. webtrees: http://localhost:8080 | Adminer: http://localhost:8081 | Jaeger: http://localhost:16686"
 
 down: ## Stack stoppen
 	$(COMPOSE) down
 
-clean: ## Stack stoppen und Volumes löschen
+clean: ## Stack stoppen, Volumes und Passwoerter loeschen
 	$(COMPOSE) down -v
 	rm -rf artifacts/layer*/*
+	@if [ -f .env ]; then \
+		for key in MYSQL_ROOT_PASSWORD MYSQL_PASSWORD \
+			MYSQL_SECURITY_ROOT_PASSWORD MYSQL_SECURITY_PASSWORD \
+			WEBTREES_ADMIN_PASSWORD WEBTREES_TEST_USER_PASSWORD; do \
+			sed -i "s/^$${key}=.*/$${key}=/" .env; \
+		done; \
+		echo "Passwoerter in .env zurueckgesetzt."; \
+	fi
 
 setup: up ## webtrees im Container einrichten (DB-Migration, Fixtures, Admin-User)
 	$(COMPOSE) exec webtrees /usr/local/bin/setup-webtrees.sh
@@ -84,7 +98,7 @@ trace-report: ## Trace-Report generieren (RUN_ID=... LAYER=3|4|5)
 security-build: clone-upstream ## Security-Image bauen (Distribution-Build)
 	scripts/build-security-image.sh
 
-test-security: security-build ## Sicherheitstest (Distribution + Wizard + Prüfpunkte)
+test-security: security-build generate-passwords ## Sicherheitstest (Distribution + Wizard + Prüfpunkte)
 	$(COMPOSE_SECURITY) up -d webtrees-security mysql-security playwright
 	scripts/security-filesystem-checks.sh --pre-wizard
 	$(COMPOSE_SECURITY) exec playwright npx playwright test \
@@ -93,7 +107,7 @@ test-security: security-build ## Sicherheitstest (Distribution + Wizard + Prüfp
 	-podman stop webtrees-security mysql-security 2>/dev/null
 	-podman rm -f webtrees-security mysql-security 2>/dev/null
 
-security-up: security-build ## Security-Stack starten (ohne Tests)
+security-up: security-build generate-passwords ## Security-Stack starten (ohne Tests)
 	$(COMPOSE_SECURITY) up -d webtrees-security mysql-security
 
 security-down: ## Security-Stack stoppen + entfernen
@@ -109,12 +123,12 @@ logs: ## Container-Logs anzeigen
 status: ## Container-Status anzeigen
 	$(COMPOSE) ps
 
-mysql-shell: ## MySQL-Shell öffnen
-	$(COMPOSE) exec mysql mysql -u webtrees -pwebtrees_test webtrees_test
+mysql-shell: ## MySQL-Shell oeffnen
+	$(COMPOSE) exec mysql mysql -u $(MYSQL_USER) -p"$(MYSQL_PASSWORD)" $(MYSQL_DATABASE)
 
 php-shell: ## PHP-Shell im webtrees-Container
 	$(COMPOSE) exec webtrees bash
 
 db-dump: ## Testdatenbank dumpen (nach artifacts/)
-	$(COMPOSE) exec mysql mysqldump -u webtrees -pwebtrees_test webtrees_test > artifacts/db-dump.sql
+	$(COMPOSE) exec mysql mysqldump -u $(MYSQL_USER) -p"$(MYSQL_PASSWORD)" $(MYSQL_DATABASE) > artifacts/db-dump.sql
 	@echo "Dump: artifacts/db-dump.sql"

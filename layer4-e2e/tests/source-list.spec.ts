@@ -2,6 +2,7 @@
 
 import { test, expect } from '../helpers/otel-fixture';
 import { themes, switchTheme } from '../helpers/theme-switch';
+import { ADMIN_PASSWORD } from '../helpers/auth';
 
 /**
  * Systemtest: Quellenliste (SourceListPage)
@@ -18,7 +19,7 @@ for (const theme of themes) {
     test.beforeEach(async ({ page }) => {
       await page.goto('/login/demo');
       await page.fill('input[name="username"]', 'admin');
-      await page.fill('input[name="password"]', 'admin');
+      await page.fill('input[name="password"]', ADMIN_PASSWORD);
       await page.locator('button[type="submit"]').last().click();
       await page.waitForLoadState('networkidle');
     });

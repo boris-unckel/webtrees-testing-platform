@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { test, expect } from '../helpers/otel-fixture';
+import { ADMIN_PASSWORD } from '../helpers/auth';
 
 /**
  * Systemtest: Login-Funktionalität
@@ -22,7 +23,7 @@ test.describe('Login', () => {
 
     // Login-Formular ausfüllen (Admin-User aus setup-webtrees.sh)
     await page.fill('input[name="username"]', 'admin');
-    await page.fill('input[name="password"]', 'admin');
+    await page.fill('input[name="password"]', ADMIN_PASSWORD);
     await page.locator('button[type="submit"]').last().click();
 
     // Nach Login: Dashboard oder Baumseite

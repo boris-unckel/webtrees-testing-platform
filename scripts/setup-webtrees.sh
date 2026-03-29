@@ -13,7 +13,14 @@ MYSQL_HOST="${MYSQL_HOST:-mysql}"
 MYSQL_PORT="${MYSQL_PORT:-3306}"
 MYSQL_DATABASE="${MYSQL_DATABASE:-webtrees_test}"
 MYSQL_USER="${MYSQL_USER:-webtrees}"
-MYSQL_PASSWORD="${MYSQL_PASSWORD:-webtrees_test}"
+
+# Pflicht-Variablen pruefen (Passwoerter ohne Fallback)
+for _var in MYSQL_PASSWORD WEBTREES_ADMIN_PASSWORD WEBTREES_TEST_USER_PASSWORD; do
+    if [[ -z "${!_var:-}" ]]; then
+        echo "FEHLER: ${_var} nicht gesetzt — wurde 'make up' ausgefuehrt?" >&2
+        exit 1
+    fi
+done
 
 echo "=== webtrees Test-Setup ==="
 
@@ -151,7 +158,11 @@ $host     = getenv('MYSQL_HOST') ?: 'mysql';
 $port     = getenv('MYSQL_PORT') ?: '3306';
 $database = getenv('MYSQL_DATABASE') ?: 'webtrees_test';
 $username = getenv('MYSQL_USER') ?: 'webtrees';
-$password = getenv('MYSQL_PASSWORD') ?: 'webtrees_test';
+$password = getenv('MYSQL_PASSWORD') ?: throw new \RuntimeException('MYSQL_PASSWORD nicht gesetzt');
+
+// App-Passwoerter aus Umgebungsvariablen
+$adminPassword    = getenv('WEBTREES_ADMIN_PASSWORD') ?: throw new \RuntimeException('WEBTREES_ADMIN_PASSWORD nicht gesetzt');
+$testUserPassword = getenv('WEBTREES_TEST_USER_PASSWORD') ?: throw new \RuntimeException('WEBTREES_TEST_USER_PASSWORD nicht gesetzt');
 
 DB::connect(
     driver:             DB::MYSQL,
@@ -181,12 +192,16 @@ echo "  Admin-User anlegen...\n";
 $userService = new UserService();
 $admin = $userService->findByUserName('admin');
 if ($admin === null) {
-    $admin = $userService->create('admin', 'Test Admin', 'admin@example.com', 'admin');
+    $admin = $userService->create('admin', 'Test Admin', 'admin@example.com', $adminPassword);
     echo "  Admin-User erstellt.\n";
 }
+// Passwort immer aktualisieren (konsistent mit generiertem Passwort nach make clean)
+DB::table('user')
+    ->where('user_name', '=', 'admin')
+    ->update(['password' => password_hash($adminPassword, PASSWORD_DEFAULT)]);
 
 // Preferences immer setzen (nicht nur bei Erstellung), damit auch bei
-// vorhandenem User aus früheren Testläufen der Admin-Status sicher gesetzt ist.
+// vorhandenem User aus frueheren Testlaeufen der Admin-Status sicher gesetzt ist.
 $admin->setPreference(\Fisharebest\Webtrees\Contracts\UserInterface::PREF_IS_ADMINISTRATOR, '1');
 $admin->setPreference('verified', '1');
 $admin->setPreference('verified_by_admin', '1');
@@ -279,10 +294,14 @@ if ($privacyTree !== null) {
                 $username,
                 'Test ' . ucfirst($roleName),
                 "test-{$roleName}@test.local",
-                'password'
+                $testUserPassword
             );
             echo "  User '{$username}' erstellt.\n";
         }
+        // Passwort immer aktualisieren (konsistent mit generiertem Passwort)
+        DB::table('user')
+            ->where('user_name', '=', $username)
+            ->update(['password' => password_hash($testUserPassword, PASSWORD_DEFAULT)]);
         $testUser->setPreference('verified', '1');
         $testUser->setPreference('verified_by_admin', '1');
 
@@ -310,10 +329,14 @@ if ($privacyTree !== null) {
             'test-relationship',
             'Test Relationship',
             'test-relationship@test.local',
-            'password'
+            $testUserPassword
         );
         echo "  User 'test-relationship' erstellt.\n";
     }
+    // Passwort immer aktualisieren (konsistent mit generiertem Passwort)
+    DB::table('user')
+        ->where('user_name', '=', 'test-relationship')
+        ->update(['password' => password_hash($testUserPassword, PASSWORD_DEFAULT)]);
     $relUser->setPreference('verified', '1');
     $relUser->setPreference('verified_by_admin', '1');
     $privacyTree->setUserPreference($relUser, \Fisharebest\Webtrees\Contracts\UserInterface::PREF_TREE_ROLE, \Fisharebest\Webtrees\Contracts\UserInterface::ROLE_MEMBER);

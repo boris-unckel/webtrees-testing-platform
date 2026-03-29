@@ -107,7 +107,7 @@ abstract class MysqlTestCase extends TestCase
         $port     = getenv('MYSQL_PORT') ?: '3306';
         $database = getenv('MYSQL_DATABASE') ?: 'webtrees_test';
         $username = getenv('MYSQL_USER') ?: 'webtrees';
-        $password = getenv('MYSQL_PASSWORD') ?: 'webtrees_test';
+        $password = getenv('MYSQL_PASSWORD') ?: throw new \RuntimeException('MYSQL_PASSWORD nicht gesetzt');
 
         DB::connect(
             driver:             DB::MYSQL,
@@ -189,7 +189,8 @@ abstract class MysqlTestCase extends TestCase
     {
         $admin = $this->userService->findByUserName('test-admin');
         if ($admin === null) {
-            $admin = $this->userService->create('test-admin', 'Test Admin', 'admin@test.local', 'password');
+            $testPassword = getenv('WEBTREES_TEST_USER_PASSWORD') ?: throw new \RuntimeException('WEBTREES_TEST_USER_PASSWORD nicht gesetzt');
+            $admin = $this->userService->create('test-admin', 'Test Admin', 'admin@test.local', $testPassword);
         }
 
         // Preferences immer setzen (nicht nur beim Erstellen), damit auch bei

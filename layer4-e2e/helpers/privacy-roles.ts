@@ -1,17 +1,19 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Page } from '@playwright/test';
+import { TEST_USER_PASSWORD } from './auth';
 
 /**
  * Rollen-Login-Helper fuer Privacy-Systemtests.
  *
  * Die User werden in setup-webtrees.sh angelegt:
- * - test-member / password (Mitglied)
- * - test-editor / password (Bearbeiter)
- * - test-moderator / password (Moderator)
- * - test-manager / password (Verwalter)
- * - test-relationship / password (Mitglied mit Relationship-Privacy)
+ * - test-member (Mitglied)
+ * - test-editor (Bearbeiter)
+ * - test-moderator (Moderator)
+ * - test-manager (Verwalter)
+ * - test-relationship (Mitglied mit Relationship-Privacy)
  *
+ * Passwort: WEBTREES_TEST_USER_PASSWORD (generiert durch scripts/generate-passwords.sh)
  * Besucher (visitor): kein Login, Abmeldung falls noetig.
  *
  */
@@ -32,7 +34,7 @@ export async function loginAsRole(page: Page, role: PrivacyRole): Promise<void> 
 
   await page.goto('/login/privacy');
   await page.fill('input[name="username"]', `test-${role}`);
-  await page.fill('input[name="password"]', 'password');
+  await page.fill('input[name="password"]', TEST_USER_PASSWORD);
   await page.locator('button[type="submit"]').last().click();
   await page.waitForLoadState('networkidle');
 }
@@ -44,7 +46,7 @@ export async function loginAsRole(page: Page, role: PrivacyRole): Promise<void> 
 export async function loginAsRelationshipUser(page: Page): Promise<void> {
   await page.goto('/login/privacy');
   await page.fill('input[name="username"]', 'test-relationship');
-  await page.fill('input[name="password"]', 'password');
+  await page.fill('input[name="password"]', TEST_USER_PASSWORD);
   await page.locator('button[type="submit"]').last().click();
   await page.waitForLoadState('networkidle');
 }

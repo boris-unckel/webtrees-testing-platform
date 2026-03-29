@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { test, expect } from '../helpers/otel-fixture';
+import { ADMIN_PASSWORD } from '../helpers/auth';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -29,7 +30,7 @@ test.describe('Performance — Homepage', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/login/demo');
     await page.fill('input[name="username"]', 'admin');
-    await page.fill('input[name="password"]', 'admin');
+    await page.fill('input[name="password"]', ADMIN_PASSWORD);
     await page.locator('button[type="submit"]').last().click();
     await page.waitForLoadState('networkidle');
   });

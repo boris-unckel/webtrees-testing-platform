@@ -25,10 +25,18 @@ Vollständige Teststrategie für das Open-Source-Projekt [webtrees](https://gith
 ```bash
 git clone <dieses-repo>
 cd webtrees-testing-platform
-cp .env.example .env       # Defaults anpassen (optional)
-make setup                 # klont webtrees-Upstream, startet Stack, richtet ein
-make test-all              # Alle Teststufen ausführen
+make setup                 # klont Upstream, generiert Passwoerter, startet Stack, richtet ein
+make test-all              # Alle Teststufen ausfuehren
 ```
+
+### Passwoerter
+
+Alle Passwoerter (MySQL, webtrees Admin, Test-User) werden beim ersten
+`make up` automatisch generiert und in `.env` geschrieben. Manuelle
+Anpassungen bleiben bei erneutem `make up` erhalten. `make clean` setzt
+alle Passwoerter zurueck, sodass der naechste Start frische Werte erzeugt.
+
+Siehe `scripts/generate-passwords.sh` und `.env.example` fuer Details.
 
 ### Eigener webtrees-Checkout
 

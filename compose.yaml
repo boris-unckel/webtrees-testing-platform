@@ -37,9 +37,11 @@ services:
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: "3306"
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-webtrees_test}
-      MYSQL_USER: ${MYSQL_USER:-webtrees}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-webtrees_test}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      WEBTREES_ADMIN_PASSWORD: ${WEBTREES_ADMIN_PASSWORD}
+      WEBTREES_TEST_USER_PASSWORD: ${WEBTREES_TEST_USER_PASSWORD}
       # OpenTelemetry
       OTEL_PHP_AUTOLOAD_ENABLED: ${OTEL_PHP_AUTOLOAD_ENABLED:-true}
       OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-webtrees}
@@ -67,10 +69,10 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-webtrees_test}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-webtrees_test}
-      MYSQL_USER: ${MYSQL_USER:-webtrees}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-webtrees_test}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_bin
@@ -80,7 +82,7 @@ services:
     networks:
       - webtrees-test-net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-webtrees_test}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -96,6 +98,9 @@ services:
       - ./artifacts:/artifacts:rw,z
     environment:
       BASE_URL: http://webtrees:80
+      WEBTREES_ADMIN_PASSWORD: ${WEBTREES_ADMIN_PASSWORD}
+      WEBTREES_TEST_USER_PASSWORD: ${WEBTREES_TEST_USER_PASSWORD}
+      MYSQL_SECURITY_PASSWORD: ${MYSQL_SECURITY_PASSWORD}
     depends_on:
       - webtrees
     networks:
@@ -162,10 +167,10 @@ services:
     profiles:
       - security
     environment:
-      MYSQL_ROOT_PASSWORD: security_test
+      MYSQL_ROOT_PASSWORD: ${MYSQL_SECURITY_ROOT_PASSWORD}
       MYSQL_DATABASE: webtrees_security
       MYSQL_USER: webtrees
-      MYSQL_PASSWORD: security_test
+      MYSQL_PASSWORD: ${MYSQL_SECURITY_PASSWORD}
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_bin

@@ -5,8 +5,8 @@ set -euo pipefail
 LAYER="${1:?Fehler: Layer angeben (layer3, layer4, layer5)}"
 CONTAINER="${2:-mysql}"
 TARGET_DIR="artifacts/${LAYER}/perfschema"
+[[ -n "${MYSQL_ROOT_PASSWORD:-}" ]] || { echo "FEHLER: MYSQL_ROOT_PASSWORD nicht gesetzt" >&2; exit 1; }
 MYSQL_DATABASE="${MYSQL_DATABASE:-webtrees_test}"
-MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-webtrees_test}"
 
 mkdir -p "$TARGET_DIR"
 

@@ -25,7 +25,7 @@ EXIT_CODE=${PIPESTATUS[0]}
 if [ "${EXIT_CODE}" -ne 0 ]; then
     echo "  Fehler — erstelle DB-Dump..."
     mysqldump -h "${MYSQL_HOST:-mysql}" -u "${MYSQL_USER:-webtrees}" \
-        -p"${MYSQL_PASSWORD:-webtrees_test}" "${MYSQL_DATABASE:-webtrees_test}" \
+        -p"${MYSQL_PASSWORD}" "${MYSQL_DATABASE:-webtrees_test}" \
         > "${ARTIFACTS}/db-dump.sql" 2>/dev/null || true
 
     # PHP-Fehlerlog kopieren

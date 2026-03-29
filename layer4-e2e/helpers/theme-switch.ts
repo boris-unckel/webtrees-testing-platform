@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Browser } from '@playwright/test';
+import { ADMIN_PASSWORD } from './auth';
 
 /**
  * Theme-Switching-Helper für Systemtests.
@@ -21,7 +22,7 @@ export async function switchTheme(browser: Browser, theme: string): Promise<void
   const page = await ctx.newPage();
   await page.goto('/login/demo');
   await page.fill('input[name="username"]', 'admin');
-  await page.fill('input[name="password"]', 'admin');
+  await page.fill('input[name="password"]', ADMIN_PASSWORD);
   await page.locator('button[type="submit"]').last().click();
   await page.waitForLoadState('networkidle');
   await page.goto(`/tree/demo?theme=${theme}`);
