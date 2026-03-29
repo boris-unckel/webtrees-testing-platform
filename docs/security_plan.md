@@ -1085,11 +1085,357 @@ Feature-Matrix (Abschnitt 4.2) synchron aktualisiert.
 
 | Aspekt | Detail |
 |--------|--------|
-| **Status** | **Offen** |
+| **Status** | **Verifiziert** |
 | **Prüfpunkte** | — (Dokumentation, keine Tests) |
-| **Deliverables** | `docs/testing-bigpicture.md` aktualisieren: Feature-Matrix Sicherheit, Endekriterien, Testorakel, Testentwurfsverfahren, Produktrisiken R14–R21. Ergebnisdokumentation. |
-| **Abnahmekriterium** | Bigpicture enthält Sicherheitsdomäne. `make test-security` in Implementierungs-Fahrplan aufgenommen. Alle 26/26 Prüfpunkte dokumentiert. |
-| **Ergebnis** | — |
+| **Deliverables** | `docs/testing-bigpicture.md` vollständig und eigenständig um Sicherheitstest-Domäne erweitern (14 Kapitel + 3 Kleinänderungen, siehe Arbeitspakete). Kein Verweis auf `docs/security_plan.md` im Bigpicture. |
+| **Abnahmekriterium** | Bigpicture enthält Sicherheitsdomäne eigenständig. `make test-security` im Implementierungs-Fahrplan. Alle 26/26 Prüfpunkte in Abdeckungsmatrix. Charakter aller bestehenden Kapitel bleibt erhalten. |
+| **Ergebnis** | 17 APs umgesetzt. Bigpicture eigenständig: Designentscheidung, Layer-Zuordnung, Mermaid-Subgraph, N2, Container-Stack (6+2), Feature-Matrix SEC (26), Testfall-/Prioritätsverteilung, Endekriterien, 10 Testorakel, 5 Testentwurfsverfahren, R14–R21, Überdeckung (Vektor-Mapping), Fehlermanagement, Fahrplan Phase 12, Verfolgbarkeit, Known Bugs (SEC-C03, SEC-HDR04), Abdeckungsmatrix (117 Features). |
+
+#### Arbeitspakete S6
+
+> Jedes AP ändert ein Kapitel in `docs/testing-bigpicture.md`. Reihenfolge = Dokumentreihenfolge.
+> **Grundregel:** Das Bigpicture muss eigenständig und vollständig sein — alle Inhalte inline,
+> keine Verweise auf `docs/security_plan.md`.
+
+**AP S6-01 — Getroffene Designentscheidungen**
+
+Neue Zeile in Tabelle:
+
+| Dimension | Entscheidung |
+|---|---|
+| **Sicherheitstest** | Zwei-Track-Architektur: Fachtest (Dev-Source, Mount) vs. Sicherheitstest (Distribution-ZIP, produktionsidentisch). Eigener Container-Build (`Containerfile.security`), Upstream-Setup-Wizard via Playwright, Dateisystem-Assertions via Shell |
+
+---
+
+**AP S6-02 — Zuordnung Layer ↔ ISTQB-Teststufe**
+
+Neue Zeile in Tabelle:
+
+| Code (Makefile / Verzeichnis) | ISTQB-Teststufe / Querschnitt |
+|---|---|
+| `layer4-e2e/tests/security/` + `scripts/security-filesystem-checks.sh` / `make test-security` | Querschnitt — Sicherheitstest |
+
+---
+
+**AP S6-03 — Mermaid-Diagramm**
+
+Neuer Subgraph einfügen (zwischen PERF und den Verbindungen):
+
+```mermaid
+    subgraph SEC["Querschnitt — Sicherheitstest (Distribution-Container)"]
+        secbuild["Distribution-Build\nContainerfile.security"]
+        secwiz["Wizard-Durchlauf\nPlaywright"]
+        secfs["Dateisystem-Assertions\nShell-Script"]
+        sechttp["HTTP-Zugriffstests\nPlaywright"]
+        secbuild --> secwiz --> secfs
+        secwiz --> sechttp
+    end
+```
+
+Neue Verbindungen:
+
+```
+    INFRA --> SEC
+    SEC -->|"Fehler-Artefakt"| d3
+    SEC -.->|"Job"| ci3
+```
+
+Anpassung CI-Kette: `ci3["systemtest"]` erweitern zu `ci3["systemtest\n+ sicherheitstest"]` oder separaten Job `ci3b["sicherheitstest"]` nach `ci3` einfügen.
+
+---
+
+**AP S6-04 — N2 Verzeichnisstruktur**
+
+Neue Einträge ergänzen:
+
+```
+├── Containerfile.security          # Distribution-Container (Multi-Stage Build)
+├── scripts/
+│   ├── build-security-image.sh    # Build-Helper (podman build --volume)
+│   ├── security-filesystem-checks.sh # 9 Dateisystem-Assertions (pre/post-wizard)
+│   ...
+├── layer4-e2e/
+│   ├── playwright-security.config.ts  # Security-Playwright-Config (Distribution-Container)
+│   └── tests/
+│       ├── security/                  # Sicherheitstests (getrennt von funktionalen E2E)
+│       │   ├── wizard-setup.spec.ts   # SEC-WZ01–WZ04 (Setup-Projekt, läuft zuerst)
+│       │   ├── data-access.spec.ts    # SEC-H03–H06
+│       │   ├── public-access.spec.ts  # SEC-PUB02–PUB04
+│       │   ├── setup-lock.spec.ts     # SEC-W01
+│       │   ├── media-access.spec.ts   # SEC-M01–M03
+│       │   └── security-headers.spec.ts # SEC-HDR01–HDR04
+│       ...
+```
+
+Anpassung `layer3-integration/tests/`-Zählung: unverändert (Security-Tests laufen nicht im Integration-Layer).
+
+---
+
+**AP S6-05 — Container-Stack-Spezifikation**
+
+Einleitungstext anpassen: "6 Container, 1 Netzwerk" → "6+2 Container, 2 Netzwerke" mit Hinweis:
+
+> Die Security-Container (`webtrees-security`, `mysql-security`) laufen über ein separates
+> Compose-Profil (`--profile security`) und werden nur für `make test-security` gestartet.
+> Sie teilen weder Netzwerk noch Volumes mit dem Fachtest-Stack.
+
+Zwei neue Zeilen in der Container-Tabelle:
+
+| Container | Image | Zweck | Host-Port | Volume-Mounts |
+|---|---|---|---|---|
+| `webtrees-security` | `Containerfile.security` | Distribution-Build (ZIP entpackt) + Apache | 8082:80 | Named Vol → `/var/www/html/data/` (rw) |
+| `mysql-security` | `docker.io/library/mysql:8.0` | Datenbank (Security-Track) | 3307:3306 | Named Vol → `/var/lib/mysql` |
+
+Netzwerk-Topologie erweitern:
+
+```
+webtrees-security-net (Bridge, Profil: security)
+├── webtrees-security ←→ mysql-security  (PDO, Port 3306)
+└── playwright        →  webtrees-security (HTTP, Port 80)
+```
+
+---
+
+**AP S6-06 — Feature-Matrix: Sicherheit (SEC)**
+
+Neues Kapitel nach der bestehenden Feature-Matrix "Datenschutz & Zugriffskontrolle" einfügen.
+Spaltenstruktur angepasst (kein Upstream-SQLite, stattdessen Shell-Assertions und Playwright-Security):
+
+```markdown
+### Feature-Matrix: Sicherheit (SEC)
+
+> Sicherheitstests prüfen, ob die Schutzmechanismen des webtrees-Upstream-Codes in einer
+> produktionsidentischen Distribution-Instanz greifen. Eigener Container-Build, eigene
+> Datenbank, Setup-Wizard via Playwright. Zwei Testverfahren: Shell-Assertions (Dateisystem)
+> und Playwright-HTTP-Tests (Zugriffskontrolle, Header).
+
+| # | Feature | Abgeleitete Anforderung | Prio | Status |
+|---|---------|-------------------------|------|--------|
+| SEC-H01 | `.htaccess` Existenz | `data/.htaccess` in Distribution vorhanden | Hoch | Grün |
+| SEC-H02 | `.htaccess` Inhalt | Enthält `Require all denied` (Apache 2.4) | Hoch | Grün |
+| SEC-H03 | HTTP-Zugriff `data/` blockiert | `GET /data/` → HTTP 403 | Hoch | Grün |
+| SEC-H04 | HTTP-Zugriff `config.ini.php` blockiert | `GET /data/config.ini.php` → 403 | Hoch | Grün |
+| SEC-H05 | HTTP-Zugriff `data/media/` blockiert | `GET /data/media/` → 403 | Hoch | Grün |
+| SEC-H06 | URL-Encoding umgeht `.htaccess` nicht | Encoding-Varianten → jeweils 403 | Hoch | Grün |
+| SEC-D01 | `data/index.php` Existenz | Datei in Distribution vorhanden | Mittel | Grün |
+| SEC-D02 | `data/index.php` Redirect-Logik | Enthält `header('Location: ../index.php')` | Mittel | Grün |
+| SEC-C01 | Config PHP-Guard | `config.ini.php` hat `; <?php return; ?>` als erste Zeile | Hoch | Grün |
+| SEC-C02 | Config DB-Credentials | `config.ini.php` enthält dbhost, dbuser, dbpass, dbname | Hoch | Grün |
+| SEC-C03 | Config Datei-Permissions | world-readable (644) — kein `chmod` im Wizard | Hoch | Rot (Upstream-Befund) |
+| SEC-M01 | Direkter Media-Zugriff blockiert | `GET /data/media/<datei>` → 403 | Mittel | Grün |
+| SEC-M02 | Media-Route ohne Auth | App-Route als Visitor → 302 (Redirect zu Login) | Mittel | Grün |
+| SEC-M03 | Media-Route mit Auth | App-Route als Member → 200 | Mittel | Grün |
+| SEC-PUB01 | `public/index.php` Existenz | Datei in Distribution vorhanden | Mittel | Grün |
+| SEC-PUB02 | `public/index.php` keine PHP-Execution | Statischer Inhalt (Source sichtbar, nicht ausgeführt) | Mittel | Grün |
+| SEC-PUB03 | Kein Directory Listing `/public/` | `GET /public/` → kein Datei-Listing | Mittel | Grün |
+| SEC-PUB04 | Path-Traversal blockiert | `GET /public/../data/config.ini.php` → kein Dateiinhalt | Mittel | Grün |
+| SEC-W01 | Wizard nach Setup gesperrt | Setup-URL → kein Setup-Formular | Hoch | Grün |
+| SEC-WZ01 | Wizard erscheint bei Erstaufruf | Frische Instanz → Setup-Formular | Hoch | Grün |
+| SEC-WZ02 | Wizard prüft Schreibrechte | Schritt 2: data/ beschreibbar | Hoch | Grün |
+| SEC-WZ03 | Wizard erzeugt `config.ini.php` | Datei existiert nach Wizard-Abschluss | Hoch | Grün |
+| SEC-WZ04 | Wizard sperrt sich selbst | Kein erneuter Setup nach Abschluss | Hoch | Grün |
+| SEC-HDR01 | `X-Content-Type-Options` | Header = `nosniff` | Niedrig | Grün |
+| SEC-HDR02 | `X-Frame-Options` | Header = `SAMEORIGIN` oder `DENY` | Niedrig | Grün |
+| SEC-HDR03 | `Referrer-Policy` | Header gesetzt (nicht leer) | Niedrig | Grün |
+| SEC-HDR04 | Server-Banner | Apache-Versionsstring sichtbar | Niedrig | Rot (Deployment-Empfehlung) |
+```
+
+---
+
+**AP S6-07 — Testfall-Verteilung / Prioritätsverteilung**
+
+Bestehende Tabelle um SEC-Spalte erweitern:
+
+Testfall-Verteilung:
+
+| Teststufe | … (bestehend) | SEC | Gesamt |
+|---|---|---|---|
+| Teststufe 2 (Dateisystem) | … | SEC-H01–H02, SEC-D01–D02, SEC-C01–C03, SEC-PUB01, SEC-WZ03 (9) | … |
+| Teststufe 3 (HTTP/Playwright) | … | SEC-H03–H06, SEC-M01–M03, SEC-PUB02–PUB04, SEC-W01, SEC-WZ01–WZ04, SEC-HDR01–HDR04 (18) | … |
+| Beide | … | SEC-WZ03 (1) | … |
+
+Prioritätsverteilung:
+
+| Priorität | G+S | P | SEC | Gesamt | Anteil |
+|---|---|---|---|---|---|
+| Hoch | 26 | 19 | 14 | **59** | 50% |
+| Mittel | 32 | 10 | 8 | **50** | 43% |
+| Niedrig | 4 | 0 | 4 | **8** | 7% |
+
+---
+
+**AP S6-08 — Endekriterien**
+
+Neue Zeile in Tabelle:
+
+| Teststufe / Querschnitt | Endekriterien |
+|---|---|
+| Sicherheitstest | Alle MUSS-Prüfpunkte (SEC-H01–H06, SEC-C01–C03, SEC-W01, SEC-WZ01–WZ04) grün; SOLL-Prüfpunkte grün oder als Upstream-Befund dokumentiert; KANN-Prüfpunkte (SEC-HDR01–HDR04) dokumentiert |
+
+---
+
+**AP S6-09 — Testorakel**
+
+10 neue Zeilen in Tabelle (1:1 aus security_plan.md §8):
+
+| Orakel | Gilt für Feature-Matrix-IDs | Methode |
+|---|---|---|
+| Upstream-Quellcode: `data/.htaccess` (statische Datei) | SEC-H01, SEC-H02 | Dateiinhalt als Referenz: `Require all denied` |
+| Upstream-Quellcode: `data/index.php` (statische Datei) | SEC-D01, SEC-D02 | Dateiinhalt als Referenz: `header('Location: ../index.php')` |
+| Upstream-Quellcode: `resources/views/setup/config.ini.phtml` | SEC-C01, SEC-C02 | Template definiert erwartetes Format (PHP-Guard, INI-Keys) |
+| Apache HTTP-Spezifikation (RFC 7231, Status 403) | SEC-H03–SEC-H06, SEC-M01 | HTTP 403 = Zugriff verboten; Body darf keine Credentials enthalten |
+| Upstream-Quellcode: `ReadConfigIni.php`, `SetupWizard.php` | SEC-W01, SEC-WZ01–SEC-WZ04 | Middleware-Logik: `file_exists()` → Lock; Wizard-HTML-Selektoren |
+| Upstream-Quellcode: `PublicFiles.php` | SEC-PUB02–SEC-PUB04 | `file_get_contents()` statt PHP-Execution; `!str_contains($path, '..')` |
+| Upstream-Quellcode: `SecurityHeaders.php` | SEC-HDR01–SEC-HDR03 | Middleware setzt Header-Werte direkt im Code |
+| Upstream-Quellcode: `Auth::checkMediaAccess()`, `MediaFileDownload` | SEC-M02, SEC-M03 | Rollenbasierte Zugriffskontrolle: Visitor → kein Zugriff, Member → Zugriff |
+| Dateisystem-Semantik: `stat()` Permissions | SEC-C03 | umask-Default des PHP-Prozesses; world-readable = potenzielle Schwäche |
+| Apache-Konfiguration: `ServerTokens` Default | SEC-HDR04 | Default `ServerTokens Full` → Versionsinfo; gehärtete Config → `Prod` |
+
+---
+
+**AP S6-10 — Testentwurfsverfahren**
+
+5 neue Zeilen in Tabelle (1:1 aus security_plan.md §9):
+
+| Verfahren (ISTQB) | Domäne / Feature-Matrix-IDs | Begründung |
+|---|---|---|
+| **Entscheidungstabellentest** | SEC-H03–SEC-H06, SEC-M01–SEC-M03 | Kombination URL-Pfad × HTTP-Methode × erwarteter Status (403/200/302). Entscheidungstabelle: `.htaccess` greift ja/nein × Auth vorhanden ja/nein |
+| **Erfahrungsbasierter Test** | SEC-H06, SEC-PUB04 | URL-Encoding-Varianten und Path-Traversal-Muster aus OWASP Testing Guide. Keine formale Spezifikation für Umgehungsversuche |
+| **Anwendungsfall-Test** | SEC-WZ01–SEC-WZ04 | End-to-End-Szenario: Frische Distribution → Wizard durchlaufen → lauffähige Instanz (6 Wizard-Schritte) |
+| **Äquivalenzklassenbildung** | SEC-HDR01–SEC-HDR04, SEC-PUB02–SEC-PUB03 | Header: vorhanden/korrekt vs. fehlend/falsch. `public/`-Zugriff: Datei vs. Verzeichnis vs. Traversal |
+| **Grenzwertanalyse** | SEC-C03 | Datei-Permissions: Grenze bei world-readable-Bit (0644 vs. 0640 vs. 0600) |
+
+---
+
+**AP S6-11 — Produktrisiken**
+
+8 neue Zeilen in Produktrisiken-Tabelle (R14–R21):
+
+| Risiko-ID | Risiko | Wahrscheinlichkeit | Auswirkung | Maßnahme (Feature-Matrix-IDs) |
+|---|---|---|---|---|
+| R14 | DB-Credentials über HTTP zugänglich (`data/config.ini.php`) | Niedrig | Kritisch | SEC-H03, SEC-H04, SEC-H06 |
+| R15 | Setup-Wizard nach Ersteinrichtung erneut aufrufbar (Admin-Takeover) | Niedrig | Kritisch | SEC-W01, SEC-WZ04 |
+| R16 | Mediendateien ohne Zugriffskontrolle per Direkt-URL abrufbar | Niedrig | Hoch | SEC-M01–SEC-M03, SEC-H05 |
+| R17 | Path-Traversal ermöglicht Dateizugriff außerhalb `/public/` | Niedrig | Kritisch | SEC-PUB04 |
+| R18 | Fehlende Security-Headers ermöglichen Clickjacking/MIME-Sniffing | Mittel | Mittel | SEC-HDR01–SEC-HDR03 |
+| R19 | `config.ini.php` world-readable (fehlender `chmod` im Wizard) | Mittel | Hoch | SEC-C03 |
+| R20 | Schutzdateien (`data/.htaccess`, `data/index.php`) fehlen in Distribution | Niedrig | Kritisch | SEC-H01, SEC-H02, SEC-D01, SEC-D02 |
+| R21 | Server-Banner verrät Apache-Version (Information Disclosure) | Hoch | Niedrig | SEC-HDR04 |
+
+---
+
+**AP S6-12 — Überdeckungsstrategie**
+
+Neuen Absatz nach der bestehenden Ratchet-Beschreibung ergänzen:
+
+> **Sicherheitstest-Track:** Anweisungsüberdeckung (pcov) ist für den Sicherheitstest nicht
+> anwendbar — der Distribution-Container enthält kein pcov, keine Dev-Dependencies und keinen
+> PHPUnit-Runner. Stattdessen gelten drei alternative Metriken:
+>
+> | Aspekt | Metrik |
+> |---|---|
+> | Prüfpunkt-Abdeckung | 26/26 Prüfpunkte implementiert und ausgeführt |
+> | Angriffsmuster-Abdeckung | URL-Encoding (9 Varianten), Path-Traversal (5 Varianten) durchlaufen |
+> | Vektor-Abdeckung | Alle 8 Angriffsvektoren durch mindestens einen Prüfpunkt adressiert |
+>
+> **Vektor-zu-Prüfpunkt-Mapping:**
+>
+> | Vektor | Adressiert durch |
+> |---|---|
+> | V1 — Direktzugriff `data/` | SEC-H03, SEC-H04, SEC-H06 |
+> | V2 — Direktzugriff `data/media/` | SEC-H05, SEC-M01 |
+> | V3 — Datei-Permissions | SEC-C03 |
+> | V4 — Directory Listing | SEC-PUB03 |
+> | V5 — Wizard nach Setup | SEC-W01, SEC-WZ04 |
+> | V6 — Fehlende `.htaccess` | SEC-H01, SEC-H02 |
+> | V7 — Path-Traversal | SEC-PUB04 |
+> | V8 — Security-Headers | SEC-HDR01–SEC-HDR04 |
+
+---
+
+**AP S6-13 — Fehlermanagement**
+
+Neue Zeile in Tabelle:
+
+| Fehlerzustand in... | Vorgehen |
+|---|---|
+| **Apache-Konfiguration** (z.B. Server-Banner) | Dokumentieren als Deployment-Empfehlung. Kein Upstream-Issue, da nicht webtrees-Code. |
+
+---
+
+**AP S6-14 — Implementierungs-Fahrplan**
+
+Neue Phase einfügen (nach Phase 11):
+
+| Phase | Status | Ergebnis |
+|---|---|---|
+| Phase 12 — Sicherheitstest | **Verifiziert** | 26 Prüfpunkte (SEC-H01–SEC-HDR04). Distribution-Container (`Containerfile.security`), Setup-Wizard via Playwright, 9 Dateisystem-Assertions + 21 Playwright-HTTP-Tests. 24/26 grün, 1 Upstream-Befund (SEC-C03: config.ini.php world-readable), 1 Deployment-Empfehlung (SEC-HDR04: Apache Server-Banner). |
+
+---
+
+**AP S6-15 — Verfolgbarkeit (Kleinänderung)**
+
+Bestehenden Absatz erweitern um SEC-*-IDs:
+
+> **Bidirektionale Abfrage:**
+> - Vorwärts: `grep -r "SEC-H01" layer4-e2e/ scripts/`
+> - Rückwärts: `// @see SEC-H01` (Playwright) oder `# @see SEC-H01` (Shell)
+
+---
+
+**AP S6-16 — Bekannte Fehler (Kleinänderung)**
+
+Zwei neue Einträge:
+
+**Upstream-Befund: `config.ini.php` world-readable (SEC-C03)**
+Setup-Wizard erzeugt `config.ini.php` via `file_put_contents()` ohne anschließendes `chmod`. Datei ist 644 (world-readable). Potenzielle Schwäche auf Shared-Hosting-Umgebungen.
+
+**Deployment-Empfehlung: Apache Server-Banner (SEC-HDR04)**
+Apache ServerTokens Default (`Full`) gibt Versionsinfo preis. Kein webtrees-Code, sondern Apache-Konfiguration. Empfehlung: `ServerTokens Prod` in Produktionsumgebungen.
+
+---
+
+**AP S6-17 — Abdeckungsmatrix + Zusammenfassung (Kleinänderung)**
+
+Neuer Abschnitt "Sicherheit (SEC-H01–SEC-HDR04)":
+
+| # | Feature | Shell-Assertions | Playwright-Security | Status |
+|---|---------|-----------------|---------------------|--------|
+| SEC-H01 | `.htaccess` Existenz | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-H02 | `.htaccess` Inhalt | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-H03 | HTTP-Zugriff `data/` blockiert | — | `data-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-H04 | HTTP-Zugriff `config.ini.php` blockiert | — | `data-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-H05 | HTTP-Zugriff `data/media/` blockiert | — | `data-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-H06 | URL-Encoding umgeht `.htaccess` nicht | — | `data-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-D01 | `data/index.php` Existenz | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-D02 | `data/index.php` Redirect-Logik | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-C01 | Config PHP-Guard | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-C02 | Config DB-Credentials | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-C03 | Config Datei-Permissions | `security-filesystem-checks.sh` ⚠ | — | **Upstream-Befund** |
+| SEC-M01 | Direkter Media-Zugriff blockiert | — | `media-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-M02 | Media-Route ohne Auth | — | `media-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-M03 | Media-Route mit Auth | — | `media-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-PUB01 | `public/index.php` Existenz | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-PUB02 | `public/index.php` keine PHP-Execution | — | `public-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-PUB03 | Kein Directory Listing `/public/` | — | `public-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-PUB04 | Path-Traversal blockiert | — | `public-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-W01 | Wizard nach Setup gesperrt | — | `setup-lock.spec.ts` ✅ | **Abgedeckt** |
+| SEC-WZ01 | Wizard erscheint bei Erstaufruf | — | `wizard-setup.spec.ts` ✅ | **Abgedeckt** |
+| SEC-WZ02 | Wizard prüft Schreibrechte | — | `wizard-setup.spec.ts` ✅ | **Abgedeckt** |
+| SEC-WZ03 | Wizard erzeugt `config.ini.php` | `security-filesystem-checks.sh` ✅ | `wizard-setup.spec.ts` ✅ | **Abgedeckt** |
+| SEC-WZ04 | Wizard sperrt sich selbst | — | `wizard-setup.spec.ts` ✅ | **Abgedeckt** |
+| SEC-HDR01 | `X-Content-Type-Options` | — | `security-headers.spec.ts` ✅ | **Abgedeckt** |
+| SEC-HDR02 | `X-Frame-Options` | — | `security-headers.spec.ts` ✅ | **Abgedeckt** |
+| SEC-HDR03 | `Referrer-Policy` | — | `security-headers.spec.ts` ✅ | **Abgedeckt** |
+| SEC-HDR04 | Server-Banner | — | `security-headers.spec.ts` ⚠ | **Deployment-Empfehlung** |
+
+Zusammenfassungstabelle um SEC-Spalte erweitern:
+
+| Status | G | S | P | SEC | Gesamt |
+|---|---|---|---|---|---|
+| **Abgedeckt** | 23 | 39 | 29 | 24 | **115** (98%) |
+| Upstream-Befund | 1 | 0 | 0 | 1 | **2** (2%) |
+| Deployment-Empfehlung | 0 | 0 | 0 | 1 | **1** (<1%) |
 
 ### Phasen-Übersicht
 
@@ -1100,7 +1446,7 @@ Feature-Matrix (Abschnitt 4.2) synchron aktualisiert.
 | S3 | Dateisystem-Assertions | SEC-H01, SEC-H02, SEC-D01, SEC-D02, SEC-C01–SEC-C03, SEC-PUB01, SEC-WZ03 | **Verifiziert** |
 | S4 | HTTP-Zugriffstests | SEC-H03–SEC-H06, SEC-PUB02–SEC-PUB04, SEC-W01 | **Verifiziert** |
 | S5 | Media + Security-Headers | SEC-M01–SEC-M03, SEC-HDR01–SEC-HDR04 | **Verifiziert** |
-| S6 | Dokumentation + Integration | — | **Offen** |
+| S6 | Dokumentation + Integration | — | **Verifiziert** |
 
 ### Abhängigkeiten
 

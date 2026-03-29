@@ -44,6 +44,7 @@ ISTQB-Terminologie (Glossar de_DE v4.7.1) ist sprachlich und inhaltlich führend
 | **Überdeckung**      | Ratchet — Anweisungsüberdeckung (pcov) darf nur steigen; kein absoluter Zielwert |
 | **Testkonventionen** | AAA-Pattern, FIRST-Prinzipien, `test_<feature>_<szenario>_<ergebnis>`, Data Provider ab ≥3 Äquivalenzklassen |
 | **Verfolgbarkeit**   | `@see`-Annotation mit Feature-Matrix-IDs in Testdateien; bidirektional per `grep` |
+| **Sicherheitstest**  | Zwei-Track-Architektur: Fachtest (Dev-Source, Mount) vs. Sicherheitstest (Distribution-ZIP, produktionsidentisch). Eigener Container-Build (`Containerfile.security`), Upstream-Setup-Wizard via Playwright, Dateisystem-Assertions via Shell |
 
 ---
 
@@ -61,6 +62,7 @@ ISTQB-Terminologie (Glossar de_DE v4.7.1) ist sprachlich und inhaltlich führend
 | `layer3-integration/` / `make test-integration` | Teststufe 2 — Komponentenintegrationstest |
 | `layer4-e2e/` / `make test-e2e` | Teststufe 3 — Systemtest |
 | `layer5-performance/` / `make test-performance` | Querschnitt — Performanztest |
+| `layer4-e2e/tests/security/` + `scripts/security-filesystem-checks.sh` / `make test-security` | Querschnitt — Sicherheitstest |
 
 ---
 
@@ -136,23 +138,35 @@ graph TB
         baseline --> compare --> threshold
     end
 
+    subgraph SEC["Querschnitt — Sicherheitstest (Distribution-Container)"]
+        secbuild["Distribution-Build\nContainerfile.security"]
+        secwiz["Wizard-Durchlauf\nPlaywright"]
+        secfs["Dateisystem-Assertions\nShell-Script"]
+        sechttp["HTTP-Zugriffstests\nPlaywright"]
+        secbuild --> secwiz --> secfs
+        secwiz --> sechttp
+    end
+
     INFRA --> STATIC
     INFRA --> TS1
     INFRA --> TS2
     INFRA --> TS3
     INFRA --> PERF
+    INFRA --> SEC
 
     STATIC -->|"Fehler-Artefakt"| d0
     TS1 -->|"Fehler-Artefakt"| d1
     TS2 -->|"Fehler-Artefakt\n+ OTel-Trace"| d2
     TS3 -->|"Fehler-Artefakt\n+ OTel-Trace"| d3
     PERF -->|"Trace-Diff"| d4
+    SEC -->|"Fehler-Artefakt"| d3
 
     STATIC -.->|"Job"| ci0
     TS1 -.->|"Job"| ci1
     TS2 -.->|"Job"| ci2
     TS3 -.->|"Job"| ci3
     PERF -.->|"Job"| ci4
+    SEC -.->|"Job"| ci3
 ```
 
 > **Aktuelle Testfall-Zahlen** sind volatil und daher nicht im Diagramm enthalten.
@@ -193,6 +207,7 @@ webtrees-testing-platform/
 ├── compose.yaml                    # Podman Compose Stack-Definition
 ├── Containerfile.webtrees          # PHP 8.5 + Apache mod_php
 ├── Containerfile.playwright        # Node.js 22 + Playwright + Chromium
+├── Containerfile.security          # Distribution-Container (Multi-Stage Build)
 ├── Makefile                        # make up / down / test-all / test-N / clean
 ├── .env.example                    # Template: DB-Creds, OTel-Config
 ├── README.md                       # Deutsch: Strategie + Quickstart
@@ -202,7 +217,9 @@ webtrees-testing-platform/
 ├── scripts/
 │   ├── setup-webtrees.sh          # Auto-Installer (config.ini.php, Migration, GEDCOM-Import)
 │   ├── generate-privacy-fixture.sh # Template → GEDCOM-Generator (__YEAR_MINUS_N__ ersetzen)
-│   ├── analyze-failure.sh         # Artefakt-Sammler → Claude Code CLI
+│   ├── build-security-image.sh    # Build-Helper für Distribution-Container (podman build --volume)
+│   ├── security-filesystem-checks.sh # 9 Dateisystem-Assertions (pre/post-wizard)
+│   ├��─ analyze-failure.sh         # Artefakt-Sammler → Claude Code CLI
 │   ├── export-traces.sh           # OTel-Traces als JSON exportieren
 │   └── wait-for-it.sh            # TCP-Port-Readiness-Check (vendored)
 ├── fixtures/
@@ -243,11 +260,19 @@ webtrees-testing-platform/
 │       ├── PrivacySearchTest.php  # P24 Privacy in Suchergebnissen (5 Tests)
 │       └── AccessControlTest.php  # P27–P29 Zugriffskontrolle (12 Tests)
 ├── layer4-e2e/
-│   ├── playwright.config.ts       # baseURL = http://webtrees:80
+│   ├── playwright.config.ts       # baseURL = http://webtrees:80 (testIgnore: security/)
+│   ├── playwright-security.config.ts # Security-Playwright-Config (Distribution-Container)
 │   ├── helpers/
 │   │   ├── theme-switch.ts        # Shared Utility: Theme-Switching (5 Themes)
 │   │   └── privacy-roles.ts      # Privacy-Rollen-Login (visitor, member, editor, moderator, manager, relationship)
 │   └── tests/
+│       ├── security/                  # Sicherheitstests (getrennt von funktionalen E2E)
+│       │   ├── wizard-setup.spec.ts   # SEC-WZ01–WZ04 (Setup-Projekt, läuft zuerst)
+│       │   ├── data-access.spec.ts    # SEC-H03–H06
+│       │   ├── public-access.spec.ts  # SEC-PUB02–PUB04
+│       │   ├── setup-lock.spec.ts     # SEC-W01
+│       │   ├── media-access.spec.ts   # SEC-M01–M03
+│       │   └── security-headers.spec.ts # SEC-HDR01–HDR04
 │       ├── login.spec.ts          # S32 (theme-unabhängig)
 │       ├── auth.spec.ts           # S33, S34 (theme-unabhängig)
 │       ├── navigation.spec.ts     # S23, S20, S09 (× 5 Themes)
@@ -453,7 +478,12 @@ eines spezifischen webtrees-Refs vor einem Versions-Update.
 
 ## Container-Stack-Spezifikation
 
-### 6 Container, 1 Netzwerk
+### 6+2 Container, 2 Netzwerke
+
+> Der Fachtest-Stack umfasst 6 Container in einem gemeinsamen Netzwerk. Für Sicherheitstests
+> (`make test-security`) kommen 2 weitere Container hinzu, die über ein separates Compose-Profil
+> (`--profile security`) gestartet werden. Sie teilen weder Netzwerk noch Volumes mit dem
+> Fachtest-Stack.
 
 | Container | Image | Zweck | Host-Port | Volume-Mounts |
 |---|---|---|---|---|
@@ -463,6 +493,8 @@ eines spezifischen webtrees-Refs vor einem Versions-Update.
 | `otel-collector` | `docker.io/otel/opentelemetry-collector-contrib` | OTel Sidecar (OTLP gRPC) | 4317:4317 | `otel/otel-collector-config.yaml` → `/etc/otelcol/config.yaml` (ro), `artifacts/` → `/artifacts` (rw) |
 | `jaeger` | `docker.io/jaegertracing/all-in-one` | Trace-Visualisierung | 16686:16686 | — |
 | `adminer` | `docker.io/library/adminer` | DB-Admin (optional, nur Debug) | 8081:8080 | — |
+| `webtrees-security` | `Containerfile.security` | Distribution-Build (ZIP entpackt) + Apache (Profil: security) | 8082:80 | Named Vol → `/var/www/html/data/` (rw) |
+| `mysql-security` | `docker.io/library/mysql:8.0` | Datenbank — Security-Track (Profil: security) | 3307:3306 | Named Vol → `/var/lib/mysql` |
 
 ### Netzwerk-Topologie
 
@@ -473,6 +505,10 @@ webtrees-test-net (Bridge)
 ├── otel-collector → jaeger    (OTLP, Port 4317)
 ├── playwright →  webtrees     (HTTP, Port 80)
 └── adminer   →   mysql        (Port 3306)
+
+webtrees-security-net (Bridge, Profil: security)
+├── webtrees-security ←→ mysql-security  (PDO, Port 3306)
+└── playwright        →  webtrees-security (HTTP, Port 80)
 ```
 
 ### MySQL-Konfiguration
@@ -771,25 +807,64 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 ---
 
+### Feature-Matrix: Sicherheit (SEC)
+
+> Sicherheitstests prüfen, ob die Schutzmechanismen des webtrees-Upstream-Codes in einer
+> produktionsidentischen Distribution-Instanz greifen. Eigener Container-Build, eigene
+> Datenbank, Setup-Wizard via Playwright. Zwei Testverfahren: Shell-Assertions (Dateisystem)
+> und Playwright-HTTP-Tests (Zugriffskontrolle, Header).
+
+| # | Feature | Abgeleitete Anforderung | Prio | Status |
+|---|---------|-------------------------|------|--------|
+| SEC-H01 | `.htaccess` Existenz | `data/.htaccess` in Distribution vorhanden | Hoch | Grün |
+| SEC-H02 | `.htaccess` Inhalt | Enthält `Require all denied` (Apache 2.4) | Hoch | Grün |
+| SEC-H03 | HTTP-Zugriff `data/` blockiert | `GET /data/` → HTTP 403 | Hoch | Grün |
+| SEC-H04 | HTTP-Zugriff `config.ini.php` blockiert | `GET /data/config.ini.php` → 403 | Hoch | Grün |
+| SEC-H05 | HTTP-Zugriff `data/media/` blockiert | `GET /data/media/` → 403 | Hoch | Grün |
+| SEC-H06 | URL-Encoding umgeht `.htaccess` nicht | Encoding-Varianten → jeweils 403 | Hoch | Grün |
+| SEC-D01 | `data/index.php` Existenz | Datei in Distribution vorhanden | Mittel | Grün |
+| SEC-D02 | `data/index.php` Redirect-Logik | Enthält `header('Location: ../index.php')` | Mittel | Grün |
+| SEC-C01 | Config PHP-Guard | `config.ini.php` hat `; <?php return; ?>` als erste Zeile | Hoch | Grün |
+| SEC-C02 | Config DB-Credentials | `config.ini.php` enthält dbhost, dbuser, dbpass, dbname | Hoch | Grün |
+| SEC-C03 | Config Datei-Permissions | world-readable (644) — kein `chmod` im Wizard | Hoch | Rot (Upstream-Befund) |
+| SEC-M01 | Direkter Media-Zugriff blockiert | `GET /data/media/<datei>` → 403 | Mittel | Grün |
+| SEC-M02 | Media-Route ohne Auth | App-Route als Visitor → 302 (Redirect zu Login) | Mittel | Grün |
+| SEC-M03 | Media-Route mit Auth | App-Route als Member → 200 | Mittel | Grün |
+| SEC-PUB01 | `public/index.php` Existenz | Datei in Distribution vorhanden | Mittel | Grün |
+| SEC-PUB02 | `public/index.php` keine PHP-Execution | Statischer Inhalt (Source sichtbar, nicht ausgeführt) | Mittel | Grün |
+| SEC-PUB03 | Kein Directory Listing `/public/` | `GET /public/` → kein Datei-Listing | Mittel | Grün |
+| SEC-PUB04 | Path-Traversal blockiert | `GET /public/../data/config.ini.php` → kein Dateiinhalt | Mittel | Grün |
+| SEC-W01 | Wizard nach Setup gesperrt | Setup-URL → kein Setup-Formular | Hoch | Grün |
+| SEC-WZ01 | Wizard erscheint bei Erstaufruf | Frische Instanz → Setup-Formular | Hoch | Grün |
+| SEC-WZ02 | Wizard prüft Schreibrechte | Schritt 2: data/ beschreibbar | Hoch | Grün |
+| SEC-WZ03 | Wizard erzeugt `config.ini.php` | Datei existiert nach Wizard-Abschluss | Hoch | Grün |
+| SEC-WZ04 | Wizard sperrt sich selbst | Kein erneuter Setup nach Abschluss | Hoch | Grün |
+| SEC-HDR01 | `X-Content-Type-Options` | Header = `nosniff` | Niedrig | Grün |
+| SEC-HDR02 | `X-Frame-Options` | Header = `SAMEORIGIN` oder `DENY` | Niedrig | Grün |
+| SEC-HDR03 | `Referrer-Policy` | Header gesetzt (nicht leer) | Niedrig | Grün |
+| SEC-HDR04 | Server-Banner | Apache-Versionsstring sichtbar | Niedrig | Rot (Deployment-Empfehlung) |
+
+---
+
 ### Testfall-Verteilung nach Teststufe
 
-| Teststufe | GEDCOM (G01–G23) | Suche/Nav (S01–S39) | Privacy (P01–P29) | Gesamt |
-|---|---|---|---|---|
-| Teststufe 1 — Komponententest | G05, G06, G11, G17, G18, G19, G22, G23 (8) | S04 (1) | — | **9** |
-| Teststufe 2 — Komponentenintegrationstest | G01–G04, G07–G10, G12–G16 (13) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (13) | P01–P24, P27–P29 (27) | **53** |
-| Teststufe 3 — Systemtest | G20, G21 (2) | S09, S13–S18, S20, S23–S24, S26–S40 (25) | P01–P03, P14–P19, P22, P24–P29 (18) | **45** |
-| **Nur Teststufe 2** | — | — | P04–P13, P20–P21, P23 (13) | — |
-| **Nur Teststufe 3** | — | — | P25, P26 (2) | — |
-| **Beide Teststufen** | — | — | 14 Features (P01–P03, P14–P19, P22, P24, P27–P29) | — |
-| **Summe** | **23** | **39** | **29** | **91** |
+| Teststufe | GEDCOM (G01–G23) | Suche/Nav (S01–S39) | Privacy (P01–P29) | Sicherheit (SEC) | Gesamt |
+|---|---|---|---|---|---|
+| Teststufe 1 — Komponententest | G05, G06, G11, G17, G18, G19, G22, G23 (8) | S04 (1) | — | — | **9** |
+| Teststufe 2 — Komponentenintegrationstest (Dateisystem) | G01–G04, G07–G10, G12–G16 (13) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (13) | P01–P24, P27–P29 (27) | SEC-H01–H02, SEC-D01–D02, SEC-C01–C03, SEC-PUB01, SEC-WZ03 (9) | **62** |
+| Teststufe 3 — Systemtest (HTTP/Playwright) | G20, G21 (2) | S09, S13–S18, S20, S23–S24, S26–S40 (25) | P01–P03, P14–P19, P22, P24–P29 (18) | SEC-H03–H06, SEC-M01–M03, SEC-PUB02–PUB04, SEC-W01, SEC-WZ01–WZ04, SEC-HDR01–HDR04 (18) | **63** |
+| **Nur Teststufe 2** | — | — | P04–P13, P20–P21, P23 (13) | SEC-H01–H02, SEC-D01–D02, SEC-C01–C02, SEC-PUB01 (7) | — |
+| **Nur Teststufe 3** | — | — | P25, P26 (2) | SEC-H03–H06, SEC-M01–M03, SEC-PUB02–PUB04, SEC-W01, SEC-WZ01–WZ02, SEC-WZ04, SEC-HDR01–HDR04 (17) | — |
+| **Beide Teststufen** | — | — | 14 Features (P01–P03, P14–P19, P22, P24, P27–P29) | SEC-C03, SEC-WZ03 (2) | — |
+| **Summe** | **23** | **39** | **29** | **26** | **117** |
 
 ### Prioritätsverteilung
 
-| Priorität | G+S | P | Gesamt | Anteil |
-|---|---|---|---|---|
-| Hoch | 26 | 19 | **45** | 49% |
-| Mittel | 32 | 10 | **42** | 46% |
-| Niedrig | 4 | 0 | **4** | 4% |
+| Priorität | G+S | P | SEC | Gesamt | Anteil |
+|---|---|---|---|---|---|
+| Hoch | 26 | 19 | 14 | **59** | 50% |
+| Mittel | 32 | 10 | 8 | **50** | 43% |
+| Niedrig | 4 | 0 | 4 | **8** | 7% |
 
 ---
 
@@ -819,6 +894,7 @@ Feature-Matrix oben).
 | Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, S01–S03, S05–S08, S10–S12, S19, S21, S22, P01–P24, P27–P29) |
 | Teststufe 3 — Systemtest | Alle Systemtestfälle grün über alle 5 Standard-Themes (G20, G21, S09, S13–S18, S20, S23–S24, S26–S40); S32–S34 theme-unabhängig grün; Privacy-Systemtests grün (P01–P03, P14–P19, P22, P24–P29) |
 | Performanztest | Kein Szenario >20% über Baseline; kein Szenario mit >+2 DB-Queries gegenüber Baseline |
+| Sicherheitstest | Alle MUSS-Prüfpunkte (SEC-H01–H06, SEC-C01–C03, SEC-W01, SEC-WZ01–WZ04) grün; SOLL-Prüfpunkte grün oder als Upstream-Befund dokumentiert; KANN-Prüfpunkte (SEC-HDR01–HDR04) dokumentiert |
 
 ---
 
@@ -836,6 +912,16 @@ Feature-Matrix oben).
 | Vorversion (Baseline-Traces) | Performanztest | Trace-Diff: Ladezeit ≤+20%, Query-Count ≤+2 |
 | `privacy-test-template.ged` (30+ Personen, dynamische Daten) | P01–P24, P27–P29 | DB-Sichtbarkeit per `canShow()`/`canEdit()`, Rollen × Einstellungen × Personenzustand |
 | webtrees Privacy-Quellcode (`Individual::canShowByType()`, `isDead()`, `GedcomRecord::canEdit()`) | P01–P29 | Code-Analyse: Rollenmatrix, Grenzwerte, Inferenz-Logik als Orakel |
+| Upstream-Quellcode: `data/.htaccess` (statische Datei) | SEC-H01, SEC-H02 | Dateiinhalt als Referenz: `Require all denied` |
+| Upstream-Quellcode: `data/index.php` (statische Datei) | SEC-D01, SEC-D02 | Dateiinhalt als Referenz: `header('Location: ../index.php')` |
+| Upstream-Quellcode: `resources/views/setup/config.ini.phtml` | SEC-C01, SEC-C02 | Template definiert erwartetes Format (PHP-Guard, INI-Keys) |
+| Apache HTTP-Spezifikation (RFC 7231, Status 403) | SEC-H03–SEC-H06, SEC-M01 | HTTP 403 = Zugriff verboten; Body darf keine Credentials enthalten |
+| Upstream-Quellcode: `ReadConfigIni.php`, `SetupWizard.php` | SEC-W01, SEC-WZ01–SEC-WZ04 | Middleware-Logik: `file_exists()` → Lock; Wizard-HTML-Selektoren |
+| Upstream-Quellcode: `PublicFiles.php` | SEC-PUB02–SEC-PUB04 | `file_get_contents()` statt PHP-Execution; `!str_contains($path, '..')` |
+| Upstream-Quellcode: `SecurityHeaders.php` | SEC-HDR01–SEC-HDR03 | Middleware setzt Header-Werte direkt im Code |
+| Upstream-Quellcode: `Auth::checkMediaAccess()`, `MediaFileDownload` | SEC-M02, SEC-M03 | Rollenbasierte Zugriffskontrolle: Visitor → kein Zugriff, Member → Zugriff |
+| Dateisystem-Semantik: `stat()` Permissions | SEC-C03 | umask-Default des PHP-Prozesses; world-readable = potenzielle Schwäche |
+| Apache-Konfiguration: `ServerTokens` Default | SEC-HDR04 | Default `ServerTokens Full` → Versionsinfo; gehärtete Config → `Prod` |
 
 ---
 
@@ -856,6 +942,11 @@ Feature-Matrix oben).
 | **Entscheidungstabellentest** | P14–P15, P24 | SHOW_LIVING_NAMES (3 Stufen) × Rollen; Suche × Privacy-Zustand × Rolle |
 | **Anwendungsfall-Test** | P25–P29 | End-to-End-Szenarien: Seitenaufruf → Sichtbarkeitsprüfung → Edit → Pending Change → DB-Persistenz |
 | **Paarweiser Test** | P01–P03 | Kombinatorik: REQUIRE_AUTHENTICATION × HIDE_LIVE_PEOPLE × SHOW_DEAD_PEOPLE × Rolle — paarweise statt volles Produkt |
+| **Entscheidungstabellentest** | SEC-H03–SEC-H06, SEC-M01–SEC-M03 | Kombination URL-Pfad × HTTP-Methode × erwarteter Status (403/200/302). Entscheidungstabelle: `.htaccess` greift ja/nein × Auth vorhanden ja/nein |
+| **Erfahrungsbasierter Test** | SEC-H06, SEC-PUB04 | URL-Encoding-Varianten und Path-Traversal-Muster aus OWASP Testing Guide. Keine formale Spezifikation für Umgehungsversuche |
+| **Anwendungsfall-Test** | SEC-WZ01–SEC-WZ04 | End-to-End-Szenario: Frische Distribution → Wizard durchlaufen → lauffähige Instanz (6 Wizard-Schritte) |
+| **Äquivalenzklassenbildung** | SEC-HDR01–SEC-HDR04, SEC-PUB02–SEC-PUB03 | Header: vorhanden/korrekt vs. fehlend/falsch. `public/`-Zugriff: Datei vs. Verzeichnis vs. Traversal |
+| **Grenzwertanalyse** | SEC-C03 | Datei-Permissions: Grenze bei world-readable-Bit (0644 vs. 0640 vs. 0600) |
 
 ---
 
@@ -880,6 +971,14 @@ Feature-Matrix oben).
 | R11 | RESN-Tags werden ignoriert oder falsch interpretiert | Niedrig | Hoch | P16–P21 |
 | R12 | Bearbeiter kann ohne Berechtigung Daten ändern | Niedrig | Hoch | P27–P29 |
 | R13 | Relationship Privacy zeigt entfernte/unverwandte Personen | Niedrig | Mittel | P22–P23 |
+| R14 | DB-Credentials über HTTP zugänglich (`data/config.ini.php`) | Niedrig | Kritisch | SEC-H03, SEC-H04, SEC-H06 |
+| R15 | Setup-Wizard nach Ersteinrichtung erneut aufrufbar (Admin-Takeover) | Niedrig | Kritisch | SEC-W01, SEC-WZ04 |
+| R16 | Mediendateien ohne Zugriffskontrolle per Direkt-URL abrufbar | Niedrig | Hoch | SEC-M01–SEC-M03, SEC-H05 |
+| R17 | Path-Traversal ermöglicht Dateizugriff außerhalb `/public/` | Niedrig | Kritisch | SEC-PUB04 |
+| R18 | Fehlende Security-Headers ermöglichen Clickjacking/MIME-Sniffing | Mittel | Mittel | SEC-HDR01–SEC-HDR03 |
+| R19 | `config.ini.php` world-readable (fehlender `chmod` im Wizard) | Mittel | Hoch | SEC-C03 |
+| R20 | Schutzdateien (`data/.htaccess`, `data/index.php`) fehlen in Distribution | Niedrig | Kritisch | SEC-H01, SEC-H02, SEC-D01, SEC-D02 |
+| R21 | Server-Banner verrät Apache-Version (Information Disclosure) | Hoch | Niedrig | SEC-HDR04 |
 
 ### Projektrisiken
 
@@ -909,6 +1008,30 @@ Feature-Matrix oben).
 Ein willkürlicher Zielwert (z. B. 80%) wäre spekulativ. Die Ratchet-Strategie schützt
 gegen Rückschritte und garantiert monotones Wachstum. Jeder echte Test ist ein Gewinn.
 
+**Sicherheitstest-Track:** Anweisungsüberdeckung (pcov) ist für den Sicherheitstest nicht
+anwendbar — der Distribution-Container enthält kein pcov, keine Dev-Dependencies und keinen
+PHPUnit-Runner. Die Tests prüfen von außen (HTTP, Dateisystem), nicht von innen.
+Stattdessen gelten drei alternative Metriken:
+
+| Aspekt | Metrik |
+|---|---|
+| **Prüfpunkt-Abdeckung** | 26/26 Prüfpunkte implementiert und ausgeführt |
+| **Angriffsmuster-Abdeckung** | URL-Encoding (9 Varianten), Path-Traversal (5 Varianten) durchlaufen |
+| **Vektor-Abdeckung** | Alle 8 Angriffsvektoren durch mindestens einen Prüfpunkt adressiert |
+
+**Vektor-zu-Prüfpunkt-Mapping:**
+
+| Vektor | Adressiert durch |
+|---|---|
+| V1 — Direktzugriff `data/` | SEC-H03, SEC-H04, SEC-H06 |
+| V2 — Direktzugriff `data/media/` | SEC-H05, SEC-M01 |
+| V3 — Datei-Permissions | SEC-C03 |
+| V4 — Directory Listing | SEC-PUB03 |
+| V5 — Wizard nach Setup | SEC-W01, SEC-WZ04 |
+| V6 — Fehlende `.htaccess` | SEC-H01, SEC-H02 |
+| V7 — Path-Traversal | SEC-PUB04 |
+| V8 — Security-Headers | SEC-HDR01–SEC-HDR04 |
+
 ---
 
 ## Fehlermanagement
@@ -922,6 +1045,7 @@ gegen Rückschritte und garantiert monotones Wachstum. Jeder echte Test ist ein 
 | **Eigener Testinfrastruktur** | Direkt im Code beheben (Fix-Commit), kein separater Issue-Tracker |
 | **webtrees Core** | Issue bei `fisharebest/webtrees` erstellen; Referenz auf Feature-Matrix-ID; ggf. Fix-PR |
 | **Testdaten (Fixture)** | Fixture korrigieren, Testerwartungen anpassen |
+| **Apache-Konfiguration** (z.B. Server-Banner) | Dokumentieren als Deployment-Empfehlung. Kein Upstream-Issue, da nicht webtrees-Code. |
 
 `analyze-failure.sh` unterstützt die Grundursachenanalyse (ISTQB: Grundursachenanalyse)
 durch Artefakt-Sammlung und Claude Code CLI als Analyse-Tool.
@@ -1038,8 +1162,8 @@ class GedcomImportServiceTest extends MysqlTestCase
 ```
 
 **Bidirektionale Abfrage:**
-- Vorwärts (Anforderung → Test): `grep -r "G01" layer*/`
-- Rückwärts (Test → Anforderung): `@see`-Zeile in der Testdatei
+- Vorwärts (Anforderung → Test): `grep -r "G01" layer*/` bzw. `grep -r "SEC-H01" layer4-e2e/ scripts/`
+- Rückwärts (Test → Anforderung): `@see`-Zeile in der Testdatei (`// @see SEC-H01` in Playwright, `# @see SEC-H01` in Shell)
 
 Keine separate Traceability-Matrix im Dokument — die Verfolgbarkeit lebt im Code und
 kann bei Bedarf per Skript extrahiert werden.
@@ -1048,7 +1172,7 @@ kann bei Bedarf per Skript extrahiert werden.
 
 ## Implementierungs-Fahrplan
 
-> Status: **Alle Phasen implementiert (1–11).** Abdeckung 100% (62/62 Features G+S, 29/29 Features P).
+> Status: **Alle Phasen implementiert (1–12).** Abdeckung 100% (62/62 Features G+S, 29/29 Features P, 26/26 Features SEC).
 > Detailplan und Umsetzungsbericht: Phasen 1–10 in `docs/plan-phase-next-coverage.md`.
 
 | Phase | Status | Ergebnis |
@@ -1068,6 +1192,7 @@ kann bei Bedarf per Skript extrahiert werden.
 | Phase 9 — Testabdeckung steigern (Systemtest) | **Implementiert** | 5 APs: 4 Fixture-Dateien, 20 neue Tests. Notizseite (S28) auf `muster`-Tree, Upload-Validierung (G21) neue Spec, Search-and-Replace (S13) neue Spec, G22 Status-Update. |
 | Phase 10 — Abschluss (Testlauf + Fehlerbereinigung) | **Implementiert** | `make test-all` grün über alle 5 Layer. 2 Iterationsrunden Fehlerbereinigung. 62/62 Features abgedeckt (100%). |
 | Phase 11 — Privacy & Zugriffskontrolle | **Implementiert** | 108 neue Tests (82 Teststufe 2 + 26 Teststufe 3). Feature-Matrix P01–P29 vollständig abgedeckt. 3 Iterationsrunden Fehlerbereinigung, 18 Fixes. |
+| Phase 12 — Sicherheitstest | **Verifiziert** | 26 Prüfpunkte (SEC-H01–SEC-HDR04). Distribution-Container (`Containerfile.security`), Setup-Wizard via Playwright, 9 Dateisystem-Assertions + 21 Playwright-HTTP-Tests. 24/26 grün, 1 Upstream-Befund (SEC-C03: config.ini.php world-readable), 1 Deployment-Empfehlung (SEC-HDR04: Apache Server-Banner). |
 
 ---
 
@@ -1257,12 +1382,45 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | P28 | Moderator: Änderungen akzeptieren | `AccessControlTest` ✅ | `access-control.spec.ts` ✅ | **Abgedeckt** |
 | P29 | RESN locked / Zugriffsverbot | `AccessControlTest` ✅ | `access-control.spec.ts` ✅ | **Abgedeckt** |
 
+#### Sicherheit (SEC-H01–SEC-HDR04)
+
+| # | Feature | Shell-Assertions | Playwright-Security | Status |
+|---|---------|-----------------|---------------------|--------|
+| SEC-H01 | `.htaccess` Existenz | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-H02 | `.htaccess` Inhalt | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-H03 | HTTP-Zugriff `data/` blockiert | — | `data-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-H04 | HTTP-Zugriff `config.ini.php` blockiert | — | `data-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-H05 | HTTP-Zugriff `data/media/` blockiert | — | `data-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-H06 | URL-Encoding umgeht `.htaccess` nicht | — | `data-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-D01 | `data/index.php` Existenz | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-D02 | `data/index.php` Redirect-Logik | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-C01 | Config PHP-Guard | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-C02 | Config DB-Credentials | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-C03 | Config Datei-Permissions | `security-filesystem-checks.sh` ⚠ | — | **Upstream-Befund** |
+| SEC-M01 | Direkter Media-Zugriff blockiert | — | `media-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-M02 | Media-Route ohne Auth | — | `media-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-M03 | Media-Route mit Auth | — | `media-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-PUB01 | `public/index.php` Existenz | `security-filesystem-checks.sh` ✅ | — | **Abgedeckt** |
+| SEC-PUB02 | `public/index.php` keine PHP-Execution | — | `public-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-PUB03 | Kein Directory Listing `/public/` | — | `public-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-PUB04 | Path-Traversal blockiert | — | `public-access.spec.ts` ✅ | **Abgedeckt** |
+| SEC-W01 | Wizard nach Setup gesperrt | — | `setup-lock.spec.ts` ✅ | **Abgedeckt** |
+| SEC-WZ01 | Wizard erscheint bei Erstaufruf | — | `wizard-setup.spec.ts` ✅ | **Abgedeckt** |
+| SEC-WZ02 | Wizard prüft Schreibrechte | — | `wizard-setup.spec.ts` ✅ | **Abgedeckt** |
+| SEC-WZ03 | Wizard erzeugt `config.ini.php` | `security-filesystem-checks.sh` ✅ | `wizard-setup.spec.ts` ✅ | **Abgedeckt** |
+| SEC-WZ04 | Wizard sperrt sich selbst | — | `wizard-setup.spec.ts` ✅ | **Abgedeckt** |
+| SEC-HDR01 | `X-Content-Type-Options` | — | `security-headers.spec.ts` ✅ | **Abgedeckt** |
+| SEC-HDR02 | `X-Frame-Options` | — | `security-headers.spec.ts` ✅ | **Abgedeckt** |
+| SEC-HDR03 | `Referrer-Policy` | — | `security-headers.spec.ts` ✅ | **Abgedeckt** |
+| SEC-HDR04 | Server-Banner | — | `security-headers.spec.ts` ⚠ | **Deployment-Empfehlung** |
+
 #### Zusammenfassung Abdeckung
 
-| Status | G-Features | S-Features (S01–S24, S26–S40) | P-Features (P01–P29) | Gesamt |
-|---|---|---|---|---|
-| **Abgedeckt** | 23 | 39 | 29 | **91** (100%) |
-| Davon mit Einschränkung (Upstream-Bug) | 1 (G16: PRIV_NONE/PRIV_USER) | 0 | 0 | **1** (1%) |
+| Status | G-Features | S-Features (S01–S24, S26–S40) | P-Features (P01–P29) | SEC-Features (SEC-H01–HDR04) | Gesamt |
+|---|---|---|---|---|---|
+| **Abgedeckt** | 23 | 39 | 29 | 24 | **115** (98%) |
+| Davon mit Einschränkung (Upstream-Bug) | 1 (G16) | 0 | 0 | 1 (SEC-C03) | **2** (2%) |
+| Deployment-Empfehlung | 0 | 0 | 0 | 1 (SEC-HDR04) | **1** (<1%) |
 
 ---
 
@@ -1288,6 +1446,24 @@ make down && make up
 **Ursache:** Die Mapper-Funktion gibt `null` für eingeschränkte Familien zurück, ohne dass der aufrufende Code dies erwartet.
 **Betrifft:** Export mit Privacy-Filterung (G16, Access-Levels PRIV_NONE/PRIV_USER) und Citation-AutoComplete (Prio 3a).
 **Status:** Offen. Upstream-Bug bei `fisharebest/webtrees` zu melden. Tests für betroffene Access-Levels sind übersprungen (`1 Skipped`).
+
+---
+
+### Upstream-Befund: `config.ini.php` world-readable (SEC-C03)
+
+**Symptom:** Setup-Wizard erzeugt `config.ini.php` mit Permissions 644 (world-readable).
+**Ursache:** `SetupWizard::createConfigFile()` nutzt `file_put_contents()` ohne anschließendes `chmod`. Die Datei erbt den umask-Default des PHP-Prozesses.
+**Betrifft:** Shared-Hosting-Umgebungen, in denen andere Nutzer die Datei lesen können (DB-Credentials).
+**Status:** Dokumentiert als Upstream-Befund. Test `SEC-C03` bleibt rot mit Annotation.
+
+---
+
+### Deployment-Empfehlung: Apache Server-Banner (SEC-HDR04)
+
+**Symptom:** HTTP-Response enthält `Server: Apache/2.x.x ...` mit vollständiger Versionsangabe.
+**Ursache:** Apache ServerTokens Default (`Full`) gibt Versionsinfo preis. Kein webtrees-Code, sondern Apache-Konfiguration.
+**Empfehlung:** `ServerTokens Prod` in der Apache-Konfiguration der Produktionsumgebung setzen.
+**Status:** Test `SEC-HDR04` als `test.fixme()` markiert (erwartetes Scheitern, nicht blockierend).
 
 ---
 
@@ -1320,4 +1496,5 @@ make down && make up
 *Aktualisiert: 2026-03-28 — Phasen 8–10 geplant (Testabdeckung steigern). Phase 8: 8 APs Komponentenintegrationstest (~48 Tests) für 10 offene + 7 teilweise Features. Phase 8a: bedingte Upstream-Stubs (G11, G17, G23). Phase 9: 5 APs Systemtest (~20 Tests) für S28, G21, S13, G22. Phase 10: Abschluss mit `make test-all` und Fehlerbereinigung. Detailplan in `docs/plan-phase-next-coverage.md`. Ziel: ≥97% Abdeckung (60-62/62 Features).*
 *Aktualisiert: 2026-03-28 — Phasen 8–10 implementiert (Testabdeckung 100%). Phase 8: 48 neue Integrationstests (AP 8-1 bis 8-8) in SearchIntegrationTest, GedcomImportTest, TreeOperationsTest, ChartModuleIntegrationTest, ListModuleIntegrationTest. Phase 8a: nicht umgesetzt (kein Erkenntnisgewinn). Phase 9: 20 neue E2E-Tests (AP 9-1 bis 9-5) — 4 Fixtures, NOTE-Test auf muster-Tree (S28), upload-validation.spec.ts (G21), search-replace.spec.ts (S13), G22 Status-Update. Phase 10: `make test-all` grün (3397 Unit + 178 Integration + 150 E2E + 3 Performance). 2 Iterationsrunden Fehlerbereinigung. Abdeckung 62/62 Features (100%). Abweichungen: G08 Encoding-Tests auf Post-Konvertierung umgestellt (importRecord macht keine Encoding-Konvertierung). 1 flaky E2E-Test (S13 Visitor, Session-Isolation). Detailbericht in `docs/plan-phase-next-coverage.md` Abschnitt 8.*
 *Aktualisiert: 2026-03-28 — Phase 11 (Privacy & Zugriffskontrolle) implementiert. Feature-Matrix P01–P29 (29 Features) eingefügt. 108 neue Tests (82 Teststufe 2 in 7 Testklassen + 26 Teststufe 3 in 6 Specs). Produktrisiken R8–R13 ergänzt. Testentwurfsverfahren (Grenzwertanalyse isDead, Äquivalenzklassen RESN, Entscheidungstabelle Rollenmatrix, paarweiser Test Preferences). Endekriterien um P01–P29 erweitert. Abdeckungsmatrix P01–P29 (29/29 abgedeckt). N2-Verzeichnisstruktur: 18 neue Dateien (Template, Generator, Basisklasse, 7 Testklassen, Helper, 6 Specs, 2 Planungsdokumente). Testorakel um Privacy-Fixture und Code-Analyse ergänzt. Gesamtabdeckung 91/91 Features (100%).*
+*Aktualisiert: 2026-03-29 — Phase 12 (Sicherheitstest) integriert. Zwei-Track-Architektur als Designentscheidung. Feature-Matrix SEC (26 Prüfpunkte SEC-H01–SEC-HDR04). Mermaid-Diagramm um Security-Subgraph erweitert. Container-Stack: 6+2 Container, 2 Netzwerke (Security-Profil). N2: Containerfile.security, 2 Scripts, playwright-security.config.ts, 6 Security-Specs. Endekriterien, Testorakel (10 Quellen), Testentwurfsverfahren (5 Verfahren), Produktrisiken R14–R21, Überdeckungsstrategie (Vektor-zu-Prüfpunkt-Mapping), Fehlermanagement (Deployment-Empfehlung). Abdeckungsmatrix SEC (24/26 grün, 1 Upstream-Befund SEC-C03, 1 Deployment-Empfehlung SEC-HDR04). Bekannte Fehler: SEC-C03 + SEC-HDR04. Gesamtabdeckung 117 Features (91 G+S+P + 26 SEC).*
 
