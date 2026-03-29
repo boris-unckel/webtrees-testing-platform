@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # webtrees Test-Stack — Podman Compose
 # 6 Container, 1 Netzwerk (webtrees-test-net)
 

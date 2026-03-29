@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # generate-privacy-fixture.sh — Ersetzt __YEAR_MINUS_N__ Platzhalter im Template
 # Erzeugt fixtures/privacy-test.ged aus fixtures/privacy-test-template.ged
 #

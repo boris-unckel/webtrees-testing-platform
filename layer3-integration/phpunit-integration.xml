@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <!--
   Teststufe 2 — Komponentenintegrationstest (PHPUnit + MySQL)
   Testet webtrees mit echter MySQL-Datenbank

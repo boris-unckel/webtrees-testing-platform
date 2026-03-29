@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # setup-webtrees.sh — Automatischer webtrees-Installer für den Test-Container
 # Umgeht den Setup-Wizard vollständig (programmatischer Install)
 

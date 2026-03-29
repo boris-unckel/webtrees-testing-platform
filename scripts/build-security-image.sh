@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # Build-Helper für Containerfile.security
 # Mountet die Upstream-Source per --volume zur Build-Zeit,
 # da COPY nicht außerhalb des Build-Contexts referenzieren kann.

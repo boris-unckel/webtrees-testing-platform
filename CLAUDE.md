@@ -1,3 +1,5 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+
 # CLAUDE.md — webtrees-testing-platform
 
 Dieses Repo enthält die **Test-Infrastruktur** für webtrees-Module und den webtrees-Core.
@@ -74,6 +76,20 @@ make down && make up && make setup
 2. den laufenden Prozess gezielt per `kill` beenden (PID über `pgrep -f` ermitteln), bevor der nächste Lauf gestartet wird.
 
 Niemals einen neuen Testlauf starten, während ein alter noch im Container aktiv ist.
+
+## Lizenz-Header
+
+Jede neue Sourcecode-Datei (.php, .ts, .sh, .yaml, .xml, Makefile) und jede neue `.md`-Datei muss einen SPDX-Header erhalten:
+
+| Dateityp | Kommentar-Syntax | Platzierung |
+|---|---|---|
+| `.md` | `<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->` | Erste Zeile |
+| `.php` | `// SPDX-License-Identifier: AGPL-3.0-or-later` | Nach `<?php` |
+| `.ts` | `// SPDX-License-Identifier: AGPL-3.0-or-later` | Erste Zeile |
+| `.sh` | `# SPDX-License-Identifier: AGPL-3.0-or-later` | Nach Shebang |
+| `.yaml`/`.yml` | `# SPDX-License-Identifier: AGPL-3.0-or-later` | Erste Zeile |
+| `.xml` | `<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->` | Nach `<?xml?>` |
+| `Makefile` | `# SPDX-License-Identifier: AGPL-3.0-or-later` | Erste Zeile |
 
 ## Git
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # Teststufe 1 — Komponententest (PHPUnit, SQLite in-memory)
 # Verwendet die webtrees-eigene Test-Infrastruktur
 

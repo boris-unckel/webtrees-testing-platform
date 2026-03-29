@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # Teststufe 2 — Komponentenintegrationstest (PHPUnit + MySQL)
 # Führt Tests gegen die echte MySQL-Datenbank im Container aus
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # analyze-failure.sh — Artefakt-Sammler → Claude Code CLI
 #
 # Sammelt Artefakte des letzten fehlgeschlagenen Testlaufs und öffnet

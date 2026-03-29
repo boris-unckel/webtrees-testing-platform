@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # Statischer Test: PHPStan + PHPCS im webtrees-Container
 # Ergebnisse werden als JSON in artifacts/layer1/ gespeichert
 

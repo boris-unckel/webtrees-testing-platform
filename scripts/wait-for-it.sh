@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # wait-for-it.sh — Wait for a TCP host:port to become available
 # Vendored utility for container readiness checks
 

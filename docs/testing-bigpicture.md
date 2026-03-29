@@ -1,3 +1,5 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+
 # Teststrategie — webtrees-testing-platform
 
 Dieses Dokument ist die konsolidierte Teststrategie-Dokumentation für die

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # export-traces.sh — OTel-Traces als JSON exportieren
 #
 # Exportiert Traces aus dem OTel Collector File-Exporter und
