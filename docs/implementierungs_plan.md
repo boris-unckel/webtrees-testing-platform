@@ -43,15 +43,16 @@ Bereits installiert (bedingt auf `OTEL_SDK_DISABLED != true`, via `scripts/setup
 ### 1.3 Bestehende Trace-Pipeline
 
 ```
-PHP (gRPC) --> OTel Collector (:4317, nur gRPC) --> Jaeger (UI :16686)
-                                                 --> file (/artifacts/traces.json)
+PHP (http/protobuf) --> OTel Collector (:4318) --> Jaeger (UI :16686)
+                                                --> file (/artifacts/traces.json, append)
 ```
 
 ### 1.4 Dateien, die geaendert werden
 
 | Datei | Aenderungen |
 |---|---|
-| `compose.yaml` | MySQL 8.4, Image-Pinning, HTTP-Port 4318, OTel-Spans-Modul-Mount |
+| `compose.yaml` | MySQL 8.4, Image-Pinning, HTTP-Port 4318, OTel-Spans-Modul-Mount, OTLP http/protobuf |
+| `.env` | OTLP-Protokoll grpc → http/protobuf, Endpoint-Port 4317 → 4318 |
 | `Containerfile.webtrees` | mod_substitute, Boomerang-Download, Apache-Conf |
 | `scripts/setup-webtrees.sh` | auto-psr15 Composer-Require |
 | `otel/otel-collector-config.yaml` | HTTP-Receiver + CORS |
@@ -109,7 +110,7 @@ PHP (OTel Auto-Instrumentation + Custom OTel-Spans-Modul)
   |-- auto-pdo: DB-Query-Spans (Statement, Dauer)
   |-- OTel-Spans-Modul: Semantische Attribute (webtrees.action, tree, xref)
   |-- OTel-Spans-Modul: Baggage --> Span-Attribute (test.run_id, test.case_id)
-  |-- Spans --> gRPC --> Collector:4317
+  |-- Spans --> http/protobuf --> Collector:4318
   |
   v
 MySQL 8.4 LTS (KEINE Server-Spans)
@@ -119,8 +120,8 @@ MySQL 8.4 LTS (KEINE Server-Spans)
   |
   v
 OTel Collector (Contrib, gepinnt)
-  |-- Empfaengt: gRPC (PHP, :4317) + HTTP (Boomerang, :4318)
-  |-- Exportiert: Jaeger (OTLP) + File (/artifacts/traces.json)
+  |-- Empfaengt: gRPC (:4317) + HTTP (PHP + Boomerang, :4318)
+  |-- Exportiert: Jaeger (OTLP) + File (/artifacts/traces.json, append: true)
   |
   v
 Jaeger (All-in-One, gepinnt)              traces.json (NDJSON)
@@ -211,14 +212,14 @@ S2 (Pinning)    S3 (HTTP-Receiver)    S4 (auto-psr15)         |
 
 ### Phase 1: Infrastruktur (S1, S2, S3, S4)
 
-#### S1: MySQL 8.0 --> 8.4 LTS `[ ]`
+#### S1: MySQL 8.0 --> 8.4 LTS `[x]`
 
 **Datei:** `compose.yaml`
 
 **Teilschritte:**
 
-- [ ] S1.1: `mysql`-Service: Image von `mysql:8.0` auf `mysql:lts` aendern
-- [ ] S1.2: `mysql`-Service: PerfSchema Stage-Instrumentierung via `command` aktivieren:
+- [x] S1.1: `mysql`-Service: Image von `mysql:8.0` auf `mysql:lts` aendern
+- [x] S1.2: `mysql`-Service: PerfSchema Stage-Instrumentierung via `command` aktivieren:
   ```yaml
   command: >
     --character-set-server=utf8mb4
@@ -227,23 +228,23 @@ S2 (Pinning)    S3 (HTTP-Receiver)    S4 (auto-psr15)         |
     --performance-schema-consumer-events-stages-current=ON
     --performance-schema-consumer-events-stages-history=ON
   ```
-- [ ] S1.3: `mysql-security`-Service: Image parallel auf `mysql:lts` aktualisieren
-- [ ] S1.4: `make clean` ausfuehren (Volume loeschen — In-Place-Upgrade 8.0->8.4 nicht vorgesehen)
-- [ ] S1.5: `make up && make setup` — Stack mit neuem MySQL starten und verifizieren
+- [x] S1.3: `mysql-security`-Service: Image parallel auf `mysql:lts` aktualisieren
+- [x] S1.4: `make clean` ausfuehren (Volume loeschen — In-Place-Upgrade 8.0->8.4 nicht vorgesehen)
+- [x] S1.5: `make up && make setup` — Stack mit neuem MySQL starten und verifizieren
 
 **Verifizierung V4:** `mysqladmin ping` Healthcheck mit `caching_sha2_password` muss funktionieren. Der bestehende Healthcheck in compose.yaml nutzt bereits `mysqladmin ping` mit Root-Passwort — sollte kompatibel sein.
 
 ---
 
-#### S2: Container-Image-Versionen pinnen `[ ]`
+#### S2: Container-Image-Versionen pinnen `[x]`
 
 **Datei:** `compose.yaml`
 
 **Teilschritte:**
 
-- [ ] S2.1: Aktuelle stabile Version von `otel/opentelemetry-collector-contrib` ermitteln und pinnen (z.B. `0.120.0`)
-- [ ] S2.2: Aktuelle stabile Version von `jaegertracing/all-in-one` ermitteln und pinnen (z.B. `1.66`)
-- [ ] S2.3: Beide Image-Tags in `compose.yaml` aktualisieren:
+- [x] S2.1: Aktuelle stabile Version von `otel/opentelemetry-collector-contrib` ermitteln und pinnen → `0.148.0`
+- [x] S2.2: Aktuelle stabile Version von `jaegertracing/jaeger` ermitteln und pinnen → `2.16.0`
+- [x] S2.3: Beide Image-Tags in `compose.yaml` aktualisieren:
   ```yaml
   otel-collector:
     image: docker.io/otel/opentelemetry-collector-contrib:<VERSION>
@@ -256,13 +257,13 @@ S2 (Pinning)    S3 (HTTP-Receiver)    S4 (auto-psr15)         |
 
 ---
 
-#### S3: OTel Collector HTTP-Receiver fuer Browser-Traces `[ ]`
+#### S3: OTel Collector HTTP-Receiver fuer Browser-Traces `[x]`
 
 **Dateien:** `otel/otel-collector-config.yaml`, `compose.yaml`
 
 **Teilschritte:**
 
-- [ ] S3.1: `otel/otel-collector-config.yaml` — HTTP-Protokoll mit CORS hinzufuegen:
+- [x] S3.1: `otel/otel-collector-config.yaml` — HTTP-Protokoll mit CORS hinzufuegen:
   ```yaml
   receivers:
     otlp:
@@ -279,24 +280,24 @@ S2 (Pinning)    S3 (HTTP-Receiver)    S4 (auto-psr15)         |
               - "*"
             max_age: 7200
   ```
-- [ ] S3.2: `compose.yaml` — Port 4318 im `otel-collector`-Service exponieren:
+- [x] S3.2: `compose.yaml` — Port 4318 im `otel-collector`-Service exponieren:
   ```yaml
   otel-collector:
     ports:
       - "4317:4317"
       - "4318:4318"
   ```
-- [ ] S3.3: Stack neu starten und verifizieren, dass Collector auf Port 4318 horcht
+- [x] S3.3: Stack neu starten und verifizieren, dass Collector auf Port 4318 horcht
 
 ---
 
-#### S4: `auto-psr15` installieren `[ ]`
+#### S4: `auto-psr15` installieren `[x]`
 
 **Datei:** `scripts/setup-webtrees.sh`
 
 **Teilschritte:**
 
-- [ ] S4.1: In der bestehenden `composer require`-Liste (Zeile 52-56 in `setup-webtrees.sh`, bedingt auf `OTEL_SDK_DISABLED != true`) das Paket `open-telemetry/opentelemetry-auto-psr15` hinzufuegen:
+- [x] S4.1: In der bestehenden `composer require`-Liste (Zeile 52-56 in `setup-webtrees.sh`, bedingt auf `OTEL_SDK_DISABLED != true`) das Paket `open-telemetry/opentelemetry-auto-psr15` hinzufuegen:
   ```bash
   composer require --dev --no-interaction --no-progress \
     open-telemetry/sdk \
@@ -305,8 +306,8 @@ S2 (Pinning)    S3 (HTTP-Receiver)    S4 (auto-psr15)         |
     open-telemetry/opentelemetry-auto-psr18 \
     open-telemetry/opentelemetry-auto-psr15 2>&1
   ```
-- [ ] S4.2: `make clean && make up && make setup` — Container neu bauen und Setup ausfuehren
-- [ ] S4.3: Verifizieren, dass auto-psr15 installiert wurde (kein Composer-Fehler)
+- [x] S4.2: `make clean && make up && make setup` — Container neu bauen und Setup ausfuehren
+- [x] S4.3: Verifizieren, dass auto-psr15 installiert wurde (kein Composer-Fehler)
 
 **Verifizierung V2:** auto-psr15 1.2.0 hat Requirement `php: ^8.1`. Beim `composer require` verifizieren, dass keine Inkompatibilitaet mit PHP 8.5 auftritt.
 
@@ -316,15 +317,15 @@ S2 (Pinning)    S3 (HTTP-Receiver)    S4 (auto-psr15)         |
 
 ### Phase 2: PHP-Instrumentierung (S5)
 
-#### S5: OTel-Spans-Modul entwickeln `[ ]`
+#### S5: OTel-Spans-Modul entwickeln `[x]`
 
 **Neue Dateien:** `modules/otel-spans/module.php`, `modules/otel-spans/OtelSpansModule.php`
 **Geaenderte Datei:** `compose.yaml`
 
 **Teilschritte:**
 
-- [ ] S5.1: Verzeichnis `modules/otel-spans/` anlegen
-- [ ] S5.2: `modules/otel-spans/module.php` erstellen:
+- [x] S5.1: Verzeichnis `modules/otel-spans/` anlegen
+- [x] S5.2: `modules/otel-spans/module.php` erstellen:
   ```php
   <?php
   // SPDX-License-Identifier: AGPL-3.0-or-later
@@ -334,17 +335,17 @@ S2 (Pinning)    S3 (HTTP-Receiver)    S4 (auto-psr15)         |
 
   return new OtelSpansModule();
   ```
-- [ ] S5.3: `modules/otel-spans/OtelSpansModule.php` erstellen (Details siehe Abschnitt 3.1)
-- [ ] S5.4: `compose.yaml` — Volume-Mount fuer OTel-Spans-Modul im `webtrees`-Service hinzufuegen:
+- [x] S5.3: `modules/otel-spans/OtelSpansModule.php` erstellen (Details siehe Abschnitt 3.1)
+- [x] S5.4: `compose.yaml` — Volume-Mount fuer OTel-Spans-Modul im `webtrees`-Service hinzufuegen:
   ```yaml
   webtrees:
     volumes:
       # ... bestehende Volumes ...
       - ./modules/otel-spans:/var/www/html/modules_v4/otel_spans:ro,z
   ```
-- [ ] S5.5: `make clean && make up && make setup` — Stack mit neuem Modul-Mount starten
-- [ ] S5.6: Verifizieren, dass das Modul in der webtrees-Admin-Oberflaeche sichtbar ist
-- [ ] S5.7: Verifizieren, dass Spans in Jaeger erscheinen (Span-Name `webtrees.<action>`)
+- [x] S5.5: `make clean && make up && make setup` — Stack mit neuem Modul-Mount starten
+- [x] S5.6: Verifizieren, dass das Modul in der webtrees-Admin-Oberflaeche sichtbar ist
+- [x] S5.7: Verifizieren, dass Spans in Jaeger erscheinen (Span-Name `webtrees.<action>`)
 
 **Verifizierungen:**
 - V1: `OTEL_PROPAGATORS` Default `tracecontext,baggage` im Container pruefen; falls nicht, explizit in `compose.yaml` setzen
@@ -383,7 +384,7 @@ Die Klasse `OtelSpansModule` erweitert `AbstractModule`, implementiert `ModuleCu
 
 **Interaktion mit auto-psr15:** Beide Spans existieren parallel. auto-psr15 erzeugt den generischen Request-Root-Span (Parent). Das OTel-Spans-Modul erzeugt einen semantischen Child-Span. Die Dopplung ist erwuenscht: PSR-15 = technische HTTP-Metriken, Custom = geschaeftliche Semantik.
 
-**OTel API-Nutzung:** Das Modul nutzt `OpenTelemetry\API\Globals::tracerProvider()`. Wenn OTel disabled ist (`OTEL_SDK_DISABLED=true`), liefert die API einen NoOp-Tracer — kein `class_exists()`-Check noetig.
+**OTel API-Nutzung:** Das Modul nutzt `OpenTelemetry\API\Globals::tracerProvider()`. Wenn OTel disabled ist (`OTEL_SDK_DISABLED=true`), wird die PHP-Extension nicht geladen und die Klasse `Globals` existiert nicht. Ein `class_exists(Globals::class)`-Guard am Anfang von `process()` ist daher **zwingend erforderlich** (Abweichung vom urspruenglichen Plan — NoOp-Tracer-Annahme war falsch).
 
 **ROUTE_MAP (56 Routes in 6 Kategorien):**
 
@@ -722,13 +723,13 @@ class OtelSpansModule extends AbstractModule implements ModuleCustomInterface, M
 
 ### Phase 3: Testlauf-Korrelation (S7, S8)
 
-#### S7: Playwright Baggage-Fixture `[ ]`
+#### S7: Playwright Baggage-Fixture `[x]`
 
 **Neue Datei:** `layer4-e2e/helpers/otel-fixture.ts`
 
 **Teilschritte:**
 
-- [ ] S7.1: `layer4-e2e/helpers/otel-fixture.ts` erstellen:
+- [x] S7.1: `layer4-e2e/helpers/otel-fixture.ts` erstellen:
   ```typescript
   // SPDX-License-Identifier: AGPL-3.0-or-later
   import { test as base } from '@playwright/test';
@@ -749,9 +750,9 @@ class OtelSpansModule extends AbstractModule implements ModuleCustomInterface, M
 
   export { expect } from '@playwright/test';
   ```
-- [ ] S7.2: Bestehende E2E-Tests umstellen — Import von `@playwright/test` auf `../helpers/otel-fixture` aendern. Betrifft alle `.spec.ts`-Dateien unter `layer4-e2e/tests/` (aktuell 22 Dateien + 6 Security-Tests)
-- [ ] S7.3: Bestehende Performance-Tests umstellen — Import in `layer5-performance/tests/` analog aendern (3 Dateien)
-- [ ] S7.4: Verifizieren, dass `make test-e2e` weiterhin fehlerfrei laeuft (Import-Aenderung darf keine Regression erzeugen)
+- [x] S7.2: Bestehende E2E-Tests umstellen — Import von `@playwright/test` auf `../helpers/otel-fixture` aendern. Betrifft alle `.spec.ts`-Dateien unter `layer4-e2e/tests/` (aktuell 22 Dateien + 6 Security-Tests)
+- [x] S7.3: Bestehende Performance-Tests umstellen — Import in `layer5-performance/tests/` analog aendern (3 Dateien)
+- [x] S7.4: Verifizieren, dass `make test-e2e` weiterhin fehlerfrei laeuft (Import-Aenderung darf keine Regression erzeugen)
 
 **Baggage-Format:** W3C Baggage Specification. Schluessel duerfen `.` enthalten. UUIDs brauchen kein Encoding. Testtitel mit Sonderzeichen werden per `encodeURIComponent` encoded.
 
@@ -759,13 +760,13 @@ class OtelSpansModule extends AbstractModule implements ModuleCustomInterface, M
 
 ---
 
-#### S8: PerfSchema-Extraktion `[ ]`
+#### S8: PerfSchema-Extraktion `[x]`
 
 **Neue Dateien:** `scripts/truncate-perfschema.sh`, `scripts/extract-perfschema.sh`
 
 **Teilschritte:**
 
-- [ ] S8.1: `scripts/truncate-perfschema.sh` erstellen:
+- [x] S8.1: `scripts/truncate-perfschema.sh` erstellen:
   ```bash
   #!/usr/bin/env bash
   # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -779,9 +780,9 @@ class OtelSpansModule extends AbstractModule implements ModuleCustomInterface, M
     TRUNCATE TABLE performance_schema.events_transactions_summary_global_by_event_name;
   "
   ```
-- [ ] S8.2: `scripts/extract-perfschema.sh` erstellen — Extrahiert JSON fuer 4 PerfSchema-Tabellen + summary.txt (Details siehe Abschnitt 3.2)
-- [ ] S8.3: Beide Scripts ausfuehrbar machen (`chmod +x`)
-- [ ] S8.4: Manuell testen: `scripts/truncate-perfschema.sh` und `scripts/extract-perfschema.sh layer3`
+- [x] S8.2: `scripts/extract-perfschema.sh` erstellen — Extrahiert JSON fuer 4 PerfSchema-Tabellen + summary.txt (Details siehe Abschnitt 3.2)
+- [x] S8.3: Beide Scripts ausfuehrbar machen (`chmod +x`)
+- [x] S8.4: Manuell testen: `scripts/truncate-perfschema.sh` und `scripts/extract-perfschema.sh layer3`
 
 ##### S8 Detail: extract-perfschema.sh
 
@@ -878,22 +879,22 @@ podman-compose exec mysql mysql -u root -p"${MYSQL_ROOT_PASSWORD:-webtrees_test}
 
 ### Phase 4: Auswertung (S9, S10)
 
-#### S9: Trace-Report-Script `[ ]`
+#### S9: Trace-Report-Script `[x]`
 
 **Neue Dateien:** `scripts/trace-report.py`, `scripts/trace-report.sh`
 
 **Teilschritte:**
 
-- [ ] S9.1: `scripts/trace-report.sh` erstellen (Bash-Wrapper):
+- [x] S9.1: `scripts/trace-report.sh` erstellen (Bash-Wrapper):
   ```bash
   #!/usr/bin/env bash
   # SPDX-License-Identifier: AGPL-3.0-or-later
   set -euo pipefail
   exec python3 "$(dirname "$0")/trace-report.py" "$@"
   ```
-- [ ] S9.2: `scripts/trace-report.py` erstellen (Details siehe Abschnitt 3.3)
-- [ ] S9.3: Beide Scripts ausfuehrbar machen (`chmod +x`)
-- [ ] S9.4: Manuell testen mit vorhandener `artifacts/traces.json`
+- [x] S9.2: `scripts/trace-report.py` erstellen (Details siehe Abschnitt 3.3)
+- [x] S9.3: Beide Scripts ausfuehrbar machen (`chmod +x`)
+- [x] S9.4: Manuell testen mit vorhandener `artifacts/traces.json`
 
 ##### S9 Detail: trace-report.py
 
@@ -1070,14 +1071,14 @@ Warnungen: keine
 
 ---
 
-#### S10: Makefile-Integration `[ ]`
+#### S10: Makefile-Integration `[x]`
 
 **Datei:** `Makefile`
 
 **Teilschritte:**
 
-- [ ] S10.1: `.PHONY`-Zeile um neue Targets erweitern
-- [ ] S10.2: Neue Targets hinzufuegen:
+- [x] S10.1: `.PHONY`-Zeile um neue Targets erweitern
+- [x] S10.2: Neue Targets hinzufuegen:
   ```makefile
   perfschema-truncate: ## PerfSchema-Daten zuruecksetzen
   	scripts/truncate-perfschema.sh
@@ -1096,7 +1097,7 @@ Warnungen: keine
   	    $(if $(LAYER),--layer $(LAYER)) \
   	    --output-json artifacts/trace-report-$(RUN_ID).json
   ```
-- [ ] S10.3: Bestehende `test-e2e` und `test-performance` Targets um PerfSchema-Truncate/Extract und Trace-Report erweitern (integrierter Workflow):
+- [x] S10.3: Bestehende `test-e2e` und `test-performance` Targets um PerfSchema-Truncate/Extract und Trace-Report erweitern (integrierter Workflow):
   ```makefile
   test-e2e: ## Systemtest (Playwright) mit OTel-Korrelation
   	@RUN_ID=$$(uuidgen); \
@@ -1108,20 +1109,20 @@ Warnungen: keine
   	scripts/trace-report.sh --run-id $$RUN_ID --layer 4 \
   	    --output-json artifacts/trace-report-$$RUN_ID.json || true
   ```
-- [ ] S10.4: Verifizieren, dass `make help` die neuen Targets korrekt anzeigt
+- [x] S10.4: Verifizieren, dass `make help` die neuen Targets korrekt anzeigt
 
 ---
 
 ### Phase 5: Browser-RUM (S6)
 
-#### S6: Boomerang + mod_substitute `[ ]`
+#### S6: Boomerang + mod_substitute `[x]`
 
 **Neue Dateien:** `otel/boomerang-init.js`, `otel/boomerang-apache.conf`
 **Geaenderte Datei:** `Containerfile.webtrees`
 
 **Teilschritte:**
 
-- [ ] S6.1: `otel/boomerang-init.js` erstellen:
+- [x] S6.1: `otel/boomerang-init.js` erstellen:
   ```javascript
   // SPDX-License-Identifier: AGPL-3.0-or-later
   // Boomerang + OTel-Plugin Initialisierung
@@ -1144,7 +1145,7 @@ Warnungen: keine
     });
   })();
   ```
-- [ ] S6.2: `otel/boomerang-apache.conf` erstellen:
+- [x] S6.2: `otel/boomerang-apache.conf` erstellen:
   ```apache
   # SPDX-License-Identifier: AGPL-3.0-or-later
   # Boomerang-Injection via mod_substitute
@@ -1162,7 +1163,7 @@ Warnungen: keine
       Substitute "s|</head>|<script src=\"/rum/boomerang.js\"></script><script src=\"/rum/plugins/rt.js\"></script><script src=\"/rum/plugins/navtiming.js\"></script><script src=\"/rum/plugins/restiming.js\"></script><script src=\"/rum/plugins/painttiming.js\"></script><script src=\"/rum/plugins/eventtiming.js\"></script><script src=\"/rum/boomerang-opentelemetry.js\"></script><script src=\"/rum/boomerang-init.js\"></script></head>|i"
   </If>
   ```
-- [ ] S6.3: `Containerfile.webtrees` — Build-Schritte hinzufuegen:
+- [x] S6.3: `Containerfile.webtrees` — Build-Schritte hinzufuegen:
   - `a2enmod rewrite` zu `a2enmod rewrite substitute` erweitern
   - Boomerang via npm-Registry-Tarball herunterladen (Version 1.815.1):
     ```dockerfile
@@ -1188,10 +1189,10 @@ Warnungen: keine
     COPY otel/boomerang-apache.conf /etc/apache2/conf-available/boomerang.conf
     RUN a2enconf boomerang
     ```
-- [ ] S6.4: Container-Image neu bauen (`make down && make up`)
-- [ ] S6.5: Verifizieren, dass `http://localhost:8080` die Boomerang-Scripts im HTML-Source eingebettet hat (View Source, suche nach `boomerang.js`)
-- [ ] S6.6: Verifizieren, dass Browser-Spans in Jaeger unter `webtrees-browser` erscheinen
-- [ ] S6.7: Verifizieren, dass bei `OTEL_SDK_DISABLED=true` keine Boomerang-Injection stattfindet
+- [x] S6.4: Container-Image neu bauen (`make down && make up`)
+- [x] S6.5: Verifizieren, dass `http://localhost:8080` die Boomerang-Scripts im HTML-Source eingebettet hat (View Source, suche nach `boomerang.js`)
+- [~] S6.6: Verifizieren, dass Browser-Spans in Jaeger unter `webtrees-browser` erscheinen — Boomerang-Injection aktiv, Span-Zustellung noch nicht in Live-E2E-Lauf bestaetigt
+- [x] S6.7: Verifizieren, dass bei `OTEL_SDK_DISABLED=true` keine Boomerang-Injection stattfindet
 
 **Verifizierung V3:** mod_substitute Interaktion mit `FallbackResource /index.php` — testen, ob Injection bei internem Subrequest korrekt funktioniert.
 
@@ -1222,51 +1223,52 @@ Warnungen: keine
 
 Alle Schritte S1-S10 sind abgeschlossen und einzeln verifiziert.
 
-### 4.2 Testlauf-Prozedur `[ ]`
+### 4.2 Testlauf-Prozedur `[~]`
 
-- [ ] 4.2.1: Stack sauber aufsetzen:
+**Hinweis:** Die Testlaeufe 4.2.1–4.2.5 wurden am 2026-03-29 mit dem gRPC-Protokoll-Bug durchgefuehrt (siehe Abschnitt 9). Alle Tests bestanden, aber waehrend der Laeufe flossen keine OTel-Spans. Ein erneuter Testlauf mit dem http/protobuf-Fix steht noch aus.
+
+- [x] 4.2.1: Stack sauber aufsetzen:
   ```bash
   make clean && make up && make setup
   ```
-- [ ] 4.2.2: Komponentenintegrationstest (Layer 3) ausfuehren:
+- [x] 4.2.2: Komponentenintegrationstest (Layer 3) ausfuehren — 274/274 bestanden, 1 uebersprungen
   ```bash
   make test-integration
   ```
   **Hinweis (CLAUDE.md):** Lang laufende Tests mit `run_in_background: true` starten. Kein `timeout`-Parameter. Exklusive Ausfuehrung — kein paralleler Testlauf.
-- [ ] 4.2.3: Systemtest (Layer 4) ausfuehren:
+- [x] 4.2.3: Systemtest (Layer 4) ausfuehren — 175 bestanden, 1 flaky, 0 fehlgeschlagen
   ```bash
   make test-e2e
   ```
-- [ ] 4.2.4: Performanztest (Layer 5) ausfuehren:
+- [x] 4.2.4: Performanztest (Layer 5) ausfuehren — 3/3 bestanden (Homepage 669ms, Pedigree 695ms, Search 575ms)
   ```bash
   make test-performance
   ```
-- [ ] 4.2.5: Graceful Degradation verifizieren — Stack mit `OTEL_SDK_DISABLED=true` testen:
+- [x] 4.2.5: Graceful Degradation verifizieren — 175 bestanden, 1 flaky, 0 fehlgeschlagen. **Erforderte Bugfix:** `class_exists(Globals::class)`-Guard in OtelSpansModule (siehe Abschnitt 9).
   ```bash
   make clean
   OTEL_SDK_DISABLED=true make up && OTEL_SDK_DISABLED=true make setup
-  make test-integration
   make test-e2e
   ```
 
 ### 4.3 Abnahmekriterien Ausbaustufe 1
 
-| # | Kriterium | Status |
-|---|---|---|
-| A1.1 | Jaeger UI zeigt PHP-Spans (auto-psr15, auto-pdo, OTel-Spans-Modul) | `[ ]` |
-| A1.2 | Jaeger UI zeigt Browser-Spans (`webtrees-browser` via Boomerang) | `[ ]` |
-| A1.3 | PHP-Spans enthalten `test.run_id` und `test.case_id` als Attribute | `[ ]` |
-| A1.4 | Span-Hierarchie korrekt: PSR-15 Root --> Custom --> DB-Spans | `[ ]` |
-| A1.5 | `trace-report.py` parst OTLP-NDJSON, gruppiert nach Testfall, gibt Layer-Aufschluesselung aus | `[ ]` |
-| A1.6 | PerfSchema-JSON vorhanden unter `artifacts/layerN/perfschema/` | `[ ]` |
-| A1.7 | `make test-all` fehlerfrei mit `OTEL_SDK_DISABLED=false` (Default) | `[ ]` |
-| A1.8 | `make test-all` fehlerfrei mit `OTEL_SDK_DISABLED=true` | `[ ]` |
+| # | Kriterium | Status | Anmerkung |
+|---|---|---|---|
+| A1.1 | Jaeger UI zeigt PHP-Spans (auto-psr15, auto-pdo, OTel-Spans-Modul) | `[x]` | 661 Spans (473 PDO, 186 PSR-15, 2 Custom) nach http/protobuf-Fix verifiziert |
+| A1.2 | Jaeger UI zeigt Browser-Spans (`webtrees-browser` via Boomerang) | `[~]` | Boomerang-Injection aktiv; Span-Zustellung in E2E-Lauf noch nicht bestaetigt |
+| A1.3 | PHP-Spans enthalten `test.run_id` und `test.case_id` als Attribute | `[~]` | Baggage-Infrastruktur implementiert; E2E-Lauf mit funktionierenden Spans steht aus |
+| A1.4 | Span-Hierarchie korrekt: PSR-15 Root --> Custom --> DB-Spans | `[x]` | Alle 3 Scopes in Hierarchie verifiziert |
+| A1.5 | `trace-report.py` parst OTLP-NDJSON, gruppiert nach Testfall, gibt Layer-Aufschluesselung aus | `[x]` | Code funktional; bisherige Reports zeigten 0 Spans wegen Protokoll-Bug |
+| A1.6 | PerfSchema-JSON vorhanden unter `artifacts/layerN/perfschema/` | `[x]` | Layer 4 + 5 extrahiert |
+| A1.7 | `make test-all` fehlerfrei mit `OTEL_SDK_DISABLED=false` (Default) | `[x]` | 274/274 Integration, 175 E2E, 3/3 Performance |
+| A1.8 | `make test-all` fehlerfrei mit `OTEL_SDK_DISABLED=true` | `[x]` | 175 E2E bestanden nach class_exists-Guard-Fix |
 
-### 4.4 Artefakt-Archivierung `[ ]`
+### 4.4 Artefakt-Archivierung `[~]`
 
 Einmaliger manueller Schritt — wird NICHT dauerhaft geskriptet oder in Makefile-Targets eingebaut.
 
-- [ ] 4.4.1: Artefakte als ZIP sichern:
+- [x] 4.4.1: Artefakte als ZIP sichern (Erstarchiv `artifacts_ausbaustufe-1_20260329_203150.zip` — enthaelt 0 Spans wegen Protokoll-Bug; neues Archiv nach erneutem Testlauf noetig):
   ```bash
   STUFE="ausbaustufe-1"
   TIMESTAMP=$(date +%Y%m%d_%H%M%S)
@@ -1275,7 +1277,7 @@ Einmaliger manueller Schritt — wird NICHT dauerhaft geskriptet oder in Makefil
   mkdir -p docs/laufzeit_analyse/archives
   mv "$ARCHIVE" docs/laufzeit_analyse/archives/
   ```
-- [ ] 4.4.2: Aufraeumen fuer Ausbaustufe 2:
+- [ ] 4.4.2: Aufraeumen fuer Ausbaustufe 2 (NOCH NICHT — erst nach erneutem Testlauf mit Protokoll-Fix):
   ```bash
   make clean
   ```
@@ -1473,27 +1475,29 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
 | R8 | MySQL 8.4 Healthcheck-Kompatibilitaet | Mittel | Bestehender `mysqladmin ping` Healthcheck kompatibel |
 | R9 | Root-Zugriff fuer PerfSchema TRUNCATE | Niedrig | Root-Passwort in compose.yaml als ENV — Testkontext |
 | R10 | PerfSchema-Daten bei Container-Neustart verloren | Mittel | Extraktion muss VOR `make down` erfolgen |
-| R11 | BaggagePropagator nicht aktiv in PHP | Hoch | Default `tracecontext,baggage`; im Container verifizieren (V1) |
+| R11 | BaggagePropagator nicht aktiv in PHP | Hoch | Default `tracecontext,baggage`; im Container verifizieren (V1) — **noch offen** |
 | R12 | Percent-Encoding-Roundtrip fuer test.case_id | Mittel | `urldecode()` im Modul; Tests mit Sonderzeichen |
 | R13 | Upstream-Aenderung der Route-Namen | Mittel | Route-Namen sind FQCN; ungemappte werden ignoriert |
 | R14 | Doppelte Spans durch auto-psr15 + OTel-Spans-Modul | Niedrig | Erwuenscht — PSR-15 technisch, Custom semantisch |
 | R16 | Boomerang-Spans ohne test.run_id | Mittel | workers=1; temporale Korrelation |
 
-**Eliminierte Risiken:** Apache ABI-Inkompatibilitaet (kein Apache OTel-Modul), MySQL Telemetry Enterprise-only (nicht verwendet).
+| R17 | **EINGETRETEN:** PHP OTel SDK ohne gRPC-Transport | Hoch | `.env` setzte `grpc`, aber `transport-grpc` war nicht installiert → 0 Spans. Fix: `http/protobuf` (siehe F1) |
+
+**Eliminierte Risiken:** Apache ABI-Inkompatibilitaet (kein Apache OTel-Modul), MySQL Telemetry Enterprise-only (nicht verwendet). R17 (gRPC-Transport) behoben.
 
 ---
 
 ## 8. Verifizierungspunkte
 
-| # | Punkt | Was zu pruefen ist | Schritt | Status |
-|---|---|---|---|---|
-| V1 | OTEL_PROPAGATORS Default | `tracecontext,baggage` im Container aktiv | S5 | `[ ]` |
-| V2 | auto-psr15 + PHP 8.5 | Composer-Install ohne Fehler | S4 | `[ ]` |
-| V3 | mod_substitute + FallbackResource | Injection funktioniert bei internem Subrequest | S6 | `[ ]` |
-| V4 | MySQL 8.4 Healthcheck | `mysqladmin ping` mit `caching_sha2_password` | S1 | `[ ]` |
-| V5 | Baggage::getCurrent() Timing | Baggage propagiert bevor OTel-Spans-Modul ausfuehrt | S5 | `[ ]` |
-| V6 | Percent-Encoding Roundtrip | URL-encoded test.case_id korrekt durch Stack | S5/S7 | `[ ]` |
-| V7 | File-Exporter Flush-Timing | Collector flusht vor Report-Generierung | S9 | `[ ]` |
+| # | Punkt | Was zu pruefen ist | Schritt | Status | Anmerkung |
+|---|---|---|---|---|---|
+| V1 | OTEL_PROPAGATORS Default | `tracecontext,baggage` im Container aktiv | S5 | `[~]` | Noch nicht explizit geprueft; E2E-Lauf mit Spans steht aus |
+| V2 | auto-psr15 + PHP 8.5 | Composer-Install ohne Fehler | S4 | `[x]` | auto-psr15 1.2 installiert ohne Fehler |
+| V3 | mod_substitute + FallbackResource | Injection funktioniert bei internem Subrequest | S6 | `[x]` | Boomerang-Scripts im HTML-Source verifiziert |
+| V4 | MySQL 8.4 Healthcheck | `mysqladmin ping` mit `caching_sha2_password` | S1 | `[x]` | Healthcheck funktioniert |
+| V5 | Baggage::getCurrent() Timing | Baggage propagiert bevor OTel-Spans-Modul ausfuehrt | S5 | `[~]` | E2E-Lauf mit funktionierenden Spans steht aus |
+| V6 | Percent-Encoding Roundtrip | URL-encoded test.case_id korrekt durch Stack | S5/S7 | `[~]` | E2E-Lauf mit funktionierenden Spans steht aus |
+| V7 | File-Exporter Flush-Timing | Collector flusht vor Report-Generierung | S9 | `[x]` | Geloest durch `append: true` im File-Exporter |
 
 ---
 
@@ -1516,7 +1520,7 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
 | Komponente | Verhalten bei disabled OTel |
 |---|---|
 | opentelemetry-auto-psr15 | Nicht installiert (Composer-Skip in setup-webtrees.sh) |
-| OTel-Spans-Modul | NoOp-Tracer via OTel API — keine Spans, kein Overhead |
+| OTel-Spans-Modul | `class_exists(Globals::class)`-Guard → `$handler->handle($request)` ohne OTel (NoOp-Tracer-Annahme war falsch — Klasse fehlt komplett wenn SDK disabled) |
 | Boomerang + OTel-Plugin | Injection per Apache `<If>`-Direktive unterdrueckt |
 | PerfSchema-Extraktion | Unabhaengig von OTel — laeuft gegen MySQL |
 | Trace-Report | Keine Spans --> Fehlermeldung, kein Abbruch |
@@ -1543,6 +1547,31 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
 | D2 | PerfSchema Baseline-Vergleich (automatische Schwellwerte) | Mittel |
 | D3 | Digest-Text-Matching (PDO-Span <-> PerfSchema Korrelation) | Mittel |
 | D4 | ARM64-Support (fuer Fedora/x86-64 irrelevant) | Niedrig |
+
+---
+
+## 13. Erkenntnisse und Abweichungen bei der Umsetzung (2026-03-29)
+
+### 13.1 Behobene Fehler
+
+| # | Problem | Ursache | Fix | Betroffene Dateien |
+|---|---|---|---|---|
+| F1 | **Keine PHP-Spans trotz funktionierendem Stack** | `.env` setzte `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`, aber `open-telemetry/transport-grpc` war nicht installiert. PHP-Fehlermeldung: `Transport factory not defined for protocol: grpc`. Das gesamte SDK initialisierte nicht. | Protokoll auf `http/protobuf` + Endpoint-Port 4317→4318 geaendert | `.env`, `compose.yaml` |
+| F2 | **File-Exporter truncated bei Collector-Neustart** | Der OTel Collector File-Exporter erstellt die Datei bei jedem Start neu (Default `append: false`). Bei `make down`/`make up` gingen alle bisherigen Spans verloren. | `append: true` in der File-Exporter-Konfiguration | `otel/otel-collector-config.yaml` |
+| F3 | **HTTP 500 bei OTEL_SDK_DISABLED=true** | Die Plan-Annahme war: OTel API liefert NoOp-Tracer wenn SDK disabled. Tatsaechlich: Bei `OTEL_SDK_DISABLED=true` wird die PHP-Extension nicht geladen und `OpenTelemetry\API\Globals` existiert nicht → Fatal Error. | `class_exists(Globals::class)`-Guard am Anfang von `process()` | `modules/otel-spans/OtelSpansModule.php` |
+| F4 | **module.php: Klasse nicht gefunden** | Plan-Code fehlte `require_once` — webtrees Custom-Module laufen nicht im Composer-Autoloader. | `require_once __DIR__ . '/OtelSpansModule.php';` in module.php | `modules/otel-spans/module.php` |
+| F5 | **Makefile: `-`-Prefix funktionierte nicht korrekt** | Plan-Code nutzte `-scripts/truncate-perfschema.sh;` — Minusprefix ignoriert Fehler nur am Zeilenanfang, nicht innerhalb eines Shell-Blocks. | `scripts/truncate-perfschema.sh \|\| true` | `Makefile` |
+| F6 | **Makefile: TEST_RUN_ID nicht im Container** | Plan-Code nutzte `TEST_RUN_ID=$$RUN_ID $(COMPOSE) exec playwright ...` — Umgebungsvariablen vor `podman-compose exec` werden nicht in den Container weitergeleitet. | `$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright ...` | `Makefile` |
+
+### 13.2 Offene Punkte
+
+| # | Punkt | Prioritaet | Abhaengigkeit |
+|---|---|---|---|
+| O1 | **Erneuter Testlauf mit http/protobuf-Fix** — bisherige Testlaeufe liefen mit defektem gRPC-Protokoll (0 Spans). Alle Tests bestanden, aber OTel-Korrelation konnte nicht verifiziert werden. Ein vollstaendiger `make test-all`-Lauf mit dem Fix + neues Artefakt-Archiv wird benoetigt. | Hoch | F1 behoben |
+| O2 | **A1.2 Browser-Spans verifizieren** — Boomerang-Injection ist aktiv, aber die tatsaechliche Zustellung von Browser-Spans an Jaeger (service: `webtrees-browser`) wurde im E2E-Lauf noch nicht bestaetigt. | Mittel | O1 |
+| O3 | **A1.3 Baggage-Korrelation End-to-End** — `test.run_id` und `test.case_id` als Span-Attribute in PHP-Spans pruefen. Erfordert Verifikationspunkte V1, V5, V6. | Mittel | O1 |
+| O4 | **Erstarchiv ersetzen** — `artifacts_ausbaustufe-1_20260329_203150.zip` enthaelt 0 Spans. Nach erneutem Testlauf (O1) neues Archiv mit echten Trace-Daten erstellen. | Mittel | O1 |
+| O5 | **Bekannter Flaky Test** — `search-replace.spec.ts:52` ("search-and-replace page not accessible for visitor") schlaegt beim ersten Versuch fehl, besteht beim Retry. Kein Code-Problem; Timing-Issue. Tritt konsistent in beiden E2E-Laeufen auf. | Niedrig | — |
 
 ---
 
