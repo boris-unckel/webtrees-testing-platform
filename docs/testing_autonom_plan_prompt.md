@@ -181,3 +181,31 @@ Ein Implementierungsplan (`docs/testing_autonom_plan.md`) mit:
 3. Reihenfolge, die jederzeit einen funktionierenden Stand gewährleistet
 4. Verifikationsschritt je AP (z. B. `make test-all` nach Compose-Änderung)
 5. Risiken und Fallstricke (insb. SELinux, Podman-Bind-Mounts, .gitignore)
+
+---
+
+## Status / Fazit
+
+**Plan erstellt:** `docs/testing_autonom_plan.md`
+
+**11 Arbeitspakete** in abhängigkeitsgeordneter Reihenfolge:
+
+| AP | Datei(en) | Kern der Änderung |
+|---|---|---|
+| 1 | `.gitignore` | `upstream/` eintragen |
+| 2 | `scripts/clone-upstream.sh` | Neues Script (idempotent, 3 Variablen) |
+| 3 | `.env.example` | Neue Variablen dokumentiert |
+| 4 | `Makefile` | Target `clone-upstream`, `up` hängt davon ab |
+| 5 | `compose.yaml` | 2 Pfade → `${WEBTREES_SOURCE:-./upstream/webtrees}` |
+| 6 | `scripts/build-security-image.sh` | Default-Fallback anpassen |
+| 7 | `.github/workflows/webtrees-tests.yaml` | `working-directory` + separaten Checkout entfernen, `make setup` nutzen |
+| 8 | `CLAUDE.md` | 5 Stellen neutralisieren (Pfade, dombrinksblagen, User-Pfad) |
+| 9 | `docs/testing-bigpicture.md` | 8 Stellen neutralisieren (+ N2-Baum ergänzen), 1 Changelog bleibt |
+| 10 | `README.md` | Schnellstart auf autonomen Workflow umstellen |
+| 11 | — | Gesamtverifikation: `make test-all` + Grep-Prüfung |
+
+**Zur Dokumentationsabdeckung:** Prompt-Abschnitt E gibt korrekte Regeln, aber keine
+Einzelstellen-Enumeration. Der Plan ergänzt dies: **8 Fundstellen** in
+`testing-bigpicture.md` und **5 in CLAUDE.md** sind tabellarisch mit Alt/Neu/Begründung
+aufgelistet. Die Changelog-Zeile 1491 (dombrinksblagen) bleibt als historische Referenz
+stehen, wie vom Prompt vorgesehen.
