@@ -53,7 +53,8 @@ if [ "${OTEL_SDK_DISABLED:-false}" != "true" ]; then
       open-telemetry/sdk \
       open-telemetry/exporter-otlp \
       open-telemetry/opentelemetry-auto-pdo \
-      open-telemetry/opentelemetry-auto-psr18 2>&1
+      open-telemetry/opentelemetry-auto-psr18 \
+      open-telemetry/opentelemetry-auto-psr15 2>&1
 fi
 
 # 2. Warten auf MySQL (via PHP PDO — umgeht TLS-Probleme von mysqladmin)
