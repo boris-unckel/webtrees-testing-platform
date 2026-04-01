@@ -62,7 +62,9 @@ test-integration-quick: ## Komponentenintegrationstest — 3 repraesentative Fae
 	$(COMPOSE) exec webtrees vendor/bin/phpunit \
 	    --configuration=/tests/layer3-integration/phpunit-integration.xml \
 	    --filter='SearchIntegrationTest|PrivacyVisibilityTest|TreeOperationsTest' \
-	    --log-junit=/artifacts/layer3/phpunit-quick.xml
+	    --log-junit=/artifacts/layer3/phpunit-quick.xml \
+	    --coverage-html=/artifacts/layer3/coverage-html \
+	    --coverage-clover=/artifacts/layer3/coverage.xml
 
 test-e2e-quick: ## Systemtest — 3 repraesentative Faelle mit OTel-Korrelation
 	@RUN_ID=$$(uuidgen); \

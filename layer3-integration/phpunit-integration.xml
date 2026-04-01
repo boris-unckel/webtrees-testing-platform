@@ -32,4 +32,11 @@
             <directory suffix=".php">/var/www/html/app</directory>
         </include>
     </source>
+
+    <coverage>
+        <report>
+            <html outputDirectory="/artifacts/layer3/coverage-html"/>
+            <clover outputFile="/artifacts/layer3/coverage.xml"/>
+        </report>
+    </coverage>
 </phpunit>
