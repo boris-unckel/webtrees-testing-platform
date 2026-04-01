@@ -41,6 +41,7 @@ down: ## Stack stoppen
 clean: ## Stack stoppen, Volumes und Passwoerter loeschen
 	$(COMPOSE) down -v
 	rm -rf artifacts/layer*/*
+	: > artifacts/traces.json && chmod 666 artifacts/traces.json
 	@if [ -f .env ]; then \
 		for key in MYSQL_ROOT_PASSWORD MYSQL_PASSWORD \
 			MYSQL_SECURITY_ROOT_PASSWORD MYSQL_SECURITY_PASSWORD \

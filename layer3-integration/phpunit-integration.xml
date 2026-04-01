@@ -35,8 +35,7 @@
 
     <coverage>
         <report>
-            <html outputDirectory="/artifacts/layer3/coverage-html"/>
-            <clover outputFile="/artifacts/layer3/coverage.xml"/>
+            <clover outputFile="/coverage/layer3-coverage.xml"/>
         </report>
     </coverage>
 </phpunit>

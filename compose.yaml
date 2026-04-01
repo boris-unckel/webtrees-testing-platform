@@ -24,6 +24,8 @@ services:
       - ./modules/otel-spans:/var/www/html/modules_v4/otel_spans:ro,z
       # GEDCOM-Fixtures
       - ./fixtures:/fixtures:ro,z
+      # Coverage-Daten auf schnellem Named Volume (kein Bind-Mount-I/O bei Instrumentierung)
+      - coverage-data:/coverage
       # Test-Layer für Container-interne Ausführung
       - ./layer1-static:/tests/layer1-static:ro,z
       - ./layer2-unit:/tests/layer2-unit:ro,z
@@ -190,6 +192,7 @@ volumes:
   webtrees-unit-tests-data:
   mysql-data:
   mysql-security-data:
+  coverage-data:
 
 networks:
   webtrees-test-net:

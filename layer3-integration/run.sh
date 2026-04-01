@@ -14,11 +14,12 @@ echo "=== Teststufe 2 — Komponentenintegrationstest ==="
 
 cd "${WEBTREES_DIR}"
 
+COVERAGE_DIR="/coverage"
+
 vendor/bin/phpunit \
     --configuration=/tests/layer3-integration/phpunit-integration.xml \
     --log-junit="${ARTIFACTS}/phpunit-integration.xml" \
-    --coverage-html="${ARTIFACTS}/coverage-html" \
-    --coverage-clover="${ARTIFACTS}/coverage.xml" \
+    --coverage-clover="${COVERAGE_DIR}/layer3-coverage.xml" \
     2>&1 | tee "${ARTIFACTS}/phpunit-output.log"
 
 EXIT_CODE=${PIPESTATUS[0]}
