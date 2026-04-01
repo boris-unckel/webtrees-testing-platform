@@ -10,7 +10,7 @@ COMPOSE = podman-compose -f compose.yaml
 COMPOSE_DEBUG = podman-compose -f compose.yaml --profile debug
 COMPOSE_SECURITY = podman-compose -f compose.yaml --profile security
 
-.PHONY: help clone-upstream generate-passwords up down clean setup test-all test-static test-unit test-integration test-integration-quick test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report security-build test-security security-up security-down security-clean logs status
+.PHONY: help clone-upstream generate-passwords up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
 	@grep -hE '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -22,10 +22,16 @@ generate-passwords: ## Passwoerter in .env generieren (falls leer)
 	scripts/generate-passwords.sh
 
 up: clone-upstream generate-passwords ## Stack starten (alle Container)
+	@$(MAKE) --no-print-directory _compose-up
+
+_compose-up:
 	$(COMPOSE) up -d --build
 	@echo "Stack gestartet. webtrees: http://localhost:8080 | Jaeger: http://localhost:16686"
 
 up-debug: clone-upstream generate-passwords ## Stack starten inkl. Adminer (Debug-Profil)
+	@$(MAKE) --no-print-directory _compose-up-debug
+
+_compose-up-debug:
 	$(COMPOSE_DEBUG) up -d --build
 	@echo "Stack gestartet. webtrees: http://localhost:8080 | Adminer: http://localhost:8081 | Jaeger: http://localhost:16686"
 
@@ -57,14 +63,17 @@ test-unit: ## Teststufe 1 — Komponententest (PHPUnit, isoliert)
 
 test-integration: ## Teststufe 2 — Komponentenintegrationstest (PHPUnit + MySQL)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer3-integration/run.sh
+	mkdir -p artifacts/layer3
+	podman cp webtrees:/coverage/layer3-coverage.xml artifacts/layer3/coverage.xml
 
 test-integration-quick: ## Komponentenintegrationstest — 3 repraesentative Faelle
 	$(COMPOSE) exec webtrees vendor/bin/phpunit \
 	    --configuration=/tests/layer3-integration/phpunit-integration.xml \
 	    --filter='SearchIntegrationTest|PrivacyVisibilityTest|TreeOperationsTest' \
 	    --log-junit=/artifacts/layer3/phpunit-quick.xml \
-	    --coverage-html=/artifacts/layer3/coverage-html \
-	    --coverage-clover=/artifacts/layer3/coverage.xml
+	    --coverage-clover=/coverage/layer3-coverage.xml
+	mkdir -p artifacts/layer3
+	podman cp webtrees:/coverage/layer3-coverage.xml artifacts/layer3/coverage.xml
 
 test-e2e-quick: ## Systemtest — 3 repraesentative Faelle mit OTel-Korrelation
 	@RUN_ID=$$(uuidgen); \
@@ -118,6 +127,9 @@ security-build: clone-upstream ## Security-Image bauen (Distribution-Build)
 	scripts/build-security-image.sh
 
 test-security: security-build generate-passwords ## Sicherheitstest (Distribution + Wizard + Prüfpunkte)
+	@$(MAKE) --no-print-directory _security-run
+
+_security-run:
 	$(COMPOSE_SECURITY) up -d webtrees-security mysql-security playwright
 	scripts/security-filesystem-checks.sh --pre-wizard
 	$(COMPOSE_SECURITY) exec playwright npx playwright test \
@@ -127,6 +139,9 @@ test-security: security-build generate-passwords ## Sicherheitstest (Distributio
 	-podman rm -f webtrees-security mysql-security 2>/dev/null
 
 security-up: security-build generate-passwords ## Security-Stack starten (ohne Tests)
+	@$(MAKE) --no-print-directory _security-compose-up
+
+_security-compose-up:
 	$(COMPOSE_SECURITY) up -d webtrees-security mysql-security
 
 security-down: ## Security-Stack stoppen + entfernen
