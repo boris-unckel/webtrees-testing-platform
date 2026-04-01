@@ -16,7 +16,6 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Optional
-from urllib.parse import unquote
 
 
 @dataclass
@@ -126,7 +125,6 @@ def group_by_test_case(spans: list) -> dict:
     groups = defaultdict(list)
     for span in spans:
         case_id = span.attributes.get("test.case_id", "(unbekannt)")
-        case_id = unquote(case_id)
         groups[case_id].append(span)
     return dict(groups)
 

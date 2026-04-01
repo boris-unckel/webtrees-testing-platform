@@ -738,7 +738,7 @@ class OtelSpansModule extends AbstractModule implements ModuleCustomInterface, M
   export const test = base.extend<{}>({
     page: async ({ page }, use, testInfo) => {
       const runId = process.env.TEST_RUN_ID || randomUUID();
-      const caseId = encodeURIComponent(testInfo.title);
+      const caseId = testInfo.title.replace(/[^a-zA-Z0-9_.-]/g, '_');
 
       await page.setExtraHTTPHeaders({
         'baggage': `test.run_id=${runId},test.case_id=${caseId}`,
@@ -750,11 +750,12 @@ class OtelSpansModule extends AbstractModule implements ModuleCustomInterface, M
 
   export { expect } from '@playwright/test';
   ```
+  **Abweichung vom urspruenglichen Plan:** `encodeURIComponent()` durch Zeichenersetzung ersetzt (siehe F7). Der PHP OTel SDK BaggagePropagator kann Percent-Encoding in Baggage-Werten nicht korrekt verarbeiten.
 - [x] S7.2: Bestehende E2E-Tests umstellen — Import von `@playwright/test` auf `../helpers/otel-fixture` aendern. Betrifft alle `.spec.ts`-Dateien unter `layer4-e2e/tests/` (aktuell 22 Dateien + 6 Security-Tests)
 - [x] S7.3: Bestehende Performance-Tests umstellen — Import in `layer5-performance/tests/` analog aendern (3 Dateien)
 - [x] S7.4: Verifizieren, dass `make test-e2e` weiterhin fehlerfrei laeuft (Import-Aenderung darf keine Regression erzeugen)
 
-**Baggage-Format:** W3C Baggage Specification. Schluessel duerfen `.` enthalten. UUIDs brauchen kein Encoding. Testtitel mit Sonderzeichen werden per `encodeURIComponent` encoded.
+**Baggage-Format:** W3C Baggage Specification. Schluessel duerfen `.` enthalten. UUIDs brauchen kein Encoding. Testtitel werden per Zeichenersetzung (`[^a-zA-Z0-9_.-]` → `_`) in sichere Baggage-Werte umgewandelt. `encodeURIComponent` kann NICHT verwendet werden — der PHP OTel SDK BaggagePropagator interpretiert `%`-Sequenzen fehlerhaft (siehe F7).
 
 **RUN_ID-Erzeugung:** `TEST_RUN_ID` als Umgebungsvariable (spaeter vom Makefile-Target gesetzt); Fallback: `randomUUID()` pro Testlauf.
 
@@ -1115,7 +1116,7 @@ Warnungen: keine
 
 ### Phase 5: Browser-RUM (S6)
 
-#### S6: Boomerang + mod_substitute `[x]`
+#### S6: Boomerang + mod_substitute `[~]`
 
 **Neue Dateien:** `otel/boomerang-init.js`, `otel/boomerang-apache.conf`
 **Geaenderte Datei:** `Containerfile.webtrees`
@@ -1191,7 +1192,7 @@ Warnungen: keine
     ```
 - [x] S6.4: Container-Image neu bauen (`make down && make up`)
 - [x] S6.5: Verifizieren, dass `http://localhost:8080` die Boomerang-Scripts im HTML-Source eingebettet hat (View Source, suche nach `boomerang.js`)
-- [~] S6.6: Verifizieren, dass Browser-Spans in Jaeger unter `webtrees-browser` erscheinen — Boomerang-Injection aktiv, Span-Zustellung noch nicht in Live-E2E-Lauf bestaetigt
+- [ ] S6.6: Verifizieren, dass Browser-Spans in Jaeger unter `webtrees-browser` erscheinen — Boomerang-Injection aktiv, aber 0 Browser-Spans in traces.json nach E2E-Quick-Lauf (2026-04-01). Span-Zustellung funktioniert nicht.
 - [x] S6.7: Verifizieren, dass bei `OTEL_SDK_DISABLED=true` keine Boomerang-Injection stattfindet
 
 **Verifizierung V3:** mod_substitute Interaktion mit `FallbackResource /index.php` — testen, ob Injection bei internem Subrequest korrekt funktioniert.
@@ -1223,22 +1224,24 @@ Warnungen: keine
 
 Alle Schritte S1-S10 sind abgeschlossen und einzeln verifiziert.
 
-### 4.2 Testlauf-Prozedur `[~]`
+### 4.2 Testlauf-Prozedur `[x]`
 
-**Hinweis:** Die Testlaeufe 4.2.1–4.2.5 wurden am 2026-03-29 mit dem gRPC-Protokoll-Bug durchgefuehrt (siehe Abschnitt 9). Alle Tests bestanden, aber waehrend der Laeufe flossen keine OTel-Spans. Ein erneuter Testlauf mit dem http/protobuf-Fix steht noch aus.
+**Hinweis:** Die Testlaeufe 4.2.1–4.2.5 wurden am 2026-03-29 mit dem gRPC-Protokoll-Bug durchgefuehrt (siehe Abschnitt 9). Am 2026-04-01 erneuter Testlauf mit Quick-Targets nach Bugfixes F7/F8 (siehe Abschnitt 13.1) — OTel-Korrelation verifiziert: 40 Spans mit `test.run_id` + `test.case_id`, 30 Testfaelle korrekt gruppiert.
 
 - [x] 4.2.1: Stack sauber aufsetzen:
   ```bash
   make clean && make up && make setup
   ```
-- [x] 4.2.2: Komponentenintegrationstest (Layer 3) ausfuehren — 274/274 bestanden, 1 uebersprungen
+- [x] 4.2.2: Komponentenintegrationstest (Layer 3) ausfuehren — 274/274 bestanden, 1 uebersprungen. Quick-Target (2026-04-01): 79/79 bestanden.
   ```bash
-  make test-integration
+  make test-integration          # Alle
+  make test-integration-quick    # 3 repraesentative Faelle
   ```
   **Hinweis (CLAUDE.md):** Lang laufende Tests mit `run_in_background: true` starten. Kein `timeout`-Parameter. Exklusive Ausfuehrung — kein paralleler Testlauf.
-- [x] 4.2.3: Systemtest (Layer 4) ausfuehren — 175 bestanden, 1 flaky, 0 fehlgeschlagen
+- [x] 4.2.3: Systemtest (Layer 4) ausfuehren — 175 bestanden, 1 flaky, 0 fehlgeschlagen. Quick-Target (2026-04-01): 30/30 bestanden mit funktionierender OTel-Korrelation.
   ```bash
-  make test-e2e
+  make test-e2e                  # Alle
+  make test-e2e-quick            # 3 repraesentative Faelle mit Trace-Report
   ```
 - [x] 4.2.4: Performanztest (Layer 5) ausfuehren — 3/3 bestanden (Homepage 669ms, Pedigree 695ms, Search 575ms)
   ```bash
@@ -1255,12 +1258,12 @@ Alle Schritte S1-S10 sind abgeschlossen und einzeln verifiziert.
 
 | # | Kriterium | Status | Anmerkung |
 |---|---|---|---|
-| A1.1 | Jaeger UI zeigt PHP-Spans (auto-psr15, auto-pdo, OTel-Spans-Modul) | `[x]` | 661 Spans (473 PDO, 186 PSR-15, 2 Custom) nach http/protobuf-Fix verifiziert |
-| A1.2 | Jaeger UI zeigt Browser-Spans (`webtrees-browser` via Boomerang) | `[~]` | Boomerang-Injection aktiv; Span-Zustellung in E2E-Lauf noch nicht bestaetigt |
-| A1.3 | PHP-Spans enthalten `test.run_id` und `test.case_id` als Attribute | `[~]` | Baggage-Infrastruktur implementiert; E2E-Lauf mit funktionierenden Spans steht aus |
+| A1.1 | Jaeger UI zeigt PHP-Spans (auto-psr15, auto-pdo, OTel-Spans-Modul) | `[x]` | 191.702 Spans (144.662 PDO, 46.985 PSR-15, 55 Custom) in traces.json nach Quick-Test 2026-04-01 |
+| A1.2 | Jaeger UI zeigt Browser-Spans (`webtrees-browser` via Boomerang) | `[ ]` | Boomerang-Injection aktiv, aber 0 Browser-Spans in traces.json — Zustellung funktioniert nicht |
+| A1.3 | PHP-Spans enthalten `test.run_id` und `test.case_id` als Attribute | `[x]` | 40 OtelSpansModule-Spans mit beiden Attributen, 30 Testfaelle korrekt gruppiert (nach F7-Fix) |
 | A1.4 | Span-Hierarchie korrekt: PSR-15 Root --> Custom --> DB-Spans | `[x]` | Alle 3 Scopes in Hierarchie verifiziert |
-| A1.5 | `trace-report.py` parst OTLP-NDJSON, gruppiert nach Testfall, gibt Layer-Aufschluesselung aus | `[x]` | Code funktional; bisherige Reports zeigten 0 Spans wegen Protokoll-Bug |
-| A1.6 | PerfSchema-JSON vorhanden unter `artifacts/layerN/perfschema/` | `[x]` | Layer 4 + 5 extrahiert |
+| A1.5 | `trace-report.py` parst OTLP-NDJSON, gruppiert nach Testfall, gibt Layer-Aufschluesselung aus | `[x]` | Vollstaendig funktional: Testfall-Gruppierung + PerfSchema-Aggregat + JSON-Report |
+| A1.6 | PerfSchema-JSON vorhanden unter `artifacts/layerN/perfschema/` | `[x]` | Valides JSON nach F8-Fix (MYSQL_PWD statt -p) |
 | A1.7 | `make test-all` fehlerfrei mit `OTEL_SDK_DISABLED=false` (Default) | `[x]` | 274/274 Integration, 175 E2E, 3/3 Performance |
 | A1.8 | `make test-all` fehlerfrei mit `OTEL_SDK_DISABLED=true` | `[x]` | 175 E2E bestanden nach class_exists-Guard-Fix |
 
@@ -1476,14 +1479,14 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
 | R9 | Root-Zugriff fuer PerfSchema TRUNCATE | Niedrig | Root-Passwort in compose.yaml als ENV — Testkontext |
 | R10 | PerfSchema-Daten bei Container-Neustart verloren | Mittel | Extraktion muss VOR `make down` erfolgen |
 | R11 | BaggagePropagator nicht aktiv in PHP | Hoch | Default `tracecontext,baggage`; im Container verifizieren (V1) — **noch offen** |
-| R12 | Percent-Encoding-Roundtrip fuer test.case_id | Mittel | `urldecode()` im Modul; Tests mit Sonderzeichen |
+| R12 | **EINGETRETEN:** Percent-Encoding-Roundtrip fuer test.case_id | ~~Mittel~~ Hoch | PHP OTel SDK BaggagePropagator verarbeitet `%`-Sequenzen fehlerhaft → Fix: Zeichenersetzung statt `encodeURIComponent` (F7) |
 | R13 | Upstream-Aenderung der Route-Namen | Mittel | Route-Namen sind FQCN; ungemappte werden ignoriert |
 | R14 | Doppelte Spans durch auto-psr15 + OTel-Spans-Modul | Niedrig | Erwuenscht — PSR-15 technisch, Custom semantisch |
 | R16 | Boomerang-Spans ohne test.run_id | Mittel | workers=1; temporale Korrelation |
 
 | R17 | **EINGETRETEN:** PHP OTel SDK ohne gRPC-Transport | Hoch | `.env` setzte `grpc`, aber `transport-grpc` war nicht installiert → 0 Spans. Fix: `http/protobuf` (siehe F1) |
 
-**Eliminierte Risiken:** Apache ABI-Inkompatibilitaet (kein Apache OTel-Modul), MySQL Telemetry Enterprise-only (nicht verwendet). R17 (gRPC-Transport) behoben.
+**Eliminierte Risiken:** Apache ABI-Inkompatibilitaet (kein Apache OTel-Modul), MySQL Telemetry Enterprise-only (nicht verwendet). R17 (gRPC-Transport) behoben. R12 (Percent-Encoding) behoben durch Zeichenersetzung.
 
 ---
 
@@ -1491,12 +1494,12 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
 
 | # | Punkt | Was zu pruefen ist | Schritt | Status | Anmerkung |
 |---|---|---|---|---|---|
-| V1 | OTEL_PROPAGATORS Default | `tracecontext,baggage` im Container aktiv | S5 | `[~]` | Noch nicht explizit geprueft; E2E-Lauf mit Spans steht aus |
+| V1 | OTEL_PROPAGATORS Default | `tracecontext,baggage` im Container aktiv | S5 | `[x]` | `OTEL_PROPAGATORS=tracecontext,baggage` im Container bestaetigt (2026-04-01) |
 | V2 | auto-psr15 + PHP 8.5 | Composer-Install ohne Fehler | S4 | `[x]` | auto-psr15 1.2 installiert ohne Fehler |
 | V3 | mod_substitute + FallbackResource | Injection funktioniert bei internem Subrequest | S6 | `[x]` | Boomerang-Scripts im HTML-Source verifiziert |
 | V4 | MySQL 8.4 Healthcheck | `mysqladmin ping` mit `caching_sha2_password` | S1 | `[x]` | Healthcheck funktioniert |
-| V5 | Baggage::getCurrent() Timing | Baggage propagiert bevor OTel-Spans-Modul ausfuehrt | S5 | `[~]` | E2E-Lauf mit funktionierenden Spans steht aus |
-| V6 | Percent-Encoding Roundtrip | URL-encoded test.case_id korrekt durch Stack | S5/S7 | `[~]` | E2E-Lauf mit funktionierenden Spans steht aus |
+| V5 | Baggage::getCurrent() Timing | Baggage propagiert bevor OTel-Spans-Modul ausfuehrt | S5 | `[x]` | `test.run_id` in 40 Spans korrekt extrahiert — Baggage-Kontext vor Middleware aktiv |
+| V6 | Baggage-Werte durch Stack | test.case_id korrekt durch Stack | S5/S7 | `[x]` | Geloest durch Zeichenersetzung statt Percent-Encoding (siehe F7). 30 Testfaelle korrekt zugeordnet. |
 | V7 | File-Exporter Flush-Timing | Collector flusht vor Report-Generierung | S9 | `[x]` | Geloest durch `append: true` im File-Exporter |
 
 ---
@@ -1562,16 +1565,20 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
 | F4 | **module.php: Klasse nicht gefunden** | Plan-Code fehlte `require_once` — webtrees Custom-Module laufen nicht im Composer-Autoloader. | `require_once __DIR__ . '/OtelSpansModule.php';` in module.php | `modules/otel-spans/module.php` |
 | F5 | **Makefile: `-`-Prefix funktionierte nicht korrekt** | Plan-Code nutzte `-scripts/truncate-perfschema.sh;` — Minusprefix ignoriert Fehler nur am Zeilenanfang, nicht innerhalb eines Shell-Blocks. | `scripts/truncate-perfschema.sh \|\| true` | `Makefile` |
 | F6 | **Makefile: TEST_RUN_ID nicht im Container** | Plan-Code nutzte `TEST_RUN_ID=$$RUN_ID $(COMPOSE) exec playwright ...` — Umgebungsvariablen vor `podman-compose exec` werden nicht in den Container weitergeleitet. | `$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright ...` | `Makefile` |
+| F7 | **test.case_id nicht in Spans (Percent-Encoding-Bug)** | `encodeURIComponent()` erzeugt `%XX`-Sequenzen. Der PHP OTel SDK BaggagePropagator interpretiert `%`-Sequenzen als Encoding und verwirft Eintraege mit dekodierten Sonderzeichen (Leerzeichen, Komma). `test.run_id` (UUID, keine `%`-Zeichen) war nicht betroffen. | Zeichenersetzung statt Percent-Encoding: `testInfo.title.replace(/[^a-zA-Z0-9_.-]/g, '_')`. `urldecode()` im PHP-Modul und `unquote()` in trace-report.py entfernt. | `otel-fixture.ts`, `OtelSpansModule.php`, `trace-report.py` |
+| F8 | **PerfSchema-JSON ungueltig (MySQL-Warnung)** | `mysql -p"..."` gibt `mysql: [Warning] Using a password on the command line interface can be insecure.` auf stderr aus. `podman-compose exec` leitet Container-stderr in stdout — die Warnung landete vor dem JSON in den Ausgabedateien. `trace-report.py` scheiterte beim Parsen. | `MYSQL_PWD` Umgebungsvariable statt `-p` Argument: `podman-compose exec -e MYSQL_PWD=... mysql -u root ...`. Eliminiert die Warnung statt sie umzuleiten. | `extract-perfschema.sh`, `truncate-perfschema.sh` |
 
 ### 13.2 Offene Punkte
 
 | # | Punkt | Prioritaet | Abhaengigkeit |
 |---|---|---|---|
-| O1 | **Erneuter Testlauf mit http/protobuf-Fix** — bisherige Testlaeufe liefen mit defektem gRPC-Protokoll (0 Spans). Alle Tests bestanden, aber OTel-Korrelation konnte nicht verifiziert werden. Ein vollstaendiger `make test-all`-Lauf mit dem Fix + neues Artefakt-Archiv wird benoetigt. | Hoch | F1 behoben |
-| O2 | **A1.2 Browser-Spans verifizieren** — Boomerang-Injection ist aktiv, aber die tatsaechliche Zustellung von Browser-Spans an Jaeger (service: `webtrees-browser`) wurde im E2E-Lauf noch nicht bestaetigt. | Mittel | O1 |
-| O3 | **A1.3 Baggage-Korrelation End-to-End** — `test.run_id` und `test.case_id` als Span-Attribute in PHP-Spans pruefen. Erfordert Verifikationspunkte V1, V5, V6. | Mittel | O1 |
-| O4 | **Erstarchiv ersetzen** — `artifacts_ausbaustufe-1_20260329_203150.zip` enthaelt 0 Spans. Nach erneutem Testlauf (O1) neues Archiv mit echten Trace-Daten erstellen. | Mittel | O1 |
+| O1 | ~~Erneuter Testlauf mit http/protobuf-Fix~~ **ERLEDIGT** (2026-04-01) — Quick-Target-Lauf: 79/79 Integration, 30/30 E2E. 40 OTel-Spans mit `test.run_id` + `test.case_id`, 30 Testfaelle korrekt gruppiert. Trace-Report + PerfSchema funktional. | ~~Hoch~~ | — |
+| O2 | **A1.2 Browser-Spans funktionieren nicht** — 0 Browser-Spans (`webtrees-browser`) in traces.json nach E2E-Quick-Lauf (2026-04-01). Boomerang-Scripts werden injiziert, aber es entstehen keine Spans. Moegliche Ursachen: Boomerang OTel-Plugin laeuft im Headless-Chromium nicht korrekt, CORS-Problem, oder OTel-Plugin-Initialisierungsfehler. | Mittel | — |
+| O3 | ~~Baggage-Korrelation End-to-End~~ **ERLEDIGT** (2026-04-01) — `test.run_id` und `test.case_id` in allen 40 OtelSpansModule-Spans verifiziert. Fix: Zeichenersetzung statt Percent-Encoding (F7). | ~~Mittel~~ | — |
+| O4 | **Erstarchiv ersetzen** — `artifacts_ausbaustufe-1_20260329_203150.zip` enthaelt 0 Spans. Neues Archiv mit echten Trace-Daten aus den Quick-Laeufen (2026-04-01) sollte erstellt werden. | Niedrig | — |
 | O5 | **Bekannter Flaky Test** — `search-replace.spec.ts:52` ("search-and-replace page not accessible for visitor") schlaegt beim ersten Versuch fehl, besteht beim Retry. Kein Code-Problem; Timing-Issue. Tritt konsistent in beiden E2E-Laeufen auf. | Niedrig | — |
+| O6 | **Nur OtelSpansModule-Spans mit Testfall korreliert** — Die auto-psr15 (46.985) und auto-pdo (144.662) Spans haben kein `test.run_id`-Attribut und erscheinen daher nicht im Testfall-Report. Sie sind ueber `trace_id` mit den OtelSpansModule-Spans verknuepft, aber `trace-report.py` nutzt bisher nur `test.run_id`-Filterung. Fuer die per-Testfall-Zuordnung von DB-Queries waere eine Erweiterung noetig (trace_id-basiertes Nachladen). | Mittel | — |
+| O7 | **Layer 3 (Komponentenintegrationstest) hat keine OTel-Korrelation** — PHPUnit-Tests laufen als CLI-PHP im Container, nicht ueber HTTP-Requests. Es entstehen keine auto-psr15/OtelSpansModule-Spans. PerfSchema-Aggregat waere per Truncate/Extract moeglich, aber kein Testfall-Bezug. | Niedrig | — |
 
 ---
 

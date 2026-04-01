@@ -10,10 +10,10 @@ COMPOSE = podman-compose -f compose.yaml
 COMPOSE_DEBUG = podman-compose -f compose.yaml --profile debug
 COMPOSE_SECURITY = podman-compose -f compose.yaml --profile security
 
-.PHONY: help clone-upstream generate-passwords up down clean setup test-all test-static test-unit test-integration test-e2e test-performance perfschema-truncate perfschema-extract trace-report security-build test-security security-up security-down security-clean logs status
+.PHONY: help clone-upstream generate-passwords up down clean setup test-all test-static test-unit test-integration test-integration-quick test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report security-build test-security security-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
-	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@grep -hE '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 clone-upstream: ## webtrees-Source klonen (falls nicht vorhanden)
 	scripts/clone-upstream.sh
@@ -57,6 +57,23 @@ test-unit: ## Teststufe 1 — Komponententest (PHPUnit, isoliert)
 
 test-integration: ## Teststufe 2 — Komponentenintegrationstest (PHPUnit + MySQL)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer3-integration/run.sh
+
+test-integration-quick: ## Komponentenintegrationstest — 3 repraesentative Faelle
+	$(COMPOSE) exec webtrees vendor/bin/phpunit \
+	    --configuration=/tests/layer3-integration/phpunit-integration.xml \
+	    --filter='SearchIntegrationTest|PrivacyVisibilityTest|TreeOperationsTest' \
+	    --log-junit=/artifacts/layer3/phpunit-quick.xml
+
+test-e2e-quick: ## Systemtest — 3 repraesentative Faelle mit OTel-Korrelation
+	@RUN_ID=$$(uuidgen); \
+	echo "Testlauf: $$RUN_ID"; \
+	scripts/truncate-perfschema.sh || true; \
+	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright npx playwright test \
+	    --config=/tests/e2e/playwright.config.ts \
+	    homepage.spec.ts individual.spec.ts search-forms.spec.ts; \
+	scripts/extract-perfschema.sh layer4 || true; \
+	scripts/trace-report.sh --run-id $$RUN_ID --layer 4 \
+	    --output-json artifacts/trace-report-$$RUN_ID.json || true
 
 test-e2e: ## Teststufe 3 — Systemtest (Playwright) mit OTel-Korrelation
 	@RUN_ID=$$(uuidgen); \

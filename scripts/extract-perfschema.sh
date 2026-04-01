@@ -11,8 +11,8 @@ MYSQL_DATABASE="${MYSQL_DATABASE:-webtrees_test}"
 mkdir -p "$TARGET_DIR"
 
 run_query() {
-  podman-compose exec "$CONTAINER" mysql -u root \
-    -p"$MYSQL_ROOT_PASSWORD" --batch --raw --skip-column-names -e "$1"
+  podman-compose exec -e MYSQL_PWD="$MYSQL_ROOT_PASSWORD" "$CONTAINER" mysql -u root \
+    --batch --raw --skip-column-names -e "$1"
 }
 
 echo "=== PerfSchema-Extraktion fuer ${LAYER} ==="

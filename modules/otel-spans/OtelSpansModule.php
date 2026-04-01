@@ -211,7 +211,7 @@ class OtelSpansModule extends AbstractModule implements ModuleCustomInterface, M
             }
             $caseId = $baggage->getEntry('test.case_id');
             if ($caseId !== null) {
-                $span->setAttribute('test.case_id', urldecode($caseId->getValue()));
+                $span->setAttribute('test.case_id', $caseId->getValue());
             }
 
             $response = $handler->handle($request);
