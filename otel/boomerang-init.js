@@ -4,7 +4,6 @@
   var collectorUrl = 'http://otel-collector:4318/v1/traces';
 
   BOOMR.init({
-    beacon_url: '/beacon/',
     OpenTelemetry: {
       samplingRate: 1.0,
       collectorConfiguration: {
