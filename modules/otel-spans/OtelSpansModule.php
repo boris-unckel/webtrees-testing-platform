@@ -179,6 +179,9 @@ class OtelSpansModule extends AbstractModule implements ModuleCustomInterface, M
             return $handler->handle($request);
         }
 
+        // VOR Span-Start: auto-psr15 Root-Span-Context sichern (fuer Server-Timing)
+        $parentContext = \OpenTelemetry\API\Trace\Span::getCurrent()->getContext();
+
         $tracer = Globals::tracerProvider()->getTracer('otel-spans');
         $span = $tracer->spanBuilder('webtrees.' . $mapping['action'])
             ->setSpanKind(SpanKind::KIND_INTERNAL)
@@ -223,7 +226,14 @@ class OtelSpansModule extends AbstractModule implements ModuleCustomInterface, M
                     : StatusCode::STATUS_OK
             );
 
-            return $response;
+            // Server-Timing mit auto-psr15 Root-Span-Context (Boomerang-Bruecke)
+            $serverTiming = sprintf(
+                'traceparent;desc="00-%s-%s-01"',
+                $parentContext->getTraceId(),
+                $parentContext->getSpanId()
+            );
+
+            return $response->withHeader('Server-Timing', $serverTiming);
         } finally {
             $span->end();
             $scope->detach();

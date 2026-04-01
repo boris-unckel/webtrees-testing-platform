@@ -2,22 +2,27 @@
 
 FROM docker.io/library/node:22-bookworm
 
-# Playwright-Systemabhängigkeiten
-RUN npx playwright@latest install --with-deps chromium
+# Playwright-Systemabhängigkeiten (ohne Browser — wird nach npm install installiert)
+RUN npx playwright@latest install-deps chromium
 
 WORKDIR /tests
 
-# package.json für Playwright — im WORKDIR installieren, damit npx playwright test
-# @playwright/test aus node_modules/  findet (nicht aus /tmp wie vorher)
+# package.json für Playwright + OTel SDK
 RUN echo '{ \
   "name": "webtrees-e2e-tests", \
   "private": true, \
   "devDependencies": { \
-    "@playwright/test": "latest" \
+    "@playwright/test": "latest", \
+    "@opentelemetry/api": "^1.9", \
+    "@opentelemetry/sdk-trace-node": "^1.28", \
+    "@opentelemetry/exporter-trace-otlp-http": "^0.57", \
+    "@opentelemetry/resources": "^1.28", \
+    "@opentelemetry/semantic-conventions": "^1.28" \
   } \
 }' > package.json && npm install
 
-# Playwright-Binaries sind bereits installiert
+# Browser passend zur installierten @playwright/test-Version
 ENV PLAYWRIGHT_BROWSERS_PATH=/root/.cache/ms-playwright
+RUN npx playwright install chromium
 
 # Kein CMD — wird per compose command gesteuert

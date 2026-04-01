@@ -13,6 +13,17 @@
       serviceName: 'webtrees-browser',
       commonAttributes: {
         'deployment.environment': 'test'
+      },
+      plugins_config: {
+        instrument_document_load: {
+          enabled: true,
+          recordTransaction: true,
+          exporterDelay: 200
+        }
+      },
+      exporter: {
+        scheduledDelayMillis: 1000,
+        maxExportBatchSize: 50
       }
     }
   });

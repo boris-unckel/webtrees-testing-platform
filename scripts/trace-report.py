@@ -83,8 +83,10 @@ def parse_traces(traces_path: str, run_id: str) -> list:
     return spans
 
 
-def parse_browser_spans(traces_path: str, time_min: int, time_max: int) -> list:
-    """Parse Boomerang spans via temporal correlation (no test.run_id)."""
+def parse_browser_spans(traces_path: str, time_min: int, time_max: int,
+                        trace_ids: set = None) -> list:
+    """Parse Boomerang spans via trace_id correlation (Server-Timing bridge)
+    with temporal correlation as fallback."""
     spans = []
     with open(traces_path) as f:
         for line in f:
@@ -104,10 +106,17 @@ def parse_browser_spans(traces_path: str, time_min: int, time_max: int) -> list:
                     for s in ss.get("spans", []):
                         start = int(s["startTimeUnixNano"])
                         end = int(s["endTimeUnixNano"])
-                        if start >= time_min and end <= time_max:
+                        tid = s.get("traceId", "")
+                        # trace_id-basierte Korrelation (Server-Timing-Bruecke)
+                        matched_by_trace = trace_ids and tid in trace_ids
+                        # Temporale Korrelation als Fallback
+                        matched_by_time = (
+                            start >= time_min and end <= time_max
+                        )
+                        if matched_by_trace or matched_by_time:
                             attrs = _extract_attrs(s.get("attributes", []))
                             spans.append(Span(
-                                trace_id=s["traceId"],
+                                trace_id=tid,
                                 span_id=s["spanId"],
                                 parent_span_id=s.get("parentSpanId") or None,
                                 name=s["name"],
@@ -144,6 +153,8 @@ def build_hierarchy(spans: list) -> list:
 
 
 def classify_span(span: Span) -> str:
+    if span.service_name == "playwright-tests":
+        return "Playwright (E2E)"
     if span.service_name == "webtrees-browser":
         return "Browser (RUM)"
     if span.scope and "pdo" in span.scope:
@@ -222,11 +233,17 @@ def print_perfschema(perfschema: dict):
 def generate_json_report(run_id: str, spans: list, browser_spans: list,
                          perfschema: dict) -> dict:
     cases = group_by_test_case(spans)
+    playwright_spans = [s for s in spans if s.service_name == "playwright-tests"]
+    trace_ids = {s.trace_id for s in spans}
     report = {
         "run_id": run_id,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "total_spans": len(spans),
+        "playwright_root_spans": len(playwright_spans),
         "browser_spans": len(browser_spans),
+        "browser_spans_trace_linked": sum(
+            1 for bs in browser_spans if bs.trace_id in trace_ids
+        ),
         "test_cases": {},
         "perfschema": perfschema,
     }
@@ -280,7 +297,18 @@ def main():
                 json.dump({"run_id": args.run_id, "total_spans": 0}, f, indent=2)
         return
 
-    # Temporal bounds for browser span correlation
+    # Playwright root-spans
+    playwright_spans = [s for s in spans if s.service_name == "playwright-tests"]
+    if playwright_spans:
+        print(f"Playwright-Root-Spans: {len(playwright_spans)}")
+        for ps in playwright_spans:
+            print(f"  test: {ps.attributes.get('test.case_id', '?')}  "
+                  f"trace_id={ps.trace_id[:8]}...")
+
+    # trace_ids from all matched spans (for trace_id-based browser correlation)
+    trace_ids = {s.trace_id for s in spans}
+
+    # Temporal bounds for browser span correlation (fallback)
     time_min = min(s.start_ns for s in spans)
     time_max = max(s.end_ns for s in spans)
     # Add 5s buffer
@@ -288,9 +316,13 @@ def main():
         args.traces_file,
         time_min - 5_000_000_000,
         time_max + 5_000_000_000,
+        trace_ids=trace_ids,
     )
     if browser_spans:
-        print(f"Browser-Spans (temporal korreliert): {len(browser_spans)}")
+        trace_linked = sum(1 for bs in browser_spans if bs.trace_id in trace_ids)
+        print(f"Browser-Spans: {len(browser_spans)} "
+              f"(trace-korreliert: {trace_linked}, "
+              f"temporal: {len(browser_spans) - trace_linked})")
 
     # Group by test case and display
     cases = group_by_test_case(spans)
