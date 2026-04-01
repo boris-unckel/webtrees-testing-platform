@@ -135,28 +135,31 @@ Jaeger (All-in-One, gepinnt)              traces.json (NDJSON)
 
 ```
 Playwright (OTel SDK in Node.js)
-  |-- Erzeugt Root-Span pro Testfall
-  |-- Setzt traceparent + baggage via page.route() (dynamisch pro Request)
+  |-- Erzeugt Root-Span pro Testfall (Service: playwright-tests)
+  |-- Setzt traceparent + baggage via page.route() (nur webtrees-Requests)
+  |
+  v  (traceparent Header)
+Apache httpd (TRANSPARENT — leitet traceparent + baggage weiter)
   |
   v
+PHP (OTel) — liest traceparent als Parent-Context
+  |-- auto-psr15: Request-Span (Child des Playwright-Root-Spans, gleiche trace_id)
+  |-- OTel-Spans-Modul: Semantischer Span + Server-Timing Response-Header
+  |-- auto-pdo: DB-Query-Spans
+  |
+  v  (Server-Timing Response-Header)
 Browser (Boomerang + OTel-Plugin)
   |-- Document Load Span liest Server-Timing Header --> gleicher Trace
-  |-- XHR/Fetch Spans propagieren traceparent automatisch
-  |
-  v
-Apache httpd (TRANSPARENT)
-  |
-  v
-PHP (OTel) — sendet Server-Timing Response-Header
-  |-- traceparent aus Playwright als Parent-Context
-  |-- Server-Timing Header fuer Boomerang-Rueckkanal
+  |-- Spans als Children des PHP-Spans (via Server-Timing)
   |
   v
 MySQL (PerfSchema, unveraendert)
 ```
 
 **Korrelation:** Kausale Parent-Child-Beziehung via traceparent:
-`Playwright-Span --> Boomerang-Span --> PHP-Span --> DB-Spans`
+`Playwright-Span --> PHP-Span --> {Custom-Span, DB-Spans, Boomerang-Span (via Server-Timing)}`
+
+**Richtung beachten:** Playwright propagiert `traceparent` an PHP (Request-Header). PHP propagiert Span-Context an Boomerang (Response-Header `Server-Timing`). Die Kette ist Playwright → PHP → Boomerang, nicht Playwright → Boomerang → PHP.
 
 ### 2.3 Was NICHT implementiert wird
 
@@ -1301,71 +1304,164 @@ Einmaliger manueller Schritt — wird NICHT dauerhaft geskriptet oder in Makefil
 
 ### 5.1 Scope
 
-Ausbaustufe 2 erweitert Ausbaustufe 1 um eine kausale Trace-Kette mittels Playwright OTel SDK. Alle Komponenten aus Ausbaustufe 1 bleiben unveraendert. Baggage-Korrelation bleibt als Fundament.
+Ausbaustufe 2 erweitert Ausbaustufe 1 um eine kausale Trace-Kette: Playwright erzeugt einen Root-Span pro Testfall und propagiert `traceparent` via `page.route()` an PHP. Alle PHP-Spans eines Testfalls teilen sich dieselbe `trace_id`. Boomerang-Browser-Spans werden ueber den `Server-Timing`-Response-Header in denselben Trace eingehaengt.
 
-### 5.2 Implementierungsschritte
+Baggage-Korrelation (`test.run_id`, `test.case_id`) bleibt unveraendert als Fundament — `page.route()` uebernimmt die Header-Injection und ersetzt `page.setExtraHTTPHeaders()`.
+
+### 5.2 Invarianten aus Ausbaustufe 1 (NICHT AENDERN)
+
+Die folgenden Mechanismen sind in Ausbaustufe 1 verifiziert und funktional. Aenderungen in Ausbaustufe 2 duerfen sie nicht brechen. Jede Invariante referenziert den zugehoerigen Fix aus Abschnitt 13.1.
+
+| # | Invariante | Fix-Referenz |
+|---|---|---|
+| I1 | **Baggage-Werte ohne Percent-Encoding** — `testInfo.title.replace(/[^a-zA-Z0-9_.-]/g, '_')` statt `encodeURIComponent()` | F7 |
+| I2 | **Apache-Filterkette `INFLATE;SUBSTITUTE;DEFLATE`** in `boomerang-apache.conf` | F9 |
+| I3 | **Collector-URL `http://otel-collector:4318`** — kein `window.location.hostname`, kein `localhost` | F10 |
+| I4 | **CORS-Origins ohne UND mit Port** (`http://webtrees` + `http://webtrees:80`) | F11 |
+| I5 | **`class_exists(Globals::class)`-Guard** in `OtelSpansModule.php` | F3 |
+| I6 | **`MYSQL_PWD` statt `-p`** in Shell-Scripts | F8 |
+| I7 | **`podman-compose exec -e VAR=...`** fuer Container-Umgebungsvariablen | F6 |
+
+**Pruefung:** `make test-e2e-quick` nach jeder Aenderung in Ausbaustufe 2 laufen lassen. Alle 30 Tests muessen bestehen, Browser-Spans muessen weiterhin erscheinen.
+
+### 5.3 Abhaengigkeitsgraph
+
+```
+S11 (Playwright OTel SDK)
+  |
+  v
+S12 (Fixture: traceparent + baggage via page.route)
+  |                                \
+  |                                 S13 (Server-Timing Header) [parallel moeglich]
+  |                                /
+  v                               v
+S14 (Trace-Report erweitern)
+```
+
+**Parallelisierbar:** S13 hat keine Abhaengigkeit zu S11/S12 und kann parallel implementiert werden.
+**Kritischer Pfad:** S11 → S12 → S14
+
+### 5.4 Implementierungsschritte
 
 #### S11: Playwright OTel SDK installieren `[ ]`
 
-**Geaenderte Datei:** `Containerfile.playwright` (oder `package.json` im Playwright-Container)
+**Geaenderte Datei:** `Containerfile.playwright`
 
 **Teilschritte:**
 
-- [ ] S11.1: OTel-Pakete zum Playwright-Container hinzufuegen:
+- [ ] S11.1: OTel-Pakete in `Containerfile.playwright` hinzufuegen. **Nicht** `@opentelemetry/sdk-node` (zieht Auto-Instrumentierungs-Registry ein, die im Playwright-Kontext nicht benoetigt wird) — nur `sdk-trace-node` + HTTP-Exporter:
   ```json
   {
     "devDependencies": {
       "@playwright/test": "latest",
       "@opentelemetry/api": "^1.9",
-      "@opentelemetry/sdk-node": "^0.57",
+      "@opentelemetry/sdk-trace-node": "^1.28",
       "@opentelemetry/exporter-trace-otlp-http": "^0.57",
-      "@opentelemetry/resources": "^1.28"
+      "@opentelemetry/resources": "^1.28",
+      "@opentelemetry/semantic-conventions": "^1.28"
     }
   }
   ```
-- [ ] S11.2: Container-Image neu bauen
+- [ ] S11.2: Container-Image neu bauen (`make down && make up`)
+- [ ] S11.3: Verifizieren: `podman-compose exec playwright npm ls @opentelemetry/api` zeigt installierte Pakete
+
+**Hinweis:** Keine `globalSetup`-Datei fuer OTel-Initialisierung verwenden — Playwright's `globalSetup` laeuft in einem separaten Prozess. Ein dort registrierter `TracerProvider` ist in den Test-Worker-Prozessen nicht verfuegbar. Stattdessen Worker-scoped Fixture (S12).
 
 ---
 
-#### S12: Playwright Baggage-Fixture erweitern `[ ]`
+#### S12: Fixture erweitern — `page.route()` mit traceparent + baggage `[ ]`
 
-**Geaenderte Datei:** `layer4-e2e/helpers/otel-fixture.ts`
+**Geaenderte Dateien:** `layer4-e2e/helpers/otel-fixture.ts`, `layer5-performance/helpers/otel-fixture.ts`
+
+**Design-Entscheidungen (Erkenntnisse aus Ausbaustufe 1):**
+
+1. **`page.route()` ersetzt `page.setExtraHTTPHeaders()`** — eine einzige Stelle fuer Header-Injection. `route.continue()` mit explizitem `headers`-Objekt ueberschreibt alle Header; deshalb `...route.request().headers()` zum Merge zwingend noetig.
+2. **Route-Pattern `/^http:\/\/webtrees(:\d+)?\/`** statt `'**/*'` — nur Requests an webtrees abfangen. **Kritisch:** Boomerang sendet OTLP-Requests an `http://otel-collector:4318/v1/traces`. Bei `page.route('**/*')` wuerde `traceparent` in diese OTLP-Requests injiziert und die Browser-Span-Zustellung stoeren.
+3. **Ein Root-Span pro Testfall** mit statischem `traceparent` — alle PHP-Requests innerhalb eines Tests werden Children dieses Root-Spans. Kein Per-Request-Child-Span aus Playwright noetig: auto-psr15 erzeugt den Request-Level-Span serverseitig.
+4. **Worker-scoped `TracerProvider`** statt `globalSetup` — OTel SDK einmal pro Worker initialisieren, am Ende herunterfahren (`provider.shutdown()` flusht ausstehende Spans). Bei `workers: 1` aequivalent zu globalSetup, aber im richtigen Prozess.
+5. **Zeichenersetzung statt `encodeURIComponent()`** fuer `test.case_id` (Invariante I1).
 
 **Teilschritte:**
 
-- [ ] S12.1: Fixture um OTel SDK Root-Span und dynamischen `traceparent` via `page.route()` erweitern:
+- [ ] S12.1: `layer4-e2e/helpers/otel-fixture.ts` umschreiben:
   ```typescript
-  // Erweiterte Fixture (Ausbaustufe 2)
-  import { trace, context } from '@opentelemetry/api';
+  // SPDX-License-Identifier: AGPL-3.0-or-later
+  import { test as base } from '@playwright/test';
+  import { randomUUID } from 'crypto';
+  import { trace } from '@opentelemetry/api';
+  import { NodeTracerProvider, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-node';
+  import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+  import { Resource } from '@opentelemetry/resources';
+  import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
-  page: async ({ page }, use, testInfo) => {
-    const tracer = trace.getTracer('playwright-tests');
-    const span = tracer.startSpan(`test: ${testInfo.title}`);
-    const ctx = trace.setSpan(context.active(), span);
+  export const test = base.extend<{}, { _otelProvider: NodeTracerProvider }>({
+    // Worker-scoped: einmal pro Worker initialisiert, bei workers:1 = einmal gesamt
+    _otelProvider: [async ({}, use) => {
+      const provider = new NodeTracerProvider({
+        resource: new Resource({
+          [ATTR_SERVICE_NAME]: 'playwright-tests',
+        }),
+        spanProcessors: [
+          new SimpleSpanProcessor(
+            new OTLPTraceExporter({
+              url: 'http://otel-collector:4318/v1/traces',
+            })
+          ),
+        ],
+      });
+      provider.register();
+      await use(provider);
+      await provider.shutdown();
+    }, { scope: 'worker' }],
 
-    const runId = process.env.TEST_RUN_ID || randomUUID();
-    const caseId = encodeURIComponent(testInfo.title);
+    page: async ({ page, _otelProvider }, use, testInfo) => {
+      const tracer = trace.getTracer('playwright-tests');
+      const runId = process.env.TEST_RUN_ID || randomUUID();
+      const caseId = testInfo.title.replace(/[^a-zA-Z0-9_.-]/g, '_');
 
-    // Dynamischer traceparent pro Request
-    await page.route('**/*', async (route) => {
-      const traceId = span.spanContext().traceId;
-      const spanId = /* neue Span-ID pro Request */;
-      const traceparent = `00-${traceId}-${spanId}-01`;
-      await route.continue({
-        headers: {
-          ...route.request().headers(),
-          'traceparent': traceparent,
-          'baggage': `test.run_id=${runId},test.case_id=${caseId}`,
+      const rootSpan = tracer.startSpan(`test: ${caseId}`, {
+        attributes: {
+          'test.run_id': runId,
+          'test.case_id': caseId,
         },
       });
-    });
+      const spanContext = rootSpan.spanContext();
+      const traceparent = `00-${spanContext.traceId}-${spanContext.spanId}-01`;
 
-    await use(page);
-    span.end();
-  },
+      // NUR webtrees-Requests — nicht otel-collector:4318 (Boomerang OTLP)
+      await page.route(/^http:\/\/webtrees(:\d+)?\//, async (route) => {
+        await route.continue({
+          headers: {
+            ...route.request().headers(),
+            'traceparent': traceparent,
+            'baggage': `test.run_id=${runId},test.case_id=${caseId}`,
+          },
+        });
+      });
+
+      await use(page);
+      rootSpan.end();
+    },
+  });
+
+  export { expect } from '@playwright/test';
   ```
-- [ ] S12.2: OTel SDK Initialisierung als Playwright globalSetup oder in der Fixture konfigurieren (Exporter auf `http://otel-collector:4318/v1/traces`)
-- [ ] S12.3: Verifizieren, dass Playwright-Root-Spans in Jaeger erscheinen
+- [ ] S12.2: `layer5-performance/helpers/otel-fixture.ts` identisch aktualisieren
+- [ ] S12.3: `make test-e2e-quick` — Basisfunktionalitaet verifizieren (30 Tests bestehen, PHP-Spans mit `test.run_id`)
+- [ ] S12.4: Verifizieren, dass Playwright-Root-Spans in `traces.json` unter Service `playwright-tests` erscheinen
+- [ ] S12.5: Verifizieren, dass PHP-Spans dieselbe `trace_id` wie der zugehoerige Playwright-Root-Span haben
+- [ ] S12.6: Verifizieren, dass Browser-Spans (`webtrees-browser`) weiterhin erscheinen (Regression A1.2)
+
+**Abweichungen vom urspruenglichen Plan:**
+
+| Urspruenglich (fehlerhaft) | Korrigiert | Begruendung |
+|---|---|---|
+| `encodeURIComponent(testInfo.title)` | `testInfo.title.replace(/[^a-zA-Z0-9_.-]/g, '_')` | F7: PHP BaggagePropagator verwirft %-Sequenzen |
+| `page.route('**/*')` | `page.route(/^http:\/\/webtrees(:\d+)?\//)` | Verhindert traceparent-Injection in Boomerang-OTLP-Requests an Collector |
+| `page.setExtraHTTPHeaders()` + `page.route()` parallel | Nur `page.route()` | Vermeidet Header-Merge-Problematik; `route.continue()` ueberschreibt alle Header |
+| Per-Request-Child-Span (`spanId = /* neu */`) | Statischer `traceparent` (Root-Span-ID) | auto-psr15 erzeugt Request-Spans serverseitig; Client-seitige Child-Spans redundant |
+| `globalSetup` fuer OTel SDK | Worker-scoped Fixture | `globalSetup` laeuft in separatem Prozess — TracerProvider dort nicht in Tests verfuegbar |
+| `@opentelemetry/sdk-node` | `@opentelemetry/sdk-trace-node` | `sdk-node` bringt Auto-Instrumentierung mit, die im Playwright-Kontext nicht benoetigt wird |
 
 ---
 
@@ -1373,20 +1469,32 @@ Ausbaustufe 2 erweitert Ausbaustufe 1 um eine kausale Trace-Kette mittels Playwr
 
 **Geaenderte Datei:** `modules/otel-spans/OtelSpansModule.php`
 
+**Design-Entscheidung:** Der `Server-Timing`-Header enthaelt den Span-Context des auto-psr15-Root-Spans (nicht des OtelSpansModule-Child-Spans). Dadurch wird Boomerangs `documentLoad`-Span ein Sibling des Custom-Spans — die Hierarchie bleibt flach und uebersichtlich. Der auto-psr15-Context muss **vor** dem eigenen `spanBuilder()` gesichert werden, da `Span::getCurrent()` danach den Child-Span liefern wuerde.
+
 **Teilschritte:**
 
-- [ ] S13.1: Nach `$handler->handle($request)` den aktuellen Span-Context als `Server-Timing`-Header in die Response schreiben:
+- [ ] S13.1: In `process()` den auto-psr15-Root-Span-Context **vor** dem eigenen Span-Start sichern und nach `$handler->handle()` als `Server-Timing`-Header setzen:
   ```php
-  $response = $handler->handle($request);
-  $spanContext = \OpenTelemetry\API\Trace\Span::getCurrent()->getContext();
+  // VOR Span-Start: auto-psr15 Root-Span-Context sichern
+  $parentContext = \OpenTelemetry\API\Trace\Span::getCurrent()->getContext();
+
+  $span = $tracer->spanBuilder('webtrees.' . $mapping['action'])
+      ->setSpanKind(SpanKind::KIND_INTERNAL)
+      ->startSpan();
+  // ... Attribute, Baggage, handle(), span->end() wie bisher ...
+
+  // NACH Span-End: Server-Timing mit Root-Span-Context
   $serverTiming = sprintf(
       'traceparent;desc="00-%s-%s-01"',
-      $spanContext->getTraceId(),
-      $spanContext->getSpanId()
+      $parentContext->getTraceId(),
+      $parentContext->getSpanId()
   );
   return $response->withHeader('Server-Timing', $serverTiming);
   ```
-- [ ] S13.2: Verifizieren, dass `Server-Timing`-Header in HTTP-Responses vorhanden ist (Browser DevTools oder `curl -I`)
+- [ ] S13.2: **`class_exists`-Guard beachten** (Invariante I5) — Server-Timing nur setzen wenn OTel aktiv. Der bestehende Guard am Methodenkopf (`if (!class_exists(Globals::class)) return ...`) deckt dies bereits ab — keine zusaetzliche Pruefung noetig, aber bei Refactoring nicht entfernen.
+- [ ] S13.3: Verifizieren: `curl -sI http://localhost:8080/ | grep -i server-timing`
+
+**Einschraenkung:** Server-Timing wird nur fuer die 56 gemappten Routes gesetzt (OtelSpansModule-Durchlauf mit Span). Fuer ungemappte Routes (Durchlauf ohne Span, Zeile `return $handler->handle($request)`) fehlt der Header — Boomerangs `documentLoad` bleibt dort ohne kausale Verknuepfung. Dies betrifft seltene Admin- und Utility-Routes und ist fuer die Testauswertung akzeptabel.
 
 ---
 
@@ -1396,28 +1504,48 @@ Ausbaustufe 2 erweitert Ausbaustufe 1 um eine kausale Trace-Kette mittels Playwr
 
 **Teilschritte:**
 
-- [ ] S14.1: Erkennung von Playwright-Spans (`service.name` fuer den Playwright-Service)
-- [ ] S14.2: Darstellung der vierstufigen Hierarchie (Playwright --> Boomerang --> PHP --> DB)
-- [ ] S14.3: Validierung der Parent-Child-Beziehungen (traceparent-Konsistenz)
+- [ ] S14.1: `classify_span()` um Playwright-Service erweitern:
+  ```python
+  if span.service_name == "playwright-tests":
+      return "Playwright (E2E)"
+  ```
+- [ ] S14.2: Playwright-Root-Spans in die Report-Zusammenfassung aufnehmen (Anzahl, Service-Name, Testfaelle)
+- [ ] S14.3: Parent-Child-Konsistenz pruefen — PHP-Spans muessen `parent_span_id` eines Playwright-Spans haben (gleiche `trace_id`)
+- [ ] S14.4: Boomerang-Spans mit gleicher `trace_id` wie Playwright-Spans identifizieren (trace_id-basierte Korrelation ersetzt temporale Korrelation fuer Faelle mit Server-Timing)
+
+**Hinweis:** Die bestehende temporale Korrelation fuer Boomerang-Spans (Zeitfenster-Methode aus Ausbaustufe 1) bleibt als Fallback erhalten — sie greift fuer Requests ohne Server-Timing (ungemappte Routes) und fuer den Fall, dass Boomerang den `Server-Timing`-Header nicht auswertet (V8).
 
 ---
 
-### 5.3 Resultierende Trace-Kette (4 Stufen)
+### 5.5 Resultierende Trace-Kette
+
+**Mit Server-Timing (gemappte Routes — 56 von ca. 80):**
 
 ```
-Playwright Root-Span (test: "homepage loads without errors")
-  +-- Boomerang documentFetch (Browser --> Server, via traceparent)
-  |     +-- PHP Request-Span (Server, Child des propagierten traceparent)
-  |           +-- webtrees.view_tree (Custom-Span)
-  |           +-- PDO Span (SELECT users ...)
-  |           +-- PDO Span (SELECT trees ...)
-  |           +-- PDO Span (SELECT modules ...)
-  +-- Boomerang documentLoad (Browser-seitiges Timing)
-  |     +-- resourceFetch Spans (CSS, JS, Bilder)
-  +-- Boomerang XHR/Fetch Spans (AJAX-Requests nach Page-Load)
-        +-- PHP Request-Span (nachfolgende Requests)
-              +-- PDO Spans
+Playwright Root-Span (test: homepage_loads_without_errors)  [playwright-tests]
+  |
+  |-- traceparent: 00-{traceId}-{rootSpanId}-01  (via page.route)
+  |
+  +-- PHP auto-psr15 (GET /)  [webtrees]                parentSpanId = rootSpanId
+  |     +-- webtrees.view_tree (Custom-Span)              parentSpanId = psr15SpanId
+  |     +-- PDO Span (SELECT ...)                         parentSpanId = psr15SpanId
+  |     +-- PDO Span (SELECT ...)                         parentSpanId = psr15SpanId
+  |
+  +-- PHP auto-psr15 (GET /ajax/...)  [webtrees]         parentSpanId = rootSpanId
+  |     +-- webtrees.search_query (Custom-Span)
+  |     +-- PDO Spans
+  |
+  +-- Boomerang documentLoad  [webtrees-browser]         parentSpanId = psr15SpanId
+        +-- resourceFetch Spans (CSS, JS, Bilder)                 (via Server-Timing)
 ```
+
+**Ohne Server-Timing (ungemappte Routes oder OTEL_SDK_DISABLED):**
+
+Fallback auf Ausbaustufe-1-Verhalten: Boomerang-Spans in separatem Trace, nur ueber Zeitfenster korrelierbar.
+
+**Unterschied zu Ausbaustufe 1:** In Stufe 1 hat jeder PHP-Request eine eigene `trace_id` (vom PHP-SDK generiert). In Stufe 2 teilen sich alle Requests eines Testfalls dieselbe `trace_id` (von Playwright vorgegeben). Dadurch zeigt Jaeger einen einzigen Trace mit allen Spans statt vieler einzelner Traces pro Testfall.
+
+**Korrektur gegenueber dem urspruenglichen Diagramm:** Boomerang `documentLoad` ist kein Parent der PHP-Spans, sondern umgekehrt — PHP setzt den `Server-Timing`-Header, Boomerang liest ihn und ordnet sich als Child ein. Die Kette ist: `Playwright → PHP → Boomerang` (nicht `Playwright → Boomerang → PHP`).
 
 ---
 
@@ -1425,7 +1553,7 @@ Playwright Root-Span (test: "homepage loads without errors")
 
 ### 6.1 Voraussetzungen
 
-Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
+Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist verifiziert (alle A1.1-A1.8 bestehen).
 
 ### 6.2 Testlauf-Prozedur `[ ]`
 
@@ -1433,21 +1561,41 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
   ```bash
   make clean && make up && make setup
   ```
-- [ ] 6.2.2: Layer 3 ausfuehren: `make test-integration`
-- [ ] 6.2.3: Layer 4 ausfuehren: `make test-e2e`
-- [ ] 6.2.4: Layer 5 ausfuehren: `make test-performance`
-- [ ] 6.2.5: Graceful Degradation mit `OTEL_SDK_DISABLED=true` verifizieren
+- [ ] 6.2.2: Quick-Targets fuer schnelles Feedback:
+  ```bash
+  make test-integration-quick   # 3 repraesentative Faelle
+  make test-e2e-quick            # 3 repraesentative Faelle + OTel-Korrelation
+  ```
+- [ ] 6.2.3: Vollstaendige Testlaeufe:
+  ```bash
+  make test-integration
+  make test-e2e
+  make test-performance
+  ```
+- [ ] 6.2.4: Invarianten-Pruefung — mindestens verifizieren:
+  - PHP-Spans enthalten `test.run_id` + `test.case_id` (A1.3)
+  - Browser-Spans (`webtrees-browser`) vorhanden (A1.2)
+  - Playwright-Root-Spans (`playwright-tests`) vorhanden (A2.1)
+  - Gleiche `trace_id` bei Playwright- und PHP-Spans (A2.2)
+- [ ] 6.2.5: Graceful Degradation mit `OTEL_SDK_DISABLED=true` verifizieren:
+  ```bash
+  make clean
+  OTEL_SDK_DISABLED=true make up && OTEL_SDK_DISABLED=true make setup
+  make test-e2e-quick
+  ```
+  **Erwartung:** Playwright OTel SDK sendet weiterhin Spans (Node.js, unabhaengig von PHP-OTel). PHP erzeugt keine Spans. Boomerang wird nicht injiziert. Tests bestehen ohne Fehler.
 
 ### 6.3 Abnahmekriterien Ausbaustufe 2
 
-| # | Kriterium | Status |
-|---|---|---|
-| A2.1 | Jaeger UI zeigt Playwright-Root-Spans (ein Span pro Testfall) | `[ ]` |
-| A2.2 | Kausale Trace-Kette: Playwright --> Boomerang --> PHP --> DB (Parent-Child via traceparent) | `[ ]` |
-| A2.3 | `Server-Timing`-Header in PHP-Responses vorhanden | `[ ]` |
-| A2.4 | Boomerang `instrumentation-document-load` liest Server-Timing und ordnet Span in Trace ein | `[ ]` |
-| A2.5 | trace-report.py zeigt vierstufige Hierarchie korrekt an | `[ ]` |
-| A2.6 | Alle Abnahmekriterien aus Ausbaustufe 1 (A1.1-A1.8) bestehen weiterhin | `[ ]` |
+| # | Kriterium | Status | Anmerkung |
+|---|---|---|---|
+| A2.1 | Playwright-Root-Spans in traces.json (Service `playwright-tests`, ein Span pro Testfall) | `[ ]` | — |
+| A2.2 | Kausale Verknuepfung: PHP-Spans haben gleiche `trace_id` wie Playwright-Root-Span und `parent_span_id` = Root-Span-ID | `[ ]` | — |
+| A2.3 | `Server-Timing`-Header in PHP-Responses fuer gemappte Routes vorhanden | `[ ]` | — |
+| A2.4 | Boomerang-Spans haben gleiche `trace_id` wie zugehoeriger Playwright-Trace (Server-Timing-Bruecke) | `[ ]` | Abhaengig von Boomerang-OTel-Plugin Server-Timing-Support (V8) |
+| A2.5 | `trace-report.py` erkennt Playwright-Spans und zeigt Hierarchie | `[ ]` | — |
+| A2.6 | Alle Abnahmekriterien A1.1-A1.8 bestehen weiterhin (`make test-e2e-quick`) | `[ ]` | Regressionspruefung gegen Ausbaustufe 1 |
+| A2.7 | `page.route()` interceptiert keine OTLP-Requests an `otel-collector:4318` | `[ ]` | Browser-Span-Zaehlung soll wie in Stufe 1 sein |
 
 ### 6.4 Artefakt-Archivierung `[ ]`
 
@@ -1457,6 +1605,7 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
   TIMESTAMP=$(date +%Y%m%d_%H%M%S)
   ARCHIVE="artifacts_${STUFE}_${TIMESTAMP}.zip"
   zip -r "$ARCHIVE" artifacts/
+  mkdir -p docs/laufzeit_analyse/archives
   mv "$ARCHIVE" docs/laufzeit_analyse/archives/
   ```
 - [ ] 6.4.2: Aufraeumen:
@@ -1485,6 +1634,11 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
 | R16 | Boomerang-Spans ohne test.run_id | Mittel | workers=1; temporale Korrelation |
 
 | R17 | **EINGETRETEN:** PHP OTel SDK ohne gRPC-Transport | Hoch | `.env` setzte `grpc`, aber `transport-grpc` war nicht installiert → 0 Spans. Fix: `http/protobuf` (siehe F1) |
+| R18 | `page.route('**/*')` interceptiert Boomerang-OTLP-Requests | Hoch | Route-Pattern auf `/^http:\/\/webtrees(:\d+)?\/` einschraenken — nur webtrees-Requests abfangen (Ausbaustufe 2) |
+| R19 | Boomerang-OTel-Plugin unterstuetzt Server-Timing nicht | Mittel | inspectIT boomerang-opentelemetry.js v2.0.0-2 basiert auf `@opentelemetry/instrumentation-document-load`, das Server-Timing liest. Verifizierung noetig (V8). Fallback: temporale Korrelation aus Stufe 1 |
+| R20 | `page.route()` Overhead in Performance-Tests (Layer 5) | Niedrig | Abfangen und Weiterleiten der Requests fuegt minimale Latenz hinzu; bei Baseline-Vergleichen hebt sich der Effekt auf, da er in allen Laeufen gleich ist |
+| R21 | Playwright `globalSetup` laeuft in separatem Prozess | Hoch | TracerProvider aus `globalSetup` nicht in Test-Workern verfuegbar. Mitigation: Worker-scoped Fixture statt globalSetup (Ausbaustufe 2, S12) |
+| R22 | Server-Timing nur fuer 56 gemappte Routes | Niedrig | Ungemappte Routes (Admin, Utility) haben keinen Server-Timing Header. Boomerang-Spans dort ohne kausale Verknuepfung — Fallback auf temporale Korrelation |
 
 **Eliminierte Risiken:** Apache ABI-Inkompatibilitaet (kein Apache OTel-Modul), MySQL Telemetry Enterprise-only (nicht verwendet). R17 (gRPC-Transport) behoben. R12 (Percent-Encoding) behoben durch Zeichenersetzung.
 
@@ -1501,6 +1655,9 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
 | V5 | Baggage::getCurrent() Timing | Baggage propagiert bevor OTel-Spans-Modul ausfuehrt | S5 | `[x]` | `test.run_id` in 40 Spans korrekt extrahiert — Baggage-Kontext vor Middleware aktiv |
 | V6 | Baggage-Werte durch Stack | test.case_id korrekt durch Stack | S5/S7 | `[x]` | Geloest durch Zeichenersetzung statt Percent-Encoding (siehe F7). 30 Testfaelle korrekt zugeordnet. |
 | V7 | File-Exporter Flush-Timing | Collector flusht vor Report-Generierung | S9 | `[x]` | Geloest durch `append: true` im File-Exporter |
+| V8 | Boomerang OTel-Plugin Server-Timing | `boomerang-opentelemetry.js` v2.0.0-2 liest `Server-Timing` Header und setzt `parentSpanId` korrekt | S13 | `[ ]` | Abhaengig von inspectIT-Plugin-Implementierung; Fallback: temporale Korrelation |
+| V9 | page.route() Pattern-Ausschluss | `page.route(/^http:\/\/webtrees/)` faengt keine Requests an `otel-collector:4318` ab | S12 | `[ ]` | Browser-Span-Zaehlung nach Stufe 2 vergleichen mit Stufe 1 |
+| V10 | TracerProvider Worker-Scope | Worker-scoped Fixture initialisiert TracerProvider im Test-Prozess (nicht globalSetup) | S12 | `[ ]` | `provider.shutdown()` in Fixture-Teardown muss Spans flushen |
 
 ---
 
