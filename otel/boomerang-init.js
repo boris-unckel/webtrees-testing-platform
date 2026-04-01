@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Boomerang + OTel-Plugin Initialisierung
 (function() {
-  var collectorHost = window.location.hostname;
-  var collectorUrl = 'http://' + collectorHost + ':4318/v1/traces';
+  var collectorUrl = 'http://otel-collector:4318/v1/traces';
 
   BOOMR.init({
     beacon_url: '/beacon/',

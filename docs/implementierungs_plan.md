@@ -1116,7 +1116,7 @@ Warnungen: keine
 
 ### Phase 5: Browser-RUM (S6)
 
-#### S6: Boomerang + mod_substitute `[~]`
+#### S6: Boomerang + mod_substitute `[x]`
 
 **Neue Dateien:** `otel/boomerang-init.js`, `otel/boomerang-apache.conf`
 **Geaenderte Datei:** `Containerfile.webtrees`
@@ -1192,7 +1192,7 @@ Warnungen: keine
     ```
 - [x] S6.4: Container-Image neu bauen (`make down && make up`)
 - [x] S6.5: Verifizieren, dass `http://localhost:8080` die Boomerang-Scripts im HTML-Source eingebettet hat (View Source, suche nach `boomerang.js`)
-- [ ] S6.6: Verifizieren, dass Browser-Spans in Jaeger unter `webtrees-browser` erscheinen — Boomerang-Injection aktiv, aber 0 Browser-Spans in traces.json nach E2E-Quick-Lauf (2026-04-01). Span-Zustellung funktioniert nicht.
+- [x] S6.6: Verifizieren, dass Browser-Spans in Jaeger unter `webtrees-browser` erscheinen — 2.430 Browser-Spans nach E2E-Quick-Lauf (2026-04-01). Erforderte drei Fixes: INFLATE;SUBSTITUTE;DEFLATE-Filterkette (F9), Collector-URL auf Container-Hostname (F10), CORS-Origin ohne Port (F11).
 - [x] S6.7: Verifizieren, dass bei `OTEL_SDK_DISABLED=true` keine Boomerang-Injection stattfindet
 
 **Verifizierung V3:** mod_substitute Interaktion mit `FallbackResource /index.php` — testen, ob Injection bei internem Subrequest korrekt funktioniert.
@@ -1259,7 +1259,7 @@ Alle Schritte S1-S10 sind abgeschlossen und einzeln verifiziert.
 | # | Kriterium | Status | Anmerkung |
 |---|---|---|---|
 | A1.1 | Jaeger UI zeigt PHP-Spans (auto-psr15, auto-pdo, OTel-Spans-Modul) | `[x]` | 191.702 Spans (144.662 PDO, 46.985 PSR-15, 55 Custom) in traces.json nach Quick-Test 2026-04-01 |
-| A1.2 | Jaeger UI zeigt Browser-Spans (`webtrees-browser` via Boomerang) | `[ ]` | Boomerang-Injection aktiv, aber 0 Browser-Spans in traces.json — Zustellung funktioniert nicht |
+| A1.2 | Jaeger UI zeigt Browser-Spans (`webtrees-browser` via Boomerang) | `[x]` | 2.430 Browser-Spans in traces.json nach E2E-Quick-Lauf (2026-04-01). Fixes: F9, F10, F11 |
 | A1.3 | PHP-Spans enthalten `test.run_id` und `test.case_id` als Attribute | `[x]` | 40 OtelSpansModule-Spans mit beiden Attributen, 30 Testfaelle korrekt gruppiert (nach F7-Fix) |
 | A1.4 | Span-Hierarchie korrekt: PSR-15 Root --> Custom --> DB-Spans | `[x]` | Alle 3 Scopes in Hierarchie verifiziert |
 | A1.5 | `trace-report.py` parst OTLP-NDJSON, gruppiert nach Testfall, gibt Layer-Aufschluesselung aus | `[x]` | Vollstaendig funktional: Testfall-Gruppierung + PerfSchema-Aggregat + JSON-Report |
@@ -1567,13 +1567,16 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
 | F6 | **Makefile: TEST_RUN_ID nicht im Container** | Plan-Code nutzte `TEST_RUN_ID=$$RUN_ID $(COMPOSE) exec playwright ...` — Umgebungsvariablen vor `podman-compose exec` werden nicht in den Container weitergeleitet. | `$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright ...` | `Makefile` |
 | F7 | **test.case_id nicht in Spans (Percent-Encoding-Bug)** | `encodeURIComponent()` erzeugt `%XX`-Sequenzen. Der PHP OTel SDK BaggagePropagator interpretiert `%`-Sequenzen als Encoding und verwirft Eintraege mit dekodierten Sonderzeichen (Leerzeichen, Komma). `test.run_id` (UUID, keine `%`-Zeichen) war nicht betroffen. | Zeichenersetzung statt Percent-Encoding: `testInfo.title.replace(/[^a-zA-Z0-9_.-]/g, '_')`. `urldecode()` im PHP-Modul und `unquote()` in trace-report.py entfernt. | `otel-fixture.ts`, `OtelSpansModule.php`, `trace-report.py` |
 | F8 | **PerfSchema-JSON ungueltig (MySQL-Warnung)** | `mysql -p"..."` gibt `mysql: [Warning] Using a password on the command line interface can be insecure.` auf stderr aus. `podman-compose exec` leitet Container-stderr in stdout — die Warnung landete vor dem JSON in den Ausgabedateien. `trace-report.py` scheiterte beim Parsen. | `MYSQL_PWD` Umgebungsvariable statt `-p` Argument: `podman-compose exec -e MYSQL_PWD=... mysql -u root ...`. Eliminiert die Warnung statt sie umzuleiten. | `extract-perfschema.sh`, `truncate-perfschema.sh` |
+| F9 | **Browser-Spans: mod_deflate komprimiert vor mod_substitute** | Browser sendet `Accept-Encoding: gzip`. Apache `mod_deflate` komprimiert die Response bevor `mod_substitute` laueft — die Substitution findet `</head>` nicht im gzip-Stream. Resultat: 0 Boomerang-Injections bei gzip-faehigen Clients (alle Browser). | Filter-Kette `INFLATE;SUBSTITUTE;DEFLATE` statt nur `SUBSTITUTE`: Erst dekomprimieren, dann substituieren, dann wieder komprimieren. | `otel/boomerang-apache.conf` |
+| F10 | **Browser-Spans: Collector-URL zeigt auf falschen Hostname** | `boomerang-init.js` nutzte `window.location.hostname` fuer die Collector-URL. Im Playwright-Kontext (Headless Chromium) ist `window.location.hostname` = `webtrees` (Container-interne Adresse). Der Collector hoert auf `otel-collector:4318`, nicht `webtrees:4318`. | Collector-URL auf `http://otel-collector:4318/v1/traces` fest kodiert. Im Container-Netzwerk ist dieser Hostname immer korrekt. | `otel/boomerang-init.js` |
+| F11 | **Browser-Spans: CORS-Origin ohne Port nicht erlaubt** | Browser sendet `Origin: http://webtrees` (Standard-Port 80 wird gemaess RFC weggelassen). Der OTel Collector hatte nur `http://webtrees:80` in `allowed_origins`. CORS-Preflight gab 204 zurueck, aber ohne `Access-Control-Allow-Origin`-Header — Browser blockierte den Request. | `http://webtrees` (ohne Port) zu `allowed_origins` hinzugefuegt. | `otel/otel-collector-config.yaml` |
 
 ### 13.2 Offene Punkte
 
 | # | Punkt | Prioritaet | Abhaengigkeit |
 |---|---|---|---|
 | O1 | ~~Erneuter Testlauf mit http/protobuf-Fix~~ **ERLEDIGT** (2026-04-01) — Quick-Target-Lauf: 79/79 Integration, 30/30 E2E. 40 OTel-Spans mit `test.run_id` + `test.case_id`, 30 Testfaelle korrekt gruppiert. Trace-Report + PerfSchema funktional. | ~~Hoch~~ | — |
-| O2 | **A1.2 Browser-Spans funktionieren nicht** — 0 Browser-Spans (`webtrees-browser`) in traces.json nach E2E-Quick-Lauf (2026-04-01). Boomerang-Scripts werden injiziert, aber es entstehen keine Spans. Moegliche Ursachen: Boomerang OTel-Plugin laeuft im Headless-Chromium nicht korrekt, CORS-Problem, oder OTel-Plugin-Initialisierungsfehler. | Mittel | — |
+| O2 | ~~A1.2 Browser-Spans funktionieren nicht~~ **ERLEDIGT** (2026-04-01) — 2.430 Browser-Spans (`webtrees-browser`) in traces.json nach E2E-Quick-Lauf. Drei Ursachen: mod_deflate komprimierte vor mod_substitute (F9), Collector-URL zeigte auf falschen Hostname (F10), CORS-Origin ohne Port nicht erlaubt (F11). | ~~Mittel~~ | — |
 | O3 | ~~Baggage-Korrelation End-to-End~~ **ERLEDIGT** (2026-04-01) — `test.run_id` und `test.case_id` in allen 40 OtelSpansModule-Spans verifiziert. Fix: Zeichenersetzung statt Percent-Encoding (F7). | ~~Mittel~~ | — |
 | O4 | **Erstarchiv ersetzen** — `artifacts_ausbaustufe-1_20260329_203150.zip` enthaelt 0 Spans. Neues Archiv mit echten Trace-Daten aus den Quick-Laeufen (2026-04-01) sollte erstellt werden. | Niedrig | — |
 | O5 | **Bekannter Flaky Test** — `search-replace.spec.ts:52` ("search-and-replace page not accessible for visitor") schlaegt beim ersten Versuch fehl, besteht beim Retry. Kein Code-Problem; Timing-Issue. Tritt konsistent in beiden E2E-Laeufen auf. | Niedrig | — |
@@ -1660,7 +1663,7 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist archiviert.
 | 3 | S8 | PerfSchema-Extraktion | `[ ]` |
 | 4 | S9 | Trace-Report-Script | `[ ]` |
 | 4 | S10 | Makefile-Integration | `[ ]` |
-| 5 | S6 | Boomerang + mod_substitute | `[ ]` |
+| 5 | S6 | Boomerang + mod_substitute | `[x]` |
 | — | — | Testlauf Ausbaustufe 1 | `[ ]` |
 | — | — | Archivierung Ausbaustufe 1 | `[ ]` |
 
