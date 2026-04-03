@@ -138,4 +138,46 @@ class RelationshipServiceIntegrationTest extends MysqlTestCase
         $this->assertSame('maternal grandmother', $this->relationship_service->legacyNameAlgorithm('motmot'));
     }
 
+    // --- AP1: legacyCousinName — Cousin-Pfade (S16) ---
+
+    /**
+     * S16 — Dritter Cousin: fatfatfatbrosonsonson triggert legacyCousinName(3).
+     * Regex: (fat|fat|fat) bro (son|son|son) → up=3, down=3, cousin=3, removed=0.
+     */
+    public function test_legacy_name_algorithm_third_cousin(): void
+    {
+        $this->assertSame('third cousin', $this->relationship_service->legacyNameAlgorithm('fatfatfatbrosonsonson'));
+    }
+
+    /**
+     * S16 — Vierter Cousin: legacyCousinName(4, 'U').
+     * up=4, down=4, cousin=4, removed=0.
+     */
+    public function test_legacy_name_algorithm_fourth_cousin(): void
+    {
+        $this->assertSame('fourth cousin', $this->relationship_service->legacyNameAlgorithm('fatfatfatfatbrosonsonsonson'));
+    }
+
+    /**
+     * S16 — Zweiter Cousin einmal entfernt (aufsteigend): removed=1, up>down.
+     * up=3, down=2, cousin=2, removed=1.
+     */
+    public function test_legacy_name_algorithm_second_cousin_once_removed_ascending(): void
+    {
+        $result = $this->relationship_service->legacyNameAlgorithm('fatfatfatbrosonson');
+        $this->assertStringContainsString('second cousin', $result);
+        $this->assertStringContainsString('ascending', $result);
+    }
+
+    /**
+     * S16 — Zweiter Cousin einmal entfernt (absteigend): removed=1, up<down.
+     * up=2, down=3, cousin=2, removed=1.
+     */
+    public function test_legacy_name_algorithm_second_cousin_once_removed_descending(): void
+    {
+        $result = $this->relationship_service->legacyNameAlgorithm('fatfatbrosonsonson');
+        $this->assertStringContainsString('second cousin', $result);
+        $this->assertStringContainsString('descending', $result);
+    }
+
 }

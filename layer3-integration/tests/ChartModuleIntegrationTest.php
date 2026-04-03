@@ -371,4 +371,32 @@ class ChartModuleIntegrationTest extends MysqlTestCase
 
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
+
+    /**
+     * S18/S20 — Branches ajax-Branch: getDescendantsHtml (private) wird intern aufgerufen.
+     *
+     * handle() mit ajax=1 betritt den AJAX-Branch und ruft intern
+     * getPatriarchsHtml() → getDescendantsHtml() auf.
+     */
+    public function test_branches_list_ajax_calls_get_descendants_html(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $module  = new \Fisharebest\Webtrees\Module\BranchesListModule(
+            new \Fisharebest\Webtrees\Services\ModuleService(),
+        );
+        $request = $this->createRequest(
+            attributes: [
+                'tree'    => $this->tree,
+                'user'    => $admin,
+                'surname' => 'Windsor',
+            ],
+            query: ['ajax' => '1'],
+        );
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
 }

@@ -1114,18 +1114,16 @@ Feature-Matrix oben).
 
 ### Ist-Stand (Teststufe 2, Stand: 2026-04-03)
 
-> Basis: `make test-integration-quick` (3 Testklassen: SearchIntegrationTest,
-> PrivacyVisibilityTest, TreeOperationsTest) — vor diesem Implementierungsplan.
-> Voller Lauf (`make test-integration`) ergibt höhere Werte.
+> Basis: `make test-integration` (alle 17 Testklassen, 295 Tests). Vor der zweiten
+> Coverage-Erweiterung (Voll-Lauf-Baseline) waren es 285 Tests / 17,9%.
 
-| Metrik | Wert (Quick-Lauf) |
+| Metrik | Wert (Voll-Lauf) |
 |---|---|
-| Anweisungsüberdeckung | 9,0% (3.969 / 44.070 Statements) |
-| Methodenüberdeckung | 7,4% (329 / 4.442 Methoden) |
-| Dateien mit 0%-Coverage | 1.191 von 1.365 |
-| Pakete mit >50%-Coverage | CustomTags (97,2%), GedcomFilters (81,5%) |
-| Pakete mit 0%-Coverage | Census, Cli, CommonMark, Exceptions, Report, Statistics, SurnameTradition |
-| Größte unabgedeckte Pakete | Module (10.531 Stmt), Http (9.032 Stmt), Report (3.137 Stmt), Census (2.552 Stmt) |
+| Anweisungsüberdeckung | 17,9% (7.882 / 44.066 Statements) — Ratchet-Basis |
+| Methodenüberdeckung | 17,3% (767 / 4.441 Methoden) |
+| Pakete mit >50%-Coverage | Http/Routes (99,7%), CustomTags (97,2%), GedcomFilters (81,5%) |
+| Pakete mit 0%-Coverage | Census, Cli, CommonMark, Exceptions, Http/Middleware, Module/InteractiveTree, Report, Statistics/Service, SurnameTradition |
+| Größte unabgedeckte Pakete | Http/RequestHandlers (8.083 Stmt), Module (10.376 Stmt), Report (3.137 Stmt), Census (2.552 Stmt) |
 
 **Begründung:** Das Projekt startet bei ~0% substanzieller Überdeckung (95% Stub-Tests).
 Ein willkürlicher Zielwert (z. B. 80%) wäre spekulativ. Die Ratchet-Strategie schützt
