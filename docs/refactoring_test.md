@@ -2,7 +2,7 @@
 
 # Refactoring-Plan: Prompt-Architektur Coverage-Iteration
 
-> Status: In Umsetzung — Teilumsetzung abgeschlossen, ein AP offen (siehe Umsetzungsstand).  
+> Status: **Vollständig abgeschlossen.**  
 > Basis: Analyse + Klärungsgespräch 2026-04-03.
 
 ---
@@ -17,7 +17,7 @@
 | `Makefile`: `make crap-report` Target | ✅ | podman cp + exec + rm |
 | `CLAUDE.md`: Abschnitt Coverage-Iteration | ✅ | Ablauf + Target dokumentiert |
 | `component-integration-coverage_full_prompt.md` löschen | ✅ | Durch neue Struktur ersetzt |
-| Flaschenhals `_full_analysis.md` + `_full_impl_plan.md` beseitigen | ⬜ | Siehe AP unten |
+| Flaschenhals `_full_analysis.md` + `_full_impl_plan.md` beseitigen | ✅ | Sample-Dateien, Prompt-Anpassungen, `_full_*` gelöscht |
 
 ---
 
@@ -295,8 +295,8 @@ Diese Regeln müssen in jeder Prompt-Datei präsent sein, die Testausführung au
 | 4 | `post-01-finalize.md` erstellen | ✅ |
 | 5 | `CLAUDE.md` auf neue Prompt-Struktur aktualisieren | ✅ |
 | 6 | `component-integration-coverage_full_prompt.md` löschen | ✅ |
-| 7 | Flaschenhals beseitigen: Sample-Dateien + Anpassungen (siehe AP oben) | ⬜ |
-| 8 | Erste Coverage-Iteration starten: `entry.md` → `prep-01` → … | ⬜ (nach Nr. 7) |
+| 7 | Flaschenhals beseitigen: Sample-Dateien + Anpassungen (siehe AP oben) | ✅ |
+| 8 | Erste Coverage-Iteration starten: `entry.md` → `prep-01` → … | ⬜ |
 
 > `README.md` und `docs/testing-bigpicture.md`: kein Handlungsbedarf im Rahmen
 > dieses Refactorings festgestellt — werden regulär in `post-01` jeder Iteration geprüft.

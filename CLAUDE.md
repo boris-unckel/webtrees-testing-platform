@@ -108,6 +108,21 @@ Der Stack enthält OTel-Infrastruktur für Distributed Tracing (optional, Standa
 `make test-e2e` und `make test-performance` starten automatisch PerfSchema-Truncate,
 -Extraktion und Trace-Report (Artefakte unter `artifacts/`).
 
+## Coverage-Iteration (Teststufe 2)
+
+Einstiegspunkt für Coverage-Erweiterungsiterationen: `docs/coverage-iteration/entry.md`
+
+Ablauf:
+1. `prep-01` — Stack starten, `make test-integration`, `make crap-report`
+2. `prep-02` — Analyse erstellen (`docs/component-integration-coverage_full_analysis.md`)
+3. `prep-03` — Implementierungsplan + AP-Dateien erstellen
+4. AP-Dateien — Skelette parallel, Ausführung sequenziell
+5. `post-01` — Voll-Lauf, Ratchet, Commit
+
+```bash
+make crap-report   # CRAP-Score-Tabelle aus artifacts/layer3/coverage.xml (CRAP > 100, 0% Cov.)
+```
+
 ## Git
 
 Commits müssen GPG-signiert sein (`commit.gpgsign=true` global gesetzt).

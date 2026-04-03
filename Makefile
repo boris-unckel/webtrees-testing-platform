@@ -10,7 +10,7 @@ COMPOSE = podman-compose -f compose.yaml
 COMPOSE_DEBUG = podman-compose -f compose.yaml --profile debug
 COMPOSE_SECURITY = podman-compose -f compose.yaml --profile security
 
-.PHONY: help clone-upstream generate-passwords up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status
+.PHONY: help clone-upstream generate-passwords up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report crap-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
 	@grep -hE '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -157,6 +157,11 @@ logs: ## Container-Logs anzeigen
 
 status: ## Container-Status anzeigen
 	$(COMPOSE) ps
+
+crap-report: ## CRAP-Score-Report aus artifacts/layer3/coverage.xml (CRAP > 100, 0% Coverage)
+	podman cp artifacts/layer3/coverage.xml webtrees:/tmp/crap-coverage.xml
+	$(COMPOSE) exec webtrees php /tests/layer3-integration/scripts/crap-report.php /tmp/crap-coverage.xml
+	$(COMPOSE) exec webtrees rm -f /tmp/crap-coverage.xml
 
 mysql-shell: ## MySQL-Shell oeffnen
 	$(COMPOSE) exec mysql mysql -u $(MYSQL_USER) -p"$(MYSQL_PASSWORD)" $(MYSQL_DATABASE)
