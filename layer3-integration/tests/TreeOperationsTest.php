@@ -503,6 +503,59 @@ class TreeOperationsTest extends MysqlTestCase
         $this->assertStringContainsString("\xFC", $exported, 'ü muss als CP1252-Byte \xFC exportiert werden');
     }
 
+    // --- AP: G16-Regressions-Guard (PRIV_NONE / PRIV_USER) ---
+
+    /**
+     * G16 — Export mit PRIV_NONE: Handler läuft durch, Ausgabe ist valide GEDCOM.
+     *
+     * Dokumentiert das aktuelle Verhalten als Regressions-Guard. Bei demo.ged
+     * (keine RESN-Records) unterscheidet sich das Ergebnis nicht von PRIV_HIDE.
+     * Nach einem Upstream-Fix am Privacy-Filtering für PRIV_NONE kann die
+     * Assertion auf Record-Counts verschärft werden.
+     *
+     * @see docs/testing-bigpicture.md G16
+     */
+    public function test_export_with_priv_none_produces_valid_gedcom(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $container     = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $resource = $exportService->export($this->tree, access_level: Auth::PRIV_NONE);
+        $exported = stream_get_contents($resource);
+
+        $this->assertStringStartsWith('0 HEAD', $exported, 'PRIV_NONE-Export muss mit HEAD beginnen');
+        $this->assertStringContainsString('0 TRLR', $exported, 'PRIV_NONE-Export muss TRLR enthalten');
+    }
+
+    /**
+     * G16 — Export mit PRIV_USER: Mitglieder-Sicht liefert valide GEDCOM.
+     *
+     * @see docs/testing-bigpicture.md G16
+     */
+    public function test_export_with_priv_user_produces_valid_gedcom(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $container     = Registry::container();
+        $exportService = new GedcomExportService(
+            $container->get(ResponseFactoryInterface::class),
+            $container->get(StreamFactoryInterface::class),
+        );
+
+        $resource = $exportService->export($this->tree, access_level: Auth::PRIV_USER);
+        $exported = stream_get_contents($resource);
+
+        $this->assertStringStartsWith('0 HEAD', $exported, 'PRIV_USER-Export muss mit HEAD beginnen');
+        $this->assertStringContainsString('0 TRLR', $exported, 'PRIV_USER-Export muss TRLR enthalten');
+    }
+
     /**
      * G17 — Export mit ASCII Encoding schreibt keine Nicht-ASCII-Zeichen.
      */

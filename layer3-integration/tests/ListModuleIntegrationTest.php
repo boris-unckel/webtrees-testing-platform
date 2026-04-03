@@ -222,6 +222,29 @@ class ListModuleIntegrationTest extends MysqlTestCase
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
 
+    // --- AP: S19-Collation (Nachnamen-Initial-Filter) ---
+
+    /**
+     * S19 — Personenliste nach Nachnamen-Initial 'W' gefiltert: 200 OK.
+     */
+    public function test_individual_list_filtered_by_initial_returns_page(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $module  = new IndividualListModule();
+        $request = $this->createRequest(
+            attributes: ['tree' => $this->tree],
+            query:      ['alpha' => 'W'],
+        );
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        // demo.ged enthält Windsor-Nachnamen → Body enthält 'W'
+        $this->assertStringContainsString('W', (string) $response->getBody());
+    }
+
     // --- AP 8-7: Fehlende Listen-Smoke-Tests (S20) ---
 
     /**

@@ -804,6 +804,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | G21 | Upload-Validierung | Ungültige Datei (kein GEDCOM) → Fehlermeldung, kein Import | 3 | Mittel |
 | G22 | Element-Validierung | 216 Element-Klassen → Tag-Patterns und erlaubte Kinder korrekt | 1 | Mittel |
 | G23 | GEDCOM 5.5.1 Compliance | Unterstützte Tags vs. Standard-Tag-Liste → Abweichungen dokumentiert | 1 | Niedrig |
+| G24 | Referenzintegrität (CheckTree) | GEDCOM-Datenbank auf verwaiste XREFs und fehlende Verknüpfungen prüfen → Report-Handler antwortet 200 OK, keine Fehler bei valider demo.ged | 2 | Mittel |
 
 ---
 
@@ -958,12 +959,12 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | Teststufe | GEDCOM (G01–G23) | Suche/Nav (S01–S39) | Privacy (P01–P29) | Sicherheit (SEC) | Gesamt |
 |---|---|---|---|---|---|
 | Teststufe 1 — Komponententest | G05, G06, G11, G17, G18, G19, G22, G23 (8) | S04 (1) | — | — | **9** |
-| Teststufe 2 — Komponentenintegrationstest (Dateisystem) | G01–G04, G07–G10, G12–G16 (13) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (13) | P01–P24, P27–P29 (27) | SEC-H01–H02, SEC-D01–D02, SEC-C01–C03, SEC-PUB01, SEC-WZ03 (9) | **62** |
+| Teststufe 2 — Komponentenintegrationstest (Dateisystem) | G01–G04, G07–G10, G12–G16, G24 (14) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (13) | P01–P24, P27–P29 (27) | SEC-H01–H02, SEC-D01–D02, SEC-C01–C03, SEC-PUB01, SEC-WZ03 (9) | **63** |
 | Teststufe 3 — Systemtest (HTTP/Playwright) | G20, G21 (2) | S09, S13–S18, S20, S23–S24, S26–S40 (25) | P01–P03, P14–P19, P22, P24–P29 (18) | SEC-H03–H06, SEC-M01–M03, SEC-PUB02–PUB04, SEC-W01, SEC-WZ01–WZ04, SEC-HDR01–HDR04 (18) | **63** |
 | **Nur Teststufe 2** | — | — | P04–P13, P20–P21, P23 (13) | SEC-H01–H02, SEC-D01–D02, SEC-C01–C02, SEC-PUB01 (7) | — |
 | **Nur Teststufe 3** | — | — | P25, P26 (2) | SEC-H03–H06, SEC-M01–M03, SEC-PUB02–PUB04, SEC-W01, SEC-WZ01–WZ02, SEC-WZ04, SEC-HDR01–HDR04 (17) | — |
 | **Beide Teststufen** | — | — | 14 Features (P01–P03, P14–P19, P22, P24, P27–P29) | SEC-C03, SEC-WZ03 (2) | — |
-| **Summe** | **23** | **39** | **29** | **26** | **117** |
+| **Summe** | **24** | **39** | **29** | **26** | **118** |
 
 ### Prioritätsverteilung
 
@@ -998,7 +999,7 @@ Feature-Matrix oben).
 |---|---|
 | Statischer Test | PHPStan Level 8: 0 Errors; PHPCS PSR-12: 0 Violations |
 | Teststufe 1 — Komponententest | Alle Feature-Matrix-Komponententests grün (G05, G06, G11, G17–G19, G22, G23, S04); Anweisungsüberdeckung ≥ vorheriger Wert (Ratchet) |
-| Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, S01–S03, S05–S08, S10–S12, S19, S21, S22, P01–P24, P27–P29) |
+| Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, G24, S01–S03, S05–S08, S10–S12, S19 (inkl. Nachnamen-Collation via handle()), S21, S22, P01–P24, P27–P29) |
 | Teststufe 3 — Systemtest | Alle Systemtestfälle grün über alle 5 Standard-Themes (G20, G21, S09, S13–S18, S20, S23–S24, S26–S40); S32–S34 theme-unabhängig grün; Privacy-Systemtests grün (P01–P03, P14–P19, P22, P24–P29) |
 | Performanztest | Kein Szenario >20% über Baseline; kein Szenario mit >+2 DB-Queries gegenüber Baseline |
 | Sicherheitstest | Alle MUSS-Prüfpunkte (SEC-H01–H06, SEC-C01–C03, SEC-W01, SEC-WZ01–WZ04) grün; SOLL-Prüfpunkte grün oder als Upstream-Befund dokumentiert; KANN-Prüfpunkte (SEC-HDR01–HDR04) dokumentiert |
@@ -1110,6 +1111,21 @@ Feature-Matrix oben).
 | **Baseline** | Wird beim ersten vollständigen Testlauf automatisch gesetzt |
 | **Scope** | Service-Klassen der Feature-Matrizen (G01–G23, S01–S24, S26–S40, P01–P29) |
 | **Reporting** | Coverage-HTML als CI-Artefakt (7 Tage Retention) |
+
+### Ist-Stand (Teststufe 2, Stand: 2026-04-03)
+
+> Basis: `make test-integration-quick` (3 Testklassen: SearchIntegrationTest,
+> PrivacyVisibilityTest, TreeOperationsTest) — vor diesem Implementierungsplan.
+> Voller Lauf (`make test-integration`) ergibt höhere Werte.
+
+| Metrik | Wert (Quick-Lauf) |
+|---|---|
+| Anweisungsüberdeckung | 9,0% (3.969 / 44.070 Statements) |
+| Methodenüberdeckung | 7,4% (329 / 4.442 Methoden) |
+| Dateien mit 0%-Coverage | 1.191 von 1.365 |
+| Pakete mit >50%-Coverage | CustomTags (97,2%), GedcomFilters (81,5%) |
+| Pakete mit 0%-Coverage | Census, Cli, CommonMark, Exceptions, Report, Statistics, SurnameTradition |
+| Größte unabgedeckte Pakete | Module (10.531 Stmt), Http (9.032 Stmt), Report (3.137 Stmt), Census (2.552 Stmt) |
 
 **Begründung:** Das Projekt startet bei ~0% substanzieller Überdeckung (95% Stub-Tests).
 Ein willkürlicher Zielwert (z. B. 80%) wäre spekulativ. Die Ratchet-Strategie schützt
@@ -1402,7 +1418,7 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | G13 | Export GEDCOM | `GedcomExportServiceTest` ✅ | `TreeOperationsTest` ✅ | — | **Abgedeckt** |
 | G14 | Export ZIP | — (upstream-Tests decken Sort by XREF ab, nicht ZIP-Format) | `TreeOperationsTest` ✅ (3 Tests: ZIP valide, .ged enthalten, GEDZIP) | — | **Abgedeckt** |
 | G15 | Export ZIP+Media | — (upstream-Tests decken Download-Response ab, nicht ZIP+Media) | `TreeOperationsTest` ✅ (2 Tests: Mediendateien im ZIP, Referenzen) | — | **Abgedeckt** |
-| G16 | Export Privacy | `GedcomExportServiceTest` ✅ (PRIV_HIDE; PRIV_NONE/USER → upstream Bug) | — | — | **Abgedeckt** (mit Einschränkung) |
+| G16 | Export Privacy | `GedcomExportServiceTest` ✅ (PRIV_HIDE; PRIV_NONE/USER → upstream Bug) | `TreeOperationsTest` ✅ (PRIV_NONE + PRIV_USER Regressions-Guard) | — | **Abgedeckt** |
 | G17 | Export Encoding | `GedcomExportServiceTest` (CONC) ✅ | `TreeOperationsTest` ✅ (3 Tests: UTF-8, ANSEL, CP1252) | — | **Abgedeckt** |
 | G18 | Export CONC/CONT | `GedcomExportServiceTest` ✅ | — | — | **Abgedeckt** |
 | G19 | Export Header | `GedcomExportServiceTest` ✅ | — | — | **Abgedeckt** |
@@ -1410,6 +1426,7 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | G21 | Upload-Validierung | — | — | `upload-validation.spec.ts` ✅ (4 Tests: leere/Text/NoHead/Binär-Datei) | **Abgedeckt** |
 | G22 | Element-Validierung | 212 Element-Tests (substanziell, Pattern-Validierung) ✅ | — | — | **Abgedeckt** |
 | G23 | GEDCOM 5.5.1 Compliance | — | `GedcomImportTest` ✅ (1 Test: Standard-Tags OCCU/RELI/NATI nicht verworfen) | — | **Abgedeckt** |
+| G24 | Referenzintegrität | — | `CheckTreeIntegrationTest` ✅ (200 OK + nicht-leerer Body auf demo.ged) | — | **Abgedeckt** |
 
 #### Suche und Navigation (S01–S39)
 
@@ -1430,10 +1447,10 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S13 | Search-and-Replace | — | — | `search-replace.spec.ts` ✅ (2×5 Themes + 1 Visitor) | **Abgedeckt** |
 | S14 | Chart: Pedigree | `PedigreeChartModuleTest` ✅ (4 Styles) | — | `pedigree.spec.ts` ✅ (5 Themes × 2 Tests) | **Abgedeckt** |
 | S15 | Chart: Nachkommen | `DescendancyChartModuleTest` ✅ (3 Styles) | — | — | **Abgedeckt** |
-| S16 | Chart: Beziehungsfinder | `RelationshipServiceTest` ✅ (nameFromPath) | — | — | **Abgedeckt** |
+| S16 | Chart: Beziehungsfinder | `RelationshipServiceTest` ✅ (nameFromPath) | `RelationshipServiceIntegrationTest` ✅ (legacyNameAlgorithm: direkte Pfade, Onkel/Tante, Großeltern, Ehepartner) | — | **Abgedeckt** |
 | S17 | Chart: Fächerchart | `FanChartModuleTest` ✅ | — | — | **Abgedeckt** |
 | S18 | Chart: alle 13 Typen (Smoke) | 6 Chart-Tests ✅ + `StatisticsChartModuleTest` ✅ | `ChartModuleIntegrationTest` ✅ (5 Tests: Timeline, Lifespan, FamilyBook, Relationships, Branches) | — | **Abgedeckt** (13/13) |
-| S19 | Liste: Personen (Nachnamen) | `IndividualListModuleTest` ✅ (handle, show_all, listIsEmpty) | — | `navigation.spec.ts` ✅ | **Abgedeckt** |
+| S19 | Liste: Personen (Nachnamen) | `IndividualListModuleTest` ✅ (handle, show_all, listIsEmpty) | `ListModuleIntegrationTest` ✅ (initial-Filter 'W' via handle()) | `navigation.spec.ts` ✅ | **Abgedeckt** |
 | S20 | Liste: alle 10 Typen (Smoke) | 7 List-Tests ✅ (Individual, Family, Source, Repository, Note, Media, Submitter) | `ListModuleIntegrationTest` ✅ (3 Tests: Location, PlaceHierarchy, Branches) | — | **Abgedeckt** (10/10) |
 | S21 | AutoComplete (Personen) | `AutoCompleteSurnameTest` ✅ | — | — | **Abgedeckt** |
 | S22 | AutoComplete (Orte) | `AutoCompletePlaceTest` ✅ (match + no-match) | — | — | **Abgedeckt** |
