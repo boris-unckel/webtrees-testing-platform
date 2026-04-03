@@ -200,6 +200,33 @@ class ChartModuleIntegrationTest extends MysqlTestCase
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
 
+    /**
+     * AP10 — FanChartModule::chart() via ajax=1 (protected, CRAP 126).
+     * handle() ruft chart() nur auf wenn ajax=true — daher ajax=1 erforderlich.
+     */
+    public function test_fan_chart_ajax_calls_chart_method(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $module  = new FanChartModule(new ChartService());
+        $request = $this->createRequest(
+            query: ['ajax' => '1'],
+            attributes: [
+                'tree'        => $this->tree,
+                'xref'        => 'X1030',
+                'style'       => 4,
+                'generations' => 4,
+                'width'       => 210,
+            ],
+        );
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $this->assertNotEmpty($response->getBody()->getContents());
+    }
+
     // --- HourglassChartModule ---
 
     public function test_hourglass_chart_returns_page(): void
@@ -276,6 +303,31 @@ class ChartModuleIntegrationTest extends MysqlTestCase
         $response = $module->handle($request);
 
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * AP10 — TimelineChartModule::chart() via ajax=1 (protected, CRAP 132).
+     * handle() ruft chart() nur auf wenn ajax=true — daher ajax=1 erforderlich.
+     */
+    public function test_timeline_chart_ajax_calls_chart_method(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $module  = new TimelineChartModule();
+        $request = $this->createRequest(
+            query: ['ajax' => '1', 'xrefs' => ['X1030']],
+            attributes: [
+                'tree'  => $this->tree,
+                'user'  => $admin,
+                'scale' => 10,
+            ],
+        );
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $this->assertNotEmpty($response->getBody()->getContents());
     }
 
     /**

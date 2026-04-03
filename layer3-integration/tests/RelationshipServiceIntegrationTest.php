@@ -8,12 +8,16 @@ namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\RelationshipService;
+use ReflectionMethod;
 
 /**
  * Komponentenintegrationstest: RelationshipService mit MySQL.
  *
  * Testet getCloseRelationshipName() mit echten Personen aus demo.ged.
  * Ergänzt RelationshipDbTest (DB-Ebene) um Service-Ebene-Tests.
+ *
+ * legacyCousinName2() ist private static und nur über Reflection erreichbar,
+ * da sie ausschließlich im Sprachzweig 'es' (Spanisch) aufgerufen wird.
  *
  * @covers \Fisharebest\Webtrees\Services\RelationshipService
  * @see docs/testing-bigpicture.md S14, S16
@@ -178,6 +182,76 @@ class RelationshipServiceIntegrationTest extends MysqlTestCase
         $result = $this->relationship_service->legacyNameAlgorithm('fatfatbrosonsonson');
         $this->assertStringContainsString('second cousin', $result);
         $this->assertStringContainsString('descending', $result);
+    }
+
+    // --- AP7: legacyCousinName2 (private static, CRAP 462) via Reflection ---
+
+    /**
+     * legacyCousinName2 via Reflection — n=1, sex=M, relation=primo.
+     *
+     * Die Methode ist private static und nur im Sprachzweig 'es' erreichbar.
+     * Reflection ermöglicht den direkten Aufruf unabhängig von I18N::languageTag().
+     */
+    public function test_legacy_cousin_name2_male_n1_returns_string(): void
+    {
+        $method = new ReflectionMethod(RelationshipService::class, 'legacyCousinName2');
+
+        $result = $method->invoke(null, 1, 'M', 'primo');
+
+        $this->assertIsString($result);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * legacyCousinName2 via Reflection — n=1, sex=F, relation=prima.
+     */
+    public function test_legacy_cousin_name2_female_n1_returns_string(): void
+    {
+        $method = new ReflectionMethod(RelationshipService::class, 'legacyCousinName2');
+
+        $result = $method->invoke(null, 1, 'F', 'prima');
+
+        $this->assertIsString($result);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * legacyCousinName2 via Reflection — n=2 (segundo primo).
+     */
+    public function test_legacy_cousin_name2_n2_returns_string(): void
+    {
+        $method = new ReflectionMethod(RelationshipService::class, 'legacyCousinName2');
+
+        $result = $method->invoke(null, 2, 'M', 'primo');
+
+        $this->assertIsString($result);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * legacyCousinName2 via Reflection — n=3, sex=U (unbekannt).
+     */
+    public function test_legacy_cousin_name2_n3_unknown_sex_returns_string(): void
+    {
+        $method = new ReflectionMethod(RelationshipService::class, 'legacyCousinName2');
+
+        $result = $method->invoke(null, 3, 'U', 'primo');
+
+        $this->assertIsString($result);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * legacyCousinName2 via Reflection — n=4 (cuarto primo).
+     */
+    public function test_legacy_cousin_name2_n4_returns_string(): void
+    {
+        $method = new ReflectionMethod(RelationshipService::class, 'legacyCousinName2');
+
+        $result = $method->invoke(null, 4, 'M', 'primo');
+
+        $this->assertIsString($result);
+        $this->assertNotEmpty($result);
     }
 
 }

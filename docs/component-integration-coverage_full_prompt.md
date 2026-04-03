@@ -1,30 +1,50 @@
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 
-# Prompt — Vollständige Coverage-Erweiterung Komponentenintegrationstest (Teststufe 2)
+# Prompt — Iterative Coverage-Erweiterung Komponentenintegrationstest (Teststufe 2)
 
-> Ziel: Auf Basis einer vollständigen `make test-integration`-Coverage eine
+> Ziel: Auf Basis der aktuellen `make test-integration`-Coverage eine neue
 > Analyse und einen ausführbaren Umsetzungsplan erstellen und umsetzen.
+> Ausgabedateien überschreiben die bisherigen Versionen — Versionshistorie liegt in git.
 
 ---
 
 ## Kontext und Vorwissen
 
-### Was bisher existiert
+### Aktueller Stand
 
-- `docs/component-integration-coverage_analysis.md` — Analyse der Quick-Lauf-Coverage
-  (3 Testklassen: SearchIntegrationTest, PrivacyVisibilityTest, TreeOperationsTest).
-  Baseline: 9,0% Statement-, 7,4% Methodenüberdeckung.
-- `docs/component-integration-coverage_impl_plan.md` — Daraus abgeleiteter Plan,
-  der 5 Arbeitspakete (AP1–AP5) erfolgreich umgesetzt hat:
-  - AP1: S19 Nachnamen-Collation (ListModuleIntegrationTest)
-  - AP2: G16 Export-Privacy-Regressions-Guard (TreeOperationsTest)
-  - AP3: S16 legacyNameAlgorithm Pfad-Tests (RelationshipServiceIntegrationTest)
-  - AP4: G24 CheckTree Referenzintegrität (CheckTreeIntegrationTest — neu)
-  - AP5: IndividualFactsService relativeFacts (IndividualFactsIntegrationTest — neu)
+- **296 Tests, 899 Assertions** in 21 Testklassen (Stand nach letztem Commit)
+- **Statement-Coverage: 17,9%** (7.882 / 44.066 Statements, Voll-Lauf-Baseline)
+- **Methoden-Coverage: 17,3%** (767 / 4.441 Methoden)
+- Coverage-Quelle: `make test-integration` (alle Layer-3-Testklassen)
+- Ratchet-Basis: beide Werte dürfen nur steigen
 
-Der bisherige Plan basierte auf einer **verfälschten Baseline** (Quick-Lauf ≠ alle 17
-Testklassen). Dieser Prompt erzeugt eine Folge-Erweiterung auf Basis der echten
-Vollabdeckung aller Layer-3-Tests.
+Bisherige Iterationen haben erfolgreich CRAP-Scores im Bereich 14.042–380 adressiert.
+Diese Iteration erweitert den Scope auf **alle verbleibenden CRAP-Kandidaten > 100**
+(cx ≥ 10, 0% Coverage).
+
+### Aufbau-Vorlagen
+
+Die folgenden Dokumente definieren das erwartete Format für Analyse und Plan.
+**Struktur und Tiefe übernehmen — konkreten Inhalt (Klassennamen, CRAP-Zahlen,
+iterationsspezifische Hinweise) nicht übernehmen:**
+
+- `docs/component-integration-coverage_full_analysis.md` — Aufbau der Analyse
+  (Gesamtüberblick, CRAP-Ranking, Klassifikation, Gap-Analyse, Diff-Vorschläge,
+  Einschränkungstabelle)
+- `docs/component-integration-coverage_full_impl_plan.md` — Aufbau des Plans
+  (Gesamtstatus-Tabelle, Stack-Regeln, Iterationskonzept, AP-Struktur mit Status-Tracking)
+
+### Layer-Regel
+
+**Alle neuen Tests gehen in `layer3-integration/tests/`** — unabhängig davon, ob
+die Zielklasse DB-Zugriff hat oder nicht. Layer-2 (`make test-unit`, Upstream-Tests)
+bleibt vollständig unangetastet.
+
+Das bedeutet: Kandidaten aus den Paketen `Report/`, `Census/`, `SurnameTradition/`,
+`Encodings/` werden im Layer-3-Kontext (`MysqlTestCase`) getestet. Viele dieser
+Klassen benötigen nur webtrees-Bootstrap (I18N, Registry), kein DB. Sie können
+trotzdem in `MysqlTestCase` instanziiert und aufgerufen werden ohne
+`createTreeWithGedcom()` zu benötigen.
 
 ### CRAP-Score-Formel
 
@@ -32,7 +52,8 @@ Vollabdeckung aller Layer-3-Tests.
 CRAP = complexity² × (1 − coverage)³ + complexity
 ```
 
-Ein CRAP von 0% Coverage und cx=N ergibt N² + N. Ein CRAP von 100% Coverage ergibt N.
+Bei 0% Coverage vereinfacht: `CRAP = cx² + cx`. Scope dieser Iteration: **CRAP > 100**
+(entspricht cx ≥ 10 bei 0% Coverage).
 
 ---
 
@@ -40,27 +61,22 @@ Ein CRAP von 0% Coverage und cx=N ergibt N² + N. Ein CRAP von 100% Coverage erg
 
 ### 0a — Stack sauber starten
 
-**Zwingend in dieser Reihenfolge:**
-
 ```bash
 # 1. Laufende Testprozesse prüfen
-pgrep -f "phpunit" && echo "Aktiver Lauf — erst warten oder per kill beenden"
+pgrep -a phpunit && echo "Aktiver Lauf — erst warten oder per kill beenden"
 
-# 2. Alte Coverage-Artefakte entfernen
-rm -f artifacts/layer3/coverage.xml artifacts/layer3/coverage-quick.xml
-# Optional: kompletten artifacts/layer3/-Ordner bereinigen
-rm -rf artifacts/layer3/
+# 2. Alte Coverage entfernen
+rm -f artifacts/layer3/coverage.xml
 
 # 3. Stack starten — IMMER make up, NIEMALS make _compose-up direkt
-#    (make up ruft intern generate-passwords auf — ohne das bleibt .env leer
-#    und MySQL startet nicht)
+#    (make up ruft intern generate-passwords auf — ohne das bleibt .env leer)
 make up
 
 # 4. webtrees installieren (falls nicht bereits geschehen)
 make setup
 ```
 
-### 0b — Vollständige Coverage erzeugen
+### 0b — Coverage erzeugen
 
 ```bash
 # run_in_background: true — läuft deutlich länger als 10 Minuten
@@ -68,320 +84,191 @@ make setup
 make test-integration
 ```
 
-Ergebnis: `artifacts/layer3/coverage.xml` mit Coverage aller 17 Testklassen.
+Ergebnis: `artifacts/layer3/coverage.xml` mit Coverage aller Testklassen.
 
 ---
 
-## Schritt 1 — Analyse erstellen: `docs/component-integration-coverage_full_analysis.md`
+## Schritt 1 — Analyse erstellen
 
-Die Analyse folgt exakt dem Aufbau von `docs/component-integration-coverage_analysis.md`.
-Jeder der folgenden 6 Unterschritte wird gegen die neue `artifacts/layer3/coverage.xml`
-ausgeführt.
+**Ausgabe:** `docs/component-integration-coverage_full_analysis.md` (überschreibt bestehende Datei)
+
+Aufbau folgt exakt `docs/component-integration-coverage_full_analysis.md` (aktuelle Version
+vor dem Überschreiben lesen). Jeder Unterschritt wird gegen die neue `coverage.xml` ausgeführt.
 
 ### 1.1 — Gesamtüberblick
 
 Extrahiere aus `coverage.xml`:
+- Gesamt-Anweisungsüberdeckung: covered / total, Prozent
+- Gesamt-Methodenüberdeckung: covered / total, Prozent
 
-- Gesamt-Anweisungsüberdeckung: `statements` covered / total, Prozent
-- Gesamt-Methodenüberdeckung: `methods` covered / total, Prozent
-- Anzahl Dateien mit 0%-Coverage
+Erstelle Paket-Aufschlüsselung-Tabelle:
 
-Erstelle eine Paket-Aufschlüsselung-Tabelle:
+| Paket | Statements | Cov% | Methoden | MthCov% | Bewertung |
 
-| Paket | Dateien | Statements | Cov% | Methoden | MthCov% | Bewertung |
+Bewertungskategorien: Sehr gut (>80%), Gut (50–80%), Partiell (10–50%),
+Gering (1–10%), Marginal (<1%), Keine Coverage (0%).
 
-Pakete aus dem `name`-Attribut der `<package>`-Elemente in der XML ableiten.
-Bewertungskategorien: Gut abgedeckt (>50%), Partiell (10–50%), Gering (1–10%),
-Marginal (<1%), Keine Coverage (0%).
+Vergleich zur Vorgänger-Baseline (17,9% / 17,3%) als Delta-Spalte aufnehmen.
 
-**Hinweis:** In der Voll-Coverage fallen Pakete, die im Quick-Lauf mit 0% erschienen,
-jetzt ggf. in die Partiell-Kategorie. Besonders: `Services/RelationshipService`,
-`CheckTree` (jetzt durch die neuen Tests abgedeckt).
+### 1.2 — CRAP-Score-Ranking (alle CRAP > 100, 0%-Coverage)
 
-### 1.2 — CRAP-Score-Ranking Top 30
-
-Alle Methoden mit `count=0` (ungetestet im Voll-Lauf), absteigend nach CRAP-Score.
-
-Tabelle:
+Alle Methoden mit `count=0` und `CRAP > 100`, absteigend nach CRAP.
+Nicht auf Top 30 begrenzen — vollständige Liste.
 
 | Rang | CRAP | Paket | Klasse | Methode | cx |
 
-CRAP berechnen aus Clover-XML: `complexity` (ccn) und Coverage (covered/statements).
-Methoden mit 0% Coverage: `count=0` auf Statement-Ebene.
+### 1.3 — Klassifikation: DB-abhängig vs. Bootstrap-only
 
-**Wichtig:** Methoden, die im Quick-Lauf mit CRAP 516.242 erschienen aber jetzt
-abgedeckt sind (z.B. `legacyNameAlgorithm`), müssen aus der Liste verschwunden sein.
-Falls sie noch aufgeführt sind → Coverage-Wert aus XML prüfen.
+Für jeden Kandidaten: benötigt die Methode `DB::table()`, `Tree`, oder
+`Registry::individualFactory()` — oder reicht webtrees-Bootstrap (I18N, Registry)?
 
-### 1.3 — Layer-Abgrenzung
+Zwei Tabellen:
 
-Für jeden der Top-30-CRAP-Kandidaten: Klassifikation Layer-3 oder Layer-2.
+**DB-abhängig (braucht `createTreeWithGedcom()`):**
+| CRAP | Klasse | Methode | DB-Zugriff | Feature-Matrix-Bezug |
 
-**Layer-3-Kriterien (MySQL + Container nötig):**
-- Direkte `DB::table()`-Aufrufe im Code der Methode
-- `Tree`-Objekt als Parameter oder Property
-- `Registry::individualFactory()`, `Registry::container()` etc.
-- `RequestHandler`-Interface (`handle(ServerRequestInterface $request)`)
+**Bootstrap-only (kein DB-Aufruf, trotzdem Layer-3):**
+| CRAP | Klasse | Methode | Begründung | Testbarkeit |
 
-**Layer-2-Kriterien (SQLite in-memory oder kein DB):**
-- Pakete `Report/`, `Census/`, `Encodings/`, `SurnameTradition/`
-- Reine String/DOM-Manipulationsmethoden
-- Algorithmen ohne Datenbankzugriff
-
-Erstelle zwei Tabellen:
-
-**Layer-3-Kandidaten:**
-| CRAP | Klasse | Methode | Begründung Layer-3 | Feature-Matrix-Bezug |
-
-**Layer-2-Kandidaten:**
-| CRAP | Klasse | Methode | Begründung Layer-2 | Anmerkung |
-
-Bei Grenzfällen (z.B. `StatisticsData` im Paket `(root)` aber mit `DB::table()`):
-explizit kennzeichnen und Layer-3 zuordnen.
+Bei Grenzfällen (Klasse hat `DB::table()` aber die zu testende Methode nicht):
+explizit begründen.
 
 ### 1.4 — Gap-Analyse Feature-Matrix × Coverage
 
-Teststufe-2-IDs aus `docs/testing-bigpicture.md` lesen:
-G01–G04, G07–G10, G12–G16, G24, S01–S03, S05–S08, S10–S12, S19, S21, S22,
-P01–P24, P27–P29.
+FM-IDs aus `docs/testing-bigpicture.md` lesen (aktuell: G01–G04, G07–G10,
+G12–G16, G24, S01–S03, S05–S08, S10–S12, S19, S21, S22, P01–P24, P27–P29).
 
-Für jede ID:
-- Welche Testklasse(n) decken sie ab?
-- Coverage-Status: grün (>50% stmt der Zielklasse) / partiell / rot (kein Test)
-- Bemerkung zu bekannten Lücken
+Für jede ID: Testklasse(n), Coverage-Status (grün/partiell/rot), Bemerkung.
 
-Tabellen pro Gruppe (GEDCOM G01–G16/G24, Suche S01–S22, Datenschutz P01–P29).
+### 1.5 — Priorisierter Handlungsplan (ohne Code)
 
-### 1.5 — Priorisierter Handlungsplan (in der Analyse, ohne Code)
-
-5–10 priorisierte Aktionspunkte, nach diesem Schema:
+Aktionspunkte nach CRAP absteigend, gruppiert:
 
 ```
-Priorität 1: Feature-Matrix-Lücken (Status "partiell" oder "rot")
-Priorität 2: Nicht-FM-Kandidaten mit CRAP > 1.000 (Layer-3)
-Priorität 3: Layer-2-Kandidaten mit CRAP > 5.000 (für Upstream-Contribution)
+Gruppe A: CRAP > 1.000 (höchste Priorität)
+Gruppe B: CRAP 300–1.000
+Gruppe C: CRAP 100–300
 ```
 
-Für jeden Punkt:
-- ID/Name
-- Zielklasse + Methode
-- CRAP vorher / cx
-- Begründung (1–3 Sätze)
-- Grobe Umsetzungsidee (kein Code)
+Für jeden Punkt: Zielklasse, Methode, CRAP/cx, Begründung (1–2 Sätze),
+Umsetzungsidee (kein Code), Einschätzung Testaufwand (niedrig/mittel/hoch).
 
-### 1.6 — Testing-bigpicture.md Diff-Vorschläge
+### 1.6 — testing-bigpicture.md Diff-Vorschläge
 
-Für jede Änderung an `docs/testing-bigpicture.md`, die sich aus der Analyse ergibt:
-
-```diff
-- alte Zeile
-+ neue Zeile
-```
-
-Mit Kontext: Welche Tabelle / Welcher Abschnitt.
+Für jede Änderung an Ratchet-Ist-Stand, FM-Tabelle, Abdeckungsmatrix:
+diff-Block mit Kontext (Tabelle/Abschnitt).
 
 ### 1.7 — Einschränkungen und Messartefakte
-
-Tabelle:
 
 | Einschränkung | Auswirkung | Empfehlung |
 
 Pflichteinträge:
-- Scope des Voll-Laufs (alle 17 Testklassen vs. Quick)
-- pcov statement-level Coverage (keine Branch-Coverage)
-- I18N-Kontext (legacyNameAlgorithm gibt je nach Locale-Initialisierung unterschiedliche Strings zurück)
-- Methoden, die nur in E2E-Lauf getriggert werden
+- pcov statement-level (keine Branch-Coverage)
+- Bootstrap-only-Tests: zählen zur Layer-3-Coverage, aber kein DB-Beweis
+- Methoden, die nur in E2E- oder Performance-Lauf triggerbar sind
+- Sehr große Klassen (cx > 50): Einzelmethode hat hohen CRAP, aber Klasse komplex
 
 ---
 
-## Schritt 2 — Umsetzungsplan erstellen: `docs/component-integration-coverage_full_impl_plan.md`
+## Schritt 2 — Umsetzungsplan erstellen
 
-Der Plan folgt exakt dem Aufbau von `docs/component-integration-coverage_impl_plan.md`.
-Zusätzlich: **Status-Tracking pro Arbeitspaket**.
+**Ausgabe:** `docs/component-integration-coverage_full_impl_plan.md` (überschreibt bestehende Datei)
 
-### Pflichtbestandteile des Plans
+Aufbau folgt exakt der aktuellen Version dieser Datei (vor dem Überschreiben lesen).
+Alle strukturellen Elemente übernehmen: Gesamtstatus-Tabelle, Stack-Regeln,
+Iterationskonzept, AP-Struktur mit Status-Block.
+
+### Pflichtbestandteile
 
 #### Status-Konzept
 
-Jedes Arbeitspaket erhält einen Status-Block am Anfang:
-
-```markdown
+```
 **Status:** ⬜ OFFEN | 🔄 IN ARBEIT | ✅ ABGESCHLOSSEN | ❌ BLOCKIERT
-
-**Abgeschlossen:** —  
+**Abgeschlossen:** —
 **Ergebnis:** —
 ```
 
-Der Status wird nach jeder abgeschlossenen AP-Bearbeitung aktualisiert — nicht erst
-am Ende aller Arbeitspakete.
+Status nach jeder abgeschlossenen AP-Bearbeitung aktualisieren.
 
-#### Stack-Voraussetzungen (analog bisherigem Plan)
+#### Stack-Regeln
 
 - `make up` (nie `make _compose-up`) → `make setup`
 - Alle lang laufenden Tests mit `run_in_background: true`
-- `pgrep -f "phpunit"` vor jedem neuen Lauf
-- Exklusivität: Niemals parallele Testläufe
+- `pgrep -a phpunit` vor jedem neuen Lauf
+- Niemals parallele Testläufe
+
+#### Korrekte Container-Pfade
+
+```bash
+# PHPUnit-Konfiguration liegt im Container unter:
+/tests/layer3-integration/phpunit-integration.xml
+
+# Testdateien liegen unter:
+/tests/layer3-integration/tests/MeineTestklasse.php
+
+# Einzeltest-Befehl:
+podman-compose exec webtrees php vendor/bin/phpunit \
+  --configuration /tests/layer3-integration/phpunit-integration.xml \
+  --filter 'MeineTestklasse' \
+  /tests/layer3-integration/tests/MeineTestklasse.php
+```
 
 #### Iterationskonzept
 
-Testausführung nach **jedem einzelnen Arbeitspaket**:
+Feedback-Loop: Einzeltest via `podman-compose exec` (schnell, kein Coverage-Overhead).
+Coverage-Verifikation: `make test-integration` (langsam, nach AP-Abschluss).
 
-```bash
-# Einzelnen Test ausführen (schneller Feedback-Loop während Entwicklung):
-# run_in_background: true — auch Einzeltests können > 2 min dauern
-make test-integration-quick
-# Falls der neue Test nicht im Quick-Subset ist:
-# Temporäres Skript oder direkter PHPUnit-Aufruf im Container:
-podman-compose exec webtrees php vendor/bin/phpunit \
-  --configuration /var/www/html/phpunit-integration.xml \
-  --filter 'MeinNeuerTestClass' \
-  /var/www/html/layer3-integration/tests/MeinNeuerTestClass.php
-```
+**Coverage-Verschiebung:** Nach jedem AP können CRAP-Scores sinken.
+Werte aus der initialen Analyse gelten nur für den Stand vor Implementierungsbeginn.
 
-**Wann make test-integration (Voll-Lauf) nötig:**
-- Am Ende jedes AP (Coverage-Änderung verifizieren)
-- Vor dem finalen Commit (alle Tests grün bestätigen)
+#### AP-Priorisierung
 
-**Wann make test-integration-quick ausreicht:**
-- Schneller Smoke-Check während Entwicklung
-- Nur wenn der neue Test im Quick-Subset liegt
+Gruppe A vollständig vor Gruppe B. Gruppe B vollständig vor Gruppe C.
+Innerhalb einer Gruppe: CRAP absteigend — aber wenn ein niedrigerer Kandidat
+deutlich einfacher zu testen ist, darf er vorgezogen werden, mit Begründung im AP.
 
-**Coverage-Verschiebung beachten:**
-Jeder neue Test verändert die `coverage.xml`. Die CRAP-Scores der Analyse gelten
-für den Stand vor der Implementierung. Nach jedem abgeschlossenen AP den CRAP
-des nächsten Kandidaten nicht blindlings aus der initialen Analyse übernehmen,
-sondern ggf. aus der neuen coverage.xml nachvollziehen.
+#### Konstruktor-Verifikation vor Skelett
+
+Bevor das PHP-Skelett erstellt wird: Konstruktor-Argumente aus dem webtrees-Source
+verifizieren. Für `Report/`-Klassen: prüfen ob sie reinen Bootstrap benötigen oder
+über einen Handler erreichbar sind. Kein `new Foo()` ohne Konstruktor-Prüfung.
 
 #### Keine Zwischencommits
 
-Kein `git commit` vor Abschluss aller Arbeitspakete. Erst wenn alle APs
-✅ ABGESCHLOSSEN sind und `make test-integration` Exit 0 liefert:
-
-```bash
-git add layer3-integration/tests/ docs/testing-bigpicture.md
-git commit -m "test(layer3): Coverage-Erweiterung Voll-Lauf ..."
-```
-
-#### Arbeitspakete (AP1–APn)
-
-Für jedes Arbeitspaket:
-
-```markdown
-## AP N — [Name] ([Testklasse])
-
-**Status:** ⬜ OFFEN
-**Abgeschlossen:** —
-**Ergebnis:** —
-
-**Priorität:** N (Begründung)
-**Datei:** layer3-integration/tests/XxxTest.php
-**Feature-Matrix-ID:** Gxx / Sxx / Pxx / — (kein FM-Eintrag)
-**Ziel-Klasse:** \Fisharebest\Webtrees\...\ClassName
-**CRAP vorher:** N.NNN (cx=N, Cov=N%)
-
-### Was zu ändern ist
-
-[Beschreibung der Änderung]
-
-### PHP-Skelett
-
-```php
-/**
- * [Docblock mit FM-ID und @see]
- */
-public function test_xxx(): void
-{
-    // ...
-}
-```
-
-### Dokumentationsupdate (testing-bigpicture.md)
-
-[diff-Block falls nötig]
-
-### Verifikation
-
-```bash
-# Einzeltest (schnell):
-podman-compose exec webtrees php vendor/bin/phpunit \
-  --filter 'TestClassName' \
-  /var/www/html/layer3-integration/tests/TestClassName.php
-
-# Voll-Lauf (Coverage-Verifikation):
-# run_in_background: true
-make test-integration
-```
-```
+Erst nach Abschluss aller APs + `make test-integration` Exit 0 committen.
 
 ---
 
 ## Schritt 3 — Plan ausführen
 
-Führe `docs/component-integration-coverage_full_impl_plan.md` aus.
-
 ### Ausführungsregeln
 
-1. **Status nach jedem AP aktualisieren** — nicht erst am Ende.
-   Nach AP-Abschluss: Status auf ✅ ABGESCHLOSSEN setzen, Datum und Testergebnis eintragen.
+1. Plan vollständig erstellen (inkl. aller PHP-Skelette) bevor AP1 gestartet wird
+2. Status nach jedem AP aktualisieren
+3. Fehler: Root Cause lesen, gezielt fixen — nicht Methode tauschen wenn
+   Konstruktor das Problem ist; nicht blind wiederholen
+4. AP als ✅ erst markieren wenn Verifikations-Test grün
+5. Finaler Commit erst wenn alle APs ✅ und `make test-integration` Exit 0
 
-2. **Vor jedem Testlauf prüfen:**
-   ```bash
-   pgrep -f "phpunit" && echo "Lauf noch aktiv"
-   ```
+### Qualitätssicherung
 
-3. **Iteratives Vorgehen bei Fehlern:**
-   - Fehlermeldung lesen und verstehen
-   - Root Cause identifizieren (Konstruktor-Argumente? Fehlende Imports? Falsche XREF?)
-   - Gezielt fixen — nicht Methode austauschen, wenn der Konstruktor das Problem ist
-   - Nicht denselben fehlgeschlagenen Aufruf blind wiederholen
+**Analyse:**
+- CRAP-Zahlen aus `coverage.xml` ableitbar (nicht geraten)
+- DB-abhängig/Bootstrap-only-Klassifikation mit Quellcode-Zitat begründet
+- Vollständige Liste (CRAP > 100), nicht auf 30 begrenzt
 
-4. **Kein `make test-integration` als Entwicklungs-Feedback-Loop** — zu langsam.
-   Einzeltest-Aufrufe über `podman-compose exec` verwenden.
-
-5. **Finaler Commit erst wenn alle APs ✅:**
-   ```bash
-   # Alle Layer-3-Tests nochmals vollständig:
-   # run_in_background: true
-   make test-integration
-   # Danach:
-   git add ...
-   git commit
-   ```
-
-### Was im Plan stehen muss, bevor mit der Ausführung begonnen wird
-
-- Stack-Startsequenz (make up → make setup)
-- Status-Block für jedes AP
-- PHP-Skelette (mindestens auf Klassen-/Methoden-Ebene, Konstruktor-Argumente aus
-  dem webtrees-Source-Code geprüft, nicht geraten)
-- Verifikations-Kommandos (Einzeltest + Voll-Lauf)
+**Plan:**
+- PHP-Skelette mit verifizierten Konstruktor-Argumenten
+- Jedes AP mit Einzeltest-Befehl (korrekter Container-Pfad)
+- Report/-Kandidaten: Einstiegspunkt-Analyse vor Skelett
 
 ---
 
 ## Ausgabedateien
 
-| Datei | Inhalt |
+| Datei | Aktion |
 |---|---|
-| `docs/component-integration-coverage_full_analysis.md` | Analyse-Ergebnis (Schritte 1.1–1.7) |
-| `docs/component-integration-coverage_full_impl_plan.md` | Umsetzungsplan mit Status-Tracking |
-| `docs/testing-bigpicture.md` | Aktualisiert (neue Zeilen FM-Tabelle, Endekriterien, Ratchet) |
+| `docs/component-integration-coverage_full_analysis.md` | Überschreiben |
+| `docs/component-integration-coverage_full_impl_plan.md` | Überschreiben |
+| `docs/testing-bigpicture.md` | Aktualisieren (Ratchet, ggf. FM-Einträge) |
 | `layer3-integration/tests/*.php` | Neue/erweiterte Testdateien |
-
----
-
-## Qualitätssicherung
-
-**Analyse:**
-- Jede CRAP-Zahl muss aus der `coverage.xml` ableitbar sein (nicht geraten)
-- Layer-3/Layer-2-Klassifikation muss mit Quellcode-Zitat begründet sein
-- Kein FM-Eintrag darf ohne Begründung von "grün" auf "partiell" rutschen
-
-**Plan:**
-- Jedes PHP-Skelett muss Konstruktor-Argumente enthalten, die aus dem webtrees-Source
-  verifiziert wurden (kein `new Foo()` für Klassen mit Pflichtparametern)
-- Jedes AP muss einen Einzeltest-Befehl enthalten
-- Status muss nach jedem AP aktualisiert werden — nicht erst am Ende
-
-**Ausführung:**
-- Kein AP als ✅ markieren, bevor der Verifikations-Test grün ist
-- Kein finaler Commit, bevor `make test-integration` Exit 0 liefert

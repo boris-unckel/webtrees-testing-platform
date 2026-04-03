@@ -1112,18 +1112,18 @@ Feature-Matrix oben).
 | **Scope** | Service-Klassen der Feature-Matrizen (G01–G23, S01–S24, S26–S40, P01–P29) |
 | **Reporting** | Coverage-HTML als CI-Artefakt (7 Tage Retention) |
 
-### Ist-Stand (Teststufe 2, Stand: 2026-04-03)
+### Ist-Stand (Teststufe 2, Stand: 2026-04-03, nach AP1–AP15)
 
-> Basis: `make test-integration` (alle 17 Testklassen, 295 Tests). Vor der zweiten
-> Coverage-Erweiterung (Voll-Lauf-Baseline) waren es 285 Tests / 17,9%.
+> Basis: `make test-integration` (alle 31 Testklassen, 384 Tests, 1.263 Assertions).
+> Vorherige Baseline (296 Tests, nach AP1–AP4): 19,8% / 17,7%.
 
 | Metrik | Wert (Voll-Lauf) |
 |---|---|
-| Anweisungsüberdeckung | 17,9% (7.882 / 44.066 Statements) — Ratchet-Basis |
-| Methodenüberdeckung | 17,3% (767 / 4.441 Methoden) |
+| Anweisungsüberdeckung | 29,3% (12.897 / 44.043 Statements) — Ratchet-Basis |
+| Methodenüberdeckung | 21,6% (958 / 4.433 Methoden) |
 | Pakete mit >50%-Coverage | Http/Routes (99,7%), CustomTags (97,2%), GedcomFilters (81,5%) |
-| Pakete mit 0%-Coverage | Census, Cli, CommonMark, Exceptions, Http/Middleware, Module/InteractiveTree, Report, Statistics/Service, SurnameTradition |
-| Größte unabgedeckte Pakete | Http/RequestHandlers (8.083 Stmt), Module (10.376 Stmt), Report (3.137 Stmt), Census (2.552 Stmt) |
+| Pakete mit 0%-Coverage | Cli, CommonMark, Http/Middleware |
+| Größte unabgedeckte Pakete | Module (restliche Methoden), Http/RequestHandlers (restliche Handler) |
 
 **Begründung:** Das Projekt startet bei ~0% substanzieller Überdeckung (95% Stub-Tests).
 Ein willkürlicher Zielwert (z. B. 80%) wäre spekulativ. Die Ratchet-Strategie schützt

@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\Http\RequestHandlers\CalendarEvents;
 use Fisharebest\Webtrees\Module\RelationshipsChartModule;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\CalendarService;
@@ -25,6 +26,7 @@ use Fisharebest\Webtrees\Services\TreeService;
  *
  * @covers \Fisharebest\Webtrees\Services\CalendarService
  * @covers \Fisharebest\Webtrees\Module\RelationshipsChartModule
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CalendarEvents
  */
 class CalendarChartIntegrationTest extends MysqlTestCase
 {
@@ -70,6 +72,70 @@ class CalendarChartIntegrationTest extends MysqlTestCase
         $events = $this->calendar_service->getAnniversaryEvents(1000000, 'BIRT', $this->tree);
 
         $this->assertIsArray($events);
+    }
+
+    /**
+     * CalendarEvents::handle mit view=day gibt 200 OK zurück.
+     */
+    public function test_calendar_events_handle_day_view_returns_ok(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $handler = new CalendarEvents($this->calendar_service);
+        $request = $this->createRequest(
+            query:      ['cal' => '', 'day' => '1', 'month' => 'JAN', 'year' => '1960', 'filterev' => 'BIRT DEAT MARR', 'filterof' => 'all', 'filtersx' => ''],
+            attributes: ['tree' => $this->tree, 'view' => 'day'],
+        );
+
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * CalendarEvents::handle mit view=month gibt 200 OK zurück.
+     */
+    public function test_calendar_events_handle_month_view_returns_ok(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $handler = new CalendarEvents($this->calendar_service);
+        $request = $this->createRequest(
+            query:      ['cal' => '', 'day' => '1', 'month' => 'JAN', 'year' => '1960', 'filterev' => 'BIRT', 'filterof' => 'all', 'filtersx' => ''],
+            attributes: ['tree' => $this->tree, 'view' => 'month'],
+        );
+
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * CalendarService::getCalendarEvents gibt Array zurück.
+     */
+    public function test_get_calendar_events_returns_array(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $events = $this->calendar_service->getCalendarEvents(2436935, 2436935, 'BIRT DEAT MARR', $this->tree);
+
+        $this->assertIsArray($events);
+    }
+
+    /**
+     * CalendarService::getEventsList gibt Collection zurück.
+     */
+    public function test_get_events_list_returns_collection(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $events = $this->calendar_service->getEventsList(2436935, 2436935, 'BIRT DEAT MARR', false, 'anniv', $this->tree);
+
+        $this->assertNotNull($events);
     }
 
     /**
