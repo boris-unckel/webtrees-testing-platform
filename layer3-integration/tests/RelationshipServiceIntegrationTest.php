@@ -16,7 +16,7 @@ use Fisharebest\Webtrees\Services\RelationshipService;
  * Ergänzt RelationshipDbTest (DB-Ebene) um Service-Ebene-Tests.
  *
  * @covers \Fisharebest\Webtrees\Services\RelationshipService
- * @see docs/testing-bigpicture.md S14
+ * @see docs/testing-bigpicture.md S14, S16
  */
 class RelationshipServiceIntegrationTest extends MysqlTestCase
 {
@@ -99,5 +99,51 @@ class RelationshipServiceIntegrationTest extends MysqlTestCase
 
         $name = $this->relationship_service->getCloseRelationshipName($son, $elizabeth);
         $this->assertSame('mother', $name);
+    }
+
+    // --- AP: S16 legacyNameAlgorithm — direkte Pfad-Strings ---
+
+    /**
+     * S16 — Einfache Beziehungs-Pfade: Vater, Mutter, Bruder, Schwester.
+     */
+    public function test_legacy_name_algorithm_direct_relationships(): void
+    {
+        $this->assertSame('father',  $this->relationship_service->legacyNameAlgorithm('fat'));
+        $this->assertSame('mother',  $this->relationship_service->legacyNameAlgorithm('mot'));
+        $this->assertSame('brother', $this->relationship_service->legacyNameAlgorithm('bro'));
+        $this->assertSame('sister',  $this->relationship_service->legacyNameAlgorithm('sis'));
+        $this->assertSame('son',     $this->relationship_service->legacyNameAlgorithm('son'));
+        $this->assertSame('daughter',$this->relationship_service->legacyNameAlgorithm('dau'));
+    }
+
+    /**
+     * S16 — Onkel/Tante: Vaterlinie und Mutterlinie.
+     */
+    public function test_legacy_name_algorithm_uncle_aunt(): void
+    {
+        $this->assertSame('uncle', $this->relationship_service->legacyNameAlgorithm('fatbro'));
+        $this->assertSame('aunt',  $this->relationship_service->legacyNameAlgorithm('fatsis'));
+        $this->assertSame('uncle', $this->relationship_service->legacyNameAlgorithm('motbro'));
+        $this->assertSame('aunt',  $this->relationship_service->legacyNameAlgorithm('motsis'));
+    }
+
+    /**
+     * S16 — Großeltern: alle vier Kombinationen.
+     */
+    public function test_legacy_name_algorithm_grandparents(): void
+    {
+        $this->assertSame('paternal grandfather', $this->relationship_service->legacyNameAlgorithm('fatfat'));
+        $this->assertSame('paternal grandmother', $this->relationship_service->legacyNameAlgorithm('fatmot'));
+        $this->assertSame('maternal grandfather', $this->relationship_service->legacyNameAlgorithm('motfat'));
+        $this->assertSame('maternal grandmother', $this->relationship_service->legacyNameAlgorithm('motmot'));
+    }
+
+    /**
+     * S16 — Ehemann/Ehefrau.
+     */
+    public function test_legacy_name_algorithm_spouse(): void
+    {
+        $this->assertSame('husband', $this->relationship_service->legacyNameAlgorithm('husb'));
+        $this->assertSame('wife',    $this->relationship_service->legacyNameAlgorithm('wife'));
     }
 }
