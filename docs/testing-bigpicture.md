@@ -26,7 +26,7 @@ ISTQB-Terminologie (Glossar de_DE v4.7.1) ist sprachlich und inhaltlich führend
 | **Reporting**        | HTML (PHPUnit Coverage HTML + Playwright HTML Reporter)                      |
 | **Tracing**          | Strukturierte Fehlerartefakte pro Teststufe (Logs, Traces, DB-Dump) — lokal abrufbar |
 | **KI-Debug**         | Claude Code CLI als lokales Analyse-Tool bei Testfehler; Artefakte werden als Kontext übergeben |
-| **OpenTelemetry**    | OTel PHP SDK (PDO-Auto-Instrumentation) + OTel Collector Sidecar-Container; Traces für Teststufen 2–3 und Performanztest; Jaeger als lokales UI; versionierter Trace-Vergleich für Performance-Regression |
+| **OpenTelemetry**    | Vollständige Trace-Kette über 4 Schichten: Auto-Instrumentation (PDO + PSR-15 + PSR-18), OtelSpansModule (semantische Spans, Server-Timing-Header), Browser-RUM (Boomerang + OTel-Plugin via Apache mod_substitute), Playwright Root-Spans (traceparent-Propagation via page.route()). Protokoll: OTLP HTTP/Protobuf (:4318). Jaeger (2.16.0) lokal (:16686). Deaktivierbar via OTEL_SDK_DISABLED=true. |
 | **Code Coverage**    | pcov + php-coveralls (wie webtrees Core selbst)                              |
 | **Static Analysis**  | PHPStan + PHPCS (wie webtrees Core selbst)                                   |
 | **Verzeichnis**      | Eigenständiges Repo (`webtrees-testing-platform`), unabhängig von Deployment-Repo und `smoke-tests/` |
@@ -92,16 +92,20 @@ graph TB
 
     subgraph INFRA["Querschnitt — Testumgebung (Podman Compose)"]
         direction LR
-        php["PHP mod_php\n+ Apache\n(webtrees)\n+ OTel SDK"]
-        db["MySQL 8\n(Container-DB)"]
-        pw["Playwright-Runner\n(Node.js)"]
+        php["PHP mod_php\n+ Apache\n(webtrees)\n+ OTel SDK\n+ OtelSpansModule"]
+        db["MySQL LTS 8.4\n(Container-DB)"]
+        pw["Playwright-Runner\n(Node.js)\n+ OTel SDK"]
+        browser["Browser\n(Chromium)\n+ Boomerang RUM"]
         fixture["GEDCOM-Fixture\n(Musterfamilie)"]
-        otelcol["OTel Collector\n(Sidecar)"]
-        jaeger["Jaeger\n(Trace-UI\n:16686)"]
+        otelcol["OTel Collector 0.148.0\n(OTLP HTTP :4318)"]
+        jaeger["Jaeger 2.16.0\n(Trace-UI\n:16686)"]
         php <--> db
         fixture -->|Import| php
-        pw -->|HTTP| php
-        php -->|OTLP| otelcol
+        pw -->|"HTTP +\ntraceparent"| php
+        pw -->|"OTLP\n:4318"| otelcol
+        php -->|"OTLP\n:4318"| otelcol
+        php -->|"Server-Timing\ntraceparent"| browser
+        browser -->|"OTLP\n:4318"| otelcol
         otelcol --> jaeger
     end
 
@@ -173,6 +177,7 @@ graph TB
 
 > **Aktuelle Testfall-Zahlen** sind volatil und daher nicht im Diagramm enthalten.
 > Stand via `make test-all` oder in den CI-Artefakten des letzten GitHub-Actions-Laufs.
+> Trace-Auswertung (4-Stufen-Hierarchie): `make trace-report`.
 
 ---
 
@@ -223,6 +228,10 @@ webtrees-testing-platform/
 │   ├── security-filesystem-checks.sh # 9 Dateisystem-Assertions (pre/post-wizard)
 │   ├��─ analyze-failure.sh         # Artefakt-Sammler → Claude Code CLI
 │   ├── export-traces.sh           # OTel-Traces als JSON exportieren
+│   ├── truncate-perfschema.sh     # MySQL PerfSchema vor Testlauf leeren
+│   ├── extract-perfschema.sh      # PerfSchema-Daten als JSON (4 Tabellen + summary.txt)
+│   ├── trace-report.py            # OTLP NDJSON Parser + 4-Stufen-Hierarchie-Report
+│   ├── trace-report.sh            # Bash-Wrapper für trace-report.py
 │   └── wait-for-it.sh            # TCP-Port-Readiness-Check (vendored)
 ├── fixtures/
 │   ├── demo.ged                   # webtrees Core (72 Individuen, 29 Familien)
@@ -265,6 +274,7 @@ webtrees-testing-platform/
 │   ├── playwright.config.ts       # baseURL = http://webtrees:80 (testIgnore: security/)
 │   ├── playwright-security.config.ts # Security-Playwright-Config (Distribution-Container)
 │   ├── helpers/
+│   │   ├── otel-fixture.ts        # Playwright Root-Span + traceparent (page.route()) + Baggage
 │   │   ├── theme-switch.ts        # Shared Utility: Theme-Switching (5 Themes)
 │   │   └── privacy-roles.ts      # Privacy-Rollen-Login (visitor, member, editor, moderator, manager, relationship)
 │   └── tests/
@@ -297,14 +307,22 @@ webtrees-testing-platform/
 │       └── access-control.spec.ts # P27–P29 (5 Tests)
 ├── layer5-performance/
 │   ├── playwright.config.ts       # Performance-spezifische Config (timeout 60s, retries 0)
+│   ├── helpers/
+│   │   └── otel-fixture.ts        # Root-Span + traceparent + Baggage (identisch zu layer4)
 │   ├── run.sh                     # Perf-Messung + Baseline-Vergleich
 │   ├── baselines/                 # Versionierte Baseline-JSONs (z.B. 2.2.5.json)
 │   └── tests/
 │       ├── perf-homepage.spec.ts
 │       ├── perf-search.spec.ts
 │       └── perf-pedigree.spec.ts
+├── modules/
+│   └── otel-spans/
+│       ├── module.php              # Modul-Einstiegspunkt
+│       └── OtelSpansModule.php     # Semantische Spans, Server-Timing-Header, Baggage-Korrelation
 ├── otel/
-│   └── otel-collector-config.yaml # Collector-Pipeline (OTLP → Jaeger + File)
+│   ├── otel-collector-config.yaml  # Collector-Pipeline (OTLP HTTP :4318 → Jaeger + File)
+│   ├── boomerang-init.js           # Boomerang OTel-Plugin-Initialisierung (service: webtrees-browser)
+│   └── boomerang-apache.conf       # mod_substitute Injection-Config (INFLATE;SUBSTITUTE;DEFLATE)
 ├── upstream/                      # gitignored — automatisch geklonter webtrees-Checkout
 │   └── webtrees/                  # (via scripts/clone-upstream.sh)
 ├── artifacts/                     # gitignored — Laufzeit-Artefakte
@@ -383,34 +401,49 @@ Teststufe 2 mit einer eigenen `MysqlTestCase`-Basis-Klasse.
 
 ---
 
-### N6 — OTel-Integration: Nur Auto-Instrumentation, kein Core-Change
+### N6 — OTel-Integration: Vollständige Trace-Kette (4 Schichten)
+
+> Entschieden 2026-03-26, implementiert bis 2026-04-01.
+
+| Schicht | Mechanismus | Service-Name in Jaeger | Protokoll |
+|---|---|---|---|
+| PHP Auto-Instrumentation | PDO + PSR-15 + PSR-18 Auto-Instrumentierung | `webtrees` | OTLP HTTP/Protobuf :4318 |
+| PHP OtelSpansModule | Semantische Spans (40+ Routes), Server-Timing-Header, Baggage-Korrelation | `webtrees` (Scope: `otel-spans`) | — (in-process) |
+| Browser-RUM | Boomerang + OTel-Plugin via Apache mod_substitute, Server-Timing-Brücke | `webtrees-browser` | OTLP HTTP :4318 |
+| Playwright Root-Spans | Ein Root-Span pro Testfall, traceparent-Propagation via page.route() | `playwright-tests` | OTLP HTTP :4318 |
+
+**Gemeinsames Protokoll:** OTLP HTTP/Protobuf auf Port 4318. Alle vier Schichten senden an denselben Endpunkt.
+Deaktivierung via `OTEL_SDK_DISABLED=true` → Zero Overhead (PHP-SDK-Guard + Boomerang-Injection-Guard).
+
+---
+
+#### N6a — PHP Auto-Instrumentation (PDO, PSR-15, PSR-18)
 
 | Aspekt | Entscheidung |
 |---|---|
-| **Tiefe** | Nur Auto-Instrumentation (PDO + PSR-18), keine manuellen Spans |
-| **Installation** | `composer require --dev` in `setup-webtrees.sh` (vendor-Volume, nicht Image-Layer) — kein webtrees-Core-Change. PHP-Extensions (`grpc`, `protobuf`) im Containerfile. Implementiert in Phase 7a. |
+| **Tiefe** | Nur Auto-Instrumentation — kein webtrees-Core-Change |
+| **Installation** | `composer require` bedingt in `setup-webtrees.sh` (nur wenn `OTEL_SDK_DISABLED != true`) |
 | **Aktivierung** | ENV-Variablen in `compose.yaml` |
 | **Deaktivierung** | `OTEL_SDK_DISABLED=true` → Zero Overhead |
 | **Export lokal** | Jaeger UI (http://localhost:16686) |
-| **Export CI** | File-Exporter → JSON-Artefakt |
-| **Upstream-Konzept** | OTel als optionales Dev-Feature vorschlagen |
+| **Export CI** | File-Exporter → `artifacts/traces.json` |
 
-**Composer-Pakete (implementiert — Phase 7a):**
+**Composer-Pakete:**
 
 - `open-telemetry/sdk`
 - `open-telemetry/exporter-otlp`
 - `open-telemetry/opentelemetry-auto-pdo`
 - `open-telemetry/opentelemetry-auto-psr18`
+- `open-telemetry/opentelemetry-auto-psr15`
 
-Installation: bedingt in `setup-webtrees.sh` (nur wenn `OTEL_SDK_DISABLED != true`).
 PHP-Extensions `protobuf` + `grpc` im `Containerfile.webtrees` (via `pecl install`).
 
-**ENV-Variablen (in compose.yaml):**
+**ENV-Variablen (in `compose.yaml`):**
 ```yaml
 OTEL_PHP_AUTOLOAD_ENABLED: "true"
 OTEL_SERVICE_NAME: "webtrees"
-OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
-OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
+OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
 OTEL_SDK_DISABLED: "false"
 OTEL_TRACES_EXPORTER: "otlp"
 OTEL_METRICS_EXPORTER: "none"
@@ -424,6 +457,12 @@ receivers:
     protocols:
       grpc:
         endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+        cors:
+          allowed_origins: ["http://localhost:8080", "http://webtrees:80", "http://webtrees"]
+          allowed_headers: ["*"]
+          max_age: 7200
 exporters:
   otlp/jaeger:
     endpoint: jaeger:4317
@@ -431,6 +470,7 @@ exporters:
       insecure: true
   file:
     path: /artifacts/traces.json
+    append: true
 service:
   pipelines:
     traces:
@@ -438,11 +478,69 @@ service:
       exporters: [otlp/jaeger, file]
 ```
 
-**Begründung:** Auto-Instrumentation fängt alle PDO-Queries und PSR-18-HTTP-Calls automatisch
-ab — ohne eine Zeile webtrees-Code zu ändern. Das liefert Visibility für Teststufe 2–3 und Performanztest
-(Query-Count, N+1-Erkennung, Trace-Diff). Manuelle Spans (z.B. "diese Query gehört zum
-Stammbaum-Rendering") wären wertvoller, erfordern aber Core-Änderungen und werden erst bei
-einer Upstream-Contribution relevant.
+**Begründung:** Auto-Instrumentation fängt alle PDO-Queries und HTTP-Calls automatisch ab —
+ohne eine Zeile webtrees-Code zu ändern. Protokollwechsel gRPC → HTTP/Protobuf war notwendig,
+damit Browser-Spans (Boomerang) denselben Endpunkt nutzen können.
+
+---
+
+#### N6b — OtelSpansModule (semantische Spans)
+
+| Aspekt | Entscheidung |
+|---|---|
+| **Implementierung** | webtrees-Modul unter `modules/otel-spans/` — kein Core-Change |
+| **Mount** | Bind-Mount in `compose.yaml` → `modules_v4/otel_spans` |
+| **Span-Klassifikation** | 40+ ROUTE_MAP-Einträge, Span-Name `webtrees.<action>` (z.B. `webtrees.individual.show`) |
+| **Server-Timing-Header** | `traceparent;desc="00-{traceId}-{spanId}-01"` in PHP-Responses für gemappte Routes |
+| **Baggage-Korrelation** | `test.run_id` + `test.case_id` aus eingehenden Baggage-Headern als Span-Attribute |
+| **Guard** | `class_exists(Globals::class)` — Graceful Degradation bei deaktiviertem SDK |
+
+**Begründung:** Auto-Instrumentation liefert keine semantischen Span-Namen — `webtrees.individual.show`
+ist aussagekräftiger als `GET /index.php`. Der Server-Timing-Header ist der einzige standardkonforme
+Kanal, um `traceparent` vom PHP-Server in den Browser zu propagieren, ohne webtrees-Code zu ändern.
+
+---
+
+#### N6c — Browser-RUM: Boomerang + OTel-Plugin
+
+| Aspekt | Entscheidung |
+|---|---|
+| **RUM-Bibliothek** | Boomerang 1.815.1 + `@opentelemetry/instrumentation-document-load` |
+| **Injection** | Apache `mod_substitute` mit `INFLATE;SUBSTITUTE;DEFLATE`-Filterkette — kein webtrees-Core-Change |
+| **Konfiguration** | `otel/boomerang-init.js` + `otel/boomerang-apache.conf` |
+| **Collector-URL** | `http://otel-collector:4318/v1/traces` (Container-Hostname, nicht localhost) |
+| **Deaktivierung** | Injection nur wenn `OTEL_SDK_DISABLED != true` |
+| **Trace-Korrelation** | Boomerang liest `traceparent` aus Server-Timing-Header → Browser-Spans im selben Trace |
+
+**Begründung:** Browser-RUM ohne Build-Pipeline (kein Grunt, kein Webpack), kein webtrees-Core-Change.
+Die `INFLATE;SUBSTITUTE;DEFLATE`-Filterkette ist notwendig, da webtrees Responses komprimiert ausliefert.
+
+---
+
+#### N6d — Playwright Root-Spans (Testfall-Korrelation)
+
+| Aspekt | Entscheidung |
+|---|---|
+| **SDK** | `@opentelemetry/api`, `sdk-trace-node`, `exporter-trace-otlp-http`, `resources`, `semantic-conventions` im Playwright-Container |
+| **Fixture** | `layer4-e2e/helpers/otel-fixture.ts`, `layer5-performance/helpers/otel-fixture.ts` |
+| **Mechanismus** | Root-Span pro Testfall; `traceparent` via `page.route()` in alle webtrees-Requests injiziert |
+| **Baggage** | `test.run_id` (UUID pro `make`-Aufruf) + `test.case_id` (Testfall-Name, alphanumerisch bereinigt) |
+| **Ausnahme** | OTLP-Requests an `otel-collector:4318` werden von `page.route()` ausgenommen |
+| **Ergebnis** | Alle PHP-Spans eines Testfalls teilen dieselbe `trace_id` wie der Playwright-Root-Span |
+
+**Begründung:** `page.route()` ersetzt `page.setExtraHTTPHeaders()`, weil Header selektiv
+pro Request-URL gesetzt werden können — OTLP-Requests dürfen kein `traceparent` erhalten.
+
+---
+
+#### N6e — PerfSchema-Extraktion und Trace-Report
+
+| Aspekt | Entscheidung |
+|---|---|
+| **Scripts** | `truncate-perfschema.sh`, `extract-perfschema.sh`, `trace-report.py`, `trace-report.sh` |
+| **Makefile-Targets** | `perfschema-truncate`, `perfschema-extract`, `trace-report` |
+| **Automatisierung** | `make test-e2e` und `make test-performance` rufen truncate/extract/report automatisch auf |
+| **Span-Hierarchie** | `trace-report.py` klassifiziert in 4 Stufen: Playwright, Browser (RUM), PHP Custom, PHP Auto |
 
 ---
 
@@ -491,23 +589,25 @@ eines spezifischen webtrees-Refs vor einem Versions-Update.
 | Container | Image | Zweck | Host-Port | Volume-Mounts |
 |---|---|---|---|---|
 | `webtrees` | `Containerfile.webtrees` | PHP 8.5 + Apache mod_php + webtrees | 8080:80 | `${WEBTREES_SOURCE}` → `/var/www/html` (ro), Named Vol → `/var/www/html/data/` (rw), `fixtures/` → `/fixtures` (ro) |
-| `mysql` | `docker.io/library/mysql:8.0` | Datenbank | 3306:3306 | Named Vol → `/var/lib/mysql` |
-| `playwright` | `Containerfile.playwright` | Node.js 22 + Chromium (headless) | — | `layer4-e2e/` + `layer5-performance/` → `/tests` (ro), `artifacts/` → `/artifacts` (rw) |
-| `otel-collector` | `docker.io/otel/opentelemetry-collector-contrib` | OTel Sidecar (OTLP gRPC) | 4317:4317 | `otel/otel-collector-config.yaml` → `/etc/otelcol/config.yaml` (ro), `artifacts/` → `/artifacts` (rw) |
-| `jaeger` | `docker.io/jaegertracing/all-in-one` | Trace-Visualisierung | 16686:16686 | — |
+| `mysql` | `docker.io/library/mysql:lts` | Datenbank (MySQL LTS 8.4) | 3306:3306 | Named Vol → `/var/lib/mysql` |
+| `playwright` | `Containerfile.playwright` | Node.js 22 + Chromium (headless) + OTel SDK | — | `layer4-e2e/` + `layer5-performance/` → `/tests` (ro), `artifacts/` → `/artifacts` (rw) |
+| `otel-collector` | `docker.io/otel/opentelemetry-collector-contrib:0.148.0` | OTel Sidecar (OTLP HTTP :4318, gRPC :4317) | 4317:4317, 4318:4318 | `otel/otel-collector-config.yaml` → `/etc/otelcol/config.yaml` (ro), `artifacts/` → `/artifacts` (rw) |
+| `jaeger` | `docker.io/jaegertracing/jaeger:2.16.0` | Trace-Visualisierung | 16686:16686 | — |
 | `adminer` | `docker.io/library/adminer` | DB-Admin (optional, nur Debug) | 8081:8080 | — |
 | `webtrees-security` | `Containerfile.security` | Distribution-Build (ZIP entpackt) + Apache (Profil: security) | 8082:80 | Named Vol → `/var/www/html/data/` (rw) |
-| `mysql-security` | `docker.io/library/mysql:8.0` | Datenbank — Security-Track (Profil: security) | 3307:3306 | Named Vol → `/var/lib/mysql` |
+| `mysql-security` | `docker.io/library/mysql:lts` | Datenbank — Security-Track (Profil: security) | 3307:3306 | Named Vol → `/var/lib/mysql` |
 
 ### Netzwerk-Topologie
 
 ```
 webtrees-test-net (Bridge)
-├── webtrees  ←→  mysql        (PDO, Port 3306)
-├── webtrees  →   otel-collector (OTLP gRPC, Port 4317)
-├── otel-collector → jaeger    (OTLP, Port 4317)
-├── playwright →  webtrees     (HTTP, Port 80)
-└── adminer   →   mysql        (Port 3306)
+├── webtrees    ←→  mysql           (PDO, Port 3306)
+├── webtrees    →   otel-collector  (OTLP HTTP, Port 4318)
+├── playwright  →   webtrees        (HTTP + traceparent, Port 80)
+├── playwright  →   otel-collector  (OTLP HTTP, Port 4318)
+├── browser     →   otel-collector  (OTLP HTTP, Port 4318, via otel-collector-Hostname)
+├── otel-collector → jaeger         (OTLP gRPC, Port 4317 intern)
+└── adminer     →   mysql           (Port 3306)
 
 webtrees-security-net (Bridge, Profil: security)
 ├── webtrees-security ←→ mysql-security  (PDO, Port 3306)
@@ -525,13 +625,17 @@ environment:
 command: >
   --character-set-server=utf8mb4
   --collation-server=utf8mb4_bin
+  --performance-schema-instrument='stage/%=ON'
+  --performance-schema-consumer-events-stages-current=ON
+  --performance-schema-consumer-events-stages-history=ON
 ```
 
 Collation `utf8mb4_bin` entspricht `DB::COLLATION_UTF8[DB::MYSQL]` in webtrees Core.
+PerfSchema-Flags aktivieren Stage-Instrumentierung für `make perfschema-extract`.
 
 ### setup-webtrees.sh — Automatischer Installer
 
-1. `composer install` im Container (Dependencies in gemountetes Volume)
+1. `composer install` + `composer require` OTel-Pakete im Container (bedingt auf `OTEL_SDK_DISABLED != true`)
 2. `data/config.ini.php` generieren (MySQL-Credentials des Containers)
 3. DB-Migration via `MigrationService::updateSchema()`
 4. Privacy-Fixture generieren (`generate-privacy-fixture.sh`)

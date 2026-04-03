@@ -53,7 +53,9 @@ WEBTREES_SOURCE=/pfad/zum/vorhandenen/checkout
 | Statischer Test | `make test-static` | PHPStan + PHPCS | Typfehler, Coding Standard (PSR-12) |
 | Komponententest | `make test-unit` | PHPUnit (SQLite) | Isolierte Klassen, Coverage via pcov |
 | Komponentenintegrationstest | `make test-integration` | PHPUnit (MySQL) | Echte DB, GEDCOM-Import, Beziehungen |
+| Komponentenintegrationstest (Quick) | `make test-integration-quick` | PHPUnit (MySQL) | Schnelllauf — Smoke-Subset |
 | Systemtest | `make test-e2e` | Playwright | Login, Navigation, Theme-Matrix |
+| Systemtest (Quick) | `make test-e2e-quick` | Playwright | 30 Tests, OTel-Korrelation verifiziert |
 | Performanztest | `make test-performance` | Playwright | Baseline-Vergleich (+20% Schwellwert) |
 
 ## Container-Stack
@@ -61,10 +63,10 @@ WEBTREES_SOURCE=/pfad/zum/vorhandenen/checkout
 6 Container im Podman Compose Stack:
 
 - **webtrees** — PHP 8.5 + Apache + OTel SDK (Port 8080)
-- **mysql** — MySQL 8.0 (Port 3306)
+- **mysql** — MySQL LTS (8.4) (Port 3306)
 - **playwright** — Node.js 22 + Chromium
-- **otel-collector** — OpenTelemetry Sidecar (Port 4317)
-- **jaeger** — Trace-UI (Port 16686)
+- **otel-collector** — OpenTelemetry Sidecar 0.148.0 (OTLP HTTP :4318, gRPC :4317 intern)
+- **jaeger** — Trace-UI 2.16.0 (Port 16686)
 - **adminer** — DB-Admin, nur Debug-Profil (Port 8081)
 
 ## Fehleranalyse
@@ -84,6 +86,9 @@ make status        # Container-Status
 make mysql-shell   # MySQL-Shell
 make db-dump       # DB nach artifacts/ exportieren
 make clean         # Stack + Volumes löschen
+make test-e2e-quick         # Systemtest-Schnelllauf (30 Tests)
+make trace-report           # OTel-Trace-Auswertung (artifacts/)
+make perfschema-extract     # MySQL PerfSchema-Daten extrahieren
 ```
 
 ## Dokumentation

@@ -13,12 +13,14 @@ Der Podman-Compose-Stack bringt einen vollständigen webtrees-Stack lokal hoch (
 ## Kanonischer Testaufruf
 
 ```bash
-make up          # Stack starten
-make setup       # webtrees installieren (einmalig nach up)
-make test-unit          # Layer 2 — Upstream-Tests (SQLite in-memory)
-make test-integration   # Layer 3 — Eigene Integrationstests (MySQL)
-make test-all           # Alle Stufen sequenziell
-make down               # Stack herunterfahren
+make up                       # Stack starten
+make setup                    # webtrees installieren (einmalig nach up)
+make test-unit                # Layer 2 — Upstream-Tests (SQLite in-memory)
+make test-integration         # Layer 3 — Eigene Integrationstests (MySQL)
+make test-integration-quick   # Layer 3 — Schnelllauf (Smoke-Subset)
+make test-e2e-quick           # Layer 4 — Schnelllauf (30 Tests, OTel-Korrelation)
+make test-all                 # Alle Stufen sequenziell
+make down                     # Stack herunterfahren
 ```
 
 ## Optionales Modul-Mounting
@@ -67,7 +69,7 @@ make down && make up && make setup
 
 **Keine Timeout-Limits auf lang laufende Tests:** Die Komponentenintegrationstests (Layer 3) und Systemtests (Layer 4) können deutlich länger als 10 Minuten dauern. Das Bash-Tool hat ein Maximum von 600 s — das reicht für diese Tests nicht aus. Deshalb:
 
-- Lang laufende Tests (`make test-integration`, `make test-e2e`, `make test-all`) immer mit `run_in_background: true` starten und auf die Fertigmeldung warten.
+- Lang laufende Tests (`make test-integration`, `make test-integration-quick`, `make test-e2e`, `make test-e2e-quick`, `make test-all`) immer mit `run_in_background: true` starten und auf die Fertigmeldung warten.
 - **Kein** `timeout`-Parameter setzen, der die Laufzeit künstlich beschränkt.
 
 **Iteratives Test-/Fixing-Vorgehen:** Vor dem Start eines neuen Testlaufs sicherstellen, dass kein vorheriger Lauf noch aktiv ist. Wenn ein vorheriger Lauf noch läuft:
@@ -94,6 +96,17 @@ Jede neue Sourcecode-Datei (.php, .ts, .sh, .yaml, .xml, Makefile) und jede neue
 ## Kein Perl
 
 Perl darf in diesem Projekt nicht verwendet werden — auch nicht als Einzeiler in Shell-Skripten. Textersetzungen und Templating in Bash mit nativen Mitteln (`BASH_REMATCH`, Parameter-Expansion, `sed`) lösen.
+
+## OTel-Stack
+
+Der Stack enthält OTel-Infrastruktur für Distributed Tracing (optional, Standard: aktiv).
+
+- `OTEL_SDK_DISABLED=true` deaktiviert PHP-SDK und Boomerang-Injection vollständig — Zero Overhead.
+- Traces: Jaeger UI unter http://localhost:16686
+- Protokoll: OTLP HTTP/Protobuf auf Port 4318
+
+`make test-e2e` und `make test-performance` starten automatisch PerfSchema-Truncate,
+-Extraktion und Trace-Report (Artefakte unter `artifacts/`).
 
 ## Git
 
