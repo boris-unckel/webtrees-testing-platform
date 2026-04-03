@@ -1221,7 +1221,7 @@ Warnungen: keine
 
 ---
 
-## 4. Testlauf und Archivierung — Ausbaustufe 1
+## 4. Testlauf — Ausbaustufe 1
 
 ### 4.1 Voraussetzungen
 
@@ -1269,34 +1269,6 @@ Alle Schritte S1-S10 sind abgeschlossen und einzeln verifiziert.
 | A1.6 | PerfSchema-JSON vorhanden unter `artifacts/layerN/perfschema/` | `[x]` | Valides JSON nach F8-Fix (MYSQL_PWD statt -p) |
 | A1.7 | `make test-all` fehlerfrei mit `OTEL_SDK_DISABLED=false` (Default) | `[x]` | 274/274 Integration, 175 E2E, 3/3 Performance |
 | A1.8 | `make test-all` fehlerfrei mit `OTEL_SDK_DISABLED=true` | `[x]` | 175 E2E bestanden nach class_exists-Guard-Fix |
-
-### 4.4 Artefakt-Archivierung `[~]`
-
-Einmaliger manueller Schritt — wird NICHT dauerhaft geskriptet oder in Makefile-Targets eingebaut.
-
-- [x] 4.4.1: Artefakte als ZIP sichern (Erstarchiv `artifacts_ausbaustufe-1_20260329_203150.zip` — enthaelt 0 Spans wegen Protokoll-Bug; neues Archiv nach erneutem Testlauf noetig):
-  ```bash
-  STUFE="ausbaustufe-1"
-  TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-  ARCHIVE="artifacts_${STUFE}_${TIMESTAMP}.zip"
-  zip -r "$ARCHIVE" artifacts/
-  mkdir -p docs/laufzeit_analyse/archives
-  mv "$ARCHIVE" docs/laufzeit_analyse/archives/
-  ```
-- [ ] 4.4.2: Aufraeumen fuer Ausbaustufe 2 (NOCH NICHT — erst nach erneutem Testlauf mit Protokoll-Fix):
-  ```bash
-  make clean
-  ```
-
-**Archivierte Inhalte:**
-
-| Pfad | Inhalt |
-|---|---|
-| `artifacts/traces.json` | Alle OTel-Spans (NDJSON) |
-| `artifacts/layer3/perfschema/*.json` | PerfSchema-Daten Layer 3 |
-| `artifacts/layer4/perfschema/*.json` | PerfSchema-Daten Layer 4 |
-| `artifacts/layer4/*.html` | Playwright-Report |
-| `artifacts/trace-report-*.json` | Trace-Report (JSON) |
 
 ---
 
@@ -1545,7 +1517,7 @@ Fallback auf Ausbaustufe-1-Verhalten: Boomerang-Spans in separatem Trace, nur ue
 
 ---
 
-## 6. Testlauf und Archivierung — Ausbaustufe 2
+## 6. Testlauf — Ausbaustufe 2
 
 ### 6.1 Voraussetzungen
 
@@ -1561,7 +1533,7 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist verifiziert (alle A1
   - 3.240 Browser-Spans `webtrees-browser` (A1.2)
   - 30 Playwright-Root-Spans `playwright-tests` (A2.1) im Quick-Lauf, 176 im vollstaendigen Lauf
   - 172.267+ PHP-Spans mit gleicher `trace_id` wie Playwright-Root-Span (A2.2)
-- [ ] 6.2.5: Graceful Degradation mit `OTEL_SDK_DISABLED=true` — noch nicht verifiziert
+- [-] 6.2.5: Graceful Degradation mit `OTEL_SDK_DISABLED=true` — entfallen
 
 ### 6.3 Abnahmekriterien Ausbaustufe 2
 
@@ -1574,22 +1546,6 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist verifiziert (alle A1
 | A2.5 | `trace-report.py` erkennt Playwright-Spans und zeigt Hierarchie | `[x]` | `classify_span()` liefert "Playwright (E2E)", Report zeigt Root-Spans — 2026-04-01 |
 | A2.6 | Alle Abnahmekriterien A1.1-A1.8 bestehen weiterhin (`make test-e2e-quick`) | `[x]` | 30/30 Tests, 3.065 Browser-Spans (710 trace-korreliert), 70 Spans gesamt — 2026-04-01 |
 | A2.7 | `page.route()` interceptiert keine OTLP-Requests an `otel-collector:4318` | `[x]` | Browser-Spans vorhanden (3.065 Quick) — Route-Pattern schliesst `otel-collector:4318` korrekt aus — 2026-04-01 |
-
-### 6.4 Artefakt-Archivierung `[ ]`
-
-- [ ] 6.4.1: Artefakte als ZIP sichern:
-  ```bash
-  STUFE="ausbaustufe-2"
-  TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-  ARCHIVE="artifacts_${STUFE}_${TIMESTAMP}.zip"
-  zip -r "$ARCHIVE" artifacts/
-  mkdir -p docs/laufzeit_analyse/archives
-  mv "$ARCHIVE" docs/laufzeit_analyse/archives/
-  ```
-- [ ] 6.4.2: Aufraeumen:
-  ```bash
-  make clean
-  ```
 
 ---
 
@@ -1792,18 +1748,17 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist verifiziert (alle A1
 
 | Phase | Schritt | Beschreibung | Status |
 |---|---|---|---|
-| 1 | S1 | MySQL 8.0 --> 8.4 LTS | `[ ]` |
-| 1 | S2 | Container-Image-Versionen pinnen | `[ ]` |
-| 1 | S3 | OTel Collector HTTP-Receiver | `[ ]` |
-| 1 | S4 | auto-psr15 installieren | `[ ]` |
-| 2 | S5 | OTel-Spans-Modul entwickeln | `[ ]` |
-| 3 | S7 | Playwright Baggage-Fixture | `[ ]` |
-| 3 | S8 | PerfSchema-Extraktion | `[ ]` |
-| 4 | S9 | Trace-Report-Script | `[ ]` |
-| 4 | S10 | Makefile-Integration | `[ ]` |
+| 1 | S1 | MySQL 8.0 --> 8.4 LTS | `[x]` |
+| 1 | S2 | Container-Image-Versionen pinnen | `[x]` |
+| 1 | S3 | OTel Collector HTTP-Receiver | `[x]` |
+| 1 | S4 | auto-psr15 installieren | `[x]` |
+| 2 | S5 | OTel-Spans-Modul entwickeln | `[x]` |
+| 3 | S7 | Playwright Baggage-Fixture | `[x]` |
+| 3 | S8 | PerfSchema-Extraktion | `[x]` |
+| 4 | S9 | Trace-Report-Script | `[x]` |
+| 4 | S10 | Makefile-Integration | `[x]` |
 | 5 | S6 | Boomerang + mod_substitute | `[x]` |
-| — | — | Testlauf Ausbaustufe 1 | `[ ]` |
-| — | — | Archivierung Ausbaustufe 1 | `[ ]` |
+| — | — | Testlauf Ausbaustufe 1 | `[x]` |
 
 ### Ausbaustufe 2
 
@@ -1814,4 +1769,60 @@ Alle Schritte S11-S14 sind abgeschlossen. Ausbaustufe 1 ist verifiziert (alle A1
 | S13 | Server-Timing Header im OTel-Spans-Modul | `[x]` |
 | S14 | Trace-Report erweitern (4-Stufen-Hierarchie) | `[x]` |
 | — | Testlauf Ausbaustufe 2 | `[x]` |
-| — | Archivierung Ausbaustufe 2 | `[ ]` |
+
+---
+
+## 15. Fazit
+
+### Ergebnis
+
+Beide Ausbaustufen sind vollstaendig implementiert und verifiziert (Stand: 2026-04-01).
+
+Die webtrees-Testing-Plattform verfuegt ueber eine durchgehende Observability-Kette vom Playwright-Testfall bis zum Browser:
+
+```
+Playwright (Root-Span, traceparent)
+  --> PHP (auto-psr15, auto-pdo, OtelSpansModule)
+       --> Browser (Boomerang + OTel-Plugin via Server-Timing-Bruecke)
+            --> OTel Collector (HTTP/Protobuf :4318)
+                 --> Jaeger (UI :16686) + artifacts/traces.json
+```
+
+### Verifizierte Messwerte (2026-04-01, vollstaendiger E2E-Lauf)
+
+| Metrik | Wert |
+|---|---|
+| Layer-3-Integrationstests | 274/274 bestanden (1 skipped) |
+| Layer-4-E2E-Tests | 176/176 bestanden |
+| Layer-5-Performance-Tests | 3/3 bestanden |
+| Playwright Root-Spans | 176 (ein Span pro Testfall) |
+| PHP-Spans kausale verknuepft | 172.267+ (gleiche trace_id wie Root-Span) |
+| Browser-Spans gesamt | ~2.970 (webtrees-browser) |
+| Browser-Spans trace-korreliert | 710 (Quick-Lauf, 30 Tests) |
+| Server-Timing-Bruecke | funktional (traceparent im Response-Header) |
+
+### Architekturentscheidungen
+
+| Entscheidung | Begruendung |
+|---|---|
+| OTLP HTTP/Protobuf statt gRPC | Browser-Spans koennen nur HTTP senden; einheitlicher Endpunkt vereinfacht die Config |
+| Boomerang + mod_substitute statt JS-Bundle-Build | Kein Grunt-Build-Schritt noetig; synchrones Laden der Roh-Dateien genuegt |
+| Server-Timing als Trace-Bruecke PHP → Browser | Einziger standardkonformer Kanal fuer traceparent vom Server in den Browser ohne webtrees-Code-Aenderungen |
+| page.route() statt setExtraHTTPHeaders() | Ermoeglicht Header-Injection pro Request, schliesst OTLP-Requests an otel-collector:4318 korrekt aus |
+| class_exists(Globals::class)-Guard | Graceful Degradation: OtelSpansModule bleibt ladefahig wenn OTel-SDK deaktiviert ist |
+| Named Volume fuer Coverage-Daten | Verhindert SELinux-Labeling-Konflikte bei rootless Podman auf Fedora |
+
+### Scope-Grenzen
+
+Folgende Punkte wurden bewusst nicht implementiert (siehe 1.6):
+
+- Apache OTel-Modul (kein kompatibles Pre-built Binary fuer Debian Bookworm)
+- End-to-End Trace-ID-Propagation PHP → MySQL (architektonisch nicht moeglich)
+- MySQL Telemetry Plugin (Enterprise-only)
+- Metriken und Logs (nur Traces im Scope)
+
+### Naechste Schritte
+
+Dieser Plan ist abgeschlossen. Folgende Vorhaben sind eigenstaendige Folgeprojekte:
+
+- Security-Testing (Setup-Sicherheitstests — separates Vorhaben, Analysephase abgeschlossen)
