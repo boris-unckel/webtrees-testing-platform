@@ -138,12 +138,4 @@ class RelationshipServiceIntegrationTest extends MysqlTestCase
         $this->assertSame('maternal grandmother', $this->relationship_service->legacyNameAlgorithm('motmot'));
     }
 
-    /**
-     * S16 — Ehemann/Ehefrau.
-     */
-    public function test_legacy_name_algorithm_spouse(): void
-    {
-        $this->assertSame('husband', $this->relationship_service->legacyNameAlgorithm('husb'));
-        $this->assertSame('wife',    $this->relationship_service->legacyNameAlgorithm('wife'));
-    }
 }

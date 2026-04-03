@@ -9,6 +9,7 @@ namespace DombrinksBlagen\WebtreesTests\Integration;
 use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\Gedcom;
 use Fisharebest\Webtrees\Http\RequestHandlers\CheckTree;
+use Fisharebest\Webtrees\Services\PhpService;
 use Fisharebest\Webtrees\Services\TimeoutService;
 
 /**
@@ -33,7 +34,7 @@ class CheckTreeIntegrationTest extends MysqlTestCase
 
         $this->handler = new CheckTree(
             new Gedcom(),
-            new TimeoutService(),
+            new TimeoutService(new PhpService()),
         );
     }
 
