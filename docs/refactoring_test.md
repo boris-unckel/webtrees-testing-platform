@@ -2,8 +2,22 @@
 
 # Refactoring-Plan: Prompt-Architektur Coverage-Iteration
 
-> Status: Planungsdokument — noch keine Umsetzung.  
+> Status: In Umsetzung — Teilumsetzung abgeschlossen, ein AP offen (siehe Umsetzungsstand).  
 > Basis: Analyse + Klärungsgespräch 2026-04-03.
+
+---
+
+## Umsetzungsstand
+
+| Schritt | Status | Ergebnis |
+|---|---|---|
+| Planungsdokument `docs/refactoring_test.md` | ✅ | Dieses Dokument |
+| `docs/coverage-iteration/` anlegen (entry, prep-01–03, post-01) | ✅ | 5 Prompt-Dateien |
+| `layer3-integration/scripts/crap-report.php` | ✅ | PHP-Script, CRAP > 100, 0%-Coverage |
+| `Makefile`: `make crap-report` Target | ✅ | podman cp + exec + rm |
+| `CLAUDE.md`: Abschnitt Coverage-Iteration | ✅ | Ablauf + Target dokumentiert |
+| `component-integration-coverage_full_prompt.md` löschen | ✅ | Durch neue Struktur ersetzt |
+| Flaschenhals `_full_analysis.md` + `_full_impl_plan.md` beseitigen | ⬜ | Siehe AP unten |
 
 ---
 
@@ -195,6 +209,56 @@ zu verifizieren — abhängig davon, ob `scripts/` gemountet ist).
 
 ---
 
+## Offenes AP — Flaschenhals `_full_analysis.md` + `_full_impl_plan.md`
+
+### Problem
+
+Die Teilumsetzung hat den monolithischen Prompt aufgeteilt, aber zwei große Dokumente
+bleiben als strukturgebende Referenz im System:
+
+| Datei | Größe | Verwendung (aktuell) |
+|---|---|---|
+| `component-integration-coverage_full_analysis.md` | ~11 k Token | prep-02 liest sie als Strukturvorlage vor dem Überschreiben |
+| `component-integration-coverage_full_impl_plan.md` | ~17 k Token | prep-03 liest sie als Strukturvorlage; AP-Phase-2 referenziert sie für Statusupdates |
+
+Jede AP-Session zieht dadurch immer noch bis zu 28 k Token Dokument-Overhead in den Kontext.
+
+### Lösung
+
+**Statustracking:** AP-Dateien verwalten ihren eigenen Status (im Template bereits angelegt).
+Die Referenz auf `_full_impl_plan.md` wird aus dem AP-Phase-2-Template in `prep-03` entfernt.
+Eine einfache Gesamt-Übersicht (AP-Liste + Status) gehört in die AP-Dateien selbst —
+`_full_impl_plan.md` als Statusträger entfällt.
+
+**Strukturvorlagen:** Statt der großen Ausgabedokumente je eine kompakte Sample-Datei in
+`docs/coverage-iteration/`:
+
+| Sample-Datei | Zielgröße | Zweck |
+|---|---|---|
+| `sample-analysis.md` | ≤ 2 k Token | Je 2–3 Beispieleinträge pro Abschnitt (2.1–2.7), zeigt nötige Tiefe und Format |
+| `sample-impl-plan.md` | ≤ 2 k Token | 2–3 APs mit Status-Block, Stack-Regeln, Container-Pfad-Beispiel |
+
+Die Sample-Dateien sind **iterationsunabhängig** — sie zeigen Struktur und Tiefe
+anhand fiktiver Beispieldaten und werden nicht überschrieben.
+
+**Anpassungen an bestehenden Prompt-Dateien:**
+
+| Datei | Änderung |
+|---|---|
+| `prep-02-analysis.md` | Vorlage: `sample-analysis.md` statt `_full_analysis.md` |
+| `prep-03-impl-plan.md` | Vorlage: `sample-impl-plan.md` statt `_full_impl_plan.md`; AP-Phase-2-Template: Statusreferenz auf `_full_impl_plan.md` entfernen |
+| `post-01-finalize.md` | Commit-Liste: `_full_analysis.md` / `_full_impl_plan.md` entfernen |
+
+**Löschen:** `_full_analysis.md` und `_full_impl_plan.md` werden nach der Umstellung
+nicht mehr benötigt und können entfernt werden.
+
+### Ergebnis
+
+Jede Session (prep-02, prep-03, AP-Phase-2) lädt ≤ 2 k Token Strukturvorlage
+statt bis zu 28 k. Der Kontext-Overhead ist dauerhaft beseitigt.
+
+---
+
 ## Offene Fragen
 
 | Thema | Status | Nächster Schritt |
@@ -221,15 +285,18 @@ Diese Regeln müssen in jeder Prompt-Datei präsent sein, die Testausführung au
 
 ---
 
-## Nächste Schritte (nicht Teil dieses Dokuments)
+## Nächste Schritte
 
-1. `make crap-report`-Script und Makefile-Target erstellen
-2. Verzeichnis `docs/coverage-iteration/` anlegen
-3. `entry.md` und `prep-01` bis `prep-03` erstellen
-4. `post-01-finalize.md` erstellen
-5. **Dokumenten-Konsistenz herstellen** (einmalig als Teil des Refactorings):
-   - `CLAUDE.md` auf neue Prompt-Struktur (`docs/coverage-iteration/`) aktualisieren
-   - `README.md` auf Vollständigkeit und Aktualität prüfen
-   - `docs/testing-bigpicture.md` auf aktuellen Ratchet-Stand und FM-Tabelle prüfen
-6. Neue Coverage-Iteration starten: Session öffnen, `entry.md` lesen, `prep-01` ausführen
-   → `prep-03` erzeugt automatisch die AP-Dateien für die aktuelle Iteration
+| Nr. | Schritt | Status |
+|---|---|---|
+| 1 | `make crap-report`-Script und Makefile-Target erstellen | ✅ |
+| 2 | Verzeichnis `docs/coverage-iteration/` anlegen | ✅ |
+| 3 | `entry.md` und `prep-01` bis `prep-03` erstellen | ✅ |
+| 4 | `post-01-finalize.md` erstellen | ✅ |
+| 5 | `CLAUDE.md` auf neue Prompt-Struktur aktualisieren | ✅ |
+| 6 | `component-integration-coverage_full_prompt.md` löschen | ✅ |
+| 7 | Flaschenhals beseitigen: Sample-Dateien + Anpassungen (siehe AP oben) | ⬜ |
+| 8 | Erste Coverage-Iteration starten: `entry.md` → `prep-01` → … | ⬜ (nach Nr. 7) |
+
+> `README.md` und `docs/testing-bigpicture.md`: kein Handlungsbedarf im Rahmen
+> dieses Refactorings festgestellt — werden regulär in `post-01` jeder Iteration geprüft.
