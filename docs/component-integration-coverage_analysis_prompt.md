@@ -318,3 +318,38 @@ explizit benannt werden, wenn sie relevant sind:
 - `layer3-integration/tests/*.php` — Bestehende Testklassen
 - `artifacts/layer3/coverage.xml` — Eingabe dieser Analyse
 - `CLAUDE.md` — Projektregeln (Lizenz-Header, Testausführungsregeln, SELinux-Falle)
+
+---
+
+## Status-Fazit (Stand: 2026-04-03, Quick-Lauf-Baseline)
+
+Erstmals ausgeführt gegen `artifacts/layer3/coverage.xml` aus `make test-integration-quick`
+(3 Testklassen: SearchIntegrationTest, PrivacyVisibilityTest, TreeOperationsTest).
+Ergebnis persistiert in `docs/component-integration-coverage_analysis.md`.
+
+**Schritt 1 — Kennzahlen:**
+- 9,0% Statement-Coverage (3.969 / 44.070), 7,4% Method-Coverage
+- 1.191 von 1.365 Dateien bei 0%
+
+**Schritt 2 — CRAP Top 3:**
+- Rang 1: `RelationshipService::legacyNameAlgorithm` — CRAP 516.242, cx=718 → **Quick-Lauf-Artefakt** (im vollen Lauf durch `RelationshipServiceIntegrationTest` abgedeckt)
+- Rang 2: `StatisticsChartModule::postCustomChartAction` — CRAP 14.042
+- Rang 3–5: `Report/`-Paket (RightToLeftSupport, ReportParserGenerate) — Layer-2-Kandidaten
+
+**Schritt 3 — Layer-Abgrenzung:**
+- Layer-3-Kandidaten: `AbstractIndividualListModule::handle` (S19, CRAP 4.290), `CheckTree::handle` (CRAP 4.160), `IndividualFactsService::childFacts/parentFacts` (CRAP 1.980+992), `CalendarService` (CRAP 870)
+- Layer-2: `Report/`-Paket (CRAP 10.100–992), `Date::display` (erst upstream prüfen)
+- Achtung: `StatisticsData` liegt im Paket `(root)`, hat aber `DB::table()` → Layer-3
+
+**Schritt 4 — Gaps:**
+- Kein einziges „rot (kein Test)" — alle 53 Teststufe-2-IDs haben Testklassen
+- Zwei partielle Lücken: S19 (Collation-Logik ungetestet), G16 (nur PRIV_HIDE getestet)
+
+**Schritt 5 — Top-Empfehlungen:**
+1. S19: `AbstractIndividualListModule::handle()` in `ListModuleIntegrationTest` mit `initial=A`-Parameter triggern
+2. G16: Testfall für PRIV_NONE/USER als dokumentierten upstream-Bug anlegen
+3. S16: `legacyNameAlgorithm` in `RelationshipServiceIntegrationTest` erweitern
+4. Neu: `CheckTreeIntegrationTest` + FM-Eintrag G24 (Referenzintegrität)
+5. Neu: `IndividualFactsIntegrationTest` (kein FM-ID nötig, analog `RomanNumeralsIntegrationTest`)
+
+**Schritt 6 — `testing-bigpicture.md`:** Konkrete Diff-Blöcke für Ratchet-Ist-Stand-Tabelle, S19-Status auf „Partiell", neuer FM-Eintrag G24.
