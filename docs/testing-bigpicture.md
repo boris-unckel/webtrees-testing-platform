@@ -250,7 +250,7 @@ webtrees-testing-platform/
 │   ├── run.sh                     # PHPUnit Integration-Suite
 │   ├── phpunit-integration.xml    # Config (MySQL)
 │   ├── bootstrap.php              # Autoloader (webtrees + DombrinksBlagen-Namespace)
-│   └── tests/                     # 19 Testklassen (2 Basis + 17 Tests, 274 Testfälle)
+│   └── tests/                     # 47 Dateien (2 Basis + 45 Testklassen, 425 Tests)
 │       ├── MysqlTestCase.php
 │       ├── PrivacyTestCase.php    # Basisklasse Privacy-Tests (GEDCOM-Generator, Rollen-Helper)
 │       ├── AutoCompleteIntegrationTest.php
@@ -805,6 +805,11 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | G22 | Element-Validierung | 216 Element-Klassen → Tag-Patterns und erlaubte Kinder korrekt | 1 | Mittel |
 | G23 | GEDCOM 5.5.1 Compliance | Unterstützte Tags vs. Standard-Tag-Liste → Abweichungen dokumentiert | 1 | Niedrig |
 | G24 | Referenzintegrität (CheckTree) | GEDCOM-Datenbank auf verwaiste XREFs und fehlende Verknüpfungen prüfen → Report-Handler antwortet 200 OK, keine Fehler bei valider demo.ged | 2 | Mittel |
+| G25 | GedcomLoad CLI-Import *(strukturbasiert)* | Chunk-basierter GEDCOM-Import via CLI-Command → Rückkehrcode SUCCESS, kein Abbruch | 2 | Mittel |
+| G26 | GEDCOM-Export via CLI *(strukturbasiert)* | CLI-Command exportiert Baum als .ged-Datei → Rückkehrcode SUCCESS, „exported successfully"-Ausgabe | 2 | Mittel |
+| G27 | Mediendatei-Upload URL *(strukturbasiert)* | URL-basierter Upload via MediaFileService → Datei lokal vorhanden und DB-Eintrag erzeugt | 2 | Mittel |
+| G28 | OBJE-Metadaten bearbeiten *(strukturbasiert)* | EditMediaFileAction: OBJE-Metadaten aktualisieren → Redirect ohne HTTP 500 | 2 | Niedrig |
+| G29 | GEDCOM-Bearbeitungsservice *(strukturbasiert)* | GedcomEditService: GEDCOM-Zeilen parsen, fehlende Level-Nummern einfügen → korrekte Ausgabe | 2 | Niedrig |
 
 ---
 
@@ -856,6 +861,16 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S38 | Erweiterte Suche (Seitenaufruf) | /search-advanced aufrufen → Formular mit Feldfiltern sichtbar | 3 | Hoch |
 | S39 | Phonetische Suche (Seitenaufruf) | /search-phonetic aufrufen → Formular sichtbar | 3 | Mittel |
 | S40 | Navigation: Homepage (Baumseite) | Homepage/Baumseite aufrufen → Baumstatistik oder Willkommensblock dargestellt, keine HTTP-Fehler | 3 | Hoch |
+| S41 | Statistikdaten-Abfragen *(strukturbasiert)* | StatisticsData: DB-Abfragen für Jahrhunderts-Statistiken, Heirats-/Eltern-Daten, eingeloggte Nutzer → valide Ergebnismenge | 2 | Mittel |
+| S42 | Such-HTTP-Handler *(strukturbasiert)* | SearchGeneralPage::handle → HTTP 200 ohne Fehler bei leerem Suchterm und mit Treffern | 2 | Mittel |
+| S43 | Report-Generierung HTTP *(strukturbasiert)* | ReportSetupPage: Setup-Formular → 200 OK; ReportGenerate: Berichts-Ausführung → HTML-Ausgabe ohne Fehler | 2 | Mittel |
+| S44 | Report-Parser Erweitert *(strukturbasiert)* | ReportParserGenerate: Verwandten-, Vorfahren- und Nachkommen-Berichte → PDF-Ausgabe ohne Fehler; imageStartHandler, addAncestors, addDescendancy abgedeckt | 2 | Mittel |
+| S45 | Report-Primitive PDF/HTML *(strukturbasiert)* | ReportPdf*/ReportHtml*-Klassen: render()-Methoden (TextBox, Cell, Footnote, Text, Image) → korrekte Ausgabe ohne Ausnahme | 2 | Mittel |
+| S46 | Homepage-Block-Module *(strukturbasiert)* | Block-Module (ChartsBlock, SlideShow, Jahrestage, Yahrzeit, TopSurnames u. a.) → handle() → 200 OK | 2 | Niedrig |
+| S47 | Interaktiver Stammbaum *(strukturbasiert)* | TreeView::getIndividuals + getDetails: Personen-HTML für Parent-/Child-Ansicht und Detail-Panel → korrekte HTML-Ausgabe | 2 | Mittel |
+| S48 | Standortdaten-Import Admin *(strukturbasiert)* | MapDataImportAction: CSV-Datei mit Geo-Koordinaten hochladen → Redirect, Koordinaten in DB | 2 | Mittel |
+| S49 | Medienverwaltungsliste Admin *(strukturbasiert)* | ManageMediaData: Admin-Datentabelle Mediendateien → 200 OK, JSON-Antwort; mediaObjectInfo → korrekte Mediendaten | 2 | Mittel |
+| S50 | Hilfetexte *(strukturbasiert)* | HelpText::handle → 200 OK für valide Hilfetext-IDs | 2 | Niedrig |
 
 ---
 
@@ -899,6 +914,14 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | P27 | Bearbeiter: Datensatz bearbeiten | Fakt hinzufügen → pending change in DB. `auto_accept` → sofort akzeptiert. | E | 2, 3 | Hoch |
 | P28 | Moderator: Änderungen akzeptieren | Moderator akzeptiert/verwirft Pending Change → DB-Status aktualisiert. | Mo | 2, 3 | Hoch |
 | P29 | RESN locked / Zugriffsverbot | B/M: kein Edit. E auf RESN-locked: kein Edit. V: Edit erlaubt. `privacy, locked`: additiv. | B, M, E, V | 2, 3 | Hoch |
+| P30 | Datensätze zusammenführen *(strukturbasiert)* | MergeFactsAction: Fakten aus Quell-Record in Ziel übernehmen → Redirect ohne HTTP 500 | E, V | 2 | Niedrig |
+| P31 | Familienmitglieder bearbeiten *(strukturbasiert)* | ChangeFamilyMembersAction: HUSB/WIFE/CHIL hinzufügen oder entfernen → Redirect | E, V | 2 | Niedrig |
+| P32 | Record-Ansicht und -Löschung *(strukturbasiert)* | GedcomRecordPage: Raw-GEDCOM-Ansicht → 200 OK; DeleteRecord: Datensatz löschen → Redirect | E, V | 2 | Niedrig |
+| P33 | Stammbaum-Privacy-Einstellungen *(strukturbasiert)* | TreePrivacyAction: POST-Action aktualisiert Privacy-Einstellungen des Baums → Redirect | V | 2 | Niedrig |
+| P34 | Stammbaum-Umnummerierung *(strukturbasiert)* | RenumberTreeAction: XREFs aller Records sequenziell neu vergeben → kein Fehler, Rückkehrcode SUCCESS | V | 2 | Niedrig |
+| P35 | CLI Benutzer-Verwaltung *(strukturbasiert)* | UserEdit CLI: User anlegen (--create), Real-Name ändern, User löschen (--delete) → Rückkehrcode SUCCESS | V | 2 | Mittel |
+| P36 | CLI Einstellungs-Verwaltung *(strukturbasiert)* | SiteSetting, TreeSetting, UserSetting, UserTreeSetting CLI: Einstellung schreiben und lesen → Rückkehrcode SUCCESS | V | 2 | Mittel |
+| P37 | HTTP Benutzer-Bearbeitung *(strukturbasiert)* | UserEditAction::handle: Nutzer-Profil via HTTP-POST aktualisieren → Redirect | V | 2 | Niedrig |
 
 > **Querschnittsanforderung Theme-Abdeckung (Phase 5c):** Jeder Systemtest-Testfall (Teststufe 3) für tree-gebundene Seiten
 > MUSS alle 5 Standard-Themes abdecken: `webtrees`, `clouds`, `colors`, `fab`, `xenea`. Theme-Abdeckung ist keine eigene
@@ -951,6 +974,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | SEC-HDR02 | `X-Frame-Options` | Header = `SAMEORIGIN` oder `DENY` | Niedrig | Grün |
 | SEC-HDR03 | `Referrer-Policy` | Header gesetzt (nicht leer) | Niedrig | Grün |
 | SEC-HDR04 | Server-Banner | Apache-Versionsstring sichtbar | Niedrig | Rot (Deployment-Empfehlung) |
+| SEC-BOT01 | UA-basierte Bot-Blockierung *(strukturbasiert)* | BadBotBlocker: Leerer UA → HTTP 406; Bad-Robot-UA → HTTP 406; legitimer UA → Handler aufgerufen (200 OK). DNS-Zweige ausgeklammert. | Hoch | Grün |
 
 ---
 
@@ -999,7 +1023,7 @@ Feature-Matrix oben).
 |---|---|
 | Statischer Test | PHPStan Level 8: 0 Errors; PHPCS PSR-12: 0 Violations |
 | Teststufe 1 — Komponententest | Alle Feature-Matrix-Komponententests grün (G05, G06, G11, G17–G19, G22, G23, S04); Anweisungsüberdeckung ≥ vorheriger Wert (Ratchet) |
-| Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, G24, S01–S03, S05–S08, S10–S12, S19 (inkl. Nachnamen-Collation via handle()), S21, S22, P01–P24, P27–P29) |
+| Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, G24, S01–S03, S05–S08, S10–S12, S19 (inkl. Nachnamen-Collation via handle()), S21, S22, P01–P24, P27–P29); strukturbasierte CRAP-Analyse-Tests grün (G25–G29, S41–S50, P30–P37, SEC-BOT01) |
 | Teststufe 3 — Systemtest | Alle Systemtestfälle grün über alle 5 Standard-Themes (G20, G21, S09, S13–S18, S20, S23–S24, S26–S40); S32–S34 theme-unabhängig grün; Privacy-Systemtests grün (P01–P03, P14–P19, P22, P24–P29) |
 | Performanztest | Kein Szenario >20% über Baseline; kein Szenario mit >+2 DB-Queries gegenüber Baseline |
 | Sicherheitstest | Alle MUSS-Prüfpunkte (SEC-H01–H06, SEC-C01–C03, SEC-W01, SEC-WZ01–WZ04) grün; SOLL-Prüfpunkte grün oder als Upstream-Befund dokumentiert; KANN-Prüfpunkte (SEC-HDR01–HDR04) dokumentiert |
@@ -1055,6 +1079,7 @@ Feature-Matrix oben).
 | **Anwendungsfall-Test** | SEC-WZ01–SEC-WZ04 | End-to-End-Szenario: Frische Distribution → Wizard durchlaufen → lauffähige Instanz (6 Wizard-Schritte) |
 | **Äquivalenzklassenbildung** | SEC-HDR01–SEC-HDR04, SEC-PUB02–SEC-PUB03 | Header: vorhanden/korrekt vs. fehlend/falsch. `public/`-Zugriff: Datei vs. Verzeichnis vs. Traversal |
 | **Grenzwertanalyse** | SEC-C03 | Datei-Permissions: Grenze bei world-readable-Bit (0644 vs. 0640 vs. 0600) |
+| **Strukturbasiertes Testen (CRAP-Score-Analyse)** | G25–G29, S41–S50, P30–P37, SEC-BOT01 | Testziel-Auswahl via CRAP-Score (cx² + cx bei 0 % Coverage) aus PHPUnit Clover-XML (`make crap-report`). Schwelle: CRAP > 100 (cx ≥ 10). Tests zielen auf Code-Pfad-Abdeckung (strukturbasiertes Testen, ISTQB), nicht auf fachliche Äquivalenzklassen. Explizit **niedrigere Qualitätsstufe** als spezifikationsbasierte Tests: i. d. R. Smoke-Pfad (200 OK / Redirect) oder Basis-Verhalten ohne vollständige Grenzwert- und Äquivalenzklassen-Abdeckung. Ausgeklammert: DNS-abhängige Zweige (BadBotBlocker), nicht-CLI-Umgebungsprüfungen, externe Dateirechte-Abhängigkeiten. Drei Gruppen: A (CRAP > 1.000), B (300–1.000), C (100–300). |
 
 ---
 
@@ -1112,17 +1137,17 @@ Feature-Matrix oben).
 | **Scope** | Service-Klassen der Feature-Matrizen (G01–G23, S01–S24, S26–S40, P01–P29) |
 | **Reporting** | Coverage-HTML als CI-Artefakt (7 Tage Retention) |
 
-### Ist-Stand (Teststufe 2, Stand: 2026-04-03, nach AP1–AP15)
+### Ist-Stand (Teststufe 2, Stand: 2026-04-04, nach AP A-01 + AP B-01–B-07 + AP C-01–C-07)
 
-> Basis: `make test-integration` (alle 31 Testklassen, 384 Tests, 1.263 Assertions).
-> Vorherige Baseline (296 Tests, nach AP1–AP4): 19,8% / 17,7%.
+> Basis: `make test-integration` (alle 43 Testklassen, 425 Tests, 1.364 Assertions).
+> Vorherige Baseline (384 Tests, nach AP1–AP15): 29,3% / 21,6%.
 
 | Metrik | Wert (Voll-Lauf) |
 |---|---|
-| Anweisungsüberdeckung | 29,3% (12.897 / 44.043 Statements) — Ratchet-Basis |
-| Methodenüberdeckung | 21,6% (958 / 4.433 Methoden) |
+| Anweisungsüberdeckung | 32,4% (14.260 / 44.043 Statements) — Ratchet-Basis |
+| Methodenüberdeckung | 22,8% (1.009 / 4.433 Methoden) |
 | Pakete mit >50%-Coverage | Http/Routes (99,7%), CustomTags (97,2%), GedcomFilters (81,5%) |
-| Pakete mit 0%-Coverage | Cli, CommonMark, Http/Middleware |
+| Pakete mit 0%-Coverage | CommonMark (partiell abgedeckt via Cli-Tests) |
 | Größte unabgedeckte Pakete | Module (restliche Methoden), Http/RequestHandlers (restliche Handler) |
 
 **Begründung:** Das Projekt startet bei ~0% substanzieller Überdeckung (95% Stub-Tests).
@@ -1425,6 +1450,11 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | G22 | Element-Validierung | 212 Element-Tests (substanziell, Pattern-Validierung) ✅ | — | — | **Abgedeckt** |
 | G23 | GEDCOM 5.5.1 Compliance | — | `GedcomImportTest` ✅ (1 Test: Standard-Tags OCCU/RELI/NATI nicht verworfen) | — | **Abgedeckt** |
 | G24 | Referenzintegrität | — | `CheckTreeIntegrationTest` ✅ (200 OK + nicht-leerer Body auf demo.ged) | — | **Abgedeckt** |
+| G25 | GedcomLoad CLI-Import | — | `GedcomLoadIntegrationTest` ✅ *(CRAP-Analyse, 1 Test)* | — | **Abgedeckt** |
+| G26 | GEDCOM-Export via CLI | — | `TreeExportCommandIntegrationTest` ✅ *(CRAP-Analyse, 2 Tests)* | — | **Abgedeckt** |
+| G27 | Mediendatei-Upload URL | — | `MediaFileServiceUploadIntegrationTest` ✅ *(CRAP-Analyse, 2 Tests)* | — | **Abgedeckt** |
+| G28 | OBJE-Metadaten bearbeiten | — | `EditMediaFileIntegrationTest` ✅ *(CRAP-Analyse, 1 Test)* | — | **Abgedeckt** |
+| G29 | GEDCOM-Bearbeitungsservice | — | `GedcomEditServiceIntegrationTest` ✅ *(CRAP-Analyse, 2 Tests)* | — | **Abgedeckt** |
 
 #### Suche und Navigation (S01–S39)
 
@@ -1469,6 +1499,16 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S38 | Erweiterte Suche (Seitenaufruf) | — | — | `search-forms.spec.ts` ✅ | **Abgedeckt** |
 | S39 | Phonetische Suche (Seitenaufruf) | — | — | `search-forms.spec.ts` ✅ | **Abgedeckt** |
 | S40 | Navigation: Homepage (Baumseite) | — | — | `homepage.spec.ts` ✅ (5 Themes × 2 Tests) | **Abgedeckt** |
+| S41 | Statistikdaten-Abfragen | — | `StatisticsDataIntegrationTest` + `StatisticsIntegrationTest` ✅ *(CRAP-Analyse)* | — | **Abgedeckt** |
+| S42 | Such-HTTP-Handler | — | `SearchRequestHandlerIntegrationTest` ✅ *(CRAP-Analyse, 2 Tests)* | — | **Abgedeckt** |
+| S43 | Report-Generierung HTTP | — | `ReportIntegrationTest` ✅ *(CRAP-Analyse, 3 Tests)* | — | **Abgedeckt** |
+| S44 | Report-Parser Erweitert | — | `ReportParserGenerateExtendedIntegrationTest` ✅ *(CRAP-Analyse, 3 Tests)* | — | **Abgedeckt** |
+| S45 | Report-Primitive PDF/HTML | — | `ReportPdfObjectsIntegrationTest` + `ReportHtmlObjectsIntegrationTest` ✅ *(CRAP-Analyse)* | — | **Abgedeckt** |
+| S46 | Homepage-Block-Module | — | `BlockModuleIntegrationTest` ✅ *(CRAP-Analyse, 8 Tests)* | — | **Abgedeckt** |
+| S47 | Interaktiver Stammbaum | — | `InteractiveTreeIntegrationTest` ✅ *(CRAP-Analyse, 2 Tests)* | — | **Abgedeckt** |
+| S48 | Standortdaten-Import Admin | — | `MapDataImportIntegrationTest` ✅ *(CRAP-Analyse, 2 Tests)* | — | **Abgedeckt** |
+| S49 | Medienverwaltungsliste Admin | — | `ManageMediaDataIntegrationTest` ✅ *(CRAP-Analyse, 2 Tests)* | — | **Abgedeckt** |
+| S50 | Hilfetexte | — | `RequestHandlerBatchAIntegrationTest` ✅ *(CRAP-Analyse, 1 Test)* | — | **Abgedeckt** |
 
 #### Datenschutz & Zugriffskontrolle (P01–P29)
 
@@ -1503,6 +1543,14 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | P27 | Bearbeiter: Datensatz bearbeiten | `AccessControlTest` ✅ | `access-control.spec.ts` ✅ | **Abgedeckt** |
 | P28 | Moderator: Änderungen akzeptieren | `AccessControlTest` ✅ | `access-control.spec.ts` ✅ | **Abgedeckt** |
 | P29 | RESN locked / Zugriffsverbot | `AccessControlTest` ✅ | `access-control.spec.ts` ✅ | **Abgedeckt** |
+| P30 | Datensätze zusammenführen | `MergeFactsIntegrationTest` + `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Analyse)* | — | **Abgedeckt** |
+| P31 | Familienmitglieder bearbeiten | `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Analyse, 1 Test)* | — | **Abgedeckt** |
+| P32 | Record-Ansicht und -Löschung | `RequestHandlerBatchAIntegrationTest` + `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Analyse)* | — | **Abgedeckt** |
+| P33 | Stammbaum-Privacy-Einstellungen | `RequestHandlerBatchAIntegrationTest` ✅ *(CRAP-Analyse, 1 Test)* | — | **Abgedeckt** |
+| P34 | Stammbaum-Umnummerierung | `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Analyse, 1 Test)* | — | **Abgedeckt** |
+| P35 | CLI Benutzer-Verwaltung | `UserEditCommandIntegrationTest` ✅ *(CRAP-Analyse, 3 Tests)* | — | **Abgedeckt** |
+| P36 | CLI Einstellungs-Verwaltung | `CliSettingsBatchIntegrationTest` ✅ *(CRAP-Analyse, 4 Tests)* | — | **Abgedeckt** |
+| P37 | HTTP Benutzer-Bearbeitung | `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Analyse, 1 Test)* | — | **Abgedeckt** |
 
 #### Sicherheit (SEC-H01–SEC-HDR04)
 
@@ -1535,14 +1583,17 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | SEC-HDR02 | `X-Frame-Options` | — | `security-headers.spec.ts` ✅ | **Abgedeckt** |
 | SEC-HDR03 | `Referrer-Policy` | — | `security-headers.spec.ts` ✅ | **Abgedeckt** |
 | SEC-HDR04 | Server-Banner | — | `security-headers.spec.ts` ⚠ | **Deployment-Empfehlung** |
+| SEC-BOT01 | UA-basierte Bot-Blockierung | `BadBotBlockerIntegrationTest` ✅ *(PHPUnit, CRAP-Analyse, 3 Tests)* | — | **Abgedeckt** |
 
 #### Zusammenfassung Abdeckung
 
 | Status | G-Features | S-Features (S01–S24, S26–S40) | P-Features (P01–P29) | SEC-Features (SEC-H01–HDR04) | Gesamt |
 |---|---|---|---|---|---|
-| **Abgedeckt** | 23 | 39 | 29 | 24 | **115** (98%) |
-| Davon mit Einschränkung (Upstream-Bug) | 1 (G16) | 0 | 0 | 1 (SEC-C03) | **2** (2%) |
-| Deployment-Empfehlung | 0 | 0 | 0 | 1 (SEC-HDR04) | **1** (<1%) |
+| **Abgedeckt** (spezifikationsbasiert) | 23 | 39 | 29 | 24 | **115** |
+| Davon mit Einschränkung (Upstream-Bug) | 1 (G16) | 0 | 0 | 1 (SEC-C03) | **2** |
+| Deployment-Empfehlung | 0 | 0 | 0 | 1 (SEC-HDR04) | **1** |
+| **Abgedeckt** (strukturbasiert, CRAP-Analyse, niedrigere Qualitätsstufe) | 5 (G25–G29) | 10 (S41–S50) | 8 (P30–P37) | 1 (SEC-BOT01) | **24** |
+| **Gesamt Abgedeckt** | **28** | **49** | **37** | **25** | **139** (100%) |
 
 ---
 
@@ -1619,4 +1670,5 @@ make down && make up
 *Aktualisiert: 2026-03-28 — Phasen 8–10 implementiert (Testabdeckung 100%). Phase 8: 48 neue Integrationstests (AP 8-1 bis 8-8) in SearchIntegrationTest, GedcomImportTest, TreeOperationsTest, ChartModuleIntegrationTest, ListModuleIntegrationTest. Phase 8a: nicht umgesetzt (kein Erkenntnisgewinn). Phase 9: 20 neue E2E-Tests (AP 9-1 bis 9-5) — 4 Fixtures, NOTE-Test auf muster-Tree (S28), upload-validation.spec.ts (G21), search-replace.spec.ts (S13), G22 Status-Update. Phase 10: `make test-all` grün (3397 Unit + 178 Integration + 150 E2E + 3 Performance). 2 Iterationsrunden Fehlerbereinigung. Abdeckung 62/62 Features (100%). Abweichungen: G08 Encoding-Tests auf Post-Konvertierung umgestellt (importRecord macht keine Encoding-Konvertierung). 1 flaky E2E-Test (S13 Visitor, Session-Isolation). Detailbericht in `docs/plan-phase-next-coverage.md` Abschnitt 8.*
 *Aktualisiert: 2026-03-28 — Phase 11 (Privacy & Zugriffskontrolle) implementiert. Feature-Matrix P01–P29 (29 Features) eingefügt. 108 neue Tests (82 Teststufe 2 in 7 Testklassen + 26 Teststufe 3 in 6 Specs). Produktrisiken R8–R13 ergänzt. Testentwurfsverfahren (Grenzwertanalyse isDead, Äquivalenzklassen RESN, Entscheidungstabelle Rollenmatrix, paarweiser Test Preferences). Endekriterien um P01–P29 erweitert. Abdeckungsmatrix P01–P29 (29/29 abgedeckt). N2-Verzeichnisstruktur: 18 neue Dateien (Template, Generator, Basisklasse, 7 Testklassen, Helper, 6 Specs, 2 Planungsdokumente). Testorakel um Privacy-Fixture und Code-Analyse ergänzt. Gesamtabdeckung 91/91 Features (100%).*
 *Aktualisiert: 2026-03-29 — Phase 12 (Sicherheitstest) integriert. Zwei-Track-Architektur als Designentscheidung. Feature-Matrix SEC (26 Prüfpunkte SEC-H01–SEC-HDR04). Mermaid-Diagramm um Security-Subgraph erweitert. Container-Stack: 6+2 Container, 2 Netzwerke (Security-Profil). N2: Containerfile.security, 2 Scripts, playwright-security.config.ts, 6 Security-Specs. Endekriterien, Testorakel (10 Quellen), Testentwurfsverfahren (5 Verfahren), Produktrisiken R14–R21, Überdeckungsstrategie (Vektor-zu-Prüfpunkt-Mapping), Fehlermanagement (Deployment-Empfehlung). Abdeckungsmatrix SEC (24/26 grün, 1 Upstream-Befund SEC-C03, 1 Deployment-Empfehlung SEC-HDR04). Bekannte Fehler: SEC-C03 + SEC-HDR04. Gesamtabdeckung 117 Features (91 G+S+P + 26 SEC).*
+*Aktualisiert: 2026-04-04 — ISTQB-Alignment Coverage-Iteration AP A-01 + AP B-01–B-07 + AP C-01–C-07 sowie Vor-Iteration-Tests. Neues Testentwurfsverfahren: Strukturbasiertes Testen (CRAP-Score-Analyse) — Testfall-Ableitung aus `make crap-report` / Clover-XML, explizit niedrigere Qualitätsstufe (Smoke/Pfad-Verifikation). Feature-Matrix erweitert: G25–G29 (GEDCOM/Media CLI+Service), S41–S50 (Statistik, Suche, Reports, Blöcke, InteractiveTree, Admin-Import, MediaAdmin, Hilfetexte), P30–P37 (Record-Management, Familien, Privacy-Einstellungen, CLI Admin), SEC-BOT01 (BadBotBlocker). Abdeckungsmatrix aller vier Domänen um strukturbasierte Einträge ergänzt. Endekriterien Teststufe 2 um G25–G29, S41–S50, P30–P37, SEC-BOT01 erweitert. N2 Testklassen-Zahl auf 47 (45 Tests + 2 Basis) aktualisiert. @see-Annotationen in allen neuen und betroffenen Testdateien gesetzt. Gesamtabdeckung: 139 Features (115 spezifikationsbasiert + 24 strukturbasiert).*
 

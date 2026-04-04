@@ -16,6 +16,7 @@ use Fisharebest\Webtrees\Services\SearchService;
  * Testet handle() — CRAP 1.722 (cx=41).
  * SearchGeneralPage ruft SearchService → DB::table() mehrfach auf.
  *
+ * @see docs/testing-bigpicture.md S42
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SearchGeneralPage
  */
 class SearchRequestHandlerIntegrationTest extends MysqlTestCase

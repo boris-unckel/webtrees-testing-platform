@@ -17,6 +17,7 @@ use Fisharebest\Webtrees\Tree;
  * Geschuetzte Personen duerfen fuer unbefugte Rollen nicht in
  * Suchergebnissen auftauchen.
  *
+ * @see docs/testing-bigpicture.md P24
  * @covers \Fisharebest\Webtrees\Services\SearchService::searchIndividuals
  */
 class PrivacySearchTest extends PrivacyTestCase

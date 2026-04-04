@@ -18,6 +18,7 @@ use Fisharebest\Webtrees\Registry;
  * - getIndividuals(Tree, 'c{familyXref,...}') → drawChildren
  * - getDetails(Individual) → drawPersonDetails
  *
+ * @see docs/testing-bigpicture.md S47
  * @covers \Fisharebest\Webtrees\Module\InteractiveTree\TreeView
  */
 class InteractiveTreeIntegrationTest extends MysqlTestCase

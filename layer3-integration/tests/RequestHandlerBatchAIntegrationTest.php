@@ -20,6 +20,7 @@ use Fisharebest\Webtrees\Services\LinkedRecordService;
  * HelpText, GedcomRecordPage, DeleteRecord (DB-abhängig),
  * TreePrivacyAction (POST-Action → Redirect).
  *
+ * @see docs/testing-bigpicture.md S50, P32, P33
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\HelpText
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\GedcomRecordPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\DeleteRecord

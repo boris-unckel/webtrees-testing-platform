@@ -23,6 +23,7 @@ use Fisharebest\Webtrees\Webtrees;
  *
  * Verwendet birth_report (kleinstes XML, keine Pflicht-Eingaben).
  *
+ * @see docs/testing-bigpicture.md S43
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportSetupPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportGenerate
  * @covers \Fisharebest\Webtrees\Report\ReportParserGenerate

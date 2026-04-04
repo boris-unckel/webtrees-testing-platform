@@ -25,6 +25,7 @@ use Fisharebest\Webtrees\Services\UserService;
  * ChangeFamilyMembersAction, MergeRecordsPage, MergeFactsPage,
  * RenumberTreeAction, UserEditAction.
  *
+ * @see docs/testing-bigpicture.md P30, P31, P32, P34, P37
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ChangeFamilyMembersAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MergeRecordsPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MergeFactsPage

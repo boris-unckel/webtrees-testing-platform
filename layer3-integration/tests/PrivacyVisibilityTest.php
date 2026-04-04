@@ -18,6 +18,7 @@ use Fisharebest\Webtrees\Tree;
  * Testet die Entscheidungskette canShow() → canShowRecord() → canShowByType()
  * fuer verschiedene Kombinationen aus Stammbaum-Einstellungen und Access-Levels.
  *
+ * @see docs/testing-bigpicture.md P01, P02, P03, P04, P05, P06, P07, P14, P15
  * @covers \Fisharebest\Webtrees\Individual::canShowByType
  * @covers \Fisharebest\Webtrees\GedcomRecord::canShowRecord
  */

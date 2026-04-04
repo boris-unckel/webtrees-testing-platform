@@ -15,6 +15,7 @@ use Fisharebest\Webtrees\Tree;
  * editLinesToGedcom() — Bootstrap-only (Registry::elementFactory).
  * insertMissingLevels() — protected, über anonyme Unterklasse zugänglich; benötigt Tree.
  *
+ * @see docs/testing-bigpicture.md G29
  * @covers \Fisharebest\Webtrees\Services\GedcomEditService
  */
 class GedcomEditServiceIntegrationTest extends MysqlTestCase
