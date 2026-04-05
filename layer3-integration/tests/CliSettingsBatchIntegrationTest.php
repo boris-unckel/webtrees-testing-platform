@@ -187,4 +187,122 @@ class CliSettingsBatchIntegrationTest extends MysqlTestCase
 
         $this->assertSame(Command::SUCCESS, $exitCode);
     }
+
+    // ─── Neue Tests: Validierungs-Branches (B1, B6, B9, B12, B14, EP11) ────────
+
+    /**
+     * SiteSetting: --list + --delete zusammen liefert FAILURE (B1/EP2).
+     */
+    public function test_site_setting_list_conflicts_with_delete(): void
+    {
+        $tester   = $this->makeTester(new SiteSetting());
+        $exitCode = $tester->execute(['--list' => true, '--delete' => true]);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('Cannot specify --list and --delete', $tester->getDisplay());
+    }
+
+    /**
+     * SiteSetting: --delete auf nicht vorhandene Einstellung gibt Warning aber SUCCESS (B6/EP4).
+     */
+    public function test_site_setting_delete_nonexistent_warns_but_succeeds(): void
+    {
+        $tester   = $this->makeTester(new SiteSetting());
+        $exitCode = $tester->execute([
+            'setting-name' => 'P36_NONEXISTENT_KEY_XYZ',
+            '--delete'     => true,
+        ]);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('not found', $tester->getDisplay());
+    }
+
+    /**
+     * SiteSetting: Get auf nicht vorhandene Einstellung meldet "not currently set" (B9/EP7).
+     */
+    public function test_site_setting_get_nonexistent_reports_not_set(): void
+    {
+        $tester   = $this->makeTester(new SiteSetting());
+        $exitCode = $tester->execute(['setting-name' => 'P36_NEVER_SET_KEY_XYZ']);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('not currently set', $tester->getDisplay());
+    }
+
+    /**
+     * SiteSetting: Gleichen Wert erneut setzen gibt Warning "already set" (B12/EP9).
+     */
+    public function test_site_setting_set_same_value_warns_already_set(): void
+    {
+        $tester = $this->makeTester(new SiteSetting());
+        $tester->execute(['setting-name' => 'P36_SAME_VAL_KEY', 'setting-value' => 'same_value']);
+
+        $exitCode = $tester->execute(['setting-name' => 'P36_SAME_VAL_KEY', 'setting-value' => 'same_value']);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('already set', $tester->getDisplay());
+    }
+
+    /**
+     * SiteSetting: Vorhandenen Wert mit neuem Wert aktualisieren gibt SUCCESS (B14/EP10).
+     */
+    public function test_site_setting_update_existing_value(): void
+    {
+        $tester = $this->makeTester(new SiteSetting());
+        $tester->execute(['setting-name' => 'P36_UPDATE_KEY', 'setting-value' => 'first_value']);
+
+        $exitCode = $tester->execute(['setting-name' => 'P36_UPDATE_KEY', 'setting-value' => 'second_value']);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('changed from', $tester->getDisplay());
+    }
+
+    /**
+     * TreeSetting: Nicht vorhandener Baum liefert FAILURE (EP11).
+     */
+    public function test_tree_setting_fails_when_tree_not_found(): void
+    {
+        $tester   = $this->makeTester(new TreeSetting());
+        $exitCode = $tester->execute([
+            'tree-name'    => 'nonexistent-tree-xyz',
+            'setting-name' => 'SOME_KEY',
+            '--list'       => true,
+        ]);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('not found', $tester->getDisplay());
+    }
+
+    /**
+     * UserSetting: Nicht vorhandener User liefert FAILURE (EP11).
+     */
+    public function test_user_setting_fails_when_user_not_found(): void
+    {
+        $tester   = $this->makeTester(new UserSetting());
+        $exitCode = $tester->execute([
+            'user-name'    => 'nonexistent-user-xyz',
+            'setting-name' => 'SOME_KEY',
+            '--list'       => true,
+        ]);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('not found', $tester->getDisplay());
+    }
+
+    /**
+     * UserTreeSetting: Nicht vorhandener Baum liefert FAILURE (EP11).
+     */
+    public function test_user_tree_setting_fails_when_tree_not_found(): void
+    {
+        $tester   = $this->makeTester(new UserTreeSetting());
+        $exitCode = $tester->execute([
+            'user-name'    => 'test-admin',
+            'tree-name'    => 'nonexistent-tree-xyz',
+            'setting-name' => 'SOME_KEY',
+            '--list'       => true,
+        ]);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('not found', $tester->getDisplay());
+    }
 }

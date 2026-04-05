@@ -1,0 +1,17 @@
+0 HEAD
+1 GEDC
+2 VERS 5.5.1
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Zinthrop2026 /Test/
+1 SEX M
+0 @I2@ INDI
+1 NAME Zooper2026 /Test/
+1 SEX M
+0 @I3@ INDI
+1 NAME Zoofer2026 /Test/
+1 SEX F
+0 @F1@ FAM
+1 HUSB @I2@
+1 WIFE @I3@
+0 TRLR

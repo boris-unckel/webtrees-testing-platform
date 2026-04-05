@@ -175,4 +175,49 @@ class GedcomEditServiceIntegrationTest extends MysqlTestCase
 
         $this->assertIsString($result);
     }
+
+    /**
+     * editLinesToGedcom: Wert mit Zeilenumbruch erzeugt CONT-Continuation-Zeile (EP2).
+     * GEDCOM-Spezifikation: mehrzeilige Werte werden über CONT-Sub-Tags codiert.
+     */
+    public function test_edit_lines_multiline_value_produces_cont_continuation(): void
+    {
+        $result = $this->service->editLinesToGedcom(
+            'INDI',
+            ['1'],
+            ['NOTE'],
+            ["First line\nSecond line"],
+        );
+
+        $this->assertStringContainsString('CONT', $result);
+        $this->assertStringContainsString('Second line', $result);
+    }
+
+    /**
+     * insertMissingLevels expandiert fehlende Subtags bei INDI:NAME (EP9).
+     * Eingabe: nur Level-1-Zeile ohne Sub-Level-Tags.
+     * Erwartung: Output enthält mindestens eine Level-2-Zeile (GIVN, SURN o.ä.).
+     */
+    public function test_insert_missing_levels_expands_subtags_for_name_tag(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $service = new class extends GedcomEditService {
+            public function insertMissingLevelsPublic(Tree $tree, string $tag, string $gedcom, bool $include_hidden): string
+            {
+                return $this->insertMissingLevels($tree, $tag, $gedcom, $include_hidden);
+            }
+        };
+
+        $result = $service->insertMissingLevelsPublic(
+            $this->tree,
+            'INDI:NAME',
+            '1 NAME John /Doe/',
+            false,
+        );
+
+        // Erwartet: Expansion um mindestens eine Level-2-Zeile (z. B. GIVN, SURN)
+        $this->assertStringContainsString("\n2 ", $result);
+    }
 }

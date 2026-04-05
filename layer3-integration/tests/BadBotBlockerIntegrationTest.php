@@ -13,6 +13,7 @@ use Fisharebest\Webtrees\Http\Middleware\BadBotBlocker;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\NetworkService;
 use Nyholm\Psr7\ServerRequest;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -48,15 +49,22 @@ class BadBotBlockerIntegrationTest extends MysqlTestCase
         };
     }
 
-    /** Erstellt einen minimal ausgestatteten Server-Request mit gesetztem UA. */
-    private function makeRequestWithUa(string $ua): ServerRequestInterface
-    {
+    /**
+     * Erstellt einen minimal ausgestatteten Server-Request mit UA, Pfad und optionalen Cookies.
+     *
+     * @param array<string, string> $cookies
+     */
+    private function makeRequest(
+        string $ua = 'Mozilla/5.0 (compatible; TestClient/1.0)',
+        string $path = '/',
+        array $cookies = [],
+    ): ServerRequestInterface {
         $route = new Route();
         $route->name('dummy');
 
         $request = new ServerRequest(
             'GET',
-            'https://webtrees.test/',
+            'https://webtrees.test' . $path,
             [],
             null,
             '1.1',
@@ -68,9 +76,19 @@ class BadBotBlockerIntegrationTest extends MysqlTestCase
             ->withAttribute('client-ip', '127.0.0.1')
             ->withAttribute('route', $route);
 
+        if ($cookies !== []) {
+            $request = $request->withCookieParams($cookies);
+        }
+
         Registry::container()->set(ServerRequestInterface::class, $request);
 
         return $request;
+    }
+
+    /** Erstellt einen minimal ausgestatteten Server-Request mit gesetztem UA. */
+    private function makeRequestWithUa(string $ua): ServerRequestInterface
+    {
+        return $this->makeRequest($ua);
     }
 
     /**
@@ -105,5 +123,95 @@ class BadBotBlockerIntegrationTest extends MysqlTestCase
         $response = $this->middleware->process($request, $this->okHandler);
 
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function badRobotUserAgents(): array
+    {
+        return [
+            'AhrefsBot (SEO)'      => ['AhrefsBot/7.0'],
+            'SemrushBot (SEO)'     => ['SemrushBot/7.0'],
+            'GPTBot (AI)'          => ['GPTBot/1.0'],
+            'ClaudeBot (AI)'       => ['ClaudeBot/1.0'],
+            'CensysInspect (Sec)'  => ['CensysInspect/1.1'],
+        ];
+    }
+
+    /**
+     * Verschiedene bekannte Bad-Bot-Kategorien werden via BAD_ROBOTS blockiert (EP1–EP5).
+     */
+    #[DataProvider('badRobotUserAgents')]
+    public function test_bad_robots_by_category_blocked(string $ua): void
+    {
+        $request  = $this->makeRequest($ua);
+        $response = $this->middleware->process($request, $this->okHandler);
+
+        $this->assertSame(StatusCodeInterface::STATUS_NOT_ACCEPTABLE, $response->getStatusCode());
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function wordpressScannerPaths(): array
+    {
+        return [
+            '/wp-admin/'         => ['/wp-admin/'],
+            '/wp-login.php'      => ['/wp-login.php'],
+            '/xmlrpc.php'        => ['/xmlrpc.php'],
+            '/wp-content/themes' => ['/wp-content/themes/'],
+        ];
+    }
+
+    /**
+     * WordPress-Scanner-Pfade werden blockiert (EP12–EP14, EP16).
+     */
+    #[DataProvider('wordpressScannerPaths')]
+    public function test_wordpress_scanner_paths_blocked(string $path): void
+    {
+        $request  = $this->makeRequest('Mozilla/5.0 (compatible; TestClient/1.0)', $path);
+        $response = $this->middleware->process($request, $this->okHandler);
+
+        $this->assertSame(StatusCodeInterface::STATUS_NOT_ACCEPTABLE, $response->getStatusCode());
+    }
+
+    /**
+     * Normaler Pfad `/` wird nicht als WordPress-Scanner erkannt (EP15).
+     */
+    public function test_normal_path_not_blocked(): void
+    {
+        $request  = $this->makeRequest('Mozilla/5.0 (compatible; TestClient/1.0)', '/');
+        $response = $this->middleware->process($request, $this->okHandler);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * Browser mit Cookies: Cookie-Heuristik greift nicht, Handler wird aufgerufen (EP8).
+     */
+    public function test_browser_with_cookies_passes_through(): void
+    {
+        $request  = $this->makeRequest(
+            'Mozilla/5.0 Chrome/120.0 Safari/537.36',
+            '/',
+            ['session' => 'abc123'],
+        );
+        $response = $this->middleware->process($request, $this->okHandler);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * Browser ohne Cookies, Chrome-UA: Cookie-Check-Response (406 + set-cookie) (EP9).
+     * Der SUT sendet eine Cookie-Check-Seite als 406-Antwort mit Set-Cookie-Header.
+     */
+    public function test_browser_without_cookies_gets_cookie_check_response(): void
+    {
+        $request  = $this->makeRequest('Mozilla/5.0 Chrome/120.0 Safari/537.36');
+        $response = $this->middleware->process($request, $this->okHandler);
+
+        $this->assertSame(StatusCodeInterface::STATUS_NOT_ACCEPTABLE, $response->getStatusCode());
+        $this->assertNotEmpty($response->getHeaderLine('set-cookie'));
     }
 }

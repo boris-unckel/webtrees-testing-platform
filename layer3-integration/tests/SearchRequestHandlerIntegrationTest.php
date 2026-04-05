@@ -21,7 +21,8 @@ use Fisharebest\Webtrees\Services\SearchService;
  */
 class SearchRequestHandlerIntegrationTest extends MysqlTestCase
 {
-    private const DEMO_GED = '/fixtures/demo.ged';
+    private const DEMO_GED    = '/fixtures/demo.ged';
+    private const REDIRECT_GED = '/fixtures/search-redirect-test.ged';
 
     private SearchGeneralPage $handler;
 
@@ -90,6 +91,68 @@ class SearchRequestHandlerIntegrationTest extends MysqlTestCase
                 'search_locations'   => '1',
                 'search_repositories'=> '1',
             ],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $this->handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * Genau 1 Individual-Treffer leitet direkt auf das Individual weiter (EP2).
+     * Fixture: 1 Individual mit eindeutigem Namen Zinthrop2026.
+     */
+    public function test_search_single_individual_result_redirects(): void
+    {
+        $this->createTreeWithGedcom('redirect', 'Redirect Test', self::REDIRECT_GED);
+
+        $request = $this->createRequest(
+            query: [
+                'query'              => 'Zinthrop2026',
+                'search_individuals' => '1',
+            ],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $this->handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        $this->assertNotEmpty($response->getHeaderLine('Location'));
+    }
+
+    /**
+     * Genau 1 Family-Treffer leitet direkt auf die Familie weiter (EP4).
+     * Fixture: 1 Familie mit Mitglied Zooper2026 — gefunden via searchFamilyNames.
+     */
+    public function test_search_single_family_result_redirects(): void
+    {
+        $this->createTreeWithGedcom('redirect-fam', 'Redirect Family Test', self::REDIRECT_GED);
+
+        $request = $this->createRequest(
+            query: [
+                'query'           => 'Zooper2026',
+                'search_families' => '1',
+            ],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $this->handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        $this->assertNotEmpty($response->getHeaderLine('Location'));
+    }
+
+    /**
+     * Ohne Such-Typ-Flags werden individuals + families als Fallback gesetzt (EP8).
+     * Kein Redirect, da Windsor viele Treffer liefert.
+     */
+    public function test_search_no_type_flags_defaults_to_individuals_and_families(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+
+        $request = $this->createRequest(
+            query: ['query' => 'Windsor'],
             attributes: ['tree' => $this->tree],
         );
 
