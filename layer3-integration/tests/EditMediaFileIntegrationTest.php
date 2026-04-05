@@ -9,6 +9,7 @@ namespace DombrinksBlagen\WebtreesTests\Integration;
 use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Http\RequestHandlers\EditMediaFileAction;
+use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\GedcomImportService;
 use Fisharebest\Webtrees\Services\MediaFileService;
 use Fisharebest\Webtrees\Services\PendingChangesService;
@@ -74,5 +75,60 @@ class EditMediaFileIntegrationTest extends MysqlTestCase
         $response = $this->handler->handle($request);
 
         $this->assertLessThan(500, $response->getStatusCode());
+    }
+
+    // --- Neue Assertion-Tests (Runde 4, G28) ---
+
+    /**
+     * Happy Path: gültige fact_id → GEDCOM mit neuem Titel in change-Tabelle (EP1 / DB-Postcondition).
+     * new_file='' → Dateiname unverändert → $old === $new → acceptRecord NICHT aufgerufen → change bleibt pending.
+     */
+    public function test_edit_media_file_happy_path_creates_pending_change_with_updated_title(): void
+    {
+        $treeId = $this->tree->id();
+        $xref   = DB::table('media')->where('m_file', '=', $treeId)->value('m_id');
+
+        if ($xref === null) {
+            $this->markTestSkipped('Kein Media-Record in demo.ged vorhanden.');
+        }
+
+        $media     = Registry::mediaFactory()->make($xref, $this->tree);
+        $firstFile = $media->mediaFiles()->first();
+
+        if ($firstFile === null) {
+            $this->markTestSkipped('Media-Record hat keine Dateien.');
+        }
+
+        $factId = $firstFile->factId();
+
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_POST,
+            params:     [
+                'folder'   => '',
+                'new_file' => '',
+                'remote'   => '',
+                'title'    => 'Updated Title EP1',
+                'type'     => 'photo',
+            ],
+            attributes: [
+                'tree'    => $this->tree,
+                'xref'    => (string) $xref,
+                'fact_id' => $factId,
+            ],
+        );
+
+        $response = $this->handler->handle($request);
+
+        $this->assertSame(302, $response->getStatusCode());
+
+        // DB-Postcondition: change-Tabelle enthält pending GEDCOM mit dem aktualisierten Titel
+        $newGedcom = DB::table('change')
+            ->where('gedcom_id', '=', $treeId)
+            ->where('xref', '=', $xref)
+            ->where('status', '=', 'pending')
+            ->value('new_gedcom');
+
+        $this->assertNotNull($newGedcom, 'Keine pending change gefunden — updateFact() nicht aufgerufen.');
+        $this->assertStringContainsString('Updated Title EP1', $newGedcom);
     }
 }

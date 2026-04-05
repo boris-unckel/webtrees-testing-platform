@@ -74,12 +74,29 @@ test_edit_media_file_handles_empty_title_gracefully()
 
 ---
 
+## P1-Korrekturen (Konsistenzcheck)
+
+- "Record nicht gefunden": `Validator->isXref()` validiert Format, dann `Auth::checkMediaAccess(null, true)` → HttpNotFoundException. ✅
+- "Fact nicht gefunden" (`$media_file === null`): bereits durch bestehenden Test (fact_id='') abgedeckt. ✅
+- **Fehlend in Spec:** `$remote !== ''` vs. Folder/File-Pfad-Konstruktion; Filesystem-Move-Exception-Pfade; `acceptRecord` nur wenn `$old !== $new && !isExternal()`.
+- Pragmatisch C: Fokus auf DB-Postcondition — change-Tabelle nach `updateFact()`. Fact-not-found-Guard bereits getestet.
+- Wenn `new_file=''`, bleibt Dateiname unverändert (`$old === $new`) → `acceptRecord` NICHT aufgerufen → change bleibt pending. Ideal für Postcondition-Check.
+
+## P2-Soll-Design
+
+| Test | Methode | Begründung |
+|---|---|---|
+| EP1 Happy Path DB-Postcondition | `test_edit_media_file_happy_path_creates_pending_change_with_updated_title()` | Gültige fact_id + title='Updated Title', type='photo' → change-Tabelle hat pending new_gedcom mit Titel |
+
+**Fixture:** demo.ged (setUp); fact_id dynamisch via `$media->mediaFiles()->first()->factId()`.  
+**Postcondition:** `DB::table('change')->where('status', 'pending')->value('new_gedcom')` enthält 'Updated Title'.
+
 ## Status
 
 | Phase | Zustand | Notiz |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ OPEN | — |
-| P2: Soll-Design | ⬜ OPEN | — |
-| P3: Test-Coding | ⬜ OPEN | — |
-| P4: Ausführung + Fixing | ⬜ OPEN | — |
-| P5: Big-Picture | ⬜ OPEN | — |
+| P1: Konsistenzcheck | ✅ DONE | Filesystem-Branches dokumentiert; Pragmatisch C auf change-Postcondition fokussiert; fact_id=''-Guard bereits getestet |
+| P2: Soll-Design | ✅ DONE | 1 neuer Test: Happy Path DB-Postcondition (change-Tabelle), Gesamt: 2 Tests |
+| P3: Test-Coding | ✅ DONE | 1 neuer Test in EditMediaFileIntegrationTest: happy_path_creates_pending_change_with_updated_title |
+| P4: Ausführung + Fixing | ✅ DONE | Voll-Lauf: 556/556 grün, 1823 Assertions |
+| P5: Big-Picture | ✅ DONE | Feature-Matrix G28 auf spezifikationsbasiert, 2 Tests; Abdeckungsmatrix, Endekriterien, Zusammenfassung aktualisiert |

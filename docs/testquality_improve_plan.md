@@ -43,7 +43,7 @@ Jede Referenz durchläuft die folgenden Phasen — sequenziell pro Referenz, abe
 | **G25** | GedcomLoad CLI-Import | Hoch | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **G26** | GEDCOM-Export via CLI | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **G27** | Mediendatei-Upload URL | Mittel/Hoch | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **G28** | OBJE-Metadaten bearbeiten | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| **G28** | OBJE-Metadaten bearbeiten | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **G29** | GEDCOM-Bearbeitungsservice | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **S41** | Statistikdaten-Abfragen | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **S42** | Such-HTTP-Handler | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -59,7 +59,7 @@ Jede Referenz durchläuft die folgenden Phasen — sequenziell pro Referenz, abe
 | **P31** | Familienmitglieder bearbeiten | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **P32** | Record-Ansicht und -Löschung | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **P33** | Stammbaum-Privacy-Einstellungen | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **P34** | Stammbaum-Umnummerierung | Hoch | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| **P34** | Stammbaum-Umnummerierung | Hoch | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **P35** | CLI Benutzer-Verwaltung | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **P36** | CLI Einstellungs-Verwaltung | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **P37** | HTTP Benutzer-Bearbeitung | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
