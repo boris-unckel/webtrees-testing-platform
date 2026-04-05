@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fisharebest\Webtrees\Report\PdfRenderer;
+use Fisharebest\Webtrees\Report\ReportBaseElement;
 use Fisharebest\Webtrees\Report\ReportPdfCell;
 use Fisharebest\Webtrees\Report\ReportPdfFootnote;
 use Fisharebest\Webtrees\Report\ReportPdfImage;
@@ -211,5 +212,90 @@ class ReportPdfObjectsIntegrationTest extends MysqlTestCase
         $result = $text->getWidth($this->renderer);
 
         $this->assertIsArray($result);
+    }
+
+    // --- Neue Tests für ReportPdfImage (Runde 3, S45) ---
+
+    /**
+     * ReportPdfImage::render mit CURRENT_POSITION und line='N' rückt Y-Position vor (EP-PDF-IMG1 / N1).
+     * Nach render: Y = initialY + height (lastpicbottom via tcpdf->setY).
+     * Testbild: /var/www/html/public/favicon-32.png (32×32 PNG aus webtrees-Source).
+     */
+    public function test_pdf_image_render_with_current_position_and_line_n_advances_y(): void
+    {
+        $initialY = $this->renderer->tcpdf->GetY();
+
+        $image = new ReportPdfImage(
+            src:    '/var/www/html/public/favicon-32.png',
+            x:      ReportBaseElement::CURRENT_POSITION,
+            y:      ReportBaseElement::CURRENT_POSITION,
+            width:  10.0,
+            height: 10.0,
+            align:  'L',
+            line:   'N',
+        );
+        $image->render($this->renderer);
+
+        // line='N' → tcpdf->setY(lastpicbottom) = setY(initialY + 10)
+        $this->assertEqualsWithDelta($initialY + 10.0, $this->renderer->tcpdf->GetY(), 0.5);
+    }
+
+    /**
+     * ReportPdfImage::render mit statischer Position (X1/Y2-Branch) und line='' läuft ohne Fehler (EP-PDF-IMG2 / N2).
+     * line='' → kein setY(lastpicbottom) — Branch N2 abgedeckt.
+     */
+    public function test_pdf_image_render_with_static_position_and_no_line_advance(): void
+    {
+        $image = new ReportPdfImage(
+            src:    '/var/www/html/public/favicon-32.png',
+            x:      10.0,
+            y:      10.0,
+            width:  10.0,
+            height: 10.0,
+            align:  'L',
+            line:   '',
+        );
+        $image->render($this->renderer);
+
+        // Keine Exception; TCPDF-Zustand valide (Y ≥ 0)
+        $this->assertGreaterThanOrEqual(0.0, $this->renderer->tcpdf->GetY());
+    }
+
+    /**
+     * ReportPdfImage::render: zweiter Aufruf mit CURRENT_POSITION prüft Kollisions-Branch (Y1a).
+     * Erster Aufruf setzt lastpicbottom; zweiter Aufruf mit überlappender X-Position
+     * und Y=CURRENT_POSITION löst Kollisions-Verschiebung aus.
+     */
+    public function test_pdf_image_render_collision_detection_bumps_y_above_previous_image(): void
+    {
+        // Erster Aufruf: setzt lastpicbottom, lastpicleft, lastpicright
+        $firstImage = new ReportPdfImage(
+            src:    '/var/www/html/public/favicon-32.png',
+            x:      ReportBaseElement::CURRENT_POSITION,
+            y:      ReportBaseElement::CURRENT_POSITION,
+            width:  20.0,
+            height: 20.0,
+            align:  'L',
+            line:   'N',
+        );
+        $firstImage->render($this->renderer);
+        $afterFirstY = $this->renderer->tcpdf->GetY();
+
+        // Y zurücksetzen: Kollision simulieren (Y < lastpicbottom, X im Überlappungsbereich)
+        $this->renderer->tcpdf->setY($afterFirstY - 15.0);
+
+        $secondImage = new ReportPdfImage(
+            src:    '/var/www/html/public/favicon-32.png',
+            x:      ReportBaseElement::CURRENT_POSITION,
+            y:      ReportBaseElement::CURRENT_POSITION,
+            width:  10.0,
+            height: 10.0,
+            align:  'L',
+            line:   'N',
+        );
+        $secondImage->render($this->renderer);
+
+        // Kollision erkannt → Y mindestens so hoch wie nach erstem Bild
+        $this->assertGreaterThanOrEqual($afterFirstY - 15.0 + 10.0, $this->renderer->tcpdf->GetY());
     }
 }

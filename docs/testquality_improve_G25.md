@@ -86,8 +86,8 @@ test_handle_accumulates_gedcom_errors_on_malformed_record()
 
 | Phase | Zustand | Notiz |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ OPEN | — |
-| P2: Soll-Design | ⬜ OPEN | — |
-| P3: Test-Coding | ⬜ OPEN | — |
-| P4: Ausführung + Fixing | ⬜ OPEN | — |
-| P5: Big-Picture | ⬜ OPEN | — |
+| P1: Konsistenzcheck | ✅ DONE | Alle 11 Branches bestätigt — Spec stimmt exakt mit GedcomLoad::handle() überein |
+| P2: Soll-Design | ✅ DONE | 6 neue Tests: EP1 (keep_media=0), EP2 (keep_media=1), EP3 (BOM-Strip), EP4 (kein 0 HEAD), EP5 (kein Trailer), EP6 (Complete-View via Tree::fromDB re-fetch) |
+| P3: Test-Coding | ✅ DONE | 6 neue Testmethoden in GedcomLoadIntegrationTest.php ergänzt |
+| P4: Ausführung + Fixing | ✅ DONE | Voll-Lauf: 552/552 grün, 1804 Assertions. GedcomLoad::handle nicht mehr in CRAP-Liste. |
+| P5: Big-Picture | ✅ DONE | Feature-Matrix G25 auf spezifikationsbasiert, 8 Tests; Abdeckungsmatrix, Endekriterien, CRAP-Zeile aktualisiert |

@@ -123,12 +123,27 @@ test_pdf_textbox_auto_width_uses_remaining_page_width()
 
 ---
 
+## ReportPdfImage::render() — Branches (Haupt-CRAP-Target, ergänzt P1)
+
+| Branch | Bedingung | Output-Effekt |
+|---|---|---|
+| PB1 | `checkPageBreakPDF(height+5)` → Seitenumbruch | `$this->y = GetY()` auf neuer Seite |
+| X1 | `$this->x === CURRENT_POSITION` | x von tcpdf->GetX() |
+| X2 | `$this->x !== CURRENT_POSITION` (statisch) | x = addMarginX($this->x); tcpdf->setX($curx) |
+| Y1 | `$this->y === CURRENT_POSITION` | y von tcpdf->GetY() (mit Kollisions-Check) |
+| Y1a | Y1 + `lastpicbottom !== null && same page && Kollision` | Y auf lastpicbottom+5 |
+| Y2 | `$this->y !== CURRENT_POSITION` (statisch) | tcpdf->setY($this->y) |
+| RTL | `getRTL()` | Image an gespiegelter x-Position (pageWidth - x) |
+| LTR | `!getRTL()` (Standard) | Image an direkter x-Position |
+| N1 | `$this->line === 'N'` | tcpdf->setY(lastpicbottom) — Y rückt auf Unterkante |
+| N2 | `$this->line !== 'N'` | kein setY — Y bleibt nach Image() |
+
 ## Status
 
 | Phase | Zustand | Notiz |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ OPEN | — |
-| P2: Soll-Design | ⬜ OPEN | — |
-| P3: Test-Coding | ⬜ OPEN | — |
-| P4: Ausführung + Fixing | ⬜ OPEN | — |
-| P5: Big-Picture | ⬜ OPEN | — |
+| P1: Konsistenzcheck | ✅ DONE | TextBox/Cell-Spec ↔ Code bestätigt; ReportPdfImage-Branches ergänzt (fehlten in ursprünglicher Spec) |
+| P2: Soll-Design | ✅ DONE | HTML: 7 Assertion-Tests (fill/border/newline für TextBox; border='1'/'T'/''/ptp/bgcolor für Cell); PDF: 3 Image-Tests (line='N', statisch, CURRENT) |
+| P3: Test-Coding | ✅ DONE | 7 neue HTML-Tests in ReportHtmlObjectsIntegrationTest.php; 3 neue PDF-Image-Tests in ReportPdfObjectsIntegrationTest.php |
+| P4: Ausführung + Fixing | ✅ DONE | Voll-Lauf: 552/552 grün, 1804 Assertions. ReportPdfImage::render aus CRAP-Liste eliminiert. |
+| P5: Big-Picture | ✅ DONE | Feature-Matrix S45 auf spezifikationsbasiert+strukturbasiert, 23 Tests; Abdeckungsmatrix, Endekriterien, CRAP-Zeile aktualisiert |

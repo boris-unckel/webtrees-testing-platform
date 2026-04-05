@@ -40,7 +40,7 @@ Jede Referenz durchläuft die folgenden Phasen — sequenziell pro Referenz, abe
 
 | Ref | Titel | Aufwand | P1 | P2 | P3 | P4 | P5 |
 |---|---|---|---|---|---|---|---|
-| **G25** | GedcomLoad CLI-Import | Hoch | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| **G25** | GedcomLoad CLI-Import | Hoch | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **G26** | GEDCOM-Export via CLI | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **G27** | Mediendatei-Upload URL | Mittel/Hoch | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
 | **G28** | OBJE-Metadaten bearbeiten | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
@@ -49,7 +49,7 @@ Jede Referenz durchläuft die folgenden Phasen — sequenziell pro Referenz, abe
 | **S42** | Such-HTTP-Handler | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **S43** | Report-Generierung HTTP | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **S44** | Report-Parser Erweitert | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **S45** | Report-Primitive PDF/HTML | Hoch | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| **S45** | Report-Primitive PDF/HTML | Hoch | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **S46** | Homepage-Block-Module | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **S47** | Interaktiver Stammbaum | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **S48** | Standortdaten-Import Admin | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
