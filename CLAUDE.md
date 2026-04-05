@@ -75,9 +75,48 @@ make down && make up && make setup
 **Iteratives Test-/Fixing-Vorgehen:** Vor dem Start eines neuen Testlaufs sicherstellen, dass kein vorheriger Lauf noch aktiv ist. Wenn ein vorheriger Lauf noch läuft:
 
 1. Entweder auf dessen Abschluss warten, oder
-2. den laufenden Prozess gezielt per `kill` beenden (PID über `pgrep -f` ermitteln), bevor der nächste Lauf gestartet wird.
+2. den laufenden Prozess gezielt beenden — PID **im Container** ermitteln und dort killen:
+   ```bash
+   podman-compose exec webtrees pgrep -a -f phpunit   # PID ermitteln
+   podman-compose exec webtrees kill <PID>             # Prozess beenden
+   ```
 
 Niemals einen neuen Testlauf starten, während ein alter noch im Container aktiv ist.
+
+## Status-Diagnose und Einzeltest (Layer 3)
+
+Alle PHPUnit-Prozesse laufen **im Container** (`webtrees`) — niemals auf dem Host-System direkt starten oder prüfen.
+
+**Container-Status prüfen:**
+```bash
+make status                              # Alle Container: Up/Down + Health (= podman-compose ps)
+podman-compose logs -f webtrees         # Live-Log des webtrees-Containers
+```
+
+**Testlauf-Status im Container:**
+```bash
+# Läuft gerade ein PHPUnit-Prozess?
+podman-compose exec webtrees pgrep -a -f phpunit
+
+# Live-Output des laufenden Testlaufs verfolgen
+podman-compose exec webtrees tail -f /artifacts/layer3/phpunit-output.log
+```
+
+**Einzelne Testklasse ausführen (ohne Coverage):**
+```bash
+podman-compose exec webtrees vendor/bin/phpunit \
+    --configuration=/tests/layer3-integration/phpunit-integration.xml \
+    --filter='BadBotBlockerIntegrationTest'
+```
+
+**Einzelne Testmethode:**
+```bash
+podman-compose exec webtrees vendor/bin/phpunit \
+    --configuration=/tests/layer3-integration/phpunit-integration.xml \
+    --filter='BadBotBlockerIntegrationTest::test_blocked_user_agent_returns_403'
+```
+
+Kein `make`-Target für Einzeltests — `make test-integration` führt immer die Voll-Suite inkl. Coverage aus.
 
 ## Lizenz-Header
 

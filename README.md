@@ -81,8 +81,8 @@ WEBTREES_SOURCE=/pfad/zum/vorhandenen/checkout
 
 ```bash
 make help          # Alle Targets anzeigen
-make logs          # Container-Logs
-make status        # Container-Status
+make logs          # Container-Logs (webtrees + alle)
+make status        # Container-Status: Up/Down + Health
 make mysql-shell   # MySQL-Shell
 make db-dump       # DB nach artifacts/ exportieren
 make clean         # Stack + Volumes löschen
@@ -91,8 +91,34 @@ make trace-report           # OTel-Trace-Auswertung (artifacts/)
 make perfschema-extract     # MySQL PerfSchema-Daten extrahieren
 ```
 
+### Einzelnen Integrationstest ausführen
+
+Kein `make`-Target für Einzeltests — direkt per `podman-compose exec` im Container:
+
+```bash
+# Testklasse (ohne Coverage)
+podman-compose exec webtrees vendor/bin/phpunit \
+    --configuration=/tests/layer3-integration/phpunit-integration.xml \
+    --filter='MeineTestklasse'
+
+# Testmethode
+podman-compose exec webtrees vendor/bin/phpunit \
+    --configuration=/tests/layer3-integration/phpunit-integration.xml \
+    --filter='MeineTestklasse::test_methode'
+```
+
+### Testlauf-Status im Container prüfen
+
+Alle PHPUnit-Prozesse laufen im Container `webtrees`, nicht auf dem Host:
+
+```bash
+podman-compose exec webtrees pgrep -a -f phpunit                           # Läuft ein Testlauf?
+podman-compose exec webtrees tail -f /artifacts/layer3/phpunit-output.log  # Live-Output
+podman-compose exec webtrees kill <PID>                                    # Abbrechen
+```
+
 ## Dokumentation
 
 - **Teststrategie**: `docs/testing-bigpicture.md`
-- **Feature-Matrizen**: G01–G23 (GEDCOM), S01–S25 (Suche/Navigation)
-- **Architektur**: `docs/webtrees-architecture.md`
+- **Feature-Matrizen**: Siehe in Teststrategie
+
