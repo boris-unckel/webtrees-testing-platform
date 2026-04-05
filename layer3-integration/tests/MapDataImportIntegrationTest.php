@@ -95,4 +95,90 @@ class MapDataImportIntegrationTest extends MysqlTestCase
 
         $this->assertLessThan(500, $response->getStatusCode());
     }
+
+    // --- EP-Matrix mit korrektem CSV-Format (MapDataService::CSV_SEPARATOR = ';') ---
+
+    /**
+     * Korrektes CSV-Format (Semikolon-Trenner, Level-basiert): option=add legt Ort in DB an (EP1 + EP5).
+     * DB-Postcondition: place_location enthält Eintrag mit importierten Koordinaten.
+     */
+    public function test_import_add_creates_location_in_db(): void
+    {
+        // Korrektes Format: Level;Country;...;Longitude;Latitude;Zoom;Icon
+        // Level=0: 0;Canada;;;W106;N56;3;
+        $csv = implode("\n", [
+            '"Level";"Country";"State";"Longitude";"Latitude";"Zoom level";"Icon";',
+            '0;TestCountry99;;;E013.4050;N52.5200;10;',
+        ]);
+
+        $factory      = new Psr17Factory();
+        $stream       = $factory->createStream($csv);
+        $uploadedFile = new UploadedFile(
+            streamOrFile: $stream,
+            size:         strlen($csv),
+            errorStatus:  UPLOAD_ERR_OK,
+            clientFilename: 'places.csv',
+            clientMediaType: 'text/csv',
+        );
+
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_POST,
+            params:     ['source' => 'client', 'options' => 'add'],
+            attributes: ['user' => $this->createAndLoginAdmin()],
+        )->withUploadedFiles(['client_file' => $uploadedFile]);
+
+        $response = $this->handler->handle($request);
+
+        $this->assertLessThan(500, $response->getStatusCode());
+
+        // DB-Postcondition: Ort wurde mit Koordinaten angelegt
+        $location = DB::table('place_location')
+            ->where('place', '=', 'TestCountry99')
+            ->first();
+
+        $this->assertNotNull($location, 'TestCountry99 muss in place_location vorhanden sein');
+        $this->assertEqualsWithDelta(52.52, (float) $location->latitude, 0.01);
+        $this->assertEqualsWithDelta(13.405, (float) $location->longitude, 0.01);
+    }
+
+    /**
+     * Null-Island-Koordinaten (0,0) für Unter-Ort werden gefiltert — nicht in DB (EP6).
+     * Nur Orte mit Komma im Namen (multi-level) UND (0,0) werden gefiltert.
+     */
+    public function test_import_null_island_filtered_for_sublocation(): void
+    {
+        // Level=1: TestLand99;TestOrt99 → Name = "TestOrt99, TestLand99" (enthält Komma)
+        // Koordinaten E0.0;N0.0 → (0,0) → gefiltert
+        $csv = implode("\n", [
+            '"Level";"Country";"State";"Longitude";"Latitude";"Zoom level";"Icon";',
+            '1;TestLand99;TestOrt99;E0.0;N0.0;3;',
+        ]);
+
+        $factory      = new Psr17Factory();
+        $stream       = $factory->createStream($csv);
+        $uploadedFile = new UploadedFile(
+            streamOrFile: $stream,
+            size:         strlen($csv),
+            errorStatus:  UPLOAD_ERR_OK,
+            clientFilename: 'places.csv',
+            clientMediaType: 'text/csv',
+        );
+
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_POST,
+            params:     ['source' => 'client', 'options' => 'add'],
+            attributes: ['user' => $this->createAndLoginAdmin()],
+        )->withUploadedFiles(['client_file' => $uploadedFile]);
+
+        $response = $this->handler->handle($request);
+
+        $this->assertLessThan(500, $response->getStatusCode());
+
+        // DB-Postcondition: Null-Island-Ort wurde NICHT angelegt
+        $exists = DB::table('place_location')
+            ->where('place', '=', 'TestOrt99')
+            ->exists();
+
+        $this->assertFalse($exists, 'Null-Island-Ort TestOrt99 darf nicht in place_location sein');
+    }
 }

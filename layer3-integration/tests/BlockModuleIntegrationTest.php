@@ -8,6 +8,7 @@ namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\Module\ChartsBlockModule;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Fisharebest\Webtrees\Module\ClippingsCartModule;
 use Fisharebest\Webtrees\Module\ReviewChangesModule;
 use Fisharebest\Webtrees\Module\SlideShowModule;
@@ -44,7 +45,8 @@ class BlockModuleIntegrationTest extends MysqlTestCase
     private const DEMO_GED = '/fixtures/demo.ged';
 
     /**
-     * SlideShowModule::getBlock gibt String zurück.
+     * SlideShowModule::getBlock gibt non-empty String zurück (EP1: Medienblock standard).
+     * demo.ged enthält Medien → entweder Bild-HTML oder "no images"-Text.
      */
     public function test_slide_show_module_get_block_returns_string(): void
     {
@@ -54,7 +56,7 @@ class BlockModuleIntegrationTest extends MysqlTestCase
         $module = new SlideShowModule(new LinkedRecordService());
         $result = $module->getBlock($this->tree, 0, 'main');
 
-        $this->assertIsString($result);
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -143,6 +145,38 @@ class BlockModuleIntegrationTest extends MysqlTestCase
         $result = $module->getBlock($this->tree, 0, 'main');
 
         $this->assertIsString($result);
+    }
+
+    // --- TopSurnamesModule — info_style EP-Matrix (EP4/EP5/EP6) ---
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function infoStyles(): array
+    {
+        return [
+            'table'    => ['table'],
+            'tagcloud' => ['tagcloud'],
+            'list'     => ['list'],
+            'array'    => ['array'],
+        ];
+    }
+
+    /**
+     * TopSurnamesModule::getBlock mit allen info_style-Varianten gibt non-empty String zurück.
+     * extract($config) überschreibt $info_style → alle 4 View-Branches testbar (EP4–EP6 + 'array').
+     */
+    #[DataProvider('infoStyles')]
+    public function test_top_surnames_block_all_info_styles_return_non_empty_string(string $infoStyle): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $module = new TopSurnamesModule(new ModuleService());
+        $result = $module->getBlock($this->tree, 0, 'main', ['info_style' => $infoStyle]);
+
+        $this->assertNotEmpty($result);
+        $this->assertStringContainsString('<', $result);
     }
 
     // --- AP13: ClippingsCartModule (CRAP 272 + 110) ---

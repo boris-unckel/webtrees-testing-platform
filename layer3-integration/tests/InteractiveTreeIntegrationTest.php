@@ -34,7 +34,8 @@ class InteractiveTreeIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * getDetails gibt HTML-String für bekannte Person zurück.
+     * getDetails gibt HTML-String für bekannte Person zurück und enthält deren XREF (EP5: Person mit Partner).
+     * X1030 ist mit X1041 verheiratet → XREF sollte im Output erscheinen (CSS-ID, AJAX-Link).
      */
     public function test_get_details_returns_html_for_known_individual(): void
     {
@@ -48,10 +49,12 @@ class InteractiveTreeIntegrationTest extends MysqlTestCase
 
         $this->assertIsString($result);
         $this->assertNotEmpty($result);
+        $this->assertStringContainsString('X1030', $result);
     }
 
     /**
-     * getIndividuals mit 'p'-Request triggert drawPerson für eine bekannte Familie.
+     * getIndividuals mit 'p'-Request triggert drawPerson für eine bekannte Familie (EP1: Person mit Eltern).
+     * Output muss non-empty HTML enthalten.
      */
     public function test_get_individuals_parent_request_triggers_draw_person(): void
     {
@@ -73,11 +76,13 @@ class InteractiveTreeIntegrationTest extends MysqlTestCase
 
         $result = $this->tree_view->getIndividuals($this->tree, $request);
 
-        $this->assertIsString($result);
+        $this->assertNotEmpty($result);
+        $this->assertStringContainsString('<', $result);
     }
 
     /**
-     * getIndividuals mit 'c'-Request triggert drawChildren für eine bekannte Familie.
+     * getIndividuals mit 'c'-Request triggert drawChildren für eine bekannte Familie (EP3: Person mit Kindern).
+     * Output muss non-empty HTML enthalten.
      */
     public function test_get_individuals_children_request_triggers_draw_children(): void
     {
@@ -99,6 +104,7 @@ class InteractiveTreeIntegrationTest extends MysqlTestCase
 
         $result = $this->tree_view->getIndividuals($this->tree, $request);
 
-        $this->assertIsString($result);
+        $this->assertNotEmpty($result);
+        $this->assertStringContainsString('<', $result);
     }
 }

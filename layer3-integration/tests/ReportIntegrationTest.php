@@ -6,10 +6,12 @@ declare(strict_types=1);
 
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
+use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\Http\RequestHandlers\ReportGenerate;
 use Fisharebest\Webtrees\Http\RequestHandlers\ReportSetupPage;
 use Fisharebest\Webtrees\Report\HtmlRenderer;
+use Fisharebest\Webtrees\Report\PdfRenderer;
 use Fisharebest\Webtrees\Report\ReportParserGenerate;
 use Fisharebest\Webtrees\Services\ModuleService;
 use Fisharebest\Webtrees\Webtrees;
@@ -193,5 +195,96 @@ class ReportIntegrationTest extends MysqlTestCase
         }
 
         $this->assertIsString($output);
+    }
+
+    // --- ReportGenerate via handle() — Format/Destination-Branches (EP2/EP6/B1) ---
+
+    /**
+     * format='PDF' → content-type: application/pdf (EP2).
+     * birth_report ist isEnabledByDefault()=true → Modul immer gefunden.
+     */
+    public function test_report_generate_pdf_format_returns_pdf_content_type(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $handler = new ReportGenerate(new ModuleService());
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_GET,
+            query: [
+                'varnames'    => array_keys(self::defaultReportVars()),
+                'vars'        => self::defaultReportVars(),
+                'format'      => 'PDF',
+                'destination' => 'view',
+            ],
+            attributes: [
+                'tree'   => $this->tree,
+                'user'   => $admin,
+                'report' => self::REPORT_NAME,
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $this->assertStringContainsString('application/pdf', $response->getHeaderLine('content-type'));
+    }
+
+    /**
+     * destination='download' für HTML → Content-Disposition: attachment (EP6).
+     */
+    public function test_report_generate_html_download_sets_content_disposition_header(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $handler = new ReportGenerate(new ModuleService());
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_GET,
+            query: [
+                'varnames'    => array_keys(self::defaultReportVars()),
+                'vars'        => self::defaultReportVars(),
+                'format'      => 'HTML',
+                'destination' => 'download',
+            ],
+            attributes: [
+                'tree'   => $this->tree,
+                'user'   => $admin,
+                'report' => self::REPORT_NAME,
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $this->assertStringContainsString('attachment', $response->getHeaderLine('content-disposition'));
+        $this->assertStringContainsString(self::REPORT_NAME, $response->getHeaderLine('content-disposition'));
+    }
+
+    /**
+     * Unbekannter Berichtsname → ModuleService findet kein Modul → Redirect (B1).
+     */
+    public function test_report_generate_unknown_report_redirects(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $handler = new ReportGenerate(new ModuleService());
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_GET,
+            query: [
+                'varnames'    => [],
+                'vars'        => [],
+                'format'      => 'HTML',
+                'destination' => 'view',
+            ],
+            attributes: [
+                'tree'   => $this->tree,
+                'user'   => $admin,
+                'report' => 'xyz_nonexistent_report_9999',
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertGreaterThanOrEqual(300, $response->getStatusCode());
+        $this->assertLessThan(400, $response->getStatusCode());
     }
 }

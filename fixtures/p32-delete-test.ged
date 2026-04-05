@@ -1,0 +1,16 @@
+0 HEAD
+1 SOUR webtrees
+2 VERS 2.1.1
+1 GEDC
+2 VERS 5.5.1
+1 CHAR UTF-8
+0 @P1@ INDI
+1 NAME Test /Person1/
+1 FAMS @F1@
+0 @P2@ INDI
+1 NAME Test /Person2/
+1 FAMS @F1@
+0 @F1@ FAM
+1 HUSB @P1@
+1 WIFE @P2@
+0 TRLR

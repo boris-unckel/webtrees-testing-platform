@@ -73,6 +73,7 @@ class ReportParserGenerateExtendedIntegrationTest extends MysqlTestCase
 
     /**
      * relative_ext_report triggert relativesStartHandler, relativesEndHandler, addAncestors.
+     * Output muss non-empty und HTML-Markup enthalten (EP1: Person mit Demo-Vorfahren).
      */
     public function test_relative_ext_report_triggers_relatives_handlers(): void
     {
@@ -90,11 +91,13 @@ class ReportParserGenerateExtendedIntegrationTest extends MysqlTestCase
             throw $e;
         }
 
-        $this->assertIsString($output);
+        $this->assertNotEmpty($output);
+        $this->assertStringContainsString('<', $output);
     }
 
     /**
      * relative_ext_report mit descendants — triggert addDescendancy.
+     * Output muss non-empty und HTML-Markup enthalten (EP3: Person mit Demo-Nachfahren).
      */
     public function test_relative_ext_report_descendants_triggers_add_descendancy(): void
     {
@@ -116,11 +119,13 @@ class ReportParserGenerateExtendedIntegrationTest extends MysqlTestCase
             throw $e;
         }
 
-        $this->assertIsString($output);
+        $this->assertNotEmpty($output);
+        $this->assertStringContainsString('<', $output);
     }
 
     /**
      * individual_ext_report triggert factsStartHandler, factsEndHandler, imageStartHandler.
+     * Output muss non-empty und HTML-Markup enthalten (EP7: Person mit BIRT/DEAT-Fakten).
      */
     public function test_individual_ext_report_triggers_facts_and_image_handlers(): void
     {
@@ -138,6 +143,7 @@ class ReportParserGenerateExtendedIntegrationTest extends MysqlTestCase
             throw $e;
         }
 
-        $this->assertIsString($output);
+        $this->assertNotEmpty($output);
+        $this->assertStringContainsString('<', $output);
     }
 }
