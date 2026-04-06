@@ -810,6 +810,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | G27 | Mediendatei-Upload URL *(strukturbasiert)* | URL-basierter Upload via MediaFileService → Datei lokal vorhanden und DB-Eintrag erzeugt | 2 | Mittel |
 | G28 | OBJE-Metadaten bearbeiten *(spezifikationsbasiert)* | EditMediaFileAction::handle — Happy Path: gültige fact_id + title+type → change-Tabelle enthält pending GEDCOM mit neuem Titel (DB-Postcondition); Fact-not-found-Guard (fact_id='') → Redirect zu TreePage | 2 | Niedrig |
 | G29 | GEDCOM-Bearbeitungsservice *(spezifikationsbasiert)* | GedcomEditService: editLinesToGedcom — Mehrzeilenwerte (CONT), Sub-Level-Struktur, Leerstring-Handling; insertMissingLevels — Subtag-Expansion, Level-1/2-Pfade | 2 | Niedrig |
+| G30 | Mediendatei-Upload (HTTP-Formular) | UploadMediaPage/UploadMediaAction: Datei-Upload via Web-Formular → Datei gespeichert, OBJE-Record in DB erzeugt (verschieden von G27: URL-basierter Upload via MediaFileService) | 2, 3 | Mittel |
 
 ---
 
@@ -851,7 +852,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S28 | Navigation: Notizseite | Notiz-XREF aufrufen → Notiztext dargestellt | 3 | Mittel |
 | S29 | Navigation: Aufbewahrungsort-Seite | Repository-XREF aufrufen → Name, Adresse, verknüpfte Quellen | 3 | Mittel |
 | S30 | Navigation: Einreicherseite | Submitter-XREF aufrufen → Name dargestellt | 3 | Niedrig |
-| S31 | Kalenderansicht | Kalender (Monats-/Jahresansicht) aufrufen → rendert, Events sichtbar | 3 | Hoch |
+| S31 | Kalenderansicht & Kalenderevents-API | CalendarPage/CalendarAction: Monats-/Jahresansicht aufrufen → rendert, Events sichtbar; CalendarEvents (AJAX-Endpoint): Ereignisdaten für Kalender-View → JSON mit Events des gewählten Zeitraums | 2, 3 | Hoch |
 | S32 | Anmeldeseite (Login) | /login aufrufen → Formular sichtbar, Login/Fehler funktional | 3 | Hoch |
 | S33 | Registrierungsseite | /register aufrufen → Formular sichtbar, keine HTTP-Fehler | 3 | Mittel |
 | S34 | Passwort-Zurücksetzung | /password-request aufrufen → Formular sichtbar | 3 | Mittel |
@@ -871,6 +872,8 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S48 | Standortdaten-Import Admin *(spezifikationsbasiert)* | MapDataImportAction: EP1+EP5 option=add korrektes CSV (`;`-Trenner, Level-Format)→DB-Postcondition lat/lng via assertEqualsWithDelta; EP6 Null-Island (0,0) multi-level Ort→gefiltert, place_location leer; 2 Smoke-Tests für malformed CSV (Fehlerresilienz) | 4 | Mittel |
 | S49 | Medienverwaltungsliste Admin *(spezifikationsbasiert)* | ManageMediaData: `files`-EP-Matrix (local/external/unused) per Einzeltest, JSON-Struktur `{data, recordsTotal, recordsFiltered}` per Assertion; unused-Branch (handleCollection) gesondert abgedeckt | 3 | Mittel |
 | S50 | Hilfetexte *(spezifikationsbasiert)* | HelpText::handle → alle 12 Topic-IDs per DataProvider (200 OK), unbekannte ID → 200 + generischer Hilfetext | 2 | Niedrig |
+| S52 | Standortdaten-Verwaltung (CRUD) | MapDataList: Übersicht → 200; MapDataAdd/Edit/Save: Formular + Speichern → DB-Update place_location; MapDataDelete/DeleteUnused: Einträge löschen; MapDataExportCSV → CSV-Download (ergänzt S48 Import) | 2, 3 | Niedrig |
+| S53 | Legacy-URL-Weiterleitungen | ~27 Redirect*-Handler (RedirectIndividualPhp, RedirectFanChartPhp, RedirectCalendarPhp usw.) leiten alte webtrees 1.x-URLs auf aktuelle Routen um → HTTP 301/302, kein 404 | 3 | Niedrig |
 
 ---
 
@@ -922,6 +925,10 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | P35 | CLI Benutzer-Verwaltung *(spezifikationsbasiert)* | UserEdit CLI: alle 15 Guard-Branches — Konflikt-Flags (B1–B5), Create-Validierung (B6–B9 inkl. Random-PW), Edit-Validierung (B10–B11), Edit-Felder (B13–B15), Delete → Rückkürcode SUCCESS/FAILURE/INVALID | V | 2 | Mittel |
 | P36 | CLI Einstellungs-Verwaltung *(spezifikationsbasiert)* | Settings-Commands (SiteSetting, TreeSetting, UserSetting, UserTreeSetting): --list/--delete-Konflikte (B1/B2), Delete-Branches (B4–B7), Get-Branches (B9–B11), Set-Branches (B12–B14), Entity-not-found (EP11) | V | 2 | Mittel |
 | P37 | HTTP Benutzer-Bearbeitung *(spezifikationsbasiert)* | UserEditAction: user-not-found → HttpNotFoundException (B1); Duplikat-Email + Duplikat-Username → Redirect zurück zu UserEditPage (B5/B6, B7/B8); Self-Edit-Admin-Guard → admin-Status bleibt (B4); Passwort-Update/Kein-Update (B3); Path-Length-Reset bei leerem gedcomid (EP12) | V | 2 | Mittel |
+| P38 | Account-Selbstverwaltung | AccountEdit: eigenes Profil-Formular → 200; AccountUpdate: Name/E-Mail/Passwort/Theme/Sprache speichern → Redirect; AccountDelete: eigenes Konto löschen → Session beendet, Redirect zu Login | M, E, V | 2, 3 | Mittel |
+| P39 | Authentifizierung-Aktionen | LoginAction: korrekte/falsche Credentials → Redirect zu Baum / Fehler; Logout → Session ungültig + Redirect; RegisterAction: neues Konto anlegen → Bestätigungs-E-Mail / Redirect; PasswordRequestAction/ResetAction → Token erzeugt / Passwort gesetzt; VerifyEmail → Account aktiviert (ergänzt S32–S34 Seiten-Smoke) | B, M | 2, 3 | Hoch |
+| P40 | Änderungsverwaltung (HTTP-Handler) | PendingChanges: Liste offener Änderungen → 200 + Einträge; PendingChangesAcceptChange/AcceptRecord → DB-Status 'accepted'; PendingChangesRejectChange/RejectRecord → DB-Status 'rejected' oder gelöscht (ergänzt P28 Playwright-Systemtest auf Handler-Ebene) | Mo, V | 2 | Hoch |
+| P41 | Datensatz-Zusammenführung (vollständig) | MergeRecordsPage: Vergleichs-Formular zweier Records → 200; MergeRecordsAction: Records zusammenführen → ein Record per change-Tabelle gelöscht, einer aktualisiert (verschieden von P30 Fakten-Merge) | E, V | 2 | Mittel |
 
 > **Querschnittsanforderung Theme-Abdeckung (Phase 5c):** Jeder Systemtest-Testfall (Teststufe 3) für tree-gebundene Seiten
 > MUSS alle 5 Standard-Themes abdecken: `webtrees`, `clouds`, `colors`, `fab`, `xenea`. Theme-Abdeckung ist keine eigene
@@ -975,6 +982,61 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | SEC-HDR03 | `Referrer-Policy` | Header gesetzt (nicht leer) | Niedrig | Grün |
 | SEC-HDR04 | Server-Banner | Apache-Versionsstring sichtbar | Niedrig | Rot (Deployment-Empfehlung) |
 | SEC-BOT01 | UA-basierte Bot-Blockierung *(spezifikationsbasiert, DNS/ASN ausgeklammert)* | BadBotBlocker: BAD_ROBOTS-Sampling DataProvider (5 Kategorien: SEO, AI, Security → 406); WordPress-Pfade DataProvider (/wp-*, /xmlrpc.php → 406); Cookie-Heuristik EP8/EP9 (mit/ohne Cookies); leerer UA → 406; legitimer UA → 200. DNS-Zweige (B3/B4) dauerhaft ausgeklammert. | 15 | Hoch |
+| SEC-UTL01 | Web-Assets & Utility-Endpoints | RobotsTxt → 200 + text/plain; FaviconIco → 200 + image/x-icon; WebmanifestJson → 200 + application/json; BrowserconfigXml → 200 + XML; AppleTouchIconPng → 200; AdsTxt/AppAdsTxt → 200; Ping → 200 | Niedrig | ⬜ |
+
+---
+
+### Feature-Matrix: Datenpflege / Erfassung (E)
+
+> Alle Handler, die GEDCOM-Datensätze via Web-UI erzeugen oder ändern.
+> Abgrenzung: G = Datenformat/Import/Export; S = Ansicht/Navigation; P = Zugriffskontrolle/Auth.
+> Rollen: B = Besucher, M = Mitglied, E = Bearbeiter, Mo = Moderator, V = Verwalter.
+> Teststufen: 2 = Komponentenintegrationstest, 3 = Systemtest.
+
+| # | Feature | Abgeleitete Anforderung | Rollen | Teststufe | Prio |
+|---|---|---|---|---|---|
+| E01 | Person/Familie anlegen & verknüpfen | AddChildToIndividual*/Action, AddParentToIndividual*/Action, AddSpouseToIndividual*/Action, LinkSpouseToIndividual*/Action: INDI mit Eltern/Kind/Partner anlegen → pending change; AddChildToFamily*/Action, AddSpouseToFamily*/Action, LinkChildToFamily*/Action: FAM-Mitglieder hinzufügen/verknüpfen | E, V | 2, 3 | Hoch |
+| E02 | Fakten bearbeiten | EditFactPage/AddNewFact: Fakt anlegen/bearbeiten → pending change; DeleteFact → GEDCOM ohne Fakt in change-Tabelle; CopyFact/PasteFact: Fakt in Zwischenablage + Einfügen; SelectNewFact: GEDCOM-Tag auswählen | E, V | 2, 3 | Hoch |
+| E03 | Rohdaten-Edit (Raw GEDCOM) | EditRawFactPage/Action: einzelner Fakt als GEDCOM-Text → change; EditRawRecordPage/Action: gesamter Record als GEDCOM-Text → change; EditRecordPage/Action: Record via Formular → change | E, V | 2, 3 | Mittel |
+| E04 | Nebenrecords anlegen (NOTE / SOUR / REPO / SUBM) | CreateNoteModal/Action → NOTE-XREF; EditNotePage/Action → Notiz change; CreateSourceModal/Action → SOUR-XREF; CreateRepositoryModal/Action → REPO-XREF; CreateSubmissionModal/Action, CreateSubmitterModal/Action → Einreicher-Records | E, V | 2, 3 | Mittel |
+| E05 | Medienobjekte anlegen & verknüpfen | CreateMediaObjectModal/Action/FromFile: OBJE-Record anlegen → DB-Eintrag; AddMediaFileModal/Action: Mediendatei zu OBJE hinzufügen → change; LinkMediaToRecordAction/IndividualModal/FamilyModal/SourceModal: OBJE mit anderem Record verknüpfen → change | E, V | 2, 3 | Mittel |
+| E06 | Sortierung (Reorder) | ReorderChildrenPage: Kindreihenfolge → change; ReorderNamesPage: Namenreihenfolge → change; ReorderFamiliesPage: Familienreihenfolge → change; ReorderMediaPage/Action, ReorderMediaFilesPage/Action: Medien/Mediendatei-Reihenfolge | E, V | 2, 3 | Niedrig |
+| E07 | Mediendatei-Download & Thumbnail | MediaFileDownload: Datei abrufen → 200 + korrekter Content-Type; MediaFileThumbnail: Thumbnail generieren → 200 + image/* | M, E, V | 2, 3 | Mittel |
+| E08 | TomSelect & AutoComplete (Edit-Hilfs-APIs) | TomSelectIndividual/MediaObject/Source/Repository/Note/SharedNote: AJAX-Dropdown → JSON mit passenden Records; AutoCompleteCitation: Zitations-Vorschläge → JSON; AutoCompleteFolder: Ordner-Vorschläge für Medienpfad → JSON | E, V | 2 | Niedrig |
+
+---
+
+### Feature-Matrix: Administration (A)
+
+> Admin-Only-Operationen: Stammbaum-Verwaltung, Modul-Konfiguration, Site-Einstellungen, System-Werkzeuge.
+> Getrennt von fachlichen Features (E, G, S, P). Rolle: V = Verwalter / Admin.
+> Teststufen: 2 = Komponentenintegrationstest, 3 = Systemtest.
+
+| # | Feature | Abgeleitete Anforderung | Teststufe | Prio |
+|---|---|---|---|---|
+| A01 | Stammbaum-Management | CreateTreePage/Action: neuen Baum anlegen → gedcom_id erzeugt; DeleteTreeAction: Baum + alle Records gelöscht; ManageTrees → Übersicht 200; MergeTreesPage/Action: Records aus Baum 2 nach Baum 1 verschoben | 2, 3 | Hoch |
+| A02 | Stammbaum-Import (HTTP-Formular) | ImportGedcomPage: Upload-Formular → 200; ImportGedcomAction: GEDCOM-Datei hochladen → Import angestoßen (verschieden von CLI GedcomLoad G25) | 2, 3 | Hoch |
+| A03 | Stammbaum-Export (HTTP-Formular) | ExportGedcomPage: Export-Formular → 200; ExportGedcomClient: Browser-Download → GEDCOM/ZIP-Response; ExportGedcomServer: serverseitige Datei gespeichert (verschieden von CLI Export G26) | 2, 3 | Mittel |
+| A04 | Stammbaum-Präferenzen | TreePreferencesPage: Einstellungsformular → 200; TreePreferencesAction: Preference-Werte (HIDE_LIVE_PEOPLE, REQUIRE_AUTHENTICATION usw.) speichern → DB-Update gedcom_setting | 2, 3 | Mittel |
+| A05 | Modul-Konfiguration | ModulesAllPage/Action: Module aktivieren/deaktivieren/sortieren; alle Modules*Page/Action-Handler (~46): Charts/Maps/Reports/Blocks/Themes konfigurieren → module_setting-Tabelle | 2, 3 | Niedrig |
+| A06 | Site-Präferenzen | SitePreferencesPage/Action: globale Einstellungen (Standardbaum, Zeitzone, E-Mail-Config, Registrierung, Theme) → site_setting-Tabelle | 2, 3 | Mittel |
+| A07 | Benutzerverwaltung Admin | UserListPage: Benutzerliste → 200 + alle Nutzer sichtbar; UsersCleanupPage/Action: inaktive Nutzer ohne Zuordnung → Übersicht + Batch-Löschen | 2, 3 | Mittel |
+| A08 | Medienverwaltung Admin | AdminMediaFileDownload/Thumbnail: Admin-Zugriff auf Mediendateien; FixLevel0MediaPage/Action: Level-0-Medien-Referenzen korrigieren → DB-Update; ManageMediaPage/Action: Admin-Medienliste (Backend-Seite, verschieden von ManageMediaData-API S49) | 2, 3 | Niedrig |
+| A09 | Datenpflege-Werkzeuge | DataFixPage/Choose/Select/Update: Datenpflege-Script auswählen + anwenden → DB-Änderungen; CleanDataFolder: temporäre Dateien bereinigen; FindDuplicateRecords → XREFs mit Duplikaten gelistet; AddUnlinkedPage/Action → neues INDI ohne FAM anlegen | 2, 3 | Niedrig |
+| A10 | Protokolle & Monitoring | PendingChangesLogPage/Data/Action/Delete/Download: Change-Log abrufen/filtern/löschen/exportieren; SiteLogsDownload: Site-Log als CSV; PhpInformation: phpinfo() → 200 | 2, 3 | Niedrig |
+| A11 | System & Upgrade | UpgradeWizardPage/Confirm: Update-Wizard Schritte → Versions-Check + Download; CheckForNewVersionNow → Versions-Check-Response; Masquerade: Admin übernimmt Nutzer-Session → SessionUser geändert; BroadcastPage/Action: Nachricht an alle Nutzer; EmailPreferencesPage/Action: SMTP-Konfiguration testen | 2, 3 | Niedrig |
+
+---
+
+### Feature-Matrix: Kommunikation (K)
+
+> Nutzer-zu-Nutzer- und Nutzer-zu-Admin-Kommunikation.
+> S36 deckt ContactPage als Seiten-Smoke — K01 ergänzt die Action-Verarbeitung.
+
+| # | Feature | Abgeleitete Anforderung | Rollen | Teststufe | Prio |
+|---|---|---|---|---|---|
+| K01 | Kontaktformular | ContactPage: Formular → 200 (S36 Smoke); ContactAction: Nachricht abschicken → E-Mail-Versand / Fehler (kein SMTP im Test-Stack: Response-Status prüfen) | B, M | 3 | Niedrig |
+| K02 | Benutzer-Nachrichten | MessagePage: Nachrichtenformular → 200; MessageAction: Nachricht an Nutzer senden → Bestätigung / Redirect; MessageSelect: Empfänger aus Nutzerliste auswählen | M, E, V | 3 | Niedrig |
 
 ---
 
@@ -1474,8 +1536,9 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | G27 | Mediendatei-Upload URL | — | `MediaFileServiceUploadIntegrationTest` ✅ *(CRAP-Analyse, 2 Tests)* | — | **Abgedeckt** |
 | G28 | OBJE-Metadaten bearbeiten | — | `EditMediaFileIntegrationTest` ✅ *(spezifikationsbasiert, 2 Tests: Fact-not-found-Redirect, Happy Path DB-Postcondition change-Tabelle)* | — | **Abgedeckt** |
 | G29 | GEDCOM-Bearbeitungsservice | — | `GedcomEditServiceIntegrationTest` ✅ *(spezifikationsbasiert, 9 Tests: editLinesToGedcom EP Normal/CONT/Leer/Sub-Level, insertMissingLevels EP Expansion/Tiefe/Tags)* | — | **Abgedeckt** |
+| G30 | Mediendatei-Upload (HTTP-Formular) | — | — | — | **Nicht abgedeckt** |
 
-#### Suche und Navigation (S01–S39)
+#### Suche und Navigation (S01–S53)
 
 | # | Feature | Upstream (SQLite) | Eigene Infra (MySQL) | Eigene Infra (Playwright) | Status |
 |---|---|---|---|---|---|
@@ -1508,7 +1571,7 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S28 | Navigation: Notizseite | — | — | `records.spec.ts` ✅ (NOTE-Seite auf `muster`-Tree, 5 Themes) | **Abgedeckt** |
 | S29 | Navigation: Aufbewahrungsort | — | — | `records.spec.ts` ✅ | **Abgedeckt** |
 | S30 | Navigation: Einreicherseite | — | — | `records.spec.ts` ✅ | **Abgedeckt** |
-| S31 | Kalenderansicht | — | — | `calendar.spec.ts` ✅ (Monat + Jahr) | **Abgedeckt** |
+| S31 | Kalenderansicht & Kalenderevents-API | — | — | `calendar.spec.ts` ✅ (Monat + Jahr; CalendarEvents AJAX implizit via Seitenaufruf) | **Abgedeckt** |
 | S32 | Anmeldeseite (Login) | — | — | `login.spec.ts` ✅ | **Abgedeckt** |
 | S33 | Registrierungsseite | — | — | `auth.spec.ts` ✅ | **Abgedeckt** |
 | S34 | Passwort-Zurücksetzung | — | — | `auth.spec.ts` ✅ | **Abgedeckt** |
@@ -1528,8 +1591,10 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S48 | Standortdaten-Import Admin | — | `MapDataImportIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: EP1+EP5 add→DB-Postcondition lat/lng, EP6 Null-Island→gefiltert, 2 Smoke-Fehlerresilienz)* | — | **Abgedeckt** |
 | S49 | Medienverwaltungsliste Admin | — | `ManageMediaDataIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: EP1 local + EP2 external + EP3 unused, JSON-Struktur-Assertions)* | — | **Abgedeckt** |
 | S50 | Hilfetexte | — | `HelpTextIntegrationTest` ✅ *(spezifikationsbasiert, 13 Tests: DataProvider 12 Topics + unknown-Topic)* | — | **Abgedeckt** |
+| S52 | Standortdaten-Verwaltung (CRUD) | — | — | — | **Nicht abgedeckt** |
+| S53 | Legacy-URL-Weiterleitungen | — | — | — | **Nicht abgedeckt** |
 
-#### Datenschutz & Zugriffskontrolle (P01–P29)
+#### Datenschutz & Zugriffskontrolle (P01–P41)
 
 | # | Feature | Eigene Infra (MySQL) | Eigene Infra (Playwright) | Status |
 |---|---|---|---|---|
@@ -1570,8 +1635,12 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | P35 | CLI Benutzer-Verwaltung | `UserEditCommandIntegrationTest` ✅ *(spezifikationsbasiert, 16 Tests: B1–B11 Guards, DataProvider B3/B4/B5, B13–B15 Edit-Felder)* | — | **Abgedeckt** |
 | P36 | CLI Einstellungs-Verwaltung | `CliSettingsBatchIntegrationTest` ✅ *(spezifikationsbasiert, 17 Tests: --list/--delete-Konflikte, Delete nonexistent, Get nonexistent, same-value Warn, Update, EP11 Tree/User/UserTree not found)* | — | **Abgedeckt** |
 | P37 | HTTP Benutzer-Bearbeitung | `UserEditActionIntegrationTest` ✅ *(spezifikationsbasiert, 7 Tests: B1 not-found, B5/B6 Duplikat-Email, B7/B8 Duplikat-Username, B4 Self-Edit-Admin, B3 Passwort, EP12 Path-Reset); `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke, 1 Test)* | — | **Abgedeckt** |
+| P38 | Account-Selbstverwaltung | — | — | **Nicht abgedeckt** |
+| P39 | Authentifizierung-Aktionen | — | — | **Nicht abgedeckt** |
+| P40 | Änderungsverwaltung (HTTP-Handler) | — | — | **Nicht abgedeckt** |
+| P41 | Datensatz-Zusammenführung (vollständig) | — | — | **Nicht abgedeckt** |
 
-#### Sicherheit (SEC-H01–SEC-HDR04)
+#### Sicherheit (SEC-H01–SEC-UTL01)
 
 | # | Feature | Shell-Assertions | Playwright-Security | Status |
 |---|---------|-----------------|---------------------|--------|
@@ -1603,16 +1672,54 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | SEC-HDR03 | `Referrer-Policy` | — | `security-headers.spec.ts` ✅ | **Abgedeckt** |
 | SEC-HDR04 | Server-Banner | — | `security-headers.spec.ts` ⚠ | **Deployment-Empfehlung** |
 | SEC-BOT01 | UA-basierte Bot-Blockierung | `BadBotBlockerIntegrationTest` ✅ *(spezifikationsbasiert, 15 Tests: BAD_ROBOTS-DataProvider×5 + WP-Pfade-DataProvider×4 + Cookie-Heuristik EP8/EP9 + 4 Basis; DNS ausgeklammert)* | — | **Abgedeckt** |
+| SEC-UTL01 | Web-Assets & Utility-Endpoints | — | — | **Nicht abgedeckt** |
+
+#### Datenpflege / Erfassung (E01–E08)
+
+| # | Feature | Eigene Infra (MySQL) | Eigene Infra (Playwright) | Status |
+|---|---|---|---|---|
+| E01 | Person/Familie anlegen & verknüpfen | — | — | **Nicht abgedeckt** |
+| E02 | Fakten bearbeiten | — | — | **Nicht abgedeckt** |
+| E03 | Rohdaten-Edit (Raw GEDCOM) | — | — | **Nicht abgedeckt** |
+| E04 | Nebenrecords anlegen | — | — | **Nicht abgedeckt** |
+| E05 | Medienobjekte anlegen & verknüpfen | — | — | **Nicht abgedeckt** |
+| E06 | Sortierung (Reorder) | — | — | **Nicht abgedeckt** |
+| E07 | Mediendatei-Download & Thumbnail | — | — | **Nicht abgedeckt** |
+| E08 | TomSelect & AutoComplete | — | — | **Nicht abgedeckt** |
+
+#### Administration (A01–A11)
+
+| # | Feature | Eigene Infra (MySQL) | Eigene Infra (Playwright) | Status |
+|---|---|---|---|---|
+| A01 | Stammbaum-Management | — | — | **Nicht abgedeckt** |
+| A02 | Stammbaum-Import (HTTP-Formular) | — | — | **Nicht abgedeckt** |
+| A03 | Stammbaum-Export (HTTP-Formular) | — | — | **Nicht abgedeckt** |
+| A04 | Stammbaum-Präferenzen | — | — | **Nicht abgedeckt** |
+| A05 | Modul-Konfiguration | — | — | **Nicht abgedeckt** |
+| A06 | Site-Präferenzen | — | — | **Nicht abgedeckt** |
+| A07 | Benutzerverwaltung Admin | — | — | **Nicht abgedeckt** |
+| A08 | Medienverwaltung Admin | — | — | **Nicht abgedeckt** |
+| A09 | Datenpflege-Werkzeuge | — | — | **Nicht abgedeckt** |
+| A10 | Protokolle & Monitoring | — | — | **Nicht abgedeckt** |
+| A11 | System & Upgrade | — | — | **Nicht abgedeckt** |
+
+#### Kommunikation (K01–K02)
+
+| # | Feature | Eigene Infra (MySQL) | Eigene Infra (Playwright) | Status |
+|---|---|---|---|---|
+| K01 | Kontaktformular | — | — | **Nicht abgedeckt** |
+| K02 | Benutzer-Nachrichten | — | — | **Nicht abgedeckt** |
 
 #### Zusammenfassung Abdeckung
 
-| Status | G-Features | S-Features (S01–S24, S26–S40) | P-Features (P01–P29) | SEC-Features (SEC-H01–HDR04) | Gesamt |
-|---|---|---|---|---|---|
-| **Abgedeckt** (spezifikationsbasiert) | 27 (inkl. G25, G26, G28, G29) | 49 (inkl. S41–S50) | 37 (inkl. P30–P37) | 25 (inkl. SEC-BOT01) | **138** |
-| Davon mit Einschränkung (Upstream-Bug) | 1 (G16) | 0 | 0 | 1 (SEC-C03) | **2** |
-| Deployment-Empfehlung | 0 | 0 | 0 | 1 (SEC-HDR04) | **1** |
-| **Abgedeckt** (strukturbasiert, CRAP-Analyse, niedrigere Qualitätsstufe) | 1 (G27) | 0 | 0 | 0 | **1** |
-| **Gesamt Abgedeckt** | **28** | **49** | **37** | **25** | **139** (100%) |
+| Status | G (G01–G30) | S (S01–S53) | P (P01–P41) | SEC (inkl. UTL01) | E (E01–E08) | A (A01–A11) | K (K01–K02) | Gesamt |
+|---|---|---|---|---|---|---|---|---|
+| **Abgedeckt** (spezifikationsbasiert) | 27 (G01–G26, G28–G29) | 49 (S01–S50) | 37 (P01–P37) | 25 (SEC-BOT01 inkl.) | 0 | 0 | 0 | **138** |
+| Davon mit Einschränkung (Upstream-Bug) | 1 (G16) | 0 | 0 | 1 (SEC-C03) | — | — | — | **2** |
+| Deployment-Empfehlung | 0 | 0 | 0 | 1 (SEC-HDR04) | — | — | — | **1** |
+| **Abgedeckt** (strukturbasiert, CRAP-Analyse, niedrigere Qualitätsstufe) | 1 (G27) | 0 | 0 | 0 | 0 | 0 | 0 | **1** |
+| **Nicht abgedeckt** | 1 (G30) | 2 (S52–S53) | 4 (P38–P41) | 1 (SEC-UTL01) | 8 | 11 | 2 | **29** |
+| **Gesamt** | **29** | **51** | **41** | **26** | **8** | **11** | **2** | **168** |
 
 ---
 
@@ -1711,5 +1818,6 @@ make down && make up
 *Aktualisiert: 2026-04-05 — S41 (Statistikdaten-Abfragen) von strukturbasiert auf spezifikationsbasiert angehoben. StatisticsDataIntegrationTest: 6→13 Tests (+EP5 countEventsByMonth(0,0)→non-empty, +EP6 countEventsByMonth(1900,2000)→non-empty, +EP8 countEventsByMonth(2100,1900)→empty, +DataProvider sortTypes EP10–EP12 commonSurnames, +EP13 high-threshold, +DataProvider sexValues EP1/EP2 parentsQuery). whereBetween-Branch (year1≠0 && year2≠0) erstmals direkt getestet. Testentwurfsverfahren: neuer Äquivalenzklassen-Eintrag S41, CRAP-Zeile korrigiert (S41 entfernt → S43–S48). Zusammenfassung: 128 spezifikationsbasiert + 11 strukturbasiert = 139 Features.*
 *Aktualisiert: 2026-04-05 — P32 (Record-Ansicht und -Löschung) von strukturbasiert auf spezifikationsbasiert angehoben. Neue Klassen: DeleteRecordIntegrationTest (2 Tests: EP1 SOUR X1102 → change-Tabellen-Assert new_gedcom=''; EP5 Familie-Kaskade P1→F1 mitgelöscht via p32-delete-test.ged Fixture) + GedcomRecordPageIntegrationTest (5 Tests: EP1×4 DataProvider INDI/FAM/SOUR/REPO→302-Redirect; EP2 _CUST-Record via DB-Insert other-Tabelle→200+Link-Header). Befund: Smoke-Tests prüften status < 400, verdeckten dass STANDARD_RECORDS immer 302 liefern — nicht 200. Fixture p32-delete-test.ged: 2-Mitglieder-Familie ohne Fakten, löst Kaskaden-Bedingung aus. Testentwurfsverfahren: neuer Äquivalenzklassen-Eintrag P32, CRAP-Zeile korrigiert (P32 entfernt → P34 allein). Endekriterien: P32 in Spec-Liste; P32 aus CRAP-Liste entfernt. Zusammenfassung: 134 spezifikationsbasiert + 5 strukturbasiert = 139 Features.*
 *Aktualisiert: 2026-04-05 — CRAP-Neubewertung nach Runde 1+2 (Abschluss-Voll-Lauf 536/536 grün, 1762 Assertions). Methoden CRAP > 100 bei 0% Coverage: 43 → 16 (27 eliminiert). Verbleibend mit aktivem Runde-3-Plan: G25 (TreeImport::execute, CRAP 110) + S45 (ReportPdfImage::render, CRAP 132). Ohne eigenen Test aus CRAP-Liste verschwunden: G28 (EditMediaFileAction — durch S44-Report-Tests abgedeckt), P34 (RenumberTreeAction — durch RequestHandlerBatchB abgedeckt). G27 bleibt EXCLUDED (GuzzleHttp-DI-Problem). CRAP-Zeile Testentwurfsverfahren: G25, G27 (EXCLUDED), S45 (G28 + P32 + P34 entfernt). Kein Ratchet-File vorhanden — kein Update nötig.*
+*Aktualisiert: 2026-04-06 — Handler-Inventarisierung und Feature-Matrix-Erweiterung. Vollständige Analyse aller 333 Http/RequestHandler-Klassen. Neue Domains: E (Datenpflege, E01–E08: Person/Familie anlegen, Fakten/Raw-Edit, Nebenrecords, Medienobjekte, Sortierung, Download, TomSelect-APIs), A (Administration, A01–A11: Tree-Management, HTTP-Import/Export, Stammbaum-/Site-Präferenzen, Modul-Config, User-Admin, Media-Admin, Datenpflege-Werkzeuge, Logs, System/Upgrade), K (Kommunikation, K01–K02: Kontaktformular, Benutzer-Nachrichten). Erweiterungen bestehender Domains: G30 (HTTP-Formular-Upload), S31 (CalendarEvents AJAX ergänzt), S52 (Standortdaten-CRUD), S53 (Legacy-Redirects), P38 (Account-Selbstverwaltung), P39 (Auth-Aktionen), P40 (Änderungsverwaltung HTTP), P41 (Records-Merge vollständig), SEC-UTL01 (Web-Assets). Alle 29 neuen Features: Nicht abgedeckt. Gesamt: 168 Features (139 abgedeckt, 29 nicht abgedeckt).*
 *Aktualisiert: 2026-04-05 — Runde 4 (G28+P34) abgeschlossen. G28 (OBJE-Metadaten bearbeiten) von strukturbasiert auf spezifikationsbasiert angehoben: EditMediaFileIntegrationTest 1→2 Tests (+test_edit_media_file_happy_path_creates_pending_change_with_updated_title, DB-Postcondition via change-Tabelle; new_file='' → $old===$new → acceptRecord nicht aufgerufen → pending-change messbar). P34 (Stammbaum-Umnummerierung) von strukturbasiert auf spezifikationsbasiert: neue Klasse RenumberTreeActionIntegrationTest, 3 Tests (B2/EP1 keine-Duplikate-Redirect, B3/EP2 INDI-XREF-Rename-Postcondition, B1/EP4 Pending-Edits-Guard). Befund: duplicateXrefs() = Cross-Tree-Kollision (nicht innerhalb eines Baums) — Setup via DB-Insert in 2 separate Bäume. Fix: i_rin+i_sex Pflichtfelder; uniqid() für tree2-Namen (Unique-Constraint-Kollision bei Wiederholung); count-Assertion entfernt (treeService->create legt @X1@ INDI an). Voll-Lauf: 556/556 grün, 1823 Assertions. CRAP bleibt 15 (G28+P34 bereits durch Smoke-Tests ohne Coverage eliminiert). Zusammenfassung: 138 spezifikationsbasiert + 1 strukturbasiert = 139 Features.*
 
