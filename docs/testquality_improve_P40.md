@@ -75,8 +75,8 @@ Kein komplexer Branch — liest `pendingXrefs()` und `pendingChanges()`, gibt Vi
 
 | Phase | Status |
 |---|---|
-| P1: Konsistenzcheck | ⬜ |
-| P2: Soll-Design | ⬜ |
-| P3: Test-Coding | ⬜ |
-| P4: Ausführung + Fixing | ⬜ |
-| P5: Big-Picture | ⬜ |
+| P1: Konsistenzcheck | ✅ |
+| P2: Soll-Design | ✅ |
+| P3: Test-Coding | ✅ |
+| P4: Ausführung + Fixing | ✅ |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix P40 aktualisiert |

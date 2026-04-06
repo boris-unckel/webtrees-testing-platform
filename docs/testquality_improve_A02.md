@@ -56,8 +56,8 @@ PSR-7 UploadedFile nötig (`getUploadedFiles()`). Startet Import-Queue (asynchro
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | ImportGedcomAction DI: StreamFactoryInterface+TreeService; key 'client_file' für UploadedFile; encoding='' als gültiger Wert (leerer Array-Key) |
+| P2: Soll-Design | ✅ | EP1 (no file→302), EP2 (partial→exception), EP4 (empty server→302), EP5 (Page GET) |
+| P3: Test-Coding | ✅ | `ImportGedcomActionIntegrationTest` (4 Tests) |
+| P4: Ausführung + Fixing | ✅ | 4/4 grün (Fix: 'ged-file' → 'client_file') |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix A02 aktualisiert |

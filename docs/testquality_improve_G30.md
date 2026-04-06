@@ -69,8 +69,8 @@ EP3 (Ordner nicht in allMediaFolders) ist schwer testbar ohne Filesystem-Mock �
 
 | Phase | Status |
 |---|---|
-| P1: Konsistenzcheck | ⬜ |
-| P2: Soll-Design | ⬜ |
-| P3: Test-Coding | ⬜ |
-| P4: Ausführung + Fixing | ⬜ |
-| P5: Big-Picture | ⬜ |
+| P1: Konsistenzcheck | ✅ |
+| P2: Soll-Design | ✅ |
+| P3: Test-Coding | ✅ |
+| P4: Ausführung + Fixing | ✅ |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix G30 aktualisiert |

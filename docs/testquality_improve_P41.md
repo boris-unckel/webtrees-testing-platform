@@ -50,8 +50,8 @@ Fixtures: zwei INDI-Records im selben Tree. DB-Postcondition nach POST: einer de
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | SUT gelesen: Page kein DI, Action kein DI; null-Record-Guard → redirect zu MergeRecordsPage |
+| P2: Soll-Design | ✅ | EP1–EP4: Page GET 200, Page leer 200, Action matching INDIs → 302 zu MergeFactsPage |
+| P3: Test-Coding | ✅ | `MergeRecordsIntegrationTest` (3 Tests) |
+| P4: Ausführung + Fixing | ✅ | 3/3 grün |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix P41 aktualisiert |

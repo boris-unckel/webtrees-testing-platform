@@ -68,8 +68,8 @@ Trivial — gibt Admin-View zurück. Branch: `zip_available` via `PhpService::ex
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | ExportGedcomClient DI: GedcomExportService; ExportGedcomServer: schreibt in data-FS, gibt immer 302 zurück; ExportGedcomPage DI: PhpService |
+| P2: Soll-Design | ✅ | EP1 (gedcom attachment), EP2 (zip content-type), EP4 (Server 302), EP6 (Page GET) |
+| P3: Test-Coding | ✅ | `ExportGedcomIntegrationTest` (4 Tests) |
+| P4: Ausführung + Fixing | ✅ | 4/4 grün |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix A03 aktualisiert |

@@ -51,8 +51,8 @@ Kein dedizierter Test für die HTTP-Handler der Faktbearbeitung.
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | EditFactPage DI: GedcomEditService; AddNewFact: `fact` in attributes (isTag()); DeleteFact kein DI |
+| P2: Soll-Design | ✅ | EP2 (redirect ungültige fact_id), EP5 (DeleteFact 204), EP3 (AddNewFact 200) |
+| P3: Test-Coding | ✅ | `EditFactIntegrationTest` (3 Tests) |
+| P4: Ausführung + Fixing | ✅ | 3/3 grün (Fix: `fact` in attributes statt query) |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix E02 aktualisiert |

@@ -50,8 +50,8 @@ Kein dedizierter Test für Raw-GEDCOM-Edit-Handler.
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | Alle Raw-Handler ohne DI; EditRawFactAction: gedcom aus parsedBody, url als isLocalUrl mit Default |
+| P2: Soll-Design | ✅ | EP1/EP4 (Redirect/200 GET), EP2 (Action redirect ungültige fact_id) |
+| P3: Test-Coding | ✅ | `EditRawGedcomIntegrationTest` (3 Tests) |
+| P4: Ausführung + Fixing | ✅ | 3/3 grün |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix E03 aktualisiert |

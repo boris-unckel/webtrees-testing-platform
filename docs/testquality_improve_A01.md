@@ -66,8 +66,8 @@
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | CreateTreeAction DI: TreeService; DeleteTreeAction DI: TreeService; ManageTrees DI: AdminService+TreeService; View benötigt non-null tree |
+| P2: Soll-Design | ✅ | EP1/EP2 (CreateTree), EP3 (DeleteTree 204), EP7 (ManageTrees GET) |
+| P3: Test-Coding | ✅ | `TreeManagementIntegrationTest` (4 Tests) |
+| P4: Ausführung + Fixing | ✅ | 4/4 grün (Fix: unique tree-name, tree-Attribut für ManageTrees) |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix A01 aktualisiert |

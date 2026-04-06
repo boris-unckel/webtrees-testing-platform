@@ -97,8 +97,8 @@ Gibt immer redirect(route(HomePage::class)) zurück (302).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | AccountEdit DI: MessageService+ModuleService; AccountUpdate DI: UserService; AccountDelete: Admin-Guard via PREF_IS_ADMINISTRATOR |
+| P2: Soll-Design | ✅ | EP1–EP10: Edit GET, Update happy path, Delete admin-guard, Delete non-admin |
+| P3: Test-Coding | ✅ | `AccountSelfManagementIntegrationTest` (4 Tests) |
+| P4: Ausführung + Fixing | ✅ | 4/4 grün |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix P38 aktualisiert |

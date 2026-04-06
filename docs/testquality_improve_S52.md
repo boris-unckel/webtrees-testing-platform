@@ -56,8 +56,8 @@ Admin-Auth über `createAndLoginAdmin()`.
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | MapDataSave kein DI; MapDataDelete/ExportCSV/List DI: MapDataService; MapDataSave.url: isLocalUrl() |
+| P2: Soll-Design | ✅ | EP1–EP7: Insert, Update (DB-Postcondition), Delete, CSV, List |
+| P3: Test-Coding | ✅ | `MapDataCrudIntegrationTest` (5 Tests) |
+| P4: Ausführung + Fixing | ✅ | 5/5 grün |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix S52 aktualisiert |
