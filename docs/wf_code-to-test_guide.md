@@ -3,9 +3,8 @@
 # Workflow: Code-Analyse → Testkonzept → Implementierung
 
 Dieser Leitfaden beschreibt, wie Testziele durch systematische Analyse des
-Upstream-Codes (Handler, Services) identifiziert werden. Er leitet den Qualitätssprung
-von **strukturbasiert** (CRAP-Analyse, Coverage-getrieben) auf **spezifikationsbasiert**
-(ISTQB B/C, EP/BVA-getrieben) ein.
+Upstream-Codes (Handler, Services) identifiziert und **spezifikationsbasiert**
+(ISTQB B/C, EP/BVA-getrieben) umgesetzt werden.
 
 Für Methodik (EP/BVA, Mock-Infrastruktur, Patterns), den 5-Phasen-Arbeitsablauf und
 die Abschlussschritte: → [Gemeinsamer Workflow](wf_test-iteration_guide.md)
@@ -14,20 +13,21 @@ die Abschlussschritte: → [Gemeinsamer Workflow](wf_test-iteration_guide.md)
 
 ## 1 Übersicht
 
-### Qualitätssprung: Strukturbasiert → Spezifikationsbasiert
+### Methodik
 
-| Vorher | Nachher |
+| Prinzip | Umsetzung |
 |---|---|
-| CRAP-Score als Testziel-Auswahl | Anforderungen / Verhalten als Testziel |
-| Abbruchkriterium: kein Exception / kein HTTP 500 | Abbruchkriterium: EP/BVA-Matrix vollständig abgedeckt |
-| Nur Happy-Path | Happy-Path + negative Pfade + Guards + Grenzfälle |
-| Keine Pre-/Postconditions | Datenbankzustand vor/nach Aktion geprüft |
+| Testziel-Auswahl | Anforderungen / Verhalten des SUT |
+| Abbruchkriterium | EP/BVA-Matrix vollständig abgedeckt |
+| Testtiefe | Happy-Path + negative Pfade + Guards + Grenzfälle |
+| Verifikation | Pre-/Postconditions — Datenbankzustand vor/nach Aktion geprüft |
 
 ### Eingangsmaterial je Iteration
 
-- **CRAP-Report** (`make crap-report`): Methoden mit CRAP > 100 bei 0% Coverage als Startpunkt.
+- **Scope-Definition:** Feature-Bereich oder SUT-Klassen, für die Tests erstellt werden sollen.
 - **Feature-Matrix** (`docs/tds_conditions_ref.md`): Feature-Referenz-IDs und SUT-Klassen.
 - **Abdeckungsmatrix** (`docs/tds_coverage_ref.md`): Bestehende Testklassen und -anzahlen.
+- **CRAP-Report** (`make crap-report`): Optional — identifiziert Methoden mit hoher Komplexität und geringer Abdeckung.
 
 ---
 
@@ -133,10 +133,10 @@ Für jedes Feature wird eine Detailkonzept-Datei erstellt. Die folgende Struktur
 ```markdown
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 
-# Testqualität verbessern — <REF>: <Feature-Name>
+# Testdesign — <REF>: <Feature-Name>
 
 **Referenz:** <REF> | **SUT:** `app/Http/RequestHandlers/<Handler>.php` (+ ggf. weitere Klassen)
-**Aktueller Test:** <Testklassenname falls vorhanden, sonst "kein Test — neu anlegen">
+**Bestehender Test:** <Testklassenname falls vorhanden, sonst „keiner">
 **Übergreifende Konzepte:** → [wf_test-iteration_guide.md](wf_test-iteration_guide.md)
 
 ---
@@ -195,7 +195,7 @@ Für jedes Feature wird eine Detailkonzept-Datei erstellt. Die folgende Struktur
 ```markdown
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 
-# Testqualität verbessern — <REF>: <Feature-Name>
+# Testdesign — <REF>: <Feature-Name>
 
 **Referenz:** <REF> | **Status:** EXCLUDED — Teststufe 2 nicht anwendbar
 **Übergreifende Konzepte:** → [wf_test-iteration_guide.md](wf_test-iteration_guide.md)
