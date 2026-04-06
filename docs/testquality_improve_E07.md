@@ -58,8 +58,8 @@
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | SUT gelesen: replacementImageResponse gibt immer HTTP 200 zurück |
+| P2: Soll-Design | ✅ | EP1–EP3: null-xref-Thumbnail, fact_id-miss, Download-Exception |
+| P3: Test-Coding | ✅ | `MediaFileDeliveryIntegrationTest` (3 Tests) |
+| P4: Ausführung + Fixing | ✅ | 3/3 grün |
+| P5: Big-Picture | ✅ | testing-bigpicture.md aktualisiert |

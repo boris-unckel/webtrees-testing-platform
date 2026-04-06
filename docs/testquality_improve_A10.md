@@ -59,8 +59,8 @@ Kein dedizierter Test. PendingChangesLogPage: GET → change-Log gefiltert, Admi
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | SUT gelesen: SiteLogsService benötigt `text` + `ip` Query-Param |
+| P2: Soll-Design | ✅ | EP1–EP4: PendingChanges, SiteLogsDownload CSV, Disposition, PhpInfo |
+| P3: Test-Coding | ✅ | `LogsMonitoringIntegrationTest` (4 Tests) |
+| P4: Ausführung + Fixing | ✅ | 4/4 grün (Fix: `text` + `ip` ergänzt) |
+| P5: Big-Picture | ✅ | testing-bigpicture.md aktualisiert |

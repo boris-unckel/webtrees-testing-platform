@@ -117,8 +117,8 @@ Kein Auth nötig — alle Handler sind öffentlich zugänglich.
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | SUT gelesen: alle 8 Handler, DI-Analyse |
+| P2: Soll-Design | ✅ | DataProvider-Batch + 4 EP-Methoden |
+| P3: Test-Coding | ✅ | `UtilityEndpointsIntegrationTest` (10 Tests) |
+| P4: Ausführung + Fixing | ✅ | 10/10 grün |
+| P5: Big-Picture | ✅ | testing-bigpicture.md aktualisiert |

@@ -58,8 +58,8 @@ Kein dedizierter Test. Alle drei Handler sind Admin-only. UserListPage: GET → 
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | SUT gelesen: UserListPage, UsersCleanupPage — beide GET→200 |
+| P2: Soll-Design | ✅ | EP1–EP3: UserList, UserList mit Filter, UsersCleanup |
+| P3: Test-Coding | ✅ | `UserAdminIntegrationTest` (3 Tests) |
+| P4: Ausführung + Fixing | ✅ | 3/3 grün |
+| P5: Big-Picture | ✅ | testing-bigpicture.md aktualisiert |

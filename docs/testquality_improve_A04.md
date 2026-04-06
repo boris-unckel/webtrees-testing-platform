@@ -58,8 +58,8 @@ Sehr viel Assembling-Logik (Kalender-Formate, Module-Liste, Benutzer-Liste). Kei
 
 | Phase | Status |
 |---|---|
-| P1: Konsistenzcheck | ⬜ |
-| P2: Soll-Design | ⬜ |
-| P3: Test-Coding | ⬜ |
-| P4: Ausführung + Fixing | ⬜ |
-| P5: Big-Picture | ⬜ |
+| P1: Konsistenzcheck | ✅ |
+| P2: Soll-Design | ✅ |
+| P3: Test-Coding | ✅ |
+| P4: Ausführung + Fixing | ✅ |
+| P5: Big-Picture | ✅ |

@@ -56,8 +56,8 @@
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | SUT gelesen: TomSelect JSON-Response, AutoCompleteFolder data-filesystem |
+| P2: Soll-Design | ✅ | EP1–EP7: TomSelectIndividual vollständig, andere Smoke |
+| P3: Test-Coding | ✅ | `TomSelectIntegrationTest` (5 Tests) |
+| P4: Ausführung + Fixing | ✅ | 5/5 grün |
+| P5: Big-Picture | ✅ | testing-bigpicture.md aktualisiert |
