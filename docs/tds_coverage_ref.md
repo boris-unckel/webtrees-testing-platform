@@ -10,7 +10,7 @@ Dieses Dokument bildet die Testabdeckung pro Feature-Matrix-ID ab. Jedes Feature
 - [Überdeckungsstrategie](tp_ratchet_spec.md)
 - [Testentwurfsverfahren](tds_methodik_spec.md)
 
-**Aktueller Stand:** 165 abgedeckt (164 spezifikationsbasiert + 1 strukturbasiert), 4 nicht abgedeckt.
+**Aktueller Stand:** 165 abgedeckt (164 spezifikationsbasiert + 1 strukturbasiert), 5 nicht abgedeckt / SKIP (davon 1 deprecated).
 
 ### Abdeckungsmatrix: Feature-Matrix → Testabdeckung
 
@@ -221,19 +221,20 @@ Dieses Dokument bildet die Testabdeckung pro Feature-Matrix-ID ab. Jedes Feature
 | K01 | Kontaktformular | — | — | **Nicht abgedeckt** |
 | K02 | Benutzer-Nachrichten | — | — | **Nicht abgedeckt** |
 
-#### Querschnitts-Utilities (U01)
+#### Querschnitts-Utilities (U01–U02)
 
 | # | Feature | Upstream (SQLite) | Eigene Infra (MySQL) | Status |
 |---|---|---|---|---|
 | U01 | Validator (root-Paket) | `ValidatorTest` ✅ (substanziell, alle Methoden) | `ValidatorIntegrationTest` ✅ *(spezifikationsbasiert, 15 Tests: float() EP1–EP5+BV+Inv+Miss, __construct UTF-8 key/value/ASCII, integer() neg-String, array() non-array-throw)* | **Abgedeckt** |
+| U02 | CountryService (`Statistics/Service/`) | — | — | **SKIP** — deprecated (`@deprecated`, Entfernung in webtrees 2.3); kein Test geplant |
 
 #### Zusammenfassung Abdeckung
 
-| Status | G (G01–G30) | S (S01–S53) | P (P01–P41) | SEC (inkl. UTL01) | E (E01–E08) | A (A01–A11) | K (K01–K02) | U (U01) | Gesamt |
+| Status | G (G01–G30) | S (S01–S53) | P (P01–P41) | SEC (inkl. UTL01) | E (E01–E08) | A (A01–A11) | K (K01–K02) | U (U01–U02) | Gesamt |
 |---|---|---|---|---|---|---|---|---|---|
 | **Abgedeckt** (spezifikationsbasiert) | 28 (G01–G26, G28–G30) | 50 (S01–S50, S52) | 41 (P01–P41) | 26 (SEC-UTL01 inkl.) | 8 (E01–E08) | 10 (A01–A07, A09–A11) | 0 | 1 (U01) | **164** |
 | Davon mit Einschränkung (Upstream-Bug) | 1 (G16) | 0 | 0 | 1 (SEC-C03) | — | — | — | — | **2** |
 | Deployment-Empfehlung | 0 | 0 | 0 | 1 (SEC-HDR04) | — | — | — | — | **1** |
 | **Abgedeckt** (strukturbasiert, CRAP-Analyse, niedrigere Qualitätsstufe) | 1 (G27) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **1** |
-| **Nicht abgedeckt** | 0 | 1 (S53) | 0 | 0 | 0 | 1 (A08) | 2 | 0 | **4** |
-| **Gesamt** | **29** | **51** | **41** | **26** | **8** | **11** | **2** | **1** | **169** |
+| **Nicht abgedeckt / SKIP** | 0 | 1 (S53) | 0 | 0 | 0 | 1 (A08) | 2 | 1 (U02 deprecated) | **5** |
+| **Gesamt** | **29** | **51** | **41** | **26** | **8** | **11** | **2** | **2** | **170** |
