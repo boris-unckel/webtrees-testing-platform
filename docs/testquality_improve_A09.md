@@ -61,8 +61,8 @@ Kein dedizierter Test. FindDuplicateRecords: GET → AdminService.duplicateRecor
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | FindDuplicateRecords DI: AdminService. DataFixPage DI: ModuleService; data_fix='' → Auswahl; data_fix='fix-place-names' → Modul-Seite. DataFixChoose DI: ModuleService. AddUnlinkedPage DI: GedcomEditService |
+| P2: Soll-Design | ✅ | EP1 (FindDuplicateRecords→200), EP2 (DataFixPage leer→200), EP3 (DataFixPage fix-place-names→200), EP4 (DataFixChoose→200) |
+| P3: Test-Coding | ✅ | `DataMaintenanceIntegrationTest` (4 Tests) |
+| P4: Ausführung + Fixing | ✅ | 4/4 grün |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix A09 aktualisiert |

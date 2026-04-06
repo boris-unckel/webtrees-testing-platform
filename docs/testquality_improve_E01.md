@@ -51,8 +51,8 @@ Repräsentativer Handler für vollständige EP-Analyse: **AddChildToIndividualPa
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | Alle Handler DI: GedcomEditService. Page-Handler: xref aus attributes, ggf. sex. Action: ilevels/itags/ivalues Arrays aus parsedBody. FAM-XREFs in demo.ged: f1/f2… (lowercase). INDI: X1030+ |
+| P2: Soll-Design | ✅ | EP1 (AddChildToIndividualPage→200), EP3 (AddChildToIndividualAction→302), DataProvider EP5 (AddParent/AddSpouseToIndi, AddChild/AddSpouseToFam→200) |
+| P3: Test-Coding | ✅ | `AddRelationIntegrationTest` (6 Tests: 2 direkt + 4 DataProvider) |
+| P4: Ausführung + Fixing | ✅ | 6/6 grün |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix E01 aktualisiert |

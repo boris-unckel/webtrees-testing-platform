@@ -61,8 +61,8 @@ Kein dedizierter Test. Masquerade: POST, setzt Session-Variable 'masquerade' = U
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | Masquerade DI: UserService; user_id+user aus Attributes; response() 204. BroadcastPage DI: MessageService; to='all'/'never'/'gone' gültig. EmailPreferencesPage DI: EmailService |
+| P2: Soll-Design | ✅ | EP1 (not-found→HttpNotFoundException), EP2 (self→204), EP3 (other→204+Auth), EP4 (Broadcast→200), EP5 (EmailPrefs→200) |
+| P3: Test-Coding | ✅ | `SystemAdminIntegrationTest` (5 Tests) |
+| P4: Ausführung + Fixing | ✅ | 5/5 grün |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix A11 aktualisiert |

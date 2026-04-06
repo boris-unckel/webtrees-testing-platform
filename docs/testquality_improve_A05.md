@@ -59,8 +59,8 @@ Neue Klasse `ModuleConfigIntegrationTest extends MysqlTestCase`. Admin-Auth, kei
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | ModulesAllPage DI: ModuleService. ModulesAllAction DI: ModuleService; boolean('status-{name}', false). AbstractModuleComponentPage DI: ModuleService+TreeService |
+| P2: Soll-Design | ✅ | EP1 (AllPage→200), EP2 (AllAction POST→302), DataProvider EP4–EP8 (Analytics/Blocks/Charts/Menus/Reports→200) |
+| P3: Test-Coding | ✅ | `ModuleConfigIntegrationTest` (7 Tests: 2 direkt + 5 DataProvider) |
+| P4: Ausführung + Fixing | ✅ | 7/7 grün |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix A05 aktualisiert |

@@ -75,8 +75,8 @@ Verweis: `testquality_improve_common2.md`, Abschnitt 4.
 
 | Phase | Status |
 |---|---|
-| P1: Konsistenzcheck | ⬜ |
-| P2: Soll-Design | ⬜ |
-| P3: Test-Coding | ⬜ |
-| P4: Ausführung + Fixing | ⬜ |
-| P5: Big-Picture | ⬜ |
+| P1: Konsistenzcheck | ✅ | DI: UpgradeService+UserService; handle() fängt alle Exceptions; $_COOKIE=[] in CLI → doLogin wirft → 302 |
+| P2: Soll-Design | ✅ | EP1: POST → 302 (Cookie-Check-Redirect zu LoginPage) |
+| P3: Test-Coding | ✅ | `LoginActionIntegrationTest` (1 Test) |
+| P4: Ausführung + Fixing | ✅ | 1/1 grün (Fix: Location enthält 'nonexistent-user' statt 'login') |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix P39 aktualisiert | |

@@ -51,8 +51,8 @@ Repräsentativer Handler für vollständige EP-Analyse: **CreateMediaObjectModal
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Big-Picture | ⬜ | |
+| P1: Konsistenzcheck | ✅ | CreateMediaObjectModal DI: MediaFileService. LinkMediaToRecordAction: kein DI. LinkMediaToIndividualModal: kein DI. OBJE XREF in demo.ged: X247 |
+| P2: Soll-Design | ✅ | EP1 (CreateModal→200), EP4 (LinkMediaToRecord xref=X247+link=X1030→302), EP5 (LinkMediaToIndividualModal xref=X247→200) |
+| P3: Test-Coding | ✅ | `MediaObjectIntegrationTest` (3 Tests) |
+| P4: Ausführung + Fixing | ✅ | 3/3 grün |
+| P5: Big-Picture | ✅ | `testing-bigpicture.md` Abdeckungsmatrix E05 aktualisiert |
