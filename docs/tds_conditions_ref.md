@@ -397,6 +397,17 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 ---
 
+## Feature-Matrix: Querschnitts-Utilities (U)
+
+> Utility-Klassen ohne Domänenzuordnung — direkt im root-Namespace `Fisharebest\Webtrees`.
+> Upstream-Tests vorhanden, aber Layer-3-Lücken durch CRAP-Analyse identifiziert.
+
+| # | Feature | Abgeleitete Anforderung | Teststufe | Prio |
+|---|---|---|---|---|
+| U01 | Validator (root-Paket) *(spezifikationsbasiert)* | `Validator.float()`: EP/BVA-Matrix (EP1 float-String→float, EP2 integer-String→float, EP3 int-Typ→float, EP4 negativ, EP5 zero-BV, EP-inv1 non-numeric→throw, EP-inv2 non-numeric+default, EP-miss1 fehlt→throw, EP-miss2 fehlt+default); `__construct` UTF-8: key-invalid→throw, value-invalid→throw, serverParams-ASCII→kein-throw; `integer()` negativer-String→-42; `array()` non-array-non-null→throw | 2 | Mittel |
+
+---
+
 ## Entscheidung: Reverse-Engineering-Quellen
 
 | Quelle | Einsatz | Methode |
