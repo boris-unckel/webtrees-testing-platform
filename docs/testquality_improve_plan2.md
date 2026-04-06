@@ -29,33 +29,33 @@ Identisch zu [testquality_improve_plan.md](testquality_improve_plan.md), Abschni
 
 | Ref | Titel | Aufwand | P1 | P2 | P3 | P4 | P5 |
 |---|---|---|---|---|---|---|---|
-| **G30** | Mediendatei-Upload (HTTP-Formular) | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **S52** | Standortdaten-Verwaltung (CRUD) | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| **G30** | Mediendatei-Upload (HTTP-Formular) | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **S52** | Standortdaten-Verwaltung (CRUD) | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **S53** | Legacy-URL-Weiterleitungen | Niedrig | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **P38** | Account-Selbstverwaltung | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **P39** | Authentifizierung-Aktionen | Hoch | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **P40** | Änderungsverwaltung (HTTP-Handler) | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **P41** | Datensatz-Zusammenführung (vollständig) | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **SEC-UTL01** | Web-Assets & Utility-Endpoints | Niedrig | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **E01** | Person/Familie anlegen & verknüpfen | Hoch | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **E02** | Fakten bearbeiten | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **E03** | Rohdaten-Edit (Raw GEDCOM) | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **E04** | Nebenrecords anlegen | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **E05** | Medienobjekte anlegen & verknüpfen | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **E06** | Sortierung (Reorder) | Niedrig | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **E07** | Mediendatei-Download & Thumbnail | Niedrig | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **E08** | TomSelect & AutoComplete (Edit-Hilfs-APIs) | Niedrig | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **A01** | Stammbaum-Management | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **A02** | Stammbaum-Import (HTTP-Formular) | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **A03** | Stammbaum-Export (HTTP-Formular) | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **A04** | Stammbaum-Präferenzen | Niedrig | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **A05** | Modul-Konfiguration | Mittel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **A06** | Site-Präferenzen | Niedrig | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **A07** | Benutzerverwaltung Admin | Niedrig | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| **P38** | Account-Selbstverwaltung | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **P39** | Authentifizierung-Aktionen | Hoch | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **P40** | Änderungsverwaltung (HTTP-Handler) | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **P41** | Datensatz-Zusammenführung (vollständig) | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **SEC-UTL01** | Web-Assets & Utility-Endpoints | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **E01** | Person/Familie anlegen & verknüpfen | Hoch | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **E02** | Fakten bearbeiten | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **E03** | Rohdaten-Edit (Raw GEDCOM) | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **E04** | Nebenrecords anlegen | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **E05** | Medienobjekte anlegen & verknüpfen | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **E06** | Sortierung (Reorder) | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **E07** | Mediendatei-Download & Thumbnail | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **E08** | TomSelect & AutoComplete (Edit-Hilfs-APIs) | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **A01** | Stammbaum-Management | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **A02** | Stammbaum-Import (HTTP-Formular) | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **A03** | Stammbaum-Export (HTTP-Formular) | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **A04** | Stammbaum-Präferenzen | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **A05** | Modul-Konfiguration | Mittel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **A06** | Site-Präferenzen | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **A07** | Benutzerverwaltung Admin | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **A08** | Medienverwaltung Admin | Niedrig | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **A09** | Datenpflege-Werkzeuge | Hoch | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **A10** | Protokolle & Monitoring | Niedrig | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| **A11** | System & Upgrade | Hoch | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| **A09** | Datenpflege-Werkzeuge | Hoch | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **A10** | Protokolle & Monitoring | Niedrig | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **A11** | System & Upgrade | Hoch | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **K01** | Kontaktformular | Niedrig | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
 | **K02** | Benutzer-Nachrichten | Niedrig | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
 
@@ -121,7 +121,7 @@ Identisch zu `testquality_improve_plan.md`, Abschnitt "P5: Big-Picture". Nach Ab
 
 ## Abschluss
 
-Nach Abschluss aller erreichbaren Referenz-IDs (Runde 1 + 2, ggf. Runde 3):
+Voll-Lauf nach Runde 3 (2026-04-06): **658/658 grün, 2169 Assertions** (19:29 min, Memory 207 MB).
 
 ```bash
 make test-integration   # Voll-Lauf — run_in_background: true, auf Fertigmeldung warten

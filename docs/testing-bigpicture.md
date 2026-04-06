@@ -982,7 +982,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | SEC-HDR03 | `Referrer-Policy` | Header gesetzt (nicht leer) | Niedrig | Grün |
 | SEC-HDR04 | Server-Banner | Apache-Versionsstring sichtbar | Niedrig | Rot (Deployment-Empfehlung) |
 | SEC-BOT01 | UA-basierte Bot-Blockierung *(spezifikationsbasiert, DNS/ASN ausgeklammert)* | BadBotBlocker: BAD_ROBOTS-Sampling DataProvider (5 Kategorien: SEO, AI, Security → 406); WordPress-Pfade DataProvider (/wp-*, /xmlrpc.php → 406); Cookie-Heuristik EP8/EP9 (mit/ohne Cookies); leerer UA → 406; legitimer UA → 200. DNS-Zweige (B3/B4) dauerhaft ausgeklammert. | 15 | Hoch |
-| SEC-UTL01 | Web-Assets & Utility-Endpoints | RobotsTxt → 200 + text/plain; FaviconIco → 200 + image/x-icon; WebmanifestJson → 200 + application/json; BrowserconfigXml → 200 + XML; AppleTouchIconPng → 200; AdsTxt/AppAdsTxt → 200; Ping → 200 | Niedrig | ⬜ |
+| SEC-UTL01 | Web-Assets & Utility-Endpoints *(spezifikationsbasiert)* | `UtilityEndpointsIntegrationTest` ✅: DataProvider-Batch (FaviconIco/WebmanifestJson/BrowserconfigXml/AppleTouchIconPng/AdsTxt/AppAdsTxt → 200 + Content-Type); RobotsTxt → 200 + text/plain + User-agent + Disallow; Ping → 200 oder 503; Ping-Body = OK/WARNING/ERROR. | Niedrig | Grün |
 
 ---
 
@@ -1536,7 +1536,7 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | G27 | Mediendatei-Upload URL | — | `MediaFileServiceUploadIntegrationTest` ✅ *(CRAP-Analyse, 2 Tests)* | — | **Abgedeckt** |
 | G28 | OBJE-Metadaten bearbeiten | — | `EditMediaFileIntegrationTest` ✅ *(spezifikationsbasiert, 2 Tests: Fact-not-found-Redirect, Happy Path DB-Postcondition change-Tabelle)* | — | **Abgedeckt** |
 | G29 | GEDCOM-Bearbeitungsservice | — | `GedcomEditServiceIntegrationTest` ✅ *(spezifikationsbasiert, 9 Tests: editLinesToGedcom EP Normal/CONT/Leer/Sub-Level, insertMissingLevels EP Expansion/Tiefe/Tags)* | — | **Abgedeckt** |
-| G30 | Mediendatei-Upload (HTTP-Formular) | — | — | — | **Nicht abgedeckt** |
+| G30 | Mediendatei-Upload (HTTP-Formular) | — | `UploadMediaActionIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: UPLOAD_ERR_NO_FILE→302, UPLOAD_ERR_PARTIAL→FileUploadException, gefährliche Extension→FlashMessage+302)* | — | **Abgedeckt** |
 
 #### Suche und Navigation (S01–S53)
 
@@ -1591,7 +1591,7 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | S48 | Standortdaten-Import Admin | — | `MapDataImportIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: EP1+EP5 add→DB-Postcondition lat/lng, EP6 Null-Island→gefiltert, 2 Smoke-Fehlerresilienz)* | — | **Abgedeckt** |
 | S49 | Medienverwaltungsliste Admin | — | `ManageMediaDataIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: EP1 local + EP2 external + EP3 unused, JSON-Struktur-Assertions)* | — | **Abgedeckt** |
 | S50 | Hilfetexte | — | `HelpTextIntegrationTest` ✅ *(spezifikationsbasiert, 13 Tests: DataProvider 12 Topics + unknown-Topic)* | — | **Abgedeckt** |
-| S52 | Standortdaten-Verwaltung (CRUD) | — | — | — | **Nicht abgedeckt** |
+| S52 | Standortdaten-Verwaltung (CRUD) | — | `MapDataCrudIntegrationTest` ✅ *(spezifikationsbasiert, 5 Tests: MapDataSave INSERT→DB, UPDATE→DB, MapDataDelete→entfernt, MapDataExportCSV→text/csv, MapDataList GET→200)* | — | **Abgedeckt** |
 | S53 | Legacy-URL-Weiterleitungen | — | — | — | **Nicht abgedeckt** |
 
 #### Datenschutz & Zugriffskontrolle (P01–P41)
@@ -1635,10 +1635,10 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | P35 | CLI Benutzer-Verwaltung | `UserEditCommandIntegrationTest` ✅ *(spezifikationsbasiert, 16 Tests: B1–B11 Guards, DataProvider B3/B4/B5, B13–B15 Edit-Felder)* | — | **Abgedeckt** |
 | P36 | CLI Einstellungs-Verwaltung | `CliSettingsBatchIntegrationTest` ✅ *(spezifikationsbasiert, 17 Tests: --list/--delete-Konflikte, Delete nonexistent, Get nonexistent, same-value Warn, Update, EP11 Tree/User/UserTree not found)* | — | **Abgedeckt** |
 | P37 | HTTP Benutzer-Bearbeitung | `UserEditActionIntegrationTest` ✅ *(spezifikationsbasiert, 7 Tests: B1 not-found, B5/B6 Duplikat-Email, B7/B8 Duplikat-Username, B4 Self-Edit-Admin, B3 Passwort, EP12 Path-Reset); `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke, 1 Test)* | — | **Abgedeckt** |
-| P38 | Account-Selbstverwaltung | — | — | **Nicht abgedeckt** |
-| P39 | Authentifizierung-Aktionen | — | — | **Nicht abgedeckt** |
-| P40 | Änderungsverwaltung (HTTP-Handler) | — | — | **Nicht abgedeckt** |
-| P41 | Datensatz-Zusammenführung (vollständig) | — | — | **Nicht abgedeckt** |
+| P38 | Account-Selbstverwaltung | `AccountSelfManagementIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: Edit GET 200, Update POST E-Mail, Delete admin-Guard, Delete non-admin gelöscht)* | — | **Abgedeckt** |
+| P39 | Authentifizierung-Aktionen | — | `LoginActionIntegrationTest` ✅ *(spezifikationsbasiert, 1 Test: EP1 CLI-Kontext $_COOKIE=[]→doLogin wirft→handler fängt→302)* | — | **Abgedeckt** |
+| P40 | Änderungsverwaltung (HTTP-Handler) | `PendingChangesIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: AcceptRecord ungültig→204, RejectRecord ungültig→204, PendingChanges GET→200)* | — | **Abgedeckt** |
+| P41 | Datensatz-Zusammenführung (vollständig) | `MergeRecordsIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: Page GET valid/empty XREFs, Action POST matching INDIs→302)* | — | **Abgedeckt** |
 
 #### Sicherheit (SEC-H01–SEC-UTL01)
 
@@ -1672,36 +1672,36 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 | SEC-HDR03 | `Referrer-Policy` | — | `security-headers.spec.ts` ✅ | **Abgedeckt** |
 | SEC-HDR04 | Server-Banner | — | `security-headers.spec.ts` ⚠ | **Deployment-Empfehlung** |
 | SEC-BOT01 | UA-basierte Bot-Blockierung | `BadBotBlockerIntegrationTest` ✅ *(spezifikationsbasiert, 15 Tests: BAD_ROBOTS-DataProvider×5 + WP-Pfade-DataProvider×4 + Cookie-Heuristik EP8/EP9 + 4 Basis; DNS ausgeklammert)* | — | **Abgedeckt** |
-| SEC-UTL01 | Web-Assets & Utility-Endpoints | — | — | **Nicht abgedeckt** |
+| SEC-UTL01 | Web-Assets & Utility-Endpoints | `UtilityEndpointsIntegrationTest` ✅ *(spezifikationsbasiert, 10 Tests)* | — | **Abgedeckt** |
 
 #### Datenpflege / Erfassung (E01–E08)
 
 | # | Feature | Eigene Infra (MySQL) | Eigene Infra (Playwright) | Status |
 |---|---|---|---|---|
-| E01 | Person/Familie anlegen & verknüpfen | — | — | **Nicht abgedeckt** |
-| E02 | Fakten bearbeiten | — | — | **Nicht abgedeckt** |
-| E03 | Rohdaten-Edit (Raw GEDCOM) | — | — | **Nicht abgedeckt** |
-| E04 | Nebenrecords anlegen | — | — | **Nicht abgedeckt** |
-| E05 | Medienobjekte anlegen & verknüpfen | — | — | **Nicht abgedeckt** |
-| E06 | Sortierung (Reorder) | — | — | **Nicht abgedeckt** |
-| E07 | Mediendatei-Download & Thumbnail | — | — | **Nicht abgedeckt** |
-| E08 | TomSelect & AutoComplete | — | — | **Nicht abgedeckt** |
+| E01 | Person/Familie anlegen & verknüpfen | — | `AddRelationIntegrationTest` ✅ *(spezifikationsbasiert, 6 Tests: AddChildToIndividualPage GET→200, Action POST→302, DataProvider AddParent/AddSpouseToIndi/AddChild/AddSpouseToFam→200)* | — | **Abgedeckt** |
+| E02 | Fakten bearbeiten | — | `EditFactIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: EditFactPage unknown fact_id→redirect, DeleteFact unknown fact_id→204, AddNewFact GET→200)* | — | **Abgedeckt** |
+| E03 | Rohdaten-Edit (Raw GEDCOM) | — | `EditRawGedcomIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: EditRawFactPage unknown fact_id→redirect, EditRawRecordPage GET→200, EditRawFactAction unknown fact_id→redirect)* | — | **Abgedeckt** |
+| E04 | Nebenrecords anlegen | — | `CreateSubrecordIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: CreateNoteModal GET→200, CreateNoteAction POST→JSON-XREF, CreateSourceModal GET→200, CreateRepositoryModal GET→200)* | — | **Abgedeckt** |
+| E05 | Medienobjekte anlegen & verknüpfen | — | `MediaObjectIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: CreateMediaObjectModal GET→200, LinkMediaToRecordAction POST→302, LinkMediaToIndividualModal GET→200)* | — | **Abgedeckt** |
+| E06 | Sortierung (Reorder) | `ReorderIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: ReorderChildren/Names/Families GET→200, unknown FAM→404)* | — | **Abgedeckt** |
+| E07 | Mediendatei-Download & Thumbnail | `MediaFileDeliveryIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: Thumbnail unknown XREF→200, Thumbnail known XREF no fact_id→200, Download unknown XREF→HttpNotFoundException)* | — | **Abgedeckt** |
+| E08 | TomSelect & AutoComplete | `TomSelectIntegrationTest` ✅ *(spezifikationsbasiert, 5 Tests: TomSelectIndividual leer/XREF/Name, TomSelectSource leer, AutoCompleteFolder)* | — | **Abgedeckt** |
 
 #### Administration (A01–A11)
 
 | # | Feature | Eigene Infra (MySQL) | Eigene Infra (Playwright) | Status |
 |---|---|---|---|---|
-| A01 | Stammbaum-Management | — | — | **Nicht abgedeckt** |
-| A02 | Stammbaum-Import (HTTP-Formular) | — | — | **Nicht abgedeckt** |
-| A03 | Stammbaum-Export (HTTP-Formular) | — | — | **Nicht abgedeckt** |
-| A04 | Stammbaum-Präferenzen | — | — | **Nicht abgedeckt** |
-| A05 | Modul-Konfiguration | — | — | **Nicht abgedeckt** |
-| A06 | Site-Präferenzen | — | — | **Nicht abgedeckt** |
-| A07 | Benutzerverwaltung Admin | — | — | **Nicht abgedeckt** |
+| A01 | Stammbaum-Management | — | `TreeManagementIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: CreateTree Duplikat→302, CreateTree Neu→DB, DeleteTree→204, ManageTrees GET→200)* | — | **Abgedeckt** |
+| A02 | Stammbaum-Import (HTTP-Formular) | — | `ImportGedcomActionIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: UPLOAD_ERR_NO_FILE→302, UPLOAD_ERR_PARTIAL→Exception, leerer server_file→302, ImportGedcomPage GET→200)* | — | **Abgedeckt** |
+| A03 | Stammbaum-Export (HTTP-Formular) | — | `ExportGedcomIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: Client format=gedcom→attachment, format=zip→application/zip, ExportGedcomServer→302, ExportGedcomPage GET→200)* | — | **Abgedeckt** |
+| A04 | Stammbaum-Präferenzen | `TreePreferencesIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: Page GET→200, Action POST→302+preference saved, Action POST→meta_description saved)* | — | **Abgedeckt** |
+| A05 | Modul-Konfiguration | — | `ModuleConfigIntegrationTest` ✅ *(spezifikationsbasiert, 7 Tests: ModulesAllPage GET→200, ModulesAllAction POST→302, DataProvider Analytics/Blocks/Charts/Menus/Reports→200)* | — | **Abgedeckt** |
+| A06 | Site-Präferenzen | `SitePreferencesIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: Page GET→200, Action POST valid→302, POST saves LANGUAGE, POST invalid directory→302)* | — | **Abgedeckt** |
+| A07 | Benutzerverwaltung Admin | `UserAdminIntegrationTest` ✅ *(spezifikationsbasiert, 3 Tests: UserListPage GET→200, mit filter, UsersCleanupPage GET→200)* | — | **Abgedeckt** |
 | A08 | Medienverwaltung Admin | — | — | **Nicht abgedeckt** |
-| A09 | Datenpflege-Werkzeuge | — | — | **Nicht abgedeckt** |
-| A10 | Protokolle & Monitoring | — | — | **Nicht abgedeckt** |
-| A11 | System & Upgrade | — | — | **Nicht abgedeckt** |
+| A09 | Datenpflege-Werkzeuge | — | `DataMaintenanceIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: FindDuplicateRecords GET→200, DataFixPage leer→200, DataFixPage fix-place-names→200, DataFixChoose GET→200)* | — | **Abgedeckt** |
+| A10 | Protokolle & Monitoring | `LogsMonitoringIntegrationTest` ✅ *(spezifikationsbasiert, 4 Tests: PendingChangesLogPage GET→200, SiteLogsDownload→CSV, Disposition attachment, PhpInformation→200)* | — | **Abgedeckt** |
+| A11 | System & Upgrade | — | `SystemAdminIntegrationTest` ✅ *(spezifikationsbasiert, 5 Tests: Masquerade not-found→HttpNotFoundException, self→204, other→204+Auth, BroadcastPage GET→200, EmailPreferencesPage GET→200)* | — | **Abgedeckt** |
 
 #### Kommunikation (K01–K02)
 
@@ -1714,11 +1714,11 @@ Zunächst entstehen ähnliche Tests an zwei Stellen:
 
 | Status | G (G01–G30) | S (S01–S53) | P (P01–P41) | SEC (inkl. UTL01) | E (E01–E08) | A (A01–A11) | K (K01–K02) | Gesamt |
 |---|---|---|---|---|---|---|---|---|
-| **Abgedeckt** (spezifikationsbasiert) | 27 (G01–G26, G28–G29) | 49 (S01–S50) | 37 (P01–P37) | 25 (SEC-BOT01 inkl.) | 0 | 0 | 0 | **138** |
+| **Abgedeckt** (spezifikationsbasiert) | 28 (G01–G26, G28–G30) | 50 (S01–S50, S52) | 41 (P01–P41) | 26 (SEC-UTL01 inkl.) | 8 (E01–E08) | 10 (A01–A07, A09–A11) | 0 | **163** |
 | Davon mit Einschränkung (Upstream-Bug) | 1 (G16) | 0 | 0 | 1 (SEC-C03) | — | — | — | **2** |
 | Deployment-Empfehlung | 0 | 0 | 0 | 1 (SEC-HDR04) | — | — | — | **1** |
 | **Abgedeckt** (strukturbasiert, CRAP-Analyse, niedrigere Qualitätsstufe) | 1 (G27) | 0 | 0 | 0 | 0 | 0 | 0 | **1** |
-| **Nicht abgedeckt** | 1 (G30) | 2 (S52–S53) | 4 (P38–P41) | 1 (SEC-UTL01) | 8 | 11 | 2 | **29** |
+| **Nicht abgedeckt** | 0 | 1 (S53) | 0 | 0 | 0 | 1 (A08) | 2 | **4** |
 | **Gesamt** | **29** | **51** | **41** | **26** | **8** | **11** | **2** | **168** |
 
 ---
@@ -1819,5 +1819,8 @@ make down && make up
 *Aktualisiert: 2026-04-05 — P32 (Record-Ansicht und -Löschung) von strukturbasiert auf spezifikationsbasiert angehoben. Neue Klassen: DeleteRecordIntegrationTest (2 Tests: EP1 SOUR X1102 → change-Tabellen-Assert new_gedcom=''; EP5 Familie-Kaskade P1→F1 mitgelöscht via p32-delete-test.ged Fixture) + GedcomRecordPageIntegrationTest (5 Tests: EP1×4 DataProvider INDI/FAM/SOUR/REPO→302-Redirect; EP2 _CUST-Record via DB-Insert other-Tabelle→200+Link-Header). Befund: Smoke-Tests prüften status < 400, verdeckten dass STANDARD_RECORDS immer 302 liefern — nicht 200. Fixture p32-delete-test.ged: 2-Mitglieder-Familie ohne Fakten, löst Kaskaden-Bedingung aus. Testentwurfsverfahren: neuer Äquivalenzklassen-Eintrag P32, CRAP-Zeile korrigiert (P32 entfernt → P34 allein). Endekriterien: P32 in Spec-Liste; P32 aus CRAP-Liste entfernt. Zusammenfassung: 134 spezifikationsbasiert + 5 strukturbasiert = 139 Features.*
 *Aktualisiert: 2026-04-05 — CRAP-Neubewertung nach Runde 1+2 (Abschluss-Voll-Lauf 536/536 grün, 1762 Assertions). Methoden CRAP > 100 bei 0% Coverage: 43 → 16 (27 eliminiert). Verbleibend mit aktivem Runde-3-Plan: G25 (TreeImport::execute, CRAP 110) + S45 (ReportPdfImage::render, CRAP 132). Ohne eigenen Test aus CRAP-Liste verschwunden: G28 (EditMediaFileAction — durch S44-Report-Tests abgedeckt), P34 (RenumberTreeAction — durch RequestHandlerBatchB abgedeckt). G27 bleibt EXCLUDED (GuzzleHttp-DI-Problem). CRAP-Zeile Testentwurfsverfahren: G25, G27 (EXCLUDED), S45 (G28 + P32 + P34 entfernt). Kein Ratchet-File vorhanden — kein Update nötig.*
 *Aktualisiert: 2026-04-06 — Handler-Inventarisierung und Feature-Matrix-Erweiterung. Vollständige Analyse aller 333 Http/RequestHandler-Klassen. Neue Domains: E (Datenpflege, E01–E08: Person/Familie anlegen, Fakten/Raw-Edit, Nebenrecords, Medienobjekte, Sortierung, Download, TomSelect-APIs), A (Administration, A01–A11: Tree-Management, HTTP-Import/Export, Stammbaum-/Site-Präferenzen, Modul-Config, User-Admin, Media-Admin, Datenpflege-Werkzeuge, Logs, System/Upgrade), K (Kommunikation, K01–K02: Kontaktformular, Benutzer-Nachrichten). Erweiterungen bestehender Domains: G30 (HTTP-Formular-Upload), S31 (CalendarEvents AJAX ergänzt), S52 (Standortdaten-CRUD), S53 (Legacy-Redirects), P38 (Account-Selbstverwaltung), P39 (Auth-Aktionen), P40 (Änderungsverwaltung HTTP), P41 (Records-Merge vollständig), SEC-UTL01 (Web-Assets). Alle 29 neuen Features: Nicht abgedeckt. Gesamt: 168 Features (139 abgedeckt, 29 nicht abgedeckt).*
+*Aktualisiert: 2026-04-06 — Runde 2, Welle 1 (SEC-UTL01, E06–E08, A04, A06, A07, A10) abgeschlossen. 8 neue Testklassen (UtilityEndpointsIntegrationTest, ReorderIntegrationTest, MediaFileDeliveryIntegrationTest, TomSelectIntegrationTest, TreePreferencesIntegrationTest, SitePreferencesIntegrationTest, UserAdminIntegrationTest, LogsMonitoringIntegrationTest), 26 neue Tests. Befunde: boolean-Felder geben '' statt '0' für false (PHP: (string)false===''); CHART_BOX_TAGS/FAM_FACTS_QUICK etc. müssen als PHP-Arrays übergeben werden; SiteLogsService benötigt `text`+`ip` Query-Params. Zusammenfassung: 146 spezifikationsbasiert + 1 strukturbasiert = 147 Features (21 nicht abgedeckt).*
+*Aktualisiert: 2026-04-06 — Runde 3 (P39, E01, E05, A05, A09, A11) abgeschlossen. 6 neue Testklassen (LoginActionIntegrationTest, AddRelationIntegrationTest, MediaObjectIntegrationTest, ModuleConfigIntegrationTest, DataMaintenanceIntegrationTest, SystemAdminIntegrationTest), 26 neue Tests. Befunde: LoginAction fängt alle Exceptions intern → nur 302 testbar (kein expectException); Masquerade user_id+user aus Attributes (nicht parsedBody); ModulesAllAction DataProvider-Smoke erfordert Übertragung des aktuellen Modulstatus (keine DB-Änderung); AbstractModuleComponentPage DI = ModuleService+TreeService; FAM-XREFs in demo.ged lowercase (f1, f2…). Zusammenfassung: 163 spezifikationsbasiert + 1 strukturbasiert = 164 Features (4 nicht abgedeckt: S53/K01/K02 EXCLUDED, A08 offen).*
+*Aktualisiert: 2026-04-06 — Runde 2, Welle 2 (G30, S52, P38, P40, P41, E02–E04, A01–A03) abgeschlossen. 11 neue Testklassen (UploadMediaActionIntegrationTest, MapDataCrudIntegrationTest, AccountSelfManagementIntegrationTest, PendingChangesIntegrationTest, MergeRecordsIntegrationTest, EditFactIntegrationTest, EditRawGedcomIntegrationTest, CreateSubrecordIntegrationTest, TreeManagementIntegrationTest, ImportGedcomActionIntegrationTest, ExportGedcomIntegrationTest), 39 neue Tests. Befunde: createRecord() schreibt in change-Tabelle (nicht other), JSON-Body prüfen; AddNewFact `fact` in Attributes (isTag()); DeleteTreeAction gibt 204 zurück (response()); MergeTreesAction: ImportGedcomAction key 'client_file'; ManageTrees benötigt tree-Attribut; SHOW_COUNTER Default='1', Test mit '0'. Zusammenfassung: 157 spezifikationsbasiert + 1 strukturbasiert = 158 Features (10 nicht abgedeckt).*
 *Aktualisiert: 2026-04-05 — Runde 4 (G28+P34) abgeschlossen. G28 (OBJE-Metadaten bearbeiten) von strukturbasiert auf spezifikationsbasiert angehoben: EditMediaFileIntegrationTest 1→2 Tests (+test_edit_media_file_happy_path_creates_pending_change_with_updated_title, DB-Postcondition via change-Tabelle; new_file='' → $old===$new → acceptRecord nicht aufgerufen → pending-change messbar). P34 (Stammbaum-Umnummerierung) von strukturbasiert auf spezifikationsbasiert: neue Klasse RenumberTreeActionIntegrationTest, 3 Tests (B2/EP1 keine-Duplikate-Redirect, B3/EP2 INDI-XREF-Rename-Postcondition, B1/EP4 Pending-Edits-Guard). Befund: duplicateXrefs() = Cross-Tree-Kollision (nicht innerhalb eines Baums) — Setup via DB-Insert in 2 separate Bäume. Fix: i_rin+i_sex Pflichtfelder; uniqid() für tree2-Namen (Unique-Constraint-Kollision bei Wiederholung); count-Assertion entfernt (treeService->create legt @X1@ INDI an). Voll-Lauf: 556/556 grün, 1823 Assertions. CRAP bleibt 15 (G28+P34 bereits durch Smoke-Tests ohne Coverage eliminiert). Zusammenfassung: 138 spezifikationsbasiert + 1 strukturbasiert = 139 Features.*
 
