@@ -100,12 +100,14 @@ if [[ -e "$lock_file" ]]; then
     exit 3
 fi
 
-# Stack-Health
-if ! "$COMPOSE" ps webtrees 2>/dev/null | grep -qE 'Up|running'; then
+# Stack-Health — podman-compose ps nimmt keinen Service-Filter-Arg,
+# also parsen wir die Full-Output-Tabelle und matchen auf die NAMES-Spalte.
+compose_ps="$("$COMPOSE" ps 2>/dev/null || true)"
+if ! awk '$NF == "webtrees"' <<<"$compose_ps" | grep -qE 'Up|running'; then
     echo "ABORT: webtrees-Container nicht aktiv — 'make up' und 'make setup' zuerst ausführen." >&2
     exit 3
 fi
-if ! "$COMPOSE" ps mysql 2>/dev/null | grep -qE 'Up|running'; then
+if ! awk '$NF == "mysql"' <<<"$compose_ps" | grep -qE 'Up|running'; then
     echo "ABORT: mysql-Container nicht aktiv." >&2
     exit 3
 fi
