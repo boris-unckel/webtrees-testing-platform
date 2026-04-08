@@ -40,15 +40,13 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 
 | ID | Status | Track | Impact | Final Score | Datei | Verticals | Letzte Änderung |
 |---|---|---|---|---|---|---|---|
-| <SEC-AUDIT-NNN> | <status> | <track> | <impact> | <float> | <app/.../X.php> | V<n>,V<m> | YYYY-MM-DD |
-
-*(Tabelle wird vom Driver befüllt. Bei Initial-Setup steht hier nur diese eine Platzhalter-Zeile.)*
+| *(leer — SEC-AUDIT-001 verschoben nach „Abgeschlossen")* | | | | | | | |
 
 ## Abgeschlossen
 
 | ID | Final-Status | Impact | Disclosure | Closed at |
 |---|---|---|---|---|
-| *(leer bei Initial-Setup)* | | | | |
+| SEC-AUDIT-001 | fix_verified | stored-xss (defense-in-depth-gap) | ready_for_manual_pr | 2026-04-08 |
 
 ## Needs Manual Review
 
@@ -58,12 +56,12 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 
 ## Aggregat-Zahlen
 
-- Tasks gesamt: 0
+- Tasks gesamt: 1
 - In Queue: 0
 - In Deep-Dive: 0
-- Fix verified: 0
+- Fix verified: 1 (SEC-AUDIT-001, Fork-Commit b2dc869b90, bereit für manuelle PR)
 - Done: 0
-- Dropped: 0
+- Dropped: 3 (SetupWizard, UpgradeWizardStep, ContactAction — siehe run-2026-04-08T19-01-49/priorities.md)
 - Critical Findings (visitor-sandbox-escape): 0
 - Halt-Flag aktiv: nein
 
