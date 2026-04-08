@@ -1,0 +1,6715 @@
+{
+  "run_id": "2026-04-08T19-01-49",
+  "scan_started": "2026-04-08T19:01:49Z",
+  "scan_finished": "2026-04-08T19:02:36.027017+00:00",
+  "scope_files_total": 698,
+  "files": [
+    {
+      "path": "app/Http/RequestHandlers/AccountDelete.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 54,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "administrator",
+      "auth_markers": [
+        "ADMINISTRATOR"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/AccountEdit.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 86,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "administrator",
+      "auth_markers": [
+        "ADMINISTRATOR"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/AccountUpdate.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 108,
+      "input_sinks_count": 11,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddChildToFamilyAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 77,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddChildToFamilyPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 78,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddChildToIndividualAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 70,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddChildToIndividualPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 83,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddMediaFileAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 72,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddMediaFileModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 70,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddNewFact.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 87,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddParentToIndividualAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 70,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddParentToIndividualPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 76,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddSpouseToFamilyAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 89,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddSpouseToFamilyPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 84,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddSpouseToIndividualAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 89,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddSpouseToIndividualPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 88,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddUnlinkedAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 53,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddUnlinkedPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 63,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AdminMediaFileDownload.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 53,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AdminMediaFileThumbnail.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 53,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AppleTouchIconPng.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 39,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "file_get_contents("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AutoCompleteCitation.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 97,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AutoCompleteFolder.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 58,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AutoCompletePlace.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 62,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/AutoCompleteSurname.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 41,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/BroadcastAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 78,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/BroadcastPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CalendarAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 46,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CalendarEvents.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 272,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CalendarPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 127,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ChangeFamilyMembersAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 161,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ChangeFamilyMembersPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CheckTree.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 402,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CleanDataFolder.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 91,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ContactAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 155,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ContactPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 94,
+      "input_sinks_count": 7,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ControlPanel.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 341,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 2,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CopyFact.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 65,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateLocationAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 54,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateLocationModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 40,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateMediaObjectAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 96,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateMediaObjectFromFile.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 60,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateMediaObjectModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 50,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateNoteAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 60,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateNoteModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 40,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateRepositoryAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 75,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateRepositoryModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 51,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSourceAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 96,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSourceModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 40,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSubmissionAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 54,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSubmissionModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 37,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSubmitterAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 78,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSubmitterModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 37,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateTreeAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 59,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateTreePage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 53,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixChoose.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 58,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixData.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 104,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "getQueryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 2,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 80,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixPreview.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 69,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "getQueryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixSelect.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 52,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixUpdate.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 60,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "getQueryParams",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixUpdateAll.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 132,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "getQueryParams",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DeleteFact.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 51,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DeletePath.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 84,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DeleteRecord.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 112,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isEditor"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/DeleteTreeAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 51,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/DeleteUser.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 59,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditFactAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 90,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditFactPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 90,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditMediaFileAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 131,
+      "input_sinks_count": 8,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditMediaFileModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 77,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditNoteAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 55,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditNotePage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 48,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRawFactAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 60,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRawFactPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 61,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRawRecordAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 85,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRawRecordPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRecordAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 63,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRecordPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 76,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/EmailPreferencesAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 94,
+      "input_sinks_count": 15,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/EmptyClipboard.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 46,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ExportGedcomClient.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 54,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ExportGedcomPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 76,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ExportGedcomServer.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 83,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/FamilyPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 146,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/FaviconIco.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 39,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "file_get_contents("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/FindDuplicateRecords.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/FixLevel0MediaAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 68,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/FixLevel0MediaData.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 125,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/GedcomLoad.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 227,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/GedcomRecordPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 106,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/HeaderPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 68,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/HelpText.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 306,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/HomePage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 80,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin",
+        "Auth::isManager"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/ImportGedcomAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 97,
+      "input_sinks_count": 8,
+      "input_sinks_patterns": [
+        "attributes",
+        "getUploadedFiles",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ImportGedcomPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 67,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 2,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/IndividualPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 274,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkChildToFamilyAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 110,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkChildToFamilyPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 50,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkMediaToFamilyModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 43,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkMediaToIndividualModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 43,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkMediaToRecordAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 47,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkMediaToSourceModal.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 43,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkSpouseToIndividualAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 90,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkSpouseToIndividualPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 76,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/LocationPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 73,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/LoginAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 122,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "$_COOKIE",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/LoginPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 105,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/Logout.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ManageMediaAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 50,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ManageMediaData.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 359,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 3,
+      "dangerous_patterns": [
+        "system(",
+        "assert("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ManageMediaPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 65,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 2,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ManageTrees.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 79,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataAdd.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 97,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataDelete.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataEdit.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 104,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataExportCSV.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 164,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataExportGeoJson.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 122,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataImportAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 181,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "getUploadedFiles",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataImportPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 69,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 2,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataList.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 120,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataSave.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 99,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/Masquerade.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 58,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MediaFileDownload.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 64,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MediaFileThumbnail.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 82,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "getQueryParams",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MediaPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 78,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeFactsAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 168,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeFactsPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 101,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeRecordsAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 64,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeRecordsPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 78,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeTreesAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 243,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeTreesPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 67,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MessageAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 90,
+      "input_sinks_count": 8,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MessagePage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 70,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/MessageSelect.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 39,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ModuleAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 85,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/ModuleDeleteSettings.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 66,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ModulesAllAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 66,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/NotFound.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 53,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/NotePage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 82,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PasswordRequestAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 116,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PasswordRequestPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 51,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PasswordResetAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 73,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody",
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PasswordResetPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 68,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PasteFact.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 52,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChanges.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 62,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesAcceptChange.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 52,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesAcceptRecord.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 61,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesAcceptTree.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 51,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesLogAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 42,
+      "input_sinks_count": 8,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesLogData.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 128,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "getQueryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesLogDelete.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 47,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "getQueryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesLogDownload.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 64,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "getQueryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesLogPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 116,
+      "input_sinks_count": 8,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesRejectChange.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 52,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesRejectRecord.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesRejectTree.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 50,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectAncestryPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 81,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectBranchesPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 70,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectCalendarPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 73,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectCompactPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 69,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectDescendencyPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 81,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectFamListPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 74,
+      "input_sinks_count": 8,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectFamilyBookPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 74,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectFamilyPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 61,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectFanChartPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 76,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectGedRecordPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 61,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectHourGlassPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 74,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectIndiListPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 74,
+      "input_sinks_count": 8,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectIndividualPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 61,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectLifeSpanPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 69,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectMediaListPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 72,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectMediaViewerPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 61,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectModulePhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 88,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectNoteListPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 66,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectNotePhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 61,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectPedigreePhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 81,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectPlaceListPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 69,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectRelationshipPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 75,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectRepoListPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 66,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectReportEnginePhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 67,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectRepositoryPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 61,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectSourceListPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 66,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectSourcePhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 61,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectStatisticsPhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 69,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectTimeLinePhp.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 70,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RegisterAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 264,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody",
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "administrator",
+      "auth_markers": [
+        "ADMINISTRATOR"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/RegisterPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 90,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RenumberTreeAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 556,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RenumberTreePage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 57,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderChildrenAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 72,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderChildrenPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 52,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderFamiliesAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 72,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderFamiliesPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 51,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderMediaAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 70,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderMediaFilesAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 70,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderMediaFilesPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderMediaPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderNamesAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 70,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderNamesPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReportGenerate.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 114,
+      "input_sinks_count": 7,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReportListAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 60,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReportListPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReportSetupAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 65,
+      "input_sinks_count": 7,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReportSetupPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 174,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/RepositoryPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 77,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/RobotsTxt.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 75,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchAdvancedAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 46,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchAdvancedPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 249,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchGeneralAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 43,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchGeneralPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 237,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchPhoneticAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 40,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchPhoneticPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 99,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchQuickAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchReplaceAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 181,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchReplacePage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SelectDefaultTree.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 52,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SelectLanguage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 47,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SelectNewFact.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 39,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SelectTheme.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 47,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SetupWizard.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 391,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "getServerParams",
+        "serverParams",
+        "$_POST",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 6,
+      "dangerous_patterns": [
+        "exec(",
+        "file_put_contents",
+        "file_get_contents(",
+        "unlink("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "administrator",
+      "auth_markers": [
+        "ADMINISTRATOR"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/SharedNotePage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 82,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SiteLogsAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 41,
+      "input_sinks_count": 7,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SiteLogsPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 104,
+      "input_sinks_count": 8,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SitePreferencesAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 69,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SitePreferencesPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SiteRegistrationAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 51,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SiteTagsAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 65,
+      "input_sinks_count": 8,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SourcePage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 77,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SubmissionPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 68,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SubmitterPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 75,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/SynchronizeTrees.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 112,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 77,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageBlock.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 58,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageBlockEdit.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 58,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageBlockUpdate.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageDefaultUpdate.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageEdit.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 66,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageUpdate.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 63,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePreferencesAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 176,
+      "input_sinks_count": 41,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePreferencesPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 180,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isMember"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePrivacyAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 138,
+      "input_sinks_count": 15,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePrivacyPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 160,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UnconnectedAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 39,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UnconnectedPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 115,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UpgradeWizardPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 110,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UpgradeWizardStep.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 246,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 6,
+      "dangerous_patterns": [
+        "system(",
+        "assert("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UploadMediaAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 126,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "getUploadedFiles",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UploadMediaPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 63,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserAddAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 88,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserAddPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserEditAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 170,
+      "input_sinks_count": 20,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "administrator",
+      "auth_markers": [
+        "ADMINISTRATOR"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserEditPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 113,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "manager",
+      "auth_markers": [
+        "MEMBER",
+        "EDITOR",
+        "MODERATOR",
+        "MANAGER"
+      ]
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserListData.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 144,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserListPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 50,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPage.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 74,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageBlock.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 59,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageBlockEdit.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 59,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageBlockUpdate.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageDefaultUpdate.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageEdit.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 64,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageUpdate.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 65,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/UsersCleanupAction.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 62,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/RequestHandlers/VerifyEmail.php",
+      "type": "handler",
+      "type_weight": 1.0,
+      "loc": 114,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 1,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/AuthAdministrator.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 55,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "administrator",
+      "auth_markers": [
+        "AuthAdministrator",
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Http/Middleware/AuthEditor.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "editor",
+      "auth_markers": [
+        "AuthEditor",
+        "Auth::isEditor"
+      ]
+    },
+    {
+      "path": "app/Http/Middleware/AuthLoggedIn.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 50,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "member",
+      "auth_markers": [
+        "AuthLoggedIn"
+      ]
+    },
+    {
+      "path": "app/Http/Middleware/AuthManager.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "manager",
+      "auth_markers": [
+        "AuthManager",
+        "Auth::isManager"
+      ]
+    },
+    {
+      "path": "app/Http/Middleware/AuthMember.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "member",
+      "auth_markers": [
+        "AuthMember",
+        "Auth::isMember"
+      ]
+    },
+    {
+      "path": "app/Http/Middleware/AuthModerator.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 56,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "moderator",
+      "auth_markers": [
+        "AuthModerator",
+        "Auth::isModerator"
+      ]
+    },
+    {
+      "path": "app/Http/Middleware/AuthNotRobot.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 40,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/BadBotBlocker.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 1682,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "getCookieParams",
+        "attributes",
+        "serverParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/BaseUrl.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 66,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/CheckCsrf.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 73,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "getParsedBody",
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/ClientIp.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 57,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/DebugLogger.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 90,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/DoHousekeeping.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 93,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 2,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/HandleExceptions.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 248,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/LoadRoutes.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 68,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/PublicFiles.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 61,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "file_get_contents("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/RequestHandler.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 45,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/Router.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 135,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "queryParams",
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/SecurityHeaders.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 57,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/UseDatabase.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 49,
+      "input_sinks_count": 11,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Http/Middleware/UseLanguage.php",
+      "type": "middleware",
+      "type_weight": 1.0,
+      "loc": 90,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "getServerParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/CalendarService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 535,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 4,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/CaptchaService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 94,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/DatatablesService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 185,
+      "input_sinks_count": 10,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/EmailService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 232,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/GedcomEditService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 346,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 2,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/GedcomExportService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 449,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 2,
+      "dangerous_patterns": [
+        "fwrite(",
+        "system("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/HomePageService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 386,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/HtmlService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 107,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/MaintenanceModeService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 96,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 5,
+      "dangerous_patterns": [
+        "rmdir(",
+        "file_put_contents",
+        "file_get_contents(",
+        "unlink("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/MediaFileService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 365,
+      "input_sinks_count": 8,
+      "input_sinks_patterns": [
+        "attributes",
+        "getUploadedFiles",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 5,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/NetworkService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 72,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "fwrite("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/SiteLogsService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 104,
+      "input_sinks_count": 7,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/UpgradeService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 361,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 2,
+      "dangerous_patterns": [
+        "fwrite(",
+        "system("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Services/UserService.php",
+      "type": "service",
+      "type_weight": 0.7,
+      "loc": 341,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "administrator",
+      "auth_markers": [
+        "MODERATOR",
+        "MANAGER",
+        "ADMINISTRATOR"
+      ]
+    },
+    {
+      "path": "app/Factories/FilesystemFactory.php",
+      "type": "factory",
+      "type_weight": 0.6,
+      "loc": 95,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 2,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Factories/ImageFactory.php",
+      "type": "factory",
+      "type_weight": 0.6,
+      "loc": 320,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 3,
+      "dangerous_patterns": [
+        "system("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Factories/RepositoryFactory.php",
+      "type": "factory",
+      "type_weight": 0.6,
+      "loc": 107,
+      "input_sinks_count": 0,
+      "input_sinks_patterns": [],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Factories/RouteFactory.php",
+      "type": "factory",
+      "type_weight": 0.6,
+      "loc": 98,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/AbstractIndividualListModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 759,
+      "input_sinks_count": 10,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/AncestorsChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 244,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/BranchesListModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 482,
+      "input_sinks_count": 10,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/CensusAssistantModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 256,
+      "input_sinks_count": 11,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/ChartsBlockModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 247,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/ChartsMenuModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 88,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/CheckForNewVersion.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 108,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/ClippingsCartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 982,
+      "input_sinks_count": 47,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin",
+        "Auth::isManager",
+        "Auth::isMember"
+      ]
+    },
+    {
+      "path": "app/Module/ColorsTheme.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 233,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Module/CompactTreeChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 171,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/ContactsFooterModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 157,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/CustomCssJsModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 113,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/DescendancyChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 235,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/DescendancyModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 260,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/FamilyBookChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 194,
+      "input_sinks_count": 11,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/FamilyTreeFavoritesModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 268,
+      "input_sinks_count": 10,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isManager"
+      ]
+    },
+    {
+      "path": "app/Module/FamilyTreeNewsModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 228,
+      "input_sinks_count": 10,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isManager"
+      ]
+    },
+    {
+      "path": "app/Module/FamilyTreeStatisticsModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 327,
+      "input_sinks_count": 20,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/FanChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 545,
+      "input_sinks_count": 11,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/FrequentlyAskedQuestionsModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 449,
+      "input_sinks_count": 13,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/GeonamesAutocomplete.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 162,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/GoogleAnalyticsModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 127,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/GoogleMaps.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 170,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Module/HereMaps.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 178,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Module/HitCountFooterModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 189,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/HourglassChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 234,
+      "input_sinks_count": 14,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/HtmlBlockModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 193,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/InteractiveTreeModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 246,
+      "input_sinks_count": 11,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/LifespansChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 488,
+      "input_sinks_count": 10,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/LocationListModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 135,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/MapBox.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 192,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Module/MapGeoLocationGeonames.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 86,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/MapGeoLocationOpenRouteService.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 81,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/MediaListModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 300,
+      "input_sinks_count": 15,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/ModuleAnalyticsTrait.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 161,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "serverParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/ModuleCustomTrait.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 200,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "file_get_contents("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/ModuleTabTrait.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 145,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/ModuleThemeTrait.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 520,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin",
+        "Auth::isManager",
+        "Auth::isModerator"
+      ]
+    },
+    {
+      "path": "app/Module/NoteListModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 132,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/OnThisDayModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 279,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/OpenRouteServiceAutocomplete.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 164,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/PedigreeChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 365,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/PedigreeMapModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 337,
+      "input_sinks_count": 9,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/PlaceHierarchyListModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 436,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess",
+        "Auth::isAdmin"
+      ]
+    },
+    {
+      "path": "app/Module/PrivacyPolicy.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 138,
+      "input_sinks_count": 4,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/RecentChangesModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 359,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/RelationshipsChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 740,
+      "input_sinks_count": 13,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/ReportsMenuModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 92,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/RepositoryListModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 135,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/ResearchTaskModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 272,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/ReviewChangesModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 255,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isManager",
+        "Auth::isModerator",
+        "Auth::isEditor"
+      ]
+    },
+    {
+      "path": "app/Module/ShareAnniversaryModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 144,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/SiteMapModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 465,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/SlideShowModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 309,
+      "input_sinks_count": 24,
+      "input_sinks_patterns": [
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/SourceListModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 132,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/StatisticsChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 978,
+      "input_sinks_count": 25,
+      "input_sinks_patterns": [
+        "attributes",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 1,
+      "dangerous_patterns": [
+        "assert("
+      ],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/StoriesModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 403,
+      "input_sinks_count": 16,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::isAdmin",
+        "Auth::isManager"
+      ]
+    },
+    {
+      "path": "app/Module/SubmitterListModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 140,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "attributes"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/TimelineChartModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 308,
+      "input_sinks_count": 6,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": [
+        "Auth::checkComponentAccess"
+      ]
+    },
+    {
+      "path": "app/Module/TopGivenNamesModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 182,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/TopPageViewsModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 169,
+      "input_sinks_count": 1,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/TopSurnamesModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 272,
+      "input_sinks_count": 2,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/UpcomingAnniversariesModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 318,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/UserFavoritesModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 272,
+      "input_sinks_count": 10,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/UserJournalModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 224,
+      "input_sinks_count": 10,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/UserMessagesModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 181,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "attributes",
+        "queryParams",
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Module/YahrzeitModule.php",
+      "type": "module",
+      "type_weight": 0.6,
+      "loc": 266,
+      "input_sinks_count": 3,
+      "input_sinks_patterns": [
+        "parsedBody"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "visitor",
+      "auth_markers": []
+    },
+    {
+      "path": "app/Validator.php",
+      "type": "validator",
+      "type_weight": 0.8,
+      "loc": 425,
+      "input_sinks_count": 5,
+      "input_sinks_patterns": [
+        "getParsedBody",
+        "getQueryParams",
+        "getServerParams",
+        "getAttribute"
+      ],
+      "db_sinks_count": 0,
+      "db_sinks_patterns": [],
+      "dangerous_count": 0,
+      "dangerous_patterns": [],
+      "routing_entry_points": 0,
+      "reachability": "unknown",
+      "auth_markers": []
+    }
+  ]
+}

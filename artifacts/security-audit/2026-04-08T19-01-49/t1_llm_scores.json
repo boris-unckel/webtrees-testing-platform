@@ -1,0 +1,59 @@
+{
+  "$schema": "../../../docs/security-audit/04_triage_pipeline.md#t1",
+  "run_id": "2026-04-08T19-01-49",
+  "triage_model": "claude-opus-4-6 (direct, interactive)",
+  "note": "T1 triage performed by direct source reading. T0 scan produced 371 file signals. Candidates below were read in full to distinguish real vulnerabilities from T0 false positives (e.g., 'system(' matching 'filesystem', 'exec(' matching DB::exec PDO, 'assert(' matching runtime type assertions).",
+  "candidates": [
+    {
+      "file": "app/Services/MediaFileService.php",
+      "focus": "uploadFile()",
+      "llm_score": 88,
+      "llm_reason": "uploadFile() is reachable via AddMediaFileAction and CreateMediaObjectAction (both Editor-role routes). It accepts user-controlled $folder, $new_file, and delegates to getClientFilename() for extension. Unlike UploadMediaAction, it performs NO extension blocklist and NO folder allowlist. In combination with ImageFactory::imageResponse()'s trivially bypassable SVG filter, this enables stored XSS via SVG. Inconsistency with the sibling UploadMediaAction strengthens confidence.",
+      "auth_requirement": "editor",
+      "reachability": "editor",
+      "vertical": "V4_xss"
+    },
+    {
+      "file": "app/Factories/ImageFactory.php",
+      "focus": "imageResponse() — SVG filter at line 270",
+      "llm_score": 95,
+      "llm_reason": "The SVG script filter uses str_contains($data, '<script') which is case-sensitive in PHP and does not cover SVG event handlers (onload, onerror, etc.) or javascript: URLs in xlink:href. Trivially bypassable with <SCRIPT>, <svg onload=...>, or <a xlink:href='javascript:...'>. This is the sole defense-in-depth layer against stored SVG XSS because MediaFileService::uploadFile() has no extension blocklist.",
+      "auth_requirement": "editor (to upload) + any viewer (to trigger)",
+      "reachability": "editor-to-plant / visitor-to-trigger",
+      "vertical": "V4_xss"
+    },
+    {
+      "file": "app/Http/RequestHandlers/SetupWizard.php",
+      "focus": "$_POST['wtpass'] direct superglobal at line 328",
+      "llm_score": 0,
+      "llm_reason": "ELIMINATED. Gated by ReadConfigIni middleware that only routes to SetupWizard when config.ini.php is missing. Post-install this handler is unreachable.",
+      "auth_requirement": "visitor (theoretical)",
+      "reachability": "unreachable_post_install",
+      "vertical": "V7_unauth"
+    },
+    {
+      "file": "app/Http/RequestHandlers/UpgradeWizardStep.php",
+      "focus": "T0 flagged dangerous_count=6",
+      "llm_score": 0,
+      "llm_reason": "ELIMINATED. All T0 signals are false positives: 'system(' matches 'filesystem'/'mediaFilesystem' substrings, 'assert(' is a runtime type assertion with expression argument (not eval-able). No real dangerous function calls.",
+      "auth_requirement": "admin",
+      "reachability": "admin_only",
+      "vertical": "none"
+    },
+    {
+      "file": "app/Http/RequestHandlers/ContactAction.php",
+      "focus": "visitor-reachable contact form with url parameter",
+      "llm_score": 15,
+      "llm_reason": "ELIMINATED for top-1. Well-guarded: CaptchaService, RateLimitService, isLocalUrl() on the url parameter, preg_match rejecting external links in body/subject, findByUserName + validContacts authz check. Residual low-confidence concerns around body HTML rendering but not exploit-ready.",
+      "auth_requirement": "visitor",
+      "reachability": "visitor",
+      "vertical": "V1_contact"
+    }
+  ],
+  "selected_top_1": {
+    "primary_file": "app/Factories/ImageFactory.php",
+    "contributing_file": "app/Services/MediaFileService.php",
+    "combined_title": "Stored XSS via SVG — inadequate <script> substring filter in ImageFactory::imageResponse() bypassable by case variation, event handlers, and javascript: URLs; enabled by MediaFileService::uploadFile() lacking the extension blocklist that UploadMediaAction enforces",
+    "rationale": "Two-file finding: ImageFactory is the root cause of the inadequate sanitization; MediaFileService is the enabling upload vector. Both are required to exploit. Score-inflation applied for defense-in-depth gap."
+  }
+}

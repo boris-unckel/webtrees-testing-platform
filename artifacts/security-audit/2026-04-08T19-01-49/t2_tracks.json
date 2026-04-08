@@ -1,0 +1,18 @@
+{
+  "$schema": "../../../docs/security-audit/04_triage_pipeline.md#t2",
+  "run_id": "2026-04-08T19-01-49",
+  "assignments": [
+    {
+      "task_slug": "svg_xss_media_upload",
+      "files": [
+        "app/Factories/ImageFactory.php",
+        "app/Services/MediaFileService.php"
+      ],
+      "track": "non-admin",
+      "impact_class": "stored-xss",
+      "verticals_hit": ["V4_xss"],
+      "track_rule_applied": "OWASP A03 Injection / A07 XSS — Editor-role plants SVG with bypass of insufficient server-side filter; any viewer's session is compromised on render.",
+      "secondary_escalation_note": "Admin-session hijack possible if an admin views the malicious media. Not promoted to privilege escalation/RCE track unless a probe confirms admin session takeover end-to-end."
+    }
+  ]
+}

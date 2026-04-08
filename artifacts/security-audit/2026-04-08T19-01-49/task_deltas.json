@@ -1,0 +1,24 @@
+{
+  "$schema": "../../../docs/security-audit/04_triage_pipeline.md#t3",
+  "run_id": "2026-04-08T19-01-49",
+  "created": [
+    {
+      "task_id": "SEC-AUDIT-001",
+      "task_file": "docs/security-audit/tasks/SEC-AUDIT-001_svg_xss_media_upload.md",
+      "title": "SVG Stored XSS via inadequate <script> substring filter (ImageFactory) + extension blocklist gap (MediaFileService)",
+      "track": "non-admin",
+      "impact": "stored-xss",
+      "final_score": 0.443,
+      "primary_file": "app/Factories/ImageFactory.php",
+      "contributing_files": [
+        "app/Services/MediaFileService.php"
+      ]
+    }
+  ],
+  "updated": [],
+  "dropped_below_cutoff": [
+    "app/Http/RequestHandlers/SetupWizard.php",
+    "app/Http/RequestHandlers/UpgradeWizardStep.php",
+    "app/Http/RequestHandlers/ContactAction.php"
+  ]
+}
