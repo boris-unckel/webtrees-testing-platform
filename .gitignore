@@ -1,5 +1,11 @@
-# Laufzeit-Artefakte
-artifacts/
+# Laufzeit-Artefakte (Coverage, Layer3-Reports, Trace-Exporte, …)
+artifacts/*
+# Security-Audit-Artefakte (Sweep-Läufe + Deep-Dive-Ergebnisse) sind kein Laufzeit-Output,
+# sondern der versionierte Audit-Trail — Ausnahme vom generellen artifacts/-Ignore.
+!artifacts/security-audit/
+# Runtime-Trace-Dateien werden vom SecurityTraceModule geschrieben — bleiben ignored.
+artifacts/security-audit/traces/*
+!artifacts/security-audit/traces/.gitkeep
 
 # Upstream-Clone (automatisch via make setup / scripts/clone-upstream.sh)
 upstream/

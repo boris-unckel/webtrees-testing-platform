@@ -1,0 +1,34 @@
+{
+    "task": "SEC-AUDIT-EXAMPLE",
+    "created": "2026-04-08",
+    "last_updated": "2026-04-08",
+    "fixtures_rev": 1,
+    "source_hypothesis": "docs/security-audit/09_fixture_register.md §2 — Demo",
+    "redaction_policy": "public-ready",
+    "H1": [
+        {
+            "name": "smart_quotes_break_sanitizer",
+            "category": "xss",
+            "equivalence_class": "control_chars_u2018_u2019",
+            "payload": {
+                "note_raw": "Benign text \u2018onerror=alert(1)\u2019",
+                "tree": "xss-sandbox"
+            },
+            "should_be_blocked": true,
+            "expected_trace_branch": "NoteSanitizer::strip#fallback",
+            "notes": "Demo-Payload — Smart-Quote-Roundtrip umgeht htmlspecialchars()-basierte Sanitization."
+        },
+        {
+            "name": "legitimate_smart_quotes",
+            "category": "xss",
+            "equivalence_class": "control_chars_u2018_u2019",
+            "payload": {
+                "note_raw": "She said \u2018hello\u2019 to the family.",
+                "tree": "xss-sandbox"
+            },
+            "should_be_blocked": false,
+            "expected_trace_branch": "NoteSanitizer::strip#passthrough",
+            "notes": "Demo-Payload — Äquivalenz-Partitioning: legitime Nutzung derselben Unicode-Klasse darf nicht blockiert werden."
+        }
+    ]
+}

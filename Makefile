@@ -10,7 +10,7 @@ COMPOSE = podman-compose -f compose.yaml
 COMPOSE_DEBUG = podman-compose -f compose.yaml --profile debug
 COMPOSE_SECURITY = podman-compose -f compose.yaml --profile security
 
-.PHONY: help clone-upstream generate-passwords up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report crap-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status
+.PHONY: help clone-upstream generate-passwords up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-integration-security test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report crap-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
 	@grep -hE '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -75,6 +75,13 @@ test-integration-quick: ## Komponentenintegrationstest — 3 repraesentative Fae
 	    --coverage-clover=/coverage/layer3-coverage.xml
 	mkdir -p artifacts/layer3
 	podman cp webtrees:/coverage/layer3-coverage.xml artifacts/layer3/coverage.xml
+
+test-integration-security-%: ## Security-Audit-Einzeltask (z. B. make test-integration-security-042)
+	@mkdir -p artifacts/security-trace/SEC-AUDIT-$*
+	$(COMPOSE) exec -e WEBTREES_SECURITY_TRACE=1 webtrees vendor/bin/phpunit \
+	    --configuration=/tests/layer3-integration/phpunit-integration.xml \
+	    --filter='SecAudit$*Test' \
+	    --no-coverage
 
 test-e2e-quick: ## Systemtest — 3 repraesentative Faelle mit OTel-Korrelation
 	@RUN_ID=$$(uuidgen); \

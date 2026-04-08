@@ -1,0 +1,142 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://webtrees-testing-platform.invalid/fixtures/security/payloads.schema.json",
+    "title": "Webtrees Security-Audit Payload Fixture",
+    "description": "Schema für sec_audit_<NNN>.json — Spec: docs/security-audit/09_fixture_register.md",
+    "type": "object",
+    "required": [
+        "task",
+        "created",
+        "last_updated",
+        "fixtures_rev",
+        "source_hypothesis",
+        "redaction_policy"
+    ],
+    "properties": {
+        "task": {
+            "type": "string",
+            "pattern": "^SEC-AUDIT-(?:[0-9]{3}|EXAMPLE)$",
+            "description": "Exakt die Task-ID SEC-AUDIT-<NNN>"
+        },
+        "created": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO-Datum der Erstellung (YYYY-MM-DD)"
+        },
+        "last_updated": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO-Datum der letzten Payload-Änderung"
+        },
+        "fixtures_rev": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Monoton steigend, +1 bei jeder Payload-Änderung"
+        },
+        "source_hypothesis": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Verweis auf hypotheses.md Abschnitt"
+        },
+        "redaction_policy": {
+            "type": "string",
+            "enum": ["public-ready", "embargoed", "internal-only"],
+            "description": "Siehe docs/security-audit/09_fixture_register.md §4"
+        }
+    },
+    "patternProperties": {
+        "^H[0-9]+$": {
+            "type": "array",
+            "description": "Pro bestätigter Hypothese ein Array von Payload-Objekten",
+            "items": { "$ref": "#/$defs/payload" }
+        }
+    },
+    "additionalProperties": false,
+    "$defs": {
+        "payload": {
+            "type": "object",
+            "required": [
+                "name",
+                "category",
+                "equivalence_class",
+                "payload",
+                "should_be_blocked",
+                "expected_trace_branch",
+                "notes"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_]*$",
+                    "description": "snake_case, eindeutig innerhalb der Hypothese"
+                },
+                "category": {
+                    "type": "string",
+                    "enum": [
+                        "auth_bypass",
+                        "authz_escalation",
+                        "gedcom_injection",
+                        "media_upload",
+                        "ssrf",
+                        "xss",
+                        "sqli",
+                        "path_traversal",
+                        "deserialization",
+                        "sandbox_escape",
+                        "csrf",
+                        "other"
+                    ]
+                },
+                "equivalence_class": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Gruppiert Payloads zur Äquivalenz-Partitioning-Logik"
+                },
+                "payload": {
+                    "type": "object",
+                    "description": "Freie Struktur je nach Angriffsvektor",
+                    "minProperties": 1
+                },
+                "should_be_blocked": {
+                    "type": "boolean",
+                    "description": "Post-Fix-Oracle: true = Regression erwartet Block"
+                },
+                "expected_trace_branch": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Branch im SecurityTraceMiddleware-Log"
+                },
+                "notes": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Kurzerklärung; keine Exploit-Details in public-ready-Fixtures"
+                },
+                "blob_path": {
+                    "type": "string",
+                    "description": "Relativ zu fixtures/security/payloads/, unter blobs/sec_audit_<NNN>/"
+                },
+                "gedcom_path": {
+                    "type": "string",
+                    "description": "Relativ zu fixtures/security/gedcoms/"
+                },
+                "auth_context": {
+                    "type": "object",
+                    "properties": {
+                        "role": {
+                            "type": "string",
+                            "enum": ["visitor", "member", "editor", "moderator", "manager", "admin"]
+                        },
+                        "username": { "type": "string" },
+                        "session_attrs": { "type": "object" }
+                    },
+                    "additionalProperties": false
+                },
+                "depends_on_fixture_rev": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "additionalProperties": false
+        }
+    }
+}

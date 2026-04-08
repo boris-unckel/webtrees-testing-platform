@@ -22,6 +22,10 @@ services:
       - ${MODULE_PATH:-./.empty-module}:/var/www/html/modules_v4/${MODULE_NAME:-_none}:ro,z
       # OTel-Spans-Modul (semantische Spans + Baggage-Konvertierung)
       - ./modules/otel-spans:/var/www/html/modules_v4/otel_spans:ro,z
+      # Security-Trace-Modul (Whitebox-Audit-Middleware, nur aktiv mit WEBTREES_SECURITY_TRACE=1)
+      - ./modules/security-trace:/var/www/html/modules_v4/security_trace:ro,z
+      # Security-Trace-Artefakte (nur beschrieben, wenn Modul aktiv)
+      - ./artifacts/security-trace:/artifacts/security-trace:rw,z
       # GEDCOM-Fixtures
       - ./fixtures:/fixtures:ro,z
       # Coverage-Daten auf schnellem Named Volume (kein Bind-Mount-I/O bei Instrumentierung)
@@ -53,6 +57,8 @@ services:
       OTEL_TRACES_EXPORTER: ${OTEL_TRACES_EXPORTER:-otlp}
       OTEL_METRICS_EXPORTER: ${OTEL_METRICS_EXPORTER:-none}
       OTEL_LOGS_EXPORTER: ${OTEL_LOGS_EXPORTER:-none}
+      # Security-Audit (nur aktiv, wenn explizit gesetzt — siehe modules/security-trace)
+      WEBTREES_SECURITY_TRACE: ${WEBTREES_SECURITY_TRACE:-}
     depends_on:
       - mysql
     networks:
