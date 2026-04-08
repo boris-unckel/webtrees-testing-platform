@@ -40,7 +40,9 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 
 | ID | Status | Track | Impact | Final Score | Datei | Verticals | Letzte Änderung |
 |---|---|---|---|---|---|---|---|
-| *(leer — SEC-AUDIT-001 verschoben nach „Abgeschlossen")* | | | | | | | |
+| SEC-AUDIT-002 | queued | non-admin | stored-xss / path-traversal-write | 0.0 (spin-off) | app/Services/MediaFileService.php | V4_xss, V9_arbitrary_file_write | 2026-04-08 |
+| SEC-AUDIT-003 | queued | non-admin | defense-in-depth (csp gap) | 0.0 (spin-off) | app/Factories/ImageFactory.php | V4_xss | 2026-04-08 |
+| SEC-AUDIT-004 | queued | non-admin | audit/enumeration | 0.0 (spin-off) | app/Factories/ImageFactory.php | V4_xss | 2026-04-08 |
 
 ## Abgeschlossen
 
@@ -56,8 +58,8 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 
 ## Aggregat-Zahlen
 
-- Tasks gesamt: 1
-- In Queue: 0
+- Tasks gesamt: 4
+- In Queue: 3 (SEC-AUDIT-002/003/004 — alle Spin-offs aus SEC-AUDIT-001 Deep-Dive)
 - In Deep-Dive: 0
 - Fix verified: 1 (SEC-AUDIT-001, Fork-Commit b2dc869b90, bereit für manuelle PR)
 - Done: 0

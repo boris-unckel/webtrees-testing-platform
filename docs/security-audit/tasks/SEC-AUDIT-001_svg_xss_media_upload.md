@@ -152,7 +152,7 @@ notes_for_opus: |
 - **Regressionstest:** `layer3-integration/tests/Security/SecAudit001Test.php` (5 Methoden, 66 Assertions post-fix). Test ist diagnostisch: pre-fix rot auf H1/H2/H3, post-fix grün.
 - **Commit (Fork):** `b2dc869b90407bb5129dbd768c9364dc863482b2` auf `security-audit-001-svg-filter-hardening`.
 - **Disclosure:** Bereit für manuelle PR-Eröffnung durch den User (V1-Workflow).
-- **Offene Folge-Tasks:** Extension-Allowlist in `MediaFileService::uploadFile()`, CSP-Header auf `replacementImageResponse()`.
+- **Offene Folge-Tasks:** SEC-AUDIT-002 (Extension-Allowlist in `MediaFileService::uploadFile()`), SEC-AUDIT-003 (CSP-Header auf `replacementImageResponse()`), SEC-AUDIT-004 (Audit weiterer SVG-Serve-Pfade außerhalb `imageResponse()`).
 
 ## Offene Punkte
 
@@ -160,9 +160,9 @@ notes_for_opus: |
 - [x] Bestätigung H2 (Event-Handler) — confirmed in `probe_H2_iter1/decision.md`
 - [x] Bestätigung H3 (javascript:-URL) — confirmed in `probe_H3_iter1/decision.md`
 - [x] Fix-Strategie entschieden: DOM-basierter Walker (`DOMDocument` + rekursiver Element/Attribut-Walk), kein externer Sanitizer benötigt. Commit `b2dc869b90`.
-- [ ] **Follow-Up-Task**: Extension-Allowlist in `MediaFileService::uploadFile()` (Defense-in-Depth, verhindert Upload anderer gefährlicher Dateiformate).
-- [ ] **Follow-Up-Task**: `replacementImageResponse` setzt keinen CSP-Header — prüfen, ob das aus Defense-in-Depth-Gründen ergänzt werden sollte.
-- [ ] **Follow-Up-Task**: Prüfen, ob es weitere Serve-Pfade in webtrees gibt, die SVG an den Browser ausliefern, ohne `imageResponse()` zu durchlaufen.
+- [ ] **Follow-Up SEC-AUDIT-002**: Extension-Allowlist in `MediaFileService::uploadFile()` (Defense-in-Depth, verhindert Upload anderer gefährlicher Dateiformate). Siehe `SEC-AUDIT-002_mediafile_service_upload_allowlist.md`.
+- [ ] **Follow-Up SEC-AUDIT-003**: `replacementImageResponse` setzt keinen CSP-Header — prüfen, ob das aus Defense-in-Depth-Gründen ergänzt werden sollte. Siehe `SEC-AUDIT-003_replacement_image_response_csp.md`.
+- [ ] **Follow-Up SEC-AUDIT-004**: Prüfen, ob es weitere Serve-Pfade in webtrees gibt, die SVG an den Browser ausliefern, ohne `imageResponse()` zu durchlaufen. Siehe `SEC-AUDIT-004_svg_serve_path_audit.md`.
 - [ ] **Manuelle Aktion durch User**: PR gegen fisharebest/webtrees eröffnen (V1-Workflow).
 
 ## Rückkopplung
