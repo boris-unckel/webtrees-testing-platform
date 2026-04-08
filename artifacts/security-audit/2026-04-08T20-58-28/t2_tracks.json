@@ -1,0 +1,32 @@
+{
+  "$schema": "../../../docs/security-audit/04_triage_pipeline.md#t2",
+  "run_id": "2026-04-08T20-58-28",
+  "assignments": [],
+  "observations": [
+    {
+      "candidate": "app/Http/RequestHandlers/ReportGenerate.php",
+      "would_be_track": "non-admin",
+      "would_be_impact_class": "info-disclosure / defense-in-depth",
+      "track_rule_applied": "T2 rule §4.1: non-admin because visitor/member reach; §4.3: defense-in-depth demotes below cutoff.",
+      "decision": "observe_only",
+      "reason": "llm_score=45 below T3 cutoff. ExpressionLanguage function allowlist (=[stristr]) and addcslashes quoting in string-literal branch are correct today. No exploit path identified in T1 reading. Future sweep should re-check if allowlist grows or if the non-anchored arithmetic regex at ReportParserGenerate.php:1071 is relaxed."
+    },
+    {
+      "candidate": "app/Module/ClippingsCartModule.php",
+      "would_be_track": "non-admin",
+      "would_be_impact_class": "path-traversal-write / info-disclosure (theoretical)",
+      "track_rule_applied": "T2 rule §4.1: non-admin (member reach via clippings-cart).",
+      "decision": "observe_only",
+      "reason": "llm_score=22 below cutoff. Highest input-density module (48 sinks) but zero dangerous filesystem operations (grep-verified). Future budget should include a structured audit of all 48 Validator call-sites in one pass."
+    },
+    {
+      "candidate": "app/Http/RequestHandlers/EditMediaFileAction.php",
+      "would_be_track": "non-admin",
+      "would_be_impact_class": "path-traversal (editor-only)",
+      "track_rule_applied": "T2 rule §4.1: non-admin (editor reach).",
+      "decision": "observe_only",
+      "reason": "llm_score=20 below cutoff. Flysystem LocalFilesystemAdapter rejects traversal by default. Related to SEC-AUDIT-002 follow-up scope."
+    }
+  ],
+  "notes": "No new track assignments this run. All T0 top candidates either (a) are already covered by queued tasks SEC-AUDIT-001..004, (b) have no reachable sink, or (c) score below the T3 cutoff. The sweep outcome is 'clean_post_fix'."
+}

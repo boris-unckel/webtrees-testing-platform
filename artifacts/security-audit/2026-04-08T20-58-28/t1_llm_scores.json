@@ -1,0 +1,299 @@
+{
+  "$schema": "../../../docs/security-audit/04_triage_pipeline.md#t1",
+  "run_id": "2026-04-08T20-58-28",
+  "triage_model": "claude-opus-4-6 (direct, interactive)",
+  "triage_method": "top-down reading of top T0 candidates (pre-score = inputs*0.35+db*0.25+danger*0.40 weighted by reach/type) until deep findings ruled out",
+  "note": "T0 pre-filtered 679 scope files → 464 with signals. This T1 round reads the highest pre-scored visitor/member/editor handlers, plus the highest-signal services/factories/modules, and a targeted deep-dive on ReportParserGenerate (XML-driven report generation). Candidates scored 1-100 with justifications. NOTE: The previous sweep (run 2026-04-08T19-01-49) already identified and closed SEC-AUDIT-001 (SVG stored XSS) which is fix_verified on fork. The same code path (ImageFactory.php) is no longer a candidate in T0 because the word-boundary regex `\\bsystem\\(` correctly excludes the `mediaFilesystem` false positive that inflated the old scan. This sweep thus reflects the *post-fix* state of the codebase.",
+  "candidates": [
+    {
+      "file": "app/Http/RequestHandlers/ReportGenerate.php",
+      "contributing_files": ["app/Report/ReportParserGenerate.php", "app/Report/ReportExpressionLanguageProvider.php", "app/Http/RequestHandlers/ReportSetupAction.php"],
+      "llm_score": 45,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": ["V4_xss", "V8_ssrf", "V10_info_disclosure"],
+      "llm_reason": "Report-handler delegates user-supplied `vars` and `varnames` (from query/parsedBody) to ReportParserGenerate. Inside the parser, two substitution paths exist: (a) `substituteVars($expr, true)` addcslashes-quotes values into ExpressionLanguage expressions (ReportParserGenerate.php:1098), and (b) `substituteVars($value, false)` raw-substitutes into filter strings processed by preg_match → Laravel query-builder `where` (ReportParserGenerate.php:1366,1452). Path (a) uses ExpressionLanguage with a deliberately tiny function allowlist (`stristr` only, see ReportExpressionLanguageProvider.php:36) and the quote branch escapes single quotes via addcslashes, which is CORRECT for ExpressionLanguage string literals. Path (b) feeds into Laravel `where(column, 'LIKE', value)` which uses bound parameters → no SQLi. The overall risk is LOW-MEDIUM: attacker can mutate report filter logic and potentially observe timing/result differences, but neither RCE nor SQLi was identified in the tracing. The candidate is worth queueing as a defense-in-depth task rather than a high-priority exploit: (1) the non-anchored arithmetic regex at line 1071 makes the ExpressionLanguage path reachable for any XML template value that happens to contain numeric characters, and (2) the ExpressionLanguage provider allowlist is a single-line class that could accidentally grow unsafe in the future. Not worth a task in this sweep.",
+      "llm_notes": "Routes: WebRoutes.php:694-698 — under visitor-tree scope with AuthNotRobot middleware only. Each report however calls `Auth::checkComponentAccess($module, ModuleReportInterface::class, $tree, $user)` which enforces the module's `accessLevel()`. Most built-in reports default to Auth::PRIV_PRIVATE so de-facto require member/editor."
+    },
+    {
+      "file": "app/Http/RequestHandlers/SearchGeneralPage.php",
+      "contributing_files": ["app/Services/SearchService.php"],
+      "llm_score": 18,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": ["V1_sqli_readonly"],
+      "llm_reason": "Visitor-reachable search handler. Delegates to SearchService which exposes 50 DB::table() call sites — grep confirms ZERO raw SQL (`whereRaw`, `orderByRaw`, `DB::raw` = 0 matches). The `whereSearch` helper uses `$query->where($column, DB::iLike(), '%' . addcslashes($search_term, '\\\\%_') . '%')` — both wildcard and LIKE-escape are correct. No SQLi. Attacker-controlled regex not observed. `extractSearchTerms()` uses preg_match_all with static pattern.",
+      "llm_notes": "Previous sweep cleared SearchService implicitly; reconfirmed."
+    },
+    {
+      "file": "app/Http/RequestHandlers/RegisterAction.php",
+      "llm_score": 12,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Visitor-reachable registration. Has strong guards (CaptchaService, RateLimitService, duplicate-username check, duplicate-email check, preg_match against external links in comments). Message insert to DB with bound params. Same as prior sweep drop. No change.",
+      "llm_notes": "Previously dropped 2026-04-08T19-01-49."
+    },
+    {
+      "file": "app/Http/RequestHandlers/AccountUpdate.php",
+      "llm_score": 10,
+      "reach": "member",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Member-reachable account self-edit. 11 input sinks via Validator::parsedBody. The `assert($user instanceof User)` at line 50 is a runtime type guard → T0 `\\bassert(` is a false positive (no user-controlled assertion). Duplicate email/username checks. setPreference calls are bound-parameter internally. No sinks.",
+      "llm_notes": "T0 dangerous_count=1 = FP for runtime assert type-guard."
+    },
+    {
+      "file": "app/Http/RequestHandlers/MessageAction.php",
+      "llm_score": 12,
+      "reach": "member",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Member-to-member messaging. Uses `Validator::parsedBody($request)->isLocalUrl()->string('url', $base_url)` — open-redirect blocked via isLocalUrl. Delegates to MessageService::deliverMessage which uses bound-param INSERT. URL escapes via e() at line 75.",
+      "llm_notes": "MessageService not audited in depth this round — reasonable to spot-check next sweep."
+    },
+    {
+      "file": "app/Http/RequestHandlers/VerifyEmail.php",
+      "llm_score": 8,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Visitor-reachable email verification. DB::table('message')->insert with bound params, `client-ip` from middleware. Token compared via `$user->getPreference(...) === $token` (constant-time is not used but timing-based token guessing requires 32-byte token — realistic only if token storage is weak). No sinks.",
+      "llm_notes": "Timing-side-channel risk on token comparison is theoretical for 32-byte random tokens — not worth a task."
+    },
+    {
+      "file": "app/Http/RequestHandlers/EditMediaFileAction.php",
+      "llm_score": 20,
+      "reach": "editor",
+      "track_hint": "non-admin",
+      "verticals": ["V5_path_traversal_read", "V6_path_traversal_write"],
+      "llm_reason": "Editor can set `$folder` + `$new_file` + `$remote`. String concat `$folder . '/' . $new_file` then `$filesystem->move($old, $new)`. Flysystem local adapter rejects `..` traversal by default, so path traversal is theoretical. `$remote` is a URL stored in GEDCOM — not dereferenced here, so no SSRF in this handler. The Flysystem move rejects overwriting existing files per try/catch. LOW priority.",
+      "llm_notes": "Related to SEC-AUDIT-002 (MediaFileService upload gaps). Could share a regression suite later but no separate task."
+    },
+    {
+      "file": "app/Http/RequestHandlers/AddSpouseToFamilyAction.php",
+      "llm_score": 12,
+      "reach": "editor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Editor-reachable. Uses GedcomEditService::editLinesToGedcom to build GEDCOM from structured arrays. isLocalUrl on redirect URL. Writes are via tree factories (bound). No sinks.",
+      "llm_notes": "GedcomEditService not audited this round."
+    },
+    {
+      "file": "app/Http/RequestHandlers/EditFactAction.php",
+      "llm_score": 12,
+      "reach": "editor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Editor-reachable. Uses GedcomEditService. Static `preg_replace('/\\\\n2 (?:AGE|OCCU) .*/', '', $gedcom)` — pattern is constant, no injection. isLocalUrl on redirect URL.",
+      "llm_notes": "Same GedcomEditService risk as AddSpouseToFamilyAction."
+    },
+    {
+      "file": "app/Http/RequestHandlers/ReportSetupAction.php",
+      "llm_score": 15,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": ["V10_info_disclosure"],
+      "llm_reason": "Visitor-reachable (via AuthNotRobot + Auth::checkComponentAccess). Forwards varnames/vars to ReportGenerate via redirect. Same concerns as ReportGenerate but just a pass-through.",
+      "llm_notes": "Covered under ReportGenerate analysis."
+    },
+    {
+      "file": "app/Http/RequestHandlers/ReportListAction.php",
+      "llm_score": 8,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Visitor-reachable. Only validates `report` name against ModuleReportInterface and redirects. No sinks.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Http/RequestHandlers/CalendarAction.php",
+      "llm_score": 5,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Trivial forward/redirect. No sinks.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Http/RequestHandlers/CalendarPage.php",
+      "llm_score": 5,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "View rendering with e() escapes. No sinks.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Http/RequestHandlers/CalendarEvents.php",
+      "llm_score": 10,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": ["V4_xss"],
+      "llm_reason": "Visitor-reachable. Builds HTML via ob_start/echo. Uses e() escape in calendarListText (line 266). User-controlled $cal/$day/$month/$year go to CalendarService via integer/string methods, not concatenated directly into HTML output. DATE construction string in JS output needs verification but fields are validated as integers/strings via Validator.",
+      "llm_notes": "Worth a deeper look in next sweep for the JS Date() concat context but no obvious vector."
+    },
+    {
+      "file": "app/Http/RequestHandlers/ContactAction.php",
+      "llm_score": 10,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Re-confirmation of prior sweep drop. CaptchaService + RateLimitService + validContacts filter. isLocalUrl on redirect. No change.",
+      "llm_notes": "Previously dropped 2026-04-08T19-01-49."
+    },
+    {
+      "file": "app/Http/RequestHandlers/ContactPage.php",
+      "llm_score": 6,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "View rendering. Uses validContacts filter + isLocalUrl. Passes fields to view (template handles escaping).",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Http/RequestHandlers/AutoCompleteSurname.php",
+      "llm_score": 5,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Delegates to SearchService::searchSurnames — covered, uses bound LIKE.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Http/RequestHandlers/TreePage.php",
+      "llm_score": 5,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Visitor home page. DB::table('block')->where(...)->exists() + insertUsing with static Expression (tree id is int cast). View rendering with e() escape.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Http/RequestHandlers/SearchGeneralAction.php",
+      "llm_score": 8,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Pure redirect forwarding parsedBody params to query-string. SearchGeneralPage handles the actual query.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Module/ClippingsCartModule.php",
+      "llm_score": 22,
+      "reach": "member",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "Highest input count in the module scope (48 sinks). Grep for dangerous file operations (`file_put_contents|fopen|ZipArchive|tempnam|->move|unlink|fwrite|move_uploaded`) returned ZERO matches — all I/O goes via injected services. T0 `assert(` hit is type-guard FP. Visitor/member reachable via clippings-cart routes but actual data-flow is to GEDCOM export rather than filesystem writes. Defer to next sweep as future deep-dive candidate if budget allows.",
+      "llm_notes": "48 inputs is a lot — worth a structured audit of all Validator usages in one go. Not critical."
+    },
+    {
+      "file": "app/Module/StatisticsChartModule.php",
+      "llm_score": 15,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "25 input sinks. T0 `assert(` hit is type-guard FP. Statistics output is SVG/HTML rendered via theme templates which use e() escapes. Worth auditing chart-data injection paths but not urgent.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Module/SlideShowModule.php",
+      "llm_score": 14,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "24 inputs, 1 db. Displays tree media. Uses view rendering; media access checks enforced.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Module/FamilyTreeStatisticsModule.php",
+      "llm_score": 12,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "20 inputs, 5 db. Delegates to Statistics which uses query builder.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Module/FrequentlyAskedQuestionsModule.php",
+      "llm_score": 8,
+      "reach": "manager",
+      "track_hint": "admin",
+      "verticals": ["V4_xss"],
+      "llm_reason": "Admin/manager-scoped (postAdminEditAction). Body/header are sanitized via `$this->html_service->sanitize($body)` before `setBlockSetting`. HtmlService::sanitize is the project's canonical HTML sanitizer.",
+      "llm_notes": "Manager-only, already sanitized."
+    },
+    {
+      "file": "app/Http/RequestHandlers/TreePreferencesAction.php",
+      "llm_score": 15,
+      "reach": "manager",
+      "track_hint": "admin",
+      "verticals": [],
+      "llm_reason": "41 inputs via Validator::parsedBody, all pushed to `$tree->setPreference(...)`. Manager-only. Stored XSS potential depends on how individual preferences are rendered in views — most use e() or blade {{ }} escaping. Track: admin.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Http/RequestHandlers/RenumberTreeAction.php",
+      "llm_score": 10,
+      "reach": "manager",
+      "track_hint": "admin",
+      "verticals": [],
+      "llm_reason": "43 DB operations, manager-only. Mass xref renumber — all via query builder with bound params.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Http/RequestHandlers/GedcomLoad.php",
+      "llm_score": 12,
+      "reach": "manager",
+      "track_hint": "admin",
+      "verticals": [],
+      "llm_reason": "Manager-only GEDCOM import. 20 DB operations all via query builder.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Services/SearchService.php",
+      "llm_score": 15,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "50 DB operations, 0 raw SQL (grep-verified). whereSearch uses bound LIKE with correct escape. No sinks.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Services/AdminService.php",
+      "llm_score": 8,
+      "reach": "administrator",
+      "track_hint": "admin",
+      "verticals": [],
+      "llm_reason": "33 DB ops. Admin-only service, not called from visitor surface.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Services/GedcomImportService.php",
+      "llm_score": 10,
+      "reach": "manager",
+      "track_hint": "admin",
+      "verticals": [],
+      "llm_reason": "31 DB ops. Manager-only import path.",
+      "llm_notes": ""
+    },
+    {
+      "file": "app/Factories/ImageFactory.php",
+      "llm_score": 0,
+      "reach": "visitor",
+      "track_hint": "non-admin",
+      "verticals": [],
+      "llm_reason": "EXCLUDED: Already addressed by SEC-AUDIT-001 (fix_verified on fork branch security-audit-001-svg-filter-hardening, commit b2dc869b90). In the current T0 scan, ImageFactory.php shows dangerous_count=0 (the previous scan's dangerous_count=3 was a `\\bsystem\\(` false positive from `mediaFilesystem` substring — corrected by this run's word-boundary regex). Three spin-off tasks (SEC-AUDIT-002/003/004) are queued and independent of this sweep.",
+      "llm_notes": "Do not create a duplicate task."
+    }
+  ],
+  "selected_top_N": {
+    "threshold_explanation": "This sweep found NO candidate with llm_score >= 60. The highest scorer is ReportGenerate/ReportParserGenerate at llm_score=45. Projected final_score with full T3 formula (see priorities.md) is well below the 0.25 cutoff in `04_triage_pipeline.md §5`. No new tasks created this run.",
+    "top_candidates": [
+      {"file": "app/Http/RequestHandlers/ReportGenerate.php", "llm_score": 45, "decision": "not_queued_below_threshold", "rationale": "Interesting design gap in ReportParserGenerate (ExpressionLanguage exposure + raw substitution) but neither path is exploitable today (function allowlist = [stristr], Laravel LIKE is bound). Defense-in-depth only — document, don't queue."},
+      {"file": "app/Module/ClippingsCartModule.php", "llm_score": 22, "decision": "not_queued_below_threshold", "rationale": "Highest input-density module (48 sinks) but no dangerous sinks; worth a structured audit pass in a future sweep when there's budget."},
+      {"file": "app/Http/RequestHandlers/EditMediaFileAction.php", "llm_score": 20, "decision": "not_queued_below_threshold", "rationale": "Editor-reachable path construction but Flysystem blocks traversal. Related to SEC-AUDIT-002 follow-up."}
+    ]
+  },
+  "sweep_outcome": "clean_post_fix — No new queueable findings. SEC-AUDIT-001 addressed the single critical visitor-reachable XSS. The residual visitor/member/editor surface shows consistent Validator usage, bound-parameter DB access, and per-component access checks. The codebase appears to be in a post-hardening state after SEC-AUDIT-001."
+}
