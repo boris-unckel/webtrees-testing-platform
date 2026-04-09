@@ -1,0 +1,128 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+
+# Batch S — Suche & Navigation
+
+**Priorität:** 2+3 (Codepfad-Komplexität + Dependencies)
+**Feature-IDs:** S01–S53
+
+---
+
+## Portierbare Tests
+
+### AutoComplete-Handler (Template 1 — Mock SearchService)
+
+| # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
+|---|-----------|------------|-------------|--------|-----------|
+| 1 | `AutoCompleteCitationTest.php` | `AutoCompleteCitation` | `SearchService` | `pending` | E08, 5349-Szenario: match/no-match |
+| 2 | `AutoCompletePlaceTest.php` | `AutoCompletePlace` | `SearchService`, `ModuleService` | `pending` | S22, 5349-Szenario: match/no-match |
+| 3 | `AutoCompleteSurnameTest.php` | `AutoCompleteSurname` | `SearchService` | `pending` | S21, 5349-Szenario: match/no-match |
+| 4 | `AutoCompleteFolder.php`* | diverse AutoComplete | `SearchService` | `pending` | E08 |
+
+*Discovery nötig — alle AutoComplete-Handler unter `app/Http/RequestHandlers/AutoComplete*`
+
+### Such-Handler (Template 1 — Mock SearchService)
+
+| # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
+|---|-----------|------------|-------------|--------|-----------|
+| 5 | `SearchAdvancedActionTest.php` | `SearchAdvancedAction` | `SearchService` | `pending` | S05–S06 |
+| 6 | `SearchAdvancedPageTest.php` | `SearchAdvancedPage` | `SearchService` | `pending` | S05 |
+| 7 | `SearchQuickActionTest.php` | `SearchQuickAction` | `SearchService` | `pending` | S09 |
+| 8 | `SearchGeneralPageTest.php` | `SearchGeneralPage` | `SearchService` | `pending` | S05 |
+| 9 | `SearchPhoneticActionTest.php` | `SearchPhoneticAction` | `SearchService` | `pending` | S07–S08 |
+| 10 | `SearchPhoneticPageTest.php` | `SearchPhoneticPage` | `SearchService` | `pending` | S07 |
+| 11 | `SearchReplaceActionTest.php` | `SearchReplaceAction` | `SearchService` | `pending` | S13 |
+| 12 | `SearchReplacePageTest.php` | `SearchReplacePage` | `SearchService` | `pending` | S13 |
+
+### Navigations-Handler (Template 3 — Registry-Mock)
+
+| # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
+|---|-----------|------------|-------------|--------|-----------|
+| 13 | `IndividualPageTest.php` | `IndividualPage` | `TreeService`, Registry | `pending` | S23 |
+| 14 | `FamilyPageTest.php` | `FamilyPage` | `TreeService`, Registry | `pending` | S24 |
+| 15 | `SourcePageTest.php` | `SourcePage` | `TreeService`, Registry | `pending` | S25 |
+| 16 | `NotePageTest.php` | `NotePage` | `TreeService`, Registry | `pending` | S26 |
+| 17 | `RepositoryPageTest.php` | `RepositoryPage` | `TreeService`, Registry | `pending` | S27 |
+| 18 | `MediaPageTest.php` | `MediaPage` | `TreeService`, Registry | `pending` | S28 |
+| 19 | `SubmitterPageTest.php` | `SubmitterPage` | `TreeService`, Registry | `pending` | S29 |
+| 20 | `HeaderPageTest.php` | `HeaderPage` | `TreeService`, Registry | `pending` | S30 |
+
+### Kalender-Handler (Template 1)
+
+| # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
+|---|-----------|------------|-------------|--------|-----------|
+| 21 | `CalendarPageTest.php` | `CalendarPage` | `CalendarService` | `pending` | S31 |
+| 22 | `CalendarEventsTest.php` | `CalendarEvents` | `CalendarService` | `pending` | S31 |
+| 23 | `CalendarActionTest.php` | `CalendarAction` | `CalendarService` | `pending` | S31 |
+
+### Weitere Seiten (Template 1)
+
+| # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
+|---|-----------|------------|-------------|--------|-----------|
+| 24 | `RegisterPageTest.php` | `RegisterPage` | `CaptchaService` | `pending` | S33 |
+| 25 | `RegisterActionTest.php` | `RegisterAction` | `UserService` | `pending` | S33 |
+| 26 | `HelpTextTest.php` | `HelpText` | — | `pending` | S50, T2 (kein Konstruktor) |
+| 27 | `MapDataImportPageTest.php` | `MapDataImportPage` | `MapDataService` | `pending` | S48 |
+| 28 | `MapDataImportActionTest.php` | `MapDataImportAction` | `MapDataService` | `pending` | S48 |
+
+### Service-Tests (L2-fähige Methoden)
+
+| # | Test-Datei | SUT-Klasse | Template | Status | Bemerkung |
+|---|-----------|------------|----------|--------|-----------|
+| 29 | `SoundexTest.php` | `Soundex` | T2 | `pending` | S07–S08, pure Logik |
+
+### Bestehende substanzielle Tests (Verbesserung in P2)
+
+| Test-Datei | Methoden | Verbesserungspotenzial |
+|-----------|----------|----------------------|
+| `LoginPageTest.php` | 2 | Reale TreeService → Mock |
+| `SelectLanguageTest.php` | 2 | Ggf. `setPreference`-Verifikation wie SelectThemeTest |
+| `SelectThemeTest.php` | 2 | Bereits substanziell, prüfen |
+| 29 Redirect-Tests | 91 | Mustervorlage — prüfen auf fehlende Negativ-Tests |
+
+## Module-Tests (Template 4)
+
+| # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
+|---|-----------|------------|-------------|--------|-----------|
+| 30 | `PedigreeChartModuleTest.php` | `PedigreeChartModule` | `ChartService` | `pending` | S14, 5349-Szenario: 4 Styles |
+| 31 | `DescendancyChartModuleTest.php` | `DescendancyChartModule` | `ChartService` | `pending` | S15, 5349-Szenario: 3 Styles |
+| 32 | `FanChartModuleTest.php` | `FanChartModule` | `ChartService` | `pending` | S17, 5349-Szenario: handle |
+| 33 | `AncestorsChartModuleTest.php` | `AncestorsChartModule` | `ChartService` | `pending` | 5349-Szenario: 7 Tests |
+| 34 | `CompactTreeChartModuleTest.php` | `CompactTreeChartModule` | `ChartService` | `pending` | 5349-Szenario: 2 Tests |
+| 35 | `IndividualListModuleTest.php` | `IndividualListModule` | — | `pending` | S19, handle only (listIsEmpty → L3) |
+| 36 | `FamilyListModuleTest.php` | `FamilyListModule` | — | `pending` | S20 |
+| 37 | `MediaListModuleTest.php` | `MediaListModule` | `LinkedRecordService` | `pending` | S20 |
+| 38 | `NoteListModuleTest.php` | `NoteListModule` | — | `pending` | S20 |
+| 39 | `RepositoryListModuleTest.php` | `RepositoryListModule` | — | `pending` | S20 |
+| 40 | `SourceListModuleTest.php` | `SourceListModule` | — | `pending` | S20 |
+| 41 | `SubmitterListModuleTest.php` | `SubmitterListModule` | — | `pending` | S20 |
+| 42 | `HourglassChartModuleTest.php` | `HourglassChartModule` | — | `pending` | S18 |
+
+## Ausgeschlossen (Layer 3)
+
+| Feature-ID | Beschreibung | Begründung |
+|-----------|-------------|-----------|
+| S01–S04 | Allg. Suche (Personen, Familien, SOUR/NOTE/REPO, Query-Parsing) | SearchService baut SQL-Queries |
+| S10 | Paginierung | DB-LIMIT/OFFSET |
+| S11 | Cross-Tree-Suche | Multi-DB-Query |
+| S41 | Statistikdaten | DB-Aggregationen |
+| S47 | Interaktiver Stammbaum | TreeView+DB |
+
+## Discovery
+
+```bash
+cd /home/borisunckel/phpprojects/webtrees-upstream/webtrees
+# AutoComplete-Handler
+ls tests/app/Http/RequestHandlers/AutoComplete*Test.php
+# Such-Handler
+ls tests/app/Http/RequestHandlers/Search*Test.php
+# Chart-Module
+ls tests/app/Module/*Chart*Test.php
+# List-Module
+ls tests/app/Module/*List*Test.php
+```
+
+## Statistik
+
+- Portierbar: ~42
+- Ausgeschlossen: 8 Feature-IDs (DB-Queries)
+- Bereits substanziell: 34 Tests (29 Redirect + SelectLanguage + SelectTheme + LoginPage + 2 weitere)
