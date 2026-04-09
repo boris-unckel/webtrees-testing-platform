@@ -1,0 +1,63 @@
+Run: 2026-04-09
+Branch: security-audit-005-module-action-case-bypass (upstream/webtrees)
+Base commit: 34dff096c2 cache of places lacked tree id (#5343)
+ModuleAction.php:75 is still `str_contains($action, 'Admin')` (unfixed).
+
+Command:
+  podman-compose exec -T webtrees su -s /bin/bash www-data -c \
+    'cd /var/www/html && vendor/bin/phpunit \
+       --configuration=/tests/layer2-unit/phpunit-unit.xml \
+       --filter "ModuleActionTest" --no-coverage --colors=never'
+
+Output:
+  PHPUnit 12.5.10 by Sebastian Bergmann and contributors.
+
+  Runtime:       PHP 8.5.4
+  Configuration: /tests/layer2-unit/phpunit-unit.xml
+
+  .....FFFFF                                                        10 / 10 (100%)
+
+  Time: 00:01.350, Memory: 74.00 MB
+
+  There were 5 failures:
+
+  1) Fisharebest\Webtrees\Http\RequestHandlers\ModuleActionTest::testAdminActionCaseBypass@all lowercase admin with data ('admin')
+  Failed asserting that exception of type "Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException" matches expected exception "Fisharebest\Webtrees\Http\Exceptions\HttpAccessDeniedException". Message was: "Method getadminAction() not found in test" at
+  /var/www/html/app/Http/RequestHandlers/ModuleAction.php:80
+  /var/www/html/tests/app/Http/RequestHandlers/ModuleActionTest.php:162
+  .
+
+  2) Fisharebest\Webtrees\Http\RequestHandlers\ModuleActionTest::testAdminActionCaseBypass@all uppercase ADMIN with data ('ADMIN')
+  Failed asserting that exception of type "Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException" matches expected exception "Fisharebest\Webtrees\Http\Exceptions\HttpAccessDeniedException". Message was: "Method getADMINAction() not found in test" at
+  /var/www/html/app/Http/RequestHandlers/ModuleAction.php:80
+  /var/www/html/tests/app/Http/RequestHandlers/ModuleActionTest.php:162
+  .
+
+  3) Fisharebest\Webtrees\Http\RequestHandlers\ModuleActionTest::testAdminActionCaseBypass@mixed case AdMiN with data ('AdMiN')
+  Failed asserting that exception of type "Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException" matches expected exception "Fisharebest\Webtrees\Http\Exceptions\HttpAccessDeniedException". Message was: "Method getAdMiNAction() not found in test" at
+  /var/www/html/app/Http/RequestHandlers/ModuleAction.php:80
+  /var/www/html/tests/app/Http/RequestHandlers/ModuleActionTest.php:162
+  .
+
+  4) Fisharebest\Webtrees\Http\RequestHandlers\ModuleActionTest::testAdminActionCaseBypass@lowercase hyphen with data ('admin-edit')
+  Failed asserting that exception of type "Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException" matches expected exception "Fisharebest\Webtrees\Http\Exceptions\HttpAccessDeniedException". Message was: "Method getadmin-editAction() not found in test" at
+  /var/www/html/app/Http/RequestHandlers/ModuleAction.php:80
+  /var/www/html/tests/app/Http/RequestHandlers/ModuleActionTest.php:162
+  .
+
+  5) Fisharebest\Webtrees\Http\RequestHandlers\ModuleActionTest::testAdminActionCaseBypass@lowercase no separator with data ('adminedit')
+  Failed asserting that exception of type "Fisharebest\Webtrees\Http\Exceptions\HttpAccessDeniedException" is thrown.
+
+  FAILURES!
+  Tests: 10, Assertions: 50, Failures: 5.
+
+Summary:
+  5 passed (testModuleAction, testNonExistingAction, testNonExistingModule,
+           testAdminAction, testAdminActionCaseBypass@'baseline capital Admin')
+  5 failed (all lowercase / mixed / hyphenated / lowercase-no-separator variants)
+
+Interpretation: the admin gate `str_contains($action, 'Admin')` is bypassed for
+every casing variant below the baseline. Variant 5 (adminedit) additionally
+proves the full end-to-end exploit path: PHP case-insensitive dispatch reaches
+the camelCase `getAdminEditAction()` method and executes it without any auth
+check, returning HTTP 200 with the sentinel response body.

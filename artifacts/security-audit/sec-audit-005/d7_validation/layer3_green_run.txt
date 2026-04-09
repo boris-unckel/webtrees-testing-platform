@@ -1,0 +1,35 @@
+Run: 2026-04-09
+Branch under test: upstream/webtrees @ security-audit-005-module-action-case-bypass
+Fix commits applied: 3a53e837de (test), f8fdf173cf (fix)
+
+Command:
+  podman-compose exec -T webtrees vendor/bin/phpunit \
+      --configuration=/tests/layer3-integration/phpunit-integration.xml \
+      --filter 'SecAudit005Test' --no-coverage --colors=never
+
+Output:
+  PHPUnit 12.5.10 by Sebastian Bergmann and contributors.
+
+  Runtime:       PHP 8.5.4
+  Configuration: /tests/layer3-integration/phpunit-integration.xml
+
+  ..........                                                        10 / 10 (100%)
+
+  Time: 00:00.278, Memory: 42.50 MB
+
+  OK (10 tests, 50 assertions)
+
+Test methods and data rows:
+  1 baseline  test_baseline_admin_action_is_blocked_on_faq
+  9 rows      test_all_variants_are_blocked_by_admin_gate (DataProvider caseBypassProvider)
+
+Total: 10 tests, 50 assertions, all green.
+
+Interpretation: the real ModuleService (bootstrapped by MysqlTestCase) +
+real ModuleAction handler + real bundled modules (faq, stories,
+relationships_chart) all reject every casing variant of the admin gate
+when invoked by a GuestUser. The fix holds against production dispatch
+targets in the full webtrees bootstrap, not only against the mocked
+Layer-2 fooModule. The smoking-gun row `GET faq adminedit` now blocks
+before reaching FrequentlyAskedQuestionsModule::getAdminEditAction,
+which previously executed verbatim on unfixed code.

@@ -4,8 +4,8 @@
 id: SEC-AUDIT-005
 title: ModuleAction::handle() substring-admin-gate case-insensitive bypass — unauthenticated admin-method invocation
 created: 2026-04-08
-last_updated: 2026-04-08
-status: queued
+last_updated: 2026-04-09
+status: fix_verified
 track: non-admin
 file: app/Http/RequestHandlers/ModuleAction.php
 contributing_files:
@@ -44,7 +44,7 @@ current_hypothesis: H1
 probe_iteration_count: 3
 validation_failure_count: 0
 fixture_rev: 0
-fix_branch: null
+fix_branch: security-audit-005-module-action-case-bypass
 disclosure_state: not_ready
 blocked_by: []
 notes_for_opus: |
@@ -322,14 +322,37 @@ public static function caseBypassProvider(): array
 
 **Status**: **exploit_confirmed** (vor Deep-Dive-Start; die Verification-Runde hat D3/D4 effektiv vorweggenommen)
 
-### Phase D5 — Regression (noch ausstehend)
-- regression_file: `layer3-integration/tests/Security/SecAudit005Test.php` (plus Änderung an upstream `ModuleActionTest.php`)
-- fixture_file: ggf. `fixtures/security/payloads/sec_audit_005.json`
+### Phase D5 — Regression (2026-04-09, Layer 2 abgeschlossen)
+- **Branch**: `security-audit-005-module-action-case-bypass` (upstream/webtrees, abgezweigt von `main` @ `34dff096c2`)
+- **Modifiziertes Testfile**: `upstream/webtrees/tests/app/Http/RequestHandlers/ModuleActionTest.php`
+  - Neu: `testAdminActionCaseBypass` mit `#[DataProvider('caseBypassProvider')]` — 6 Casing-Varianten
+  - Neu: `getAdminEditAction()` auf dem anonymen `fooModule()` — Dispatch-Target für die `adminedit`-Variante
+- **Red-Run-Evidenz**: `artifacts/security-audit/sec-audit-005/d5_regression/layer2_red_run_pre_fix.txt`
+  - 10 Tests gesamt, **5 Failures** gegen unfixed `str_contains` Gate
+  - Baseline `Admin` ✓ pass (Gate feuert)
+  - `admin`, `ADMIN`, `AdMiN`, `admin-edit`: ✗ fail mit `HttpNotFoundException` statt `HttpAccessDeniedException` (Gate bypassed, Method-Lookup ins Leere)
+  - `adminedit`: ✗ fail mit "keine Exception geworfen" — **Smoking Gun**: Gate bypassed AND case-insensitive PHP-Dispatch auf `getAdminEditAction` erfolgreich → HTTP 200 mit Sentinel-Body
+- **fixture_file**: nicht erforderlich (keine XSS-Payloads, nur URL-Casing-Varianten in Code)
+- **Test-Commit**: `3a53e837de` (GPG-signiert) auf Fix-Branch
 
-### Phase D6 — Fix-Draft (noch ausstehend)
-- fix_branch: `security-audit-005-module-action-case-bypass`
+### Phase D6 — Fix-Draft (2026-04-09 abgeschlossen)
+- fix_branch: `security-audit-005-module-action-case-bypass` (bereits in D5 angelegt)
+- **Fix-Commit**: `f8fdf173cf` (GPG-signiert)
+- **Diff**: 1-Zeilen-Änderung in `app/Http/RequestHandlers/ModuleAction.php:75` + passender `use function`-Import
+  - `str_contains($action, 'Admin')` → `stripos($action, 'Admin') !== false`
+  - `use function str_contains;` → `use function stripos;`
+- Kommentar im Fix erklärt die Asymmetrie zwischen `str_contains` (case-sensitive) und PHP-Method-Dispatch (case-insensitive), damit zukünftige Refactorings nicht erneut ins str_contains-Muster zurückfallen.
 
-### Phase D7 — Validation (noch ausstehend)
+### Phase D7 — Validation (2026-04-09 abgeschlossen)
+- **Layer-2 Re-Run**: `artifacts/security-audit/sec-audit-005/d5_regression/layer2_green_run_post_fix.txt`
+  - Kommando identisch zum D5-Red-Run
+  - Ergebnis: **10/10 green, 60 assertions, OK**
+- **Layer-3 Integrationstest**: `layer3-integration/tests/Security/SecAudit005Test.php` — neu erzeugt
+  - Nutzt die echte `ModuleService` (aus `MysqlTestCase::setUp()` gebootet) und den echten `ModuleAction`-Handler
+  - 9 Data-Provider-Rows × 1 Baseline-Methode = 10 Tests gegen echte Bundled-Module (`faq`, `stories`, `relationships_chart`), GET + POST, alle Casing-Varianten inkl. Smoking-Gun `GET faq adminedit`
+  - **Self-Skip-Guard** in `setUp()`: behavioral Fix-Probe + Module-Enablement-Probe. `make test-integration` bleibt grün auf pristine Upstream.
+  - Ergebnis: **10/10 green, 50 assertions, OK** (`artifacts/security-audit/sec-audit-005/d7_validation/layer3_green_run.txt`)
+- **Validation-Report**: `artifacts/security-audit/sec-audit-005/d7_validation/README.md`
 
 ## Rückkopplung
 
@@ -338,3 +361,6 @@ public static function caseBypassProvider(): array
 |---|---|---|
 | 2026-04-08 | queued | Erzeugt aus V1e.2 CRITICAL Finding |
 | 2026-04-08 | exploit_confirmed | End-to-end PoC in V1e.2 verifiziert (Probe-Loop in Verification-Runde vorweggenommen) |
+| 2026-04-09 | regression_drafted | D5 Layer-2 Regression-Test erzeugt und auf unfixed Code als RED bestätigt (5/6 Varianten fail, Smoking Gun = `adminedit` dispatch erfolgreich) |
+| 2026-04-09 | fix_committed | D6 1-Zeilen-Fix + `use function`-Import committet als `f8fdf173cf` auf Fix-Branch (GPG-signiert) |
+| 2026-04-09 | fix_verified | D7 Layer-2 (10/10) und Layer-3 (10/10) Re-Runs grün. Layer-3-Test mit echter `ModuleService` + Bundled-Modulen + Self-Skip-Guard live. |

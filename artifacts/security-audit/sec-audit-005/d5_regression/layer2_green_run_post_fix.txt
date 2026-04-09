@@ -1,0 +1,31 @@
+Run: 2026-04-09
+Branch: security-audit-005-module-action-case-bypass (upstream/webtrees)
+ModuleAction.php:75 now uses `stripos($action, 'Admin') !== false` (fixed).
+
+Command (identical to pre-fix red run):
+  podman-compose exec -T webtrees su -s /bin/bash www-data -c \
+    'cd /var/www/html && vendor/bin/phpunit \
+       --configuration=/tests/layer2-unit/phpunit-unit.xml \
+       --filter "ModuleActionTest" --no-coverage --colors=never'
+
+Output:
+  PHPUnit 12.5.10 by Sebastian Bergmann and contributors.
+
+  Runtime:       PHP 8.5.4
+  Configuration: /tests/layer2-unit/phpunit-unit.xml
+
+  ..........                                                        10 / 10 (100%)
+
+  Time: 00:01.285, Memory: 74.00 MB
+
+  OK (10 tests, 60 assertions)
+
+All 10 tests green — 4 original (testModuleAction, testNonExistingAction,
+testNonExistingModule, testAdminAction) + 6 data-provider rows of the new
+testAdminActionCaseBypass (Admin, admin, ADMIN, AdMiN, admin-edit, adminedit).
+
+Interpretation: the 1-line fix (`str_contains` → `stripos(..., 'Admin') !== false`)
+closes the case-insensitive bypass. Every casing variant now triggers the
+admin gate and an HttpAccessDeniedException is thrown *before* the method
+lookup / dispatch. The adminedit variant no longer reaches the camelCase
+getAdminEditAction() method on the test fooModule.
