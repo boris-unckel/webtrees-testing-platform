@@ -1,0 +1,13 @@
+PHPUnit 12.5.10 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.4
+Configuration: /tests/layer2-unit/phpunit-unit.xml
+
+.                                                                   1 / 1 (100%)
+Warning: file_put_contents(/tmp/phpunit-cache/test-results): Failed to open stream: Permission denied in /var/www/html/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+PHP Warning:  file_put_contents(/tmp/phpunit-cache/test-results): Failed to open stream: Permission denied in /var/www/html/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:01.259, Memory: 72.00 MB
+
+OK (1 test, 2 assertions)

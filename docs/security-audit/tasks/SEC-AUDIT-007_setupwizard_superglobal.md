@@ -5,7 +5,7 @@ id: SEC-AUDIT-007
 title: SetupWizard.php:327 — raw $_POST['wtpass'] bypasses Validator (LOW, code quality)
 created: 2026-04-09
 last_updated: 2026-04-09
-status: queued
+status: fix_verified
 track: admin
 file: app/Http/RequestHandlers/SetupWizard.php
 contributing_files: []
@@ -34,8 +34,8 @@ current_hypothesis: H1
 probe_iteration_count: 0
 validation_failure_count: 0
 fixture_rev: 0
-fix_branch: null
-disclosure_state: not_ready
+fix_branch: security-audit-007-setupwizard-superglobal
+disclosure_state: ready_for_manual_pr
 blocked_by: []
 notes_for_opus: |
   Discovered in V1e.1 of verification run verify-2026-04-08T21-45-10,
@@ -176,10 +176,16 @@ Skipping — H1 ist self-evident per Code-Read.
 
 ### Phase D6 — Fix-Draft
 - fix_branch: `security-audit-007-setupwizard-superglobal`
-- 1-line change, Line 327 only
+- fix_commit: `1dcca3938863d38bf11eeb495bcf8c80bf503fcd` (GPG-signed, 1-line change on line 327)
+- diff_size: 1 Zeile (`$_POST['wtpass']` → `$data['wtpass']`)
 
 ### Phase D7 — Validation
-- Upstream-Layer-2 SetupWizardTest run nach Fix
+- validation_artifacts: `artifacts/security-audit/sec-audit-007/d7_validation/`
+- Layer 1 `php -l`: ✅ green (`php_lint.txt`)
+- Layer 2 `SetupWizardTest`: ✅ 1/1, 2 assertions (`layer2_setupwizard_green.txt`)
+- Code-read-Review: ✅ `$data['wtpass']` ist bei Line 180 via `Validator::parsedBody(...)->string('wtpass', $default)` gesetzt und wird bereits im Fresh-Install-Zweig (Line 323) verwendet — Reinstall-Zweig ist jetzt konsistent.
+- gesamturteil: **fix_verified**
+- Kein dedizierter Layer-3 Regressionstest (LOW-Severity, Fix ist selbsterklärend und betrifft nur API-Konsistenz, kein Verhalten am Hash-Pfad).
 
 ## Rückkopplung
 
@@ -187,3 +193,5 @@ Skipping — H1 ist self-evident per Code-Read.
 | Zeitpunkt | Status | Grund |
 |---|---|---|
 | 2026-04-09 | queued | Erzeugt aus V1e.1 F-3 nach V3-User-Decision |
+| 2026-04-09 | fix_committed | 1-Zeilen-Fix auf `security-audit-007-setupwizard-superglobal` committet (`1dcca39388`, GPG) |
+| 2026-04-09 | fix_verified | Layer 1+2 green, Code-read bestätigt API-Konsistenz mit Fresh-Install-Zweig |

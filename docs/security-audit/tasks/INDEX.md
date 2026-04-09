@@ -44,14 +44,14 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 | SEC-AUDIT-003 | queued | non-admin | defense-in-depth (csp gap) | 0.0 (spin-off) | app/Factories/ImageFactory.php | V4_xss | 2026-04-08 |
 | SEC-AUDIT-004 | queued | non-admin | audit/enumeration | 0.0 (spin-off) | app/Factories/ImageFactory.php | V4_xss | 2026-04-08 |
 | SEC-AUDIT-006 | queued | admin | defense-in-depth (sqli-readwrite, latent) | 0.263 | app/Http/RequestHandlers/RenumberTreeAction.php | V5_sqli_readwrite | 2026-04-09 |
-| SEC-AUDIT-007 | queued | admin | code-quality (LOW, not exploitable) | 0.05 | app/Http/RequestHandlers/SetupWizard.php | V11_info_disclosure | 2026-04-09 |
 
 ## Abgeschlossen
 
 | ID | Final-Status | Impact | Disclosure | Closed at |
 |---|---|---|---|---|
 | SEC-AUDIT-001 | fix_verified | stored-xss (defense-in-depth-gap) | ready_for_manual_pr | 2026-04-08 |
-| **SEC-AUDIT-005** | **fix_verified** | **auth-bypass (unauthenticated admin-method invocation)** | **ready_for_manual_pr** | **2026-04-09** |
+| SEC-AUDIT-005 | fix_verified | auth-bypass (unauthenticated admin-method invocation) | ready_for_manual_pr | 2026-04-09 |
+| SEC-AUDIT-007 | fix_verified | code-quality (LOW, not exploitable) | ready_for_manual_pr | 2026-04-09 |
 
 ## Needs Manual Review
 
@@ -62,11 +62,11 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 ## Aggregat-Zahlen
 
 - Tasks gesamt: 7
-- In Queue: 5 (SEC-AUDIT-002/003/004 Spin-offs aus SEC-AUDIT-001; SEC-AUDIT-006/007 aus verify-2026-04-08T21-45-10 V1b/V1e.1 nach V3-User-Decision)
+- In Queue: 4 (SEC-AUDIT-002/003/004 Spin-offs aus SEC-AUDIT-001; SEC-AUDIT-006 aus verify-2026-04-08T21-45-10 V1b nach V3-User-Decision)
 - **Exploit confirmed**: 0
 - **Regression drafted**: 0
 - In Deep-Dive: 0
-- Fix verified: 2 (SEC-AUDIT-001 Fork-Commit b2dc869b90; SEC-AUDIT-005 Branch `security-audit-005-module-action-case-bypass` @ `3a53e837de` / `f8fdf173cf`, Layer-2 10/10, Layer-3 10/10, bereit für manuelle PR)
+- Fix verified: 3 (SEC-AUDIT-001 Fork-Commit b2dc869b90; SEC-AUDIT-005 Branch `security-audit-005-module-action-case-bypass` @ `3a53e837de` / `f8fdf173cf`, Layer-2 10/10, Layer-3 10/10; SEC-AUDIT-007 Branch `security-audit-007-setupwizard-superglobal` @ `1dcca39388`, 1-Zeilen-Fix LOW, Layer-2 1/1, bereit für manuelle PR)
 - Done: 0
 - Dropped: 3 (SetupWizard, UpgradeWizardStep, ContactAction — siehe run-2026-04-08T19-01-49/priorities.md)
 - Critical Findings (visitor-sandbox-escape): 0
