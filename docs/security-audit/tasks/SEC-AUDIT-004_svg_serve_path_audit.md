@@ -4,14 +4,19 @@
 id: SEC-AUDIT-004
 title: Audit other serve paths that deliver SVG bypassing ImageFactory::imageResponse()
 created: 2026-04-08
-last_updated: 2026-04-08
-status: queued
+last_updated: 2026-04-09
+status: no_finding
 track: non-admin
 file: app/Factories/ImageFactory.php
 contributing_files:
   - app/Factories/ImageFactory.php
   - app/Http/RequestHandlers/MediaFileDownload.php
   - app/Http/RequestHandlers/MediaFileThumbnail.php
+  - app/Http/RequestHandlers/AdminMediaFileDownload.php
+  - app/Http/RequestHandlers/AdminMediaFileThumbnail.php
+  - app/Services/GedcomExportService.php
+  - app/Report/HtmlRenderer.php
+  - app/Report/ReportParserGenerate.php
 verticals_hit:
   - V4_xss
 final_score: 0.0
@@ -23,7 +28,10 @@ t0_signals:
   db_sinks: []
   dangerous_functions: []
   routing_entry_points:
-    - <to be enumerated in D1>
+    - GET /media-{filename} (MediaFileDownload)
+    - GET /media-thumbnail-{...} (MediaFileThumbnail)
+    - GET /admin/media-file-download (AdminMediaFileDownload)
+    - GET /admin/media-file-thumbnail (AdminMediaFileThumbnail)
   reachability: visitor
   type_weight: 0.3
   auth_requirement: visitor
@@ -34,7 +42,7 @@ probe_iteration_count: 0
 validation_failure_count: 0
 fixture_rev: 0
 fix_branch: null
-disclosure_state: not_ready
+disclosure_state: not_applicable
 blocked_by: []
 notes_for_opus: |
   Spin-off aus SEC-AUDIT-001 D7-Validation (artifacts/security-audit/deepdive/001/validation.md §Folge-Aktionen).
@@ -106,50 +114,59 @@ notes_for_opus: |
 ## Analyse-Verlauf
 
 ### Phase D1 — Context
-- context_file: `artifacts/security-audit/deepdive/004/context.md`
-- generated_at: <YYYY-MM-DD HH:MM>
+- context_file: `artifacts/security-audit/sec-audit-004/enumeration.md`
+- generated_at: 2026-04-09
 - Fokus: Enumeration aller Serve-Pfade statt Single-Function-Analyse
 
 ### Phase D2 — Hypothesen
-- hypotheses_file: `artifacts/security-audit/deepdive/004/hypotheses.md`
-- hypothesen_count: 0
-- highest_confidence: <low|medium|high>
-- Bemerkung: Hypothesen werden **pro gefundenen Serve-Pfad** gebildet; wenn kein Pfad gefunden → no_finding
+- hypothesen_count: 0 (keine Hypothesen gebildet, da Enumeration keinen Bypass-Pfad aufgedeckt hat)
+- Bemerkung: Diese Task ist Search-&-Enumerate; Hypothesen werden pro gefundenem Bypass-Pfad gebildet. Kein Pfad gefunden → keine Hypothesen.
 
-### Phase D3/D4 — Probe-Loop
-- iteration_log:
-  - iter1: <pending — wird nur ausgeführt, wenn D2 konkrete Hypothesen liefert>
+### Phase D3/D4 — Probe-Loop (nicht erforderlich)
+Skipping — keine Bypass-Pfade zu sondieren.
 
-### Phase D5 — Regression
-- regression_file: `layer3-integration/tests/Security/SecAudit004Test.php`
-- fixture_file: `fixtures/security/payloads/sec_audit_004.json`
-- Bemerkung: Regression nur sinnvoll, wenn ein konkreter zweiter Serve-Pfad gefunden und gehärtet wird
+### Phase D5 — Regression (nicht erforderlich)
+Skipping — ohne Bypass-Pfad kein Regressions-Contract. Der bestehende Contract (alle SVG-Responses durchlaufen ImageFactory) wird implizit durch SEC-AUDIT-001 + SEC-AUDIT-003 Tests gehalten.
 
-### Phase D6 — Fix-Draft
-- fix_branch: `security-audit-004-<slug>`
-- fix_commit: <hash>
-- diff_size: <N lines>
+### Phase D6 — Fix-Draft (nicht erforderlich)
+Skipping — kein Fix erforderlich.
 
 ### Phase D7 — Validation
-- validation_file: `artifacts/security-audit/deepdive/004/validation.md`
-- gesamturteil: <fix_verified | no_finding | validation_incomplete>
+- validation_artifacts: `artifacts/security-audit/sec-audit-004/enumeration.md`
+- gesamturteil: **no_finding** — Enumeration belegt, dass `ImageFactory::imageResponse()` / `replacementImageResponse()` der einzige SVG-Serve-Choke-Point in webtrees ist. Keine weitere Härtung erforderlich.
 
 ## Finding Summary
 
-<nach Phase D7 — entweder Liste gefundener ungeschützter Serve-Pfade, oder no_finding mit Enumeration-Ergebnis>
+Nach SEC-AUDIT-001 (SVG-XSS Blocker in `imageResponse()`) und SEC-AUDIT-003
+(CSP-Header-Symmetrie in `replacementImageResponse()`) ist der gesamte
+`ImageFactory`-Response-Pfad gehärtet. Die Enumeration in `enumeration.md`
+zeigt, dass **alle** Serve-Pfade mit `Content-Type: image/svg+xml` durch
+`ImageFactory` laufen:
+
+- `MediaFileDownload` / `MediaFileThumbnail` / `AdminMediaFileDownload` /
+  `AdminMediaFileThumbnail` → direkt `ImageFactory`
+- `GedcomExportService` → liefert nur ZIP, keine direkte SVG-Response
+- `HtmlRenderer::createImage` → Regex-Gate `(jpg|jpeg|png|gif)` blockt SVG
+- `HtmlRenderer::createImageFromObject` → Intervention (raster-only) blockt SVG
+- `ReportParserGenerate` highlighted-image → `imagecreatefromstring` (GD raster-only) blockt SVG
+- `StatisticsChartModule` → returniert HTML-Views, keine SVG-Bytes
+- `app/Module/*.php` → 0 Treffer für `svg`
+- `modules_v4/*` → nur Test-Module
+
+Sekundär-Observation (nicht SEC-AUDIT-004 Scope): `HtmlRenderer::createImage`
+hat einen latenten Render-Bug (computed `$src` data-URI wird nicht an
+`ReportHtmlImage` übergeben — stattdessen ein lokaler Dateisystem-Pfad).
+Dies ist ein Qualitäts-Bug im HTML-Report-Pfad, kein Security-Befund.
 
 ## Offene Punkte
 
-- [ ] D1 Context: Enumerate alle Serve-Pfade für SVG-Daten
-  - [ ] grep `image/svg+xml` in `app/`
-  - [ ] grep `mediaFilesystem` in `app/Http/RequestHandlers` und `app/Services`
-  - [ ] grep `response(.*svg` in `app/`
-  - [ ] Module-Scan: `modules_v4/*/` für custom media delivery
-- [ ] D2: Pro gefundenen Pfad entscheiden: durchläuft `svgContainsActiveContent()` oder nicht?
-- [ ] D3: Für jeden ungeschützten Pfad: konkrete XSS-Probe konstruieren (parallel zu SEC-AUDIT-001 H1/H2/H3)
-- [ ] D5: Regressionstests für jeden neu gefundenen Pfad
-- [ ] D6: Fix-Strategie: pro Pfad einzeln härten, oder zentrale Serve-Funktion in ImageFactory refactoren?
-- [ ] Falls keine weiteren Pfade gefunden werden: Task als `no_finding` schließen mit dokumentierter Enumeration
+- [x] D1 Context: Enumerate alle Serve-Pfade für SVG-Daten
+- [x] grep `image/svg+xml` in `app/` — nur Mime/ImageFactory/CompressResponse
+- [x] grep `mediaFilesystem` in `app/Http/RequestHandlers` und `app/Services` — alle abgedeckt
+- [x] grep `response(.*svg` in `app/` — 0 Treffer außerhalb ImageFactory
+- [x] Module-Scan: `modules_v4/*/` und `app/Module/*.php` — 0 SVG-Treffer
+- [x] D2: Pro gefundenen Pfad entscheiden — alle Pfade gehen durch ImageFactory oder erreichen SVG nie
+- [x] Task als `no_finding` schließen mit dokumentierter Enumeration
 
 ## Rückkopplung
 
@@ -157,3 +174,4 @@ notes_for_opus: |
 | Zeitpunkt | Status | Grund |
 |---|---|---|
 | 2026-04-08 22:40 | queued | Spin-off aus SEC-AUDIT-001 D7-Validation — manuell angelegt |
+| 2026-04-09 | no_finding | Enumeration in `artifacts/security-audit/sec-audit-004/enumeration.md` belegt: alle SVG-Serve-Pfade flowen durch `ImageFactory::imageResponse()` bzw. `replacementImageResponse()`. Keine Bypass-Pfade, kein Fix nötig. |
