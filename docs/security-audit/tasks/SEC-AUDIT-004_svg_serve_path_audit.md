@@ -99,7 +99,7 @@ notes_for_opus: |
   - SEC-AUDIT-001: `docs/security-audit/tasks/SEC-AUDIT-001_svg_xss_media_upload.md`
   - SEC-AUDIT-001 Validation §Folge-Aktionen:
     `artifacts/security-audit/deepdive/001/validation.md`
-  - Fix-Commit (Fork): `b2dc869b90407bb5129dbd768c9364dc863482b2`
+  - Fix-Commit (Fork): `c15b95fef48b9ee96eb0a77bfe9a48d7dbbfb3be` (branch `security-audit-001-svg-filter-hardening-clean`)
 ---
 
 # SEC-AUDIT-004 — Audit weiterer SVG-Serve-Pfade außerhalb imageResponse()

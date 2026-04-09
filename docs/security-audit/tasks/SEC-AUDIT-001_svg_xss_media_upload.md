@@ -46,8 +46,8 @@ current_hypothesis: null
 probe_iteration_count: 5
 validation_failure_count: 0
 fixture_rev: 1
-fix_branch: security-audit-001-svg-filter-hardening
-fix_commit: b2dc869b90407bb5129dbd768c9364dc863482b2
+fix_branch: security-audit-001-svg-filter-hardening-clean
+fix_commit: c15b95fef48b9ee96eb0a77bfe9a48d7dbbfb3be
 disclosure_state: ready_for_manual_pr
 blocked_by: []
 notes_for_opus: |
@@ -114,8 +114,8 @@ notes_for_opus: |
 - fixture_file: `fixtures/security/payloads/sec_audit_001.json`
 
 ### Phase D6 — Fix-Draft
-- fix_branch: `security-audit-001-svg-filter-hardening`
-- fix_commit: `b2dc869b90407bb5129dbd768c9364dc863482b2`
+- fix_branch: `security-audit-001-svg-filter-hardening-clean`
+- fix_commit: `c15b95fef48b9ee96eb0a77bfe9a48d7dbbfb3be`
 - diff_size: 1 file changed, 97 insertions(+), 2 deletions(-)
 - approach: `str_contains`-Filter durch DOM-basierten Walker in `ImageFactory::svgContainsActiveContent()` ersetzt. Blockt `script`/`foreignObject`/`iframe`/`object`/`embed`/`handler`-Elemente (case-insensitiv), alle `on*`-Event-Handler und normalisierte `javascript:`-URLs. Malformed XML → konservativer Block. `LIBXML_NONET` schützt gegen XXE/SSRF.
 
@@ -150,7 +150,7 @@ notes_for_opus: |
   - `app/Services/MediaFileService.php:126-195` — Enabling Gap (keine Extension-Allowlist; bleibt offen als Follow-Up)
 - **Fix:** `ImageFactory::svgContainsActiveContent()` + `svgElementIsDangerous()` — DOM-basierter Walker, der Script-Elemente, Event-Handler und `javascript:`-URLs rekursiv erkennt und blockt. Malformed XML wird konservativ zurückgewiesen. `LIBXML_NONET` aktiviert, um XXE/SSRF vorzubeugen.
 - **Regressionstest:** `layer3-integration/tests/Security/SecAudit001Test.php` (5 Methoden, 66 Assertions post-fix). Test ist diagnostisch: pre-fix rot auf H1/H2/H3, post-fix grün.
-- **Commit (Fork):** `b2dc869b90407bb5129dbd768c9364dc863482b2` auf `security-audit-001-svg-filter-hardening`.
+- **Commit (Fork):** `c15b95fef48b9ee96eb0a77bfe9a48d7dbbfb3be` auf `security-audit-001-svg-filter-hardening-clean`.
 - **Disclosure:** Bereit für manuelle PR-Eröffnung durch den User (V1-Workflow).
 - **Offene Folge-Tasks:** SEC-AUDIT-002 (Extension-Allowlist in `MediaFileService::uploadFile()`), SEC-AUDIT-003 (CSP-Header auf `replacementImageResponse()`), SEC-AUDIT-004 (Audit weiterer SVG-Serve-Pfade außerhalb `imageResponse()`).
 
@@ -159,7 +159,7 @@ notes_for_opus: |
 - [x] Bestätigung H1 (Case-Bypass) via Probe-Run — confirmed in `probe_H1_iter1/decision.md`
 - [x] Bestätigung H2 (Event-Handler) — confirmed in `probe_H2_iter1/decision.md`
 - [x] Bestätigung H3 (javascript:-URL) — confirmed in `probe_H3_iter1/decision.md`
-- [x] Fix-Strategie entschieden: DOM-basierter Walker (`DOMDocument` + rekursiver Element/Attribut-Walk), kein externer Sanitizer benötigt. Commit `b2dc869b90`.
+- [x] Fix-Strategie entschieden: DOM-basierter Walker (`DOMDocument` + rekursiver Element/Attribut-Walk), kein externer Sanitizer benötigt. Commit `c15b95fef4`.
 - [ ] **Follow-Up SEC-AUDIT-002**: Extension-Allowlist in `MediaFileService::uploadFile()` (Defense-in-Depth, verhindert Upload anderer gefährlicher Dateiformate). Siehe `SEC-AUDIT-002_mediafile_service_upload_allowlist.md`.
 - [ ] **Follow-Up SEC-AUDIT-003**: `replacementImageResponse` setzt keinen CSP-Header — prüfen, ob das aus Defense-in-Depth-Gründen ergänzt werden sollte. Siehe `SEC-AUDIT-003_replacement_image_response_csp.md`.
 - [ ] **Follow-Up SEC-AUDIT-004**: Prüfen, ob es weitere Serve-Pfade in webtrees gibt, die SVG an den Browser ausliefern, ohne `imageResponse()` zu durchlaufen. Siehe `SEC-AUDIT-004_svg_serve_path_audit.md`.
@@ -176,5 +176,5 @@ notes_for_opus: |
 | 2026-04-08 21:32 | exploit_attempted | D3 Probe-Loop: 5 Iterationen durchgeführt |
 | 2026-04-08 21:32 | exploit_confirmed | D4: H1+H2+H3 L1-Bypass empirisch bestätigt, L2-CSP intakt |
 | 2026-04-08 21:32 | regression_drafted | D5: SecAudit001Test (5 Methoden, 70 Assertions) grün |
-| 2026-04-08 22:20 | fix_committed | D6: Commit b2dc869b90 auf security-audit-001-svg-filter-hardening (GPG-signed) |
+| 2026-04-08 22:20 | fix_committed | D6: Commit b2dc869b90 auf security-audit-001-svg-filter-hardening (GPG-signed), rebased to c15b95fef4 on security-audit-001-svg-filter-hardening-clean (off main) |
 | 2026-04-08 22:23 | fix_verified | D7: pre-fix 3F/2P, post-fix 5P/66A, Test-Suite diagnostisch |

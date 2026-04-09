@@ -84,12 +84,12 @@ final class SecAudit001Test extends SecurityAuditTestCase
         // SEC-AUDIT-001 fix. This lets `make test-integration` stay green on
         // pristine upstream checkouts while the fork commit is still unmerged,
         // and turns green automatically once WEBTREES_SOURCE is pointed at a
-        // tree that carries commit b2dc869b90 (branch
-        // security-audit-001-svg-filter-hardening) or its upstream successor.
+        // tree that carries commit c15b95fef4 (branch
+        // security-audit-001-svg-filter-hardening-clean) or its upstream successor.
         if (!method_exists(ImageFactory::class, 'svgContainsActiveContent')) {
             self::markTestSkipped(
                 'SEC-AUDIT-001 regression requires ImageFactory::svgContainsActiveContent() '
-                . '(fork branch security-audit-001-svg-filter-hardening, commit b2dc869b90). '
+                . '(fork branch security-audit-001-svg-filter-hardening-clean, commit c15b95fef4). '
                 . 'Run with WEBTREES_SOURCE pointing at a tree that includes this fix to enable.',
             );
         }
