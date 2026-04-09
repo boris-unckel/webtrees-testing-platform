@@ -1,0 +1,2 @@
+No syntax errors detected in app/Http/RequestHandlers/RenumberTreeAction.php
+No syntax errors detected in tests/app/Http/RequestHandlers/RenumberTreeActionTest.php

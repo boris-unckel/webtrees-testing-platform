@@ -40,8 +40,7 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 
 | ID | Status | Track | Impact | Final Score | Datei | Verticals | Letzte Änderung |
 |---|---|---|---|---|---|---|---|
-| SEC-AUDIT-002 | queued | non-admin | stored-xss / path-traversal-write | 0.0 (spin-off) | app/Services/MediaFileService.php | V4_xss, V9_arbitrary_file_write | 2026-04-08 |
-| SEC-AUDIT-006 | queued | admin | defense-in-depth (sqli-readwrite, latent) | 0.263 | app/Http/RequestHandlers/RenumberTreeAction.php | V5_sqli_readwrite | 2026-04-09 |
+| *(leer — alle Tasks abgeschlossen oder abgebrochen)* | | | | | | | |
 
 ## Abgeschlossen
 
@@ -51,7 +50,9 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 | SEC-AUDIT-003 | fix_verified | defense-in-depth (CSP symmetry) | ready_for_manual_pr | 2026-04-09 |
 | SEC-AUDIT-004 | no_finding | audit/enumeration (no bypass) | not_applicable | 2026-04-09 |
 | SEC-AUDIT-005 | fix_verified | auth-bypass (unauthenticated admin-method invocation) | ready_for_manual_pr | 2026-04-09 |
+| SEC-AUDIT-002 | fix_verified | defense-in-depth (stored HTML injection, JS blocked by CSP) | ready_for_manual_pr | 2026-04-09 |
 | SEC-AUDIT-007 | fix_verified | code-quality (LOW, not exploitable) | ready_for_manual_pr | 2026-04-09 |
+| SEC-AUDIT-006 | fix_verified | defense-in-depth (sqli-readwrite, latent) | ready_for_manual_pr | 2026-04-09 |
 
 ## Needs Manual Review
 
@@ -62,11 +63,11 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 ## Aggregat-Zahlen
 
 - Tasks gesamt: 7
-- In Queue: 2 (SEC-AUDIT-002 Spin-off aus SEC-AUDIT-001; SEC-AUDIT-006 aus verify-2026-04-08T21-45-10 V1b nach V3-User-Decision)
+- In Queue: 0
 - **Exploit confirmed**: 0
 - **Regression drafted**: 0
 - In Deep-Dive: 0
-- Fix verified: 4 (SEC-AUDIT-001 Fork-Commit b2dc869b90; SEC-AUDIT-003 Branch `security-audit-003-replacement-image-csp` — authoritative Fork-Commits Test `32e541249e` + Fix `26cbc493a4`, Layer-2 2/2 (5 assertions); SEC-AUDIT-005 Branch `security-audit-005-module-action-case-bypass` — authoritative Fork-Commits Test `19e44380f5` + Fix `de5f8f5843`, Layer-2 10/10, Layer-3 10/10; SEC-AUDIT-007 Branch `security-audit-007-setupwizard-superglobal` — authoritative Fork-Commit `2e56788147`, 1-Zeilen-Fix LOW, Layer-2 1/1. Alle in `/home/borisunckel/phpprojects/webtrees-upstream/webtrees` auf Branches ab Fork-`main`, bereit für manuelle PRs.)
+- Fix verified: 6 (SEC-AUDIT-001 Fork-Commit b2dc869b90; SEC-AUDIT-002 Branch `security-audit-002-upload-blocklist` — authoritative Fork-Commits Test `7b6fb9fc8f` + Fix `3bb05b15d4` + Bypass-Fix `775478141e`, Layer-2 6/6 (36 assertions); SEC-AUDIT-003 Branch `security-audit-003-replacement-image-csp` — authoritative Fork-Commits Test `32e541249e` + Fix `26cbc493a4`, Layer-2 2/2 (5 assertions); SEC-AUDIT-005 Branch `security-audit-005-module-action-case-bypass` — authoritative Fork-Commits Test `19e44380f5` + Fix `de5f8f5843`, Layer-2 10/10, Layer-3 10/10; SEC-AUDIT-007 Branch `security-audit-007-setupwizard-superglobal` — authoritative Fork-Commit `2e56788147`, 1-Zeilen-Fix LOW, Layer-2 1/1; SEC-AUDIT-006 Branch `security-audit-006-renumber-xref-guard` — authoritative Fork-Commits Test `c17c4f6545` + Fix `5735f9e9b1`, Layer-2 2/2 (6 assertions). Alle in `/home/borisunckel/phpprojects/webtrees-upstream/webtrees` auf Branches ab Fork-`main`, bereit für manuelle PRs.)
 - No finding: 1 (SEC-AUDIT-004 Enumeration `artifacts/security-audit/sec-audit-004/enumeration.md` bestätigt: kein SVG-Serve-Pfad umgeht `ImageFactory::imageResponse()`.)
 - Done: 0
 - Dropped: 3 (SetupWizard, UpgradeWizardStep, ContactAction — siehe run-2026-04-08T19-01-49/priorities.md)

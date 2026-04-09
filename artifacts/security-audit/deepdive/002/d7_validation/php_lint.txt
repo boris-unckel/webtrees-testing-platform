@@ -1,0 +1,2 @@
+No syntax errors detected in app/Services/MediaFileService.php
+No syntax errors detected in tests/app/Services/MediaFileServiceTest.php

@@ -5,7 +5,7 @@ id: SEC-AUDIT-006
 title: RenumberTreeAction — raw Expression() string interpolation, REGEX_XREF-only defense (defense-in-depth gap)
 created: 2026-04-09
 last_updated: 2026-04-09
-status: queued
+status: fix_verified
 track: admin
 file: app/Http/RequestHandlers/RenumberTreeAction.php
 contributing_files:
@@ -39,8 +39,8 @@ current_hypothesis: H1
 probe_iteration_count: 0
 validation_failure_count: 0
 fixture_rev: 0
-fix_branch: null
-disclosure_state: not_ready
+fix_branch: security-audit-006-renumber-xref-guard
+disclosure_state: ready_for_manual_pr
 blocked_by: []
 notes_for_opus: |
   Discovered in V1b / re-verified in V1e.1 of verification run
@@ -262,26 +262,46 @@ Der Test muss **vor** jedem Fix existieren und:
 ## Analyse-Verlauf
 
 ### Phase D1 — Context
-- context_file: `artifacts/security-audit/verify-2026-04-08T21-45-10/v1b_raw_sql_audit.md` §RenumberTreeAction
-- re-verified: `artifacts/security-audit/verify-2026-04-08T21-45-10/v1e1_handler_coverage.md` §RenumberTreeAction
-- generated_at: 2026-04-08 (während V1b / V1e.1)
+- context_file: `artifacts/security-audit/deepdive/006/context.md`
+- generated_at: 2026-04-09
+- Fokus: 31× raw `Expression("REPLACE(...)")` mit PHP-String-Interpolation. Defense-Chain: REGEX_XREF (L1), GEDCOM-Parser (L2), VARCHAR(20) (L3), Admin-MW (L4). Keine lokale Validierung am Interpolation-Punkt.
 
 ### Phase D2 — Hypothesen
-- H1: REGEX_XREF schützt den Interpolation-Pfad heute vollständig → **TO VERIFY in D3**
-- H2: Refactor ist notwendig für zukünftige Robustheit → **qualitativ, nicht testbar**
+- hypotheses_file: `artifacts/security-audit/deepdive/006/hypotheses.md`
+- hypothesen_count: 3 (H1 rejected, H2 rejected, H3 rejected)
+- H1: SQLi via malformed old_xref — rejected (REGEX_XREF blocks)
+- H2: SQLi via $type in default case — rejected (GEDCOM parser validates)
+- H3: Second-order injection via data corruption — rejected (alle bekannten Write-Pfade validieren)
+- Alle latent, nicht exploitierbar heute.
 
-### Phase D3/D4 — Probe-Loop (noch ausstehend)
-- iter1: Upload-Test mit crafted GEDCOM-xref
-- iter2: Direct-Insert-Test per Raw-DB-Bypass
-- iter3: REGEX_XREF-Regressions-Scan im upstream Git-Log
+### Phase D3/D4 — Probe-Loop (Code-Read, kein Container-Probe)
+- Code-Read bestätigt: REGEX_XREF-Zeichenklasse enthält keine SQL-Metazeichen.
+- RED-Test beweist: malformed xref `"I1' OR 1=1--"` → `QueryException` (SQL-Syntax-Fehler) wenn kein Guard.
+- Kein Container-Probe nötig — Code-Read + RED-Test genügt.
 
-### Phase D5 — Regression (noch ausstehend)
-- regression_file: `layer3-integration/tests/Security/SecAudit006Test.php`
+### Phase D5 — Regression
+- regression_file: `upstream/webtrees/tests/app/Http/RequestHandlers/RenumberTreeActionTest.php`
+- test_count: 2 (1x noDuplicates + 1x malformedXref)
+- assertions: 6
+- Test-first: Commit `1b60305289` (volatile) — testRenumberSkipsMalformedXref RED (QueryException)
 
-### Phase D6 — Fix-Draft (noch ausstehend)
-- fix_branch: `security-audit-006-renumber-tree-defense-in-depth`
+### Phase D6 — Fix-Draft
+- **fix_branch (authoritativ):** `security-audit-006-renumber-xref-guard` in `/home/borisunckel/phpprojects/webtrees-upstream/webtrees`, abgezweigt von Fork-`main` @ `c338276a5a`
+- **Fix-Commits (authoritativ, Fork):**
+  - Test: `c17c4f6545` (GPG) — RED-Test für xref-Validation
+  - Fix: `5735f9e9b1` (GPG) — preg_match Guard vor Expression-Interpolation
+- **Fix-Commits (volatile, non-authoritative):**
+  - Test: `1b60305289`
+  - Fix: `7da28e58b6`
+- diff_size: RenumberTreeAction.php +6 Zeilen (Gedcom import, preg_match import, 4 Zeilen Guard), RenumberTreeActionTest.php +38/-2 Zeilen (2 Tests)
+- Fix-Ansatz: Minimum local assertion (`preg_match(REGEX_XREF)` Guard am Anfang der foreach-Schleife, `continue` bei Mismatch)
 
-### Phase D7 — Validation (noch ausstehend)
+### Phase D7 — Validation
+- validation_artifacts: `artifacts/security-audit/deepdive/006/d7_validation/`
+- Layer 1 `php -l`: OK (`php_lint.txt`)
+- Layer 2 `RenumberTreeActionTest`: OK (2 tests, 6 assertions) (`layer2_green.txt`)
+- Code-read: Guard verwendet `\A`/`\z`-Anker (kein `^`/`$` mit PCRE_MULTILINE-Risk), Regex identisch mit Gedcom::REGEX_XREF, `continue` statt Exception (graceful skip, keine Side-Effects).
+- gesamturteil: **fix_verified**
 
 ## Rückkopplung
 
@@ -289,3 +309,6 @@ Der Test muss **vor** jedem Fix existieren und:
 | Zeitpunkt | Status | Grund |
 |---|---|---|
 | 2026-04-09 | queued | Erzeugt aus V1b/V1e.1 Findings nach V3-User-Decision |
+| 2026-04-09 | fix_committed | Test-First `1b60305289` + Fix `7da28e58b6` im volatilen Scratch-Clone |
+| 2026-04-09 | fix_verified | Layer 1+2 green, Code-read bestätigt Fix-Wirksamkeit |
+| 2026-04-09 | fix_verified (Mirror) | 2 Commits per `git cherry-pick -S` in authoritativen Fork — Test `c17c4f6545`, Fix `5735f9e9b1`, Branch `security-audit-006-renumber-xref-guard` @ Fork-`main`. |
