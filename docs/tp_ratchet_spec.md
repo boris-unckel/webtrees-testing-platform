@@ -18,7 +18,7 @@ Verwandte Dokumente:
 
 | Teststufe / Querschnitt | Endekriterien |
 |---|---|
-| Statischer Test | PHPStan Level 8: 0 Errors; PHPCS PSR-12: 0 Violations |
+| Statischer Test | PHPStan Level 8: 0 Errors; PHPCS PSR-12: 0 Violations; Trivy: informell (keine Abbruch-Schwelle, Ergebnisse in `artifacts/layer1/`) |
 | Teststufe 1 — Komponententest | Alle Feature-Matrix-Komponententests grün (G05, G06, G11, G17–G19, G22, G23, S04); Anweisungsüberdeckung ≥ vorheriger Wert (Ratchet) |
 | Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, G24–G26, G28–G29, S01–S03, S05–S08, S10–S12, S19 (inkl. Nachnamen-Collation via handle()), S21, S22, S41–S50, P01–P24, P27–P37, SEC-BOT01); strukturbasierte CRAP-Analyse-Tests grün (G27, S45) |
 | Teststufe 3 — Systemtest | Alle Systemtestfälle grün über alle 5 Standard-Themes (G20, G21, S09, S13–S18, S20, S23–S24, S26–S40); S32–S34 theme-unabhängig grün; Privacy-Systemtests grün (P01–P03, P14–P19, P22, P24–P29) |

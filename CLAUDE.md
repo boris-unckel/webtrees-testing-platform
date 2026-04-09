@@ -50,7 +50,7 @@ make down && make up && make setup
 
 | Layer | Inhalt | Tool |
 |---|---|---|
-| Layer 1 | Statische Analyse (phpstan, phpcs) | `make test-static` |
+| Layer 1 | Statische Analyse (PHPStan, PHPCS, Trivy) | `make test-static` |
 | Layer 2 | Upstream-Unit-Tests (SQLite in-memory) | `make test-unit` |
 | Layer 3 | Eigene Integrationstests (MySQL) | `make test-integration` |
 | Layer 4 | E2E-Tests (Playwright) | `make test-e2e` |

@@ -246,7 +246,7 @@ Hierarchische Teststruktur dieses Projekts mit 5 Ebenen.
 
 | Layer | Deutsch | Werkzeug |
 |-------|---------|---------|
-| Layer 1 | Statischer Test | PHPStan, PHPCS |
+| Layer 1 | Statischer Test | PHPStan, PHPCS, Trivy |
 | Layer 2 | Komponententest / Unit-Test | PHPUnit + SQLite |
 | Layer 3 | Komponentenintegrationstest | PHPUnit + MySQL |
 | Layer 4 | Systemtest / E2E-Test | Playwright |

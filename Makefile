@@ -10,6 +10,10 @@ COMPOSE = podman-compose -f compose.yaml
 COMPOSE_DEBUG = podman-compose -f compose.yaml --profile debug
 COMPOSE_SECURITY = podman-compose -f compose.yaml --profile security
 
+WEBTREES_SOURCE ?= ./upstream/webtrees
+TRIVY_VERSION   ?= 0.69.3
+TRIVY_IMAGE      = ghcr.io/aquasecurity/trivy:$(TRIVY_VERSION)
+
 .PHONY: help clone-upstream generate-passwords up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-integration-security test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report crap-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
@@ -56,8 +60,30 @@ setup: up ## webtrees im Container einrichten (DB-Migration, Fixtures, Admin-Use
 
 test-all: setup test-static test-unit test-integration test-e2e test-performance ## Alle Teststufen ausführen
 
-test-static: ## Statischer Test (PHPStan + PHPCS)
+test-static: ## Statischer Test (PHPStan + PHPCS + Trivy)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer1-static/run.sh
+	@echo ""
+	@echo "=== Trivy Security Scan ==="
+	@mkdir -p artifacts/layer1
+	-podman run --rm \
+		-v trivy-cache:/root/.cache/trivy:rw \
+		-v $(WEBTREES_SOURCE):/src:ro,z \
+		-v ./artifacts/layer1:/output:rw,z \
+		$(TRIVY_IMAGE) fs \
+		--scanners vuln,misconfig,secret \
+		--format json \
+		--output /output/trivy-report.json \
+		/src
+	-podman run --rm \
+		-v trivy-cache:/root/.cache/trivy:rw \
+		-v $(WEBTREES_SOURCE):/src:ro,z \
+		-v ./artifacts/layer1:/output:rw,z \
+		$(TRIVY_IMAGE) fs \
+		--scanners vuln,misconfig,secret \
+		--format table \
+		--output /output/trivy-report.txt \
+		/src
+	@echo "  Trivy: Bericht unter artifacts/layer1/trivy-report.{json,txt}"
 
 test-unit: ## Teststufe 1 — Komponententest (PHPUnit, isoliert)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer2-unit/run.sh

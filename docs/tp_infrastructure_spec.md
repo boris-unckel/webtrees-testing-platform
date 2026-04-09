@@ -74,7 +74,7 @@ webtrees-testing-platform/
 │   ├── invalid-no-head.ged        # GEDCOM ohne HEAD — Upload-Validierung (G21)
 │   └── invalid-binary.bin         # Binärdatei (16 Bytes) — Upload-Validierung (G21)
 ├── layer1-static/
-│   └── run.sh                     # PHPStan + PHPCS im Container
+│   └── run.sh                     # PHPStan + PHPCS im Container (Trivy läuft separat via podman run)
 ├── layer2-unit/
 │   ├── run.sh                     # PHPUnit Unit-Suite
 │   └── phpunit-unit.xml           # Config (SQLite in-memory wie webtrees Core)
@@ -196,7 +196,7 @@ Die Privacy-Fixture wird dynamisch aus dem Template generiert (`generate-privacy
 | Phase | Stufe / Querschnitt | Kern-Deliverable |
 |---|---|---|
 | 1 | Querschnitt — Testumgebung | `compose.yaml`, Containerfiles, `setup-webtrees.sh`, `Makefile` |
-| 2 | Querschnitt — Statischer Test | `layer1-static/run.sh` (PHPStan + PHPCS im Container) |
+| 2 | Querschnitt — Statischer Test | `layer1-static/run.sh` (PHPStan + PHPCS im Container) + Trivy Security Scan (podman run, Host-seitig) |
 | 3 | Teststufe 1 — Komponententest | `phpunit-unit.xml`, SQLite in-memory (wie webtrees Core) |
 | 4 | Teststufe 2 — Komponentenintegrationstest | `MysqlTestCase.php`, neue Tests (GEDCOM-Import, Beziehungen, Bäume) |
 | 5 | Teststufe 3 — Systemtest | `Containerfile.playwright`, Playwright-Tests (Login, Navigation, Themes) |
@@ -220,7 +220,7 @@ Teststufe 2 mit einer eigenen `MysqlTestCase`-Basis-Klasse.
 
 **Funktionsweise:**
 1. Sammelt Artefakte aus `artifacts/` je nach Teststufe:
-   - Statischer Test: PHPStan JSON, PHPCS JSON
+   - Statischer Test: PHPStan JSON, PHPCS JSON, Trivy JSON + Table
    - Teststufe 1: PHPUnit XML + PHP-Fehlerlog (via `podman logs`)
    - Teststufe 2: PHPUnit XML + DB-Dump (`mysqldump`, nur Testschema) + PHP-Log + OTel-Trace-JSON
    - Teststufe 3: Playwright Trace (.zip) + Screenshots + Browser-Konsole-Log + OTel-Trace-JSON

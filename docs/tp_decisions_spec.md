@@ -41,7 +41,7 @@ des Gesamtstacks. Die ISTQB-Terminologie (Glossar de_DE v4.7.1) ist durchgängig
 | **KI-Debug**         | Claude Code CLI als lokales Analyse-Tool bei Testfehler; Artefakte werden als Kontext übergeben |
 | **OpenTelemetry**    | Vollständige Trace-Kette über 4 Schichten: Auto-Instrumentation (PDO + PSR-15 + PSR-18), OtelSpansModule (semantische Spans, Server-Timing-Header), Browser-RUM (Boomerang + OTel-Plugin via Apache mod_substitute), Playwright Root-Spans (traceparent-Propagation via page.route()). Protokoll: OTLP HTTP/Protobuf (:4318). Jaeger (2.16.0) lokal (:16686). Deaktivierbar via OTEL_SDK_DISABLED=true. |
 | **Code Coverage**    | pcov + php-coveralls (wie webtrees Core selbst)                              |
-| **Static Analysis**  | PHPStan + PHPCS (wie webtrees Core selbst)                                   |
+| **Static Analysis**  | PHPStan + PHPCS (wie webtrees Core selbst) + Trivy (Vulnerability-, Misconfig- und Secret-Scan via Container-Image) |
 | **Verzeichnis**      | Eigenständiges Repo (`webtrees-testing-platform`), unabhängig von Deployment-Repo und `smoke-tests/` |
 | **Repo-Platzierung** | Eigenständiges Repo (`webtrees-testing-platform`) — für Upstream-Contribution Testcode extrahierbar |
 | **RE-Methodik**      | Code-first + Gap-Analyse existierender Tests + GEDCOM-5.5.1-Abgleich         |
@@ -125,6 +125,7 @@ graph TB
     subgraph STATIC["Querschnitt — Statischer Test (layer1-static)"]
         phpstan["PHPStan\nLevel 8+"]
         phpcs["PHP CodeSniffer\nPSR-12"]
+        trivy["Trivy\nvuln+misconfig+secret"]
     end
 
     subgraph TS1["Teststufe 1 — Komponententest (layer2-unit)"]
