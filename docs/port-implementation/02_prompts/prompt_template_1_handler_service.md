@@ -11,6 +11,10 @@
 
 ## Prompt
 
+> **Ziel-Repo:** `webtrees-upstream/webtrees` (Fork) — **GPL-3.0-or-later**, **en_GB**
+> Lizenz-Header: `// SPDX-License-Identifier: GPL-3.0-or-later` (nach `<?php`)
+> Sprache: Alle Code-Kommentare, PHPDoc und BUG-CANDIDATE-Marker in Englisch (en_GB)
+
 Du portierst den Stub-Test `{TEST_FILE}` in einen substanziellen Layer-2-Komponentest
 mit Test Doubles. Der Test liegt im webtrees-Fork unter
 `/home/borisunckel/phpprojects/webtrees-upstream/webtrees/tests/app/Http/RequestHandlers/`.
@@ -117,7 +121,7 @@ class {SUT_CLASS}Test extends TestCase
 
 **Wenn ein potenzieller Bug gefunden wird:**
 - Schreibe den Test trotzdem so, dass er **das erwartete korrekte Verhalten** testet
-- Markiere den Test mit Kommentar: `// BUG-CANDIDATE: {Beschreibung}`
+- Markiere den Test mit Kommentar: `// BUG-CANDIDATE: {description}`
 - Dokumentiere den Befund im Batch-Status als `bug_candidate`
 
 ### Schritt 5: Validierung

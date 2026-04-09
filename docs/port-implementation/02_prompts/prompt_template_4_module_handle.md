@@ -16,6 +16,10 @@ List-Module, Block-Module.
 
 ## Prompt
 
+> **Ziel-Repo:** `webtrees-upstream/webtrees` (Fork) — **GPL-3.0-or-later**, **en_GB**
+> Lizenz-Header: `// SPDX-License-Identifier: GPL-3.0-or-later` (nach `<?php`)
+> Sprache: Alle Code-Kommentare, PHPDoc und BUG-CANDIDATE-Marker in Englisch (en_GB)
+
 Du portierst den Stub-Test `{TEST_FILE}` in einen substanziellen Layer-2-Komponentest.
 Das Modul implementiert `RequestHandlerInterface` und hat eine `handle()`-Methode.
 

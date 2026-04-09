@@ -29,6 +29,8 @@ Siehe `01_repo_setup.md` im Detail. Kurzfassung:
 3. **Validierung:** `make test-unit` im Testing-Platform-Container
    (`WEBTREES_SOURCE=/home/borisunckel/phpprojects/webtrees-upstream/webtrees`)
 4. **Commits:** Manuell am Ende durch den User, nicht automatisch während des Laufs
+5. **Sprache & Lizenz:** Code im Fork → en_GB + GPL-3.0-or-later;
+   Dokumentation im Testing-Platform → de_DE + AGPL-3.0-or-later (siehe CLAUDE.md)
 
 ## 3. Phasen
 

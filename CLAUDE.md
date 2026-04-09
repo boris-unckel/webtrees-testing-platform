@@ -118,9 +118,25 @@ podman-compose exec webtrees vendor/bin/phpunit \
 
 Kein `make`-Target für Einzeltests — `make test-integration` führt immer die Voll-Suite inkl. Coverage aus.
 
+## Sprache
+
+Jedes Repo hat eine feste Sprache. Code, Kommentare, Dokumentation und Commit-Messages richten sich danach:
+
+| Repo | Locale | Geltungsbereich |
+|---|---|---|
+| `webtrees-testing-platform` (dieses Repo) | **de_DE** | Dokumentation, Kommentare, CLAUDE.md, Commit-Messages |
+| `webtrees-upstream/webtrees` (Fork) | **en_GB** | Code, Tests, PHPDoc, Code-Kommentare, BUG-CANDIDATE-Marker |
+
 ## Lizenz-Header
 
-Jede neue Sourcecode-Datei (.php, .ts, .sh, .yaml, .xml, Makefile) und jede neue `.md`-Datei muss einen SPDX-Header erhalten:
+Jede neue Sourcecode-Datei muss einen SPDX-Header erhalten. **Die Lizenz hängt vom Ziel-Repo ab:**
+
+| Repo | SPDX-Identifier |
+|---|---|
+| `webtrees-testing-platform` (dieses Repo) | `AGPL-3.0-or-later` |
+| `webtrees-upstream/webtrees` (Fork) | `GPL-3.0-or-later` |
+
+### Dieses Repo (AGPL-3.0-or-later)
 
 | Dateityp | Kommentar-Syntax | Platzierung |
 |---|---|---|
@@ -131,6 +147,14 @@ Jede neue Sourcecode-Datei (.php, .ts, .sh, .yaml, .xml, Makefile) und jede neue
 | `.yaml`/`.yml` | `# SPDX-License-Identifier: AGPL-3.0-or-later` | Erste Zeile |
 | `.xml` | `<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->` | Nach `<?xml?>` |
 | `Makefile` | `# SPDX-License-Identifier: AGPL-3.0-or-later` | Erste Zeile |
+
+### Fork-Repo (GPL-3.0-or-later)
+
+| Dateityp | Kommentar-Syntax | Platzierung |
+|---|---|---|
+| `.php` | `// SPDX-License-Identifier: GPL-3.0-or-later` | Nach `<?php` |
+| `.xml` | `<!-- SPDX-License-Identifier: GPL-3.0-or-later -->` | Nach `<?xml?>` |
+| `.md` | `<!-- SPDX-License-Identifier: GPL-3.0-or-later -->` | Erste Zeile |
 
 ## Kein Perl
 

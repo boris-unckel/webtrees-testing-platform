@@ -64,7 +64,17 @@ git show 5349_add_tests:tests/app/Http/RequestHandlers/AutoCompletePlaceTest.php
 Commits werden **nicht** automatisch erstellt. Der User committet manuell am Ende
 der Portierungsrunde. GPG-Signatur ist Pflicht (`commit.gpgsign=true` global).
 
-## 6. Preflight-Check
+## 6. Sprache & Lizenz im Fork
+
+Alle Dateien, die im Fork erstellt oder geändert werden, unterliegen:
+
+- **Lizenz:** `GPL-3.0-or-later` (nicht AGPL wie im Testing-Platform-Repo)
+  - PHP-Header: `// SPDX-License-Identifier: GPL-3.0-or-later`
+- **Sprache:** en_GB — Code-Kommentare, PHPDoc, `BUG-CANDIDATE`-Marker in Englisch
+
+Siehe `CLAUDE.md` §Sprache und §Lizenz-Header.
+
+## 7. Preflight-Check
 
 Vor Beginn der Portierung:
 
