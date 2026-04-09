@@ -1,0 +1,12 @@
+PHPUnit 12.5.10 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.4
+Configuration: /var/www/html/phpunit.xml.dist
+
+..                                                                  2 / 2 (100%)
+Warning: file_put_contents(/var/www/html/.phpunit.result.cache): Failed to open stream: Read-only file system in /var/www/html/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:00.026, Memory: 20.00 MB
+
+OK (2 tests, 5 assertions)
