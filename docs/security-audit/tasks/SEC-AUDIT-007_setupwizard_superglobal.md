@@ -175,9 +175,10 @@ Skipping — H1 ist self-evident per Code-Read.
 - optional regression_file: `layer3-integration/tests/Security/SecAudit007Test.php`
 
 ### Phase D6 — Fix-Draft
-- fix_branch: `security-audit-007-setupwizard-superglobal`
-- fix_commit: `1dcca3938863d38bf11eeb495bcf8c80bf503fcd` (GPG-signed, 1-line change on line 327)
-- diff_size: 1 Zeile (`$_POST['wtpass']` → `$data['wtpass']`)
+- **fix_branch (authoritativ)**: `security-audit-007-setupwizard-superglobal` in `/home/borisunckel/phpprojects/webtrees-upstream/webtrees`, abgezweigt von Fork-`main` @ `c338276a5a`
+- **Fix-Commit (volatile, non-authoritative)**: `1dcca3938863d38bf11eeb495bcf8c80bf503fcd` (GPG, Scratch-Clone `webtrees-testing-platform/upstream/webtrees`)
+- **Fix-Commit (authoritativ, Fork)**: `2e567881474227742f7c39e725ffde661b3c74cb` (GPG) — dies ist der Hash, der in PRs und Disclosure-Kommunikation referenziert wird
+- diff_size: 1 Zeile (`$_POST['wtpass']` → `$data['wtpass']`) auf `app/Http/RequestHandlers/SetupWizard.php:327`
 
 ### Phase D7 — Validation
 - validation_artifacts: `artifacts/security-audit/sec-audit-007/d7_validation/`
@@ -193,5 +194,6 @@ Skipping — H1 ist self-evident per Code-Read.
 | Zeitpunkt | Status | Grund |
 |---|---|---|
 | 2026-04-09 | queued | Erzeugt aus V1e.1 F-3 nach V3-User-Decision |
-| 2026-04-09 | fix_committed | 1-Zeilen-Fix auf `security-audit-007-setupwizard-superglobal` committet (`1dcca39388`, GPG) |
+| 2026-04-09 | fix_committed | 1-Zeilen-Fix im volatilen Scratch-Clone `webtrees-testing-platform/upstream/webtrees` als `1dcca39388` committet (GPG-signiert) |
 | 2026-04-09 | fix_verified | Layer 1+2 green, Code-read bestätigt API-Konsistenz mit Fresh-Install-Zweig |
+| 2026-04-09 | fix_verified (Mirror) | Fix per `git cherry-pick -S` in den authoritativen Fork `/home/borisunckel/phpprojects/webtrees-upstream/webtrees` gespiegelt — Commit `2e56788147`, Branch `security-audit-007-setupwizard-superglobal` @ Fork-`main`. Dies ist der PR-relevante Hash. |

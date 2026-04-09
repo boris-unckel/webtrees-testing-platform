@@ -323,8 +323,8 @@ public static function caseBypassProvider(): array
 **Status**: **exploit_confirmed** (vor Deep-Dive-Start; die Verification-Runde hat D3/D4 effektiv vorweggenommen)
 
 ### Phase D5 — Regression (2026-04-09, Layer 2 abgeschlossen)
-- **Branch**: `security-audit-005-module-action-case-bypass` (upstream/webtrees, abgezweigt von `main` @ `34dff096c2`)
-- **Modifiziertes Testfile**: `upstream/webtrees/tests/app/Http/RequestHandlers/ModuleActionTest.php`
+- **Volatile Scratch-Branch**: `security-audit-005-module-action-case-bypass` im volatilen Clone `webtrees-testing-platform/upstream/webtrees`, abgezweigt von `main` @ `34dff096c2`. Diente dem Live-Testen im laufenden Container-Stack; **nicht authoritativ** (siehe `10_fixing_and_disclosure.md` §1 — dieser Clone kann durch `make setup` jederzeit neu geklont werden).
+- **Modifiziertes Testfile**: `tests/app/Http/RequestHandlers/ModuleActionTest.php` (im webtrees-Sourcebaum)
   - Neu: `testAdminActionCaseBypass` mit `#[DataProvider('caseBypassProvider')]` — 6 Casing-Varianten
   - Neu: `getAdminEditAction()` auf dem anonymen `fooModule()` — Dispatch-Target für die `adminedit`-Variante
 - **Red-Run-Evidenz**: `artifacts/security-audit/sec-audit-005/d5_regression/layer2_red_run_pre_fix.txt`
@@ -333,11 +333,13 @@ public static function caseBypassProvider(): array
   - `admin`, `ADMIN`, `AdMiN`, `admin-edit`: ✗ fail mit `HttpNotFoundException` statt `HttpAccessDeniedException` (Gate bypassed, Method-Lookup ins Leere)
   - `adminedit`: ✗ fail mit "keine Exception geworfen" — **Smoking Gun**: Gate bypassed AND case-insensitive PHP-Dispatch auf `getAdminEditAction` erfolgreich → HTTP 200 mit Sentinel-Body
 - **fixture_file**: nicht erforderlich (keine XSS-Payloads, nur URL-Casing-Varianten in Code)
-- **Test-Commit**: `3a53e837de` (GPG-signiert) auf Fix-Branch
+- **Volatile-Test-Commit**: `3a53e837de` (GPG, volatile Scratch-Branch)
+- **Authoritativer Test-Commit (Fork)**: `19e44380f58c47f96592fa766b284a423aa7ee54` (GPG) — per `git cherry-pick -S` in `/home/borisunckel/phpprojects/webtrees-upstream/webtrees` Branch `security-audit-005-module-action-case-bypass` (abgezweigt vom Fork-`main` @ `c338276a5a`) gespiegelt 2026-04-09.
 
 ### Phase D6 — Fix-Draft (2026-04-09 abgeschlossen)
-- fix_branch: `security-audit-005-module-action-case-bypass` (bereits in D5 angelegt)
-- **Fix-Commit**: `f8fdf173cf` (GPG-signiert)
+- **fix_branch (authoritativ)**: `security-audit-005-module-action-case-bypass` in `/home/borisunckel/phpprojects/webtrees-upstream/webtrees`, von `main` @ `c338276a5a` abgezweigt
+- **Fix-Commit (volatile, non-authoritative)**: `f8fdf173cf` (GPG, Scratch-Clone)
+- **Fix-Commit (authoritativ, Fork)**: `de5f8f5843f4f50e32b291b4ebe4b7f7a2c4b59d` (GPG) — dies ist der Hash, der in PRs und Disclosure-Kommunikation referenziert wird
 - **Diff**: 1-Zeilen-Änderung in `app/Http/RequestHandlers/ModuleAction.php:75` + passender `use function`-Import
   - `str_contains($action, 'Admin')` → `stripos($action, 'Admin') !== false`
   - `use function str_contains;` → `use function stripos;`
@@ -362,5 +364,6 @@ public static function caseBypassProvider(): array
 | 2026-04-08 | queued | Erzeugt aus V1e.2 CRITICAL Finding |
 | 2026-04-08 | exploit_confirmed | End-to-end PoC in V1e.2 verifiziert (Probe-Loop in Verification-Runde vorweggenommen) |
 | 2026-04-09 | regression_drafted | D5 Layer-2 Regression-Test erzeugt und auf unfixed Code als RED bestätigt (5/6 Varianten fail, Smoking Gun = `adminedit` dispatch erfolgreich) |
-| 2026-04-09 | fix_committed | D6 1-Zeilen-Fix + `use function`-Import committet als `f8fdf173cf` auf Fix-Branch (GPG-signiert) |
+| 2026-04-09 | fix_committed | D6 1-Zeilen-Fix + `use function`-Import im volatilen Scratch-Clone als `f8fdf173cf` committet (GPG-signiert) |
 | 2026-04-09 | fix_verified | D7 Layer-2 (10/10) und Layer-3 (10/10) Re-Runs grün. Layer-3-Test mit echter `ModuleService` + Bundled-Modulen + Self-Skip-Guard live. |
+| 2026-04-09 | fix_verified (Mirror) | Fix + Regressionstest per `git cherry-pick -S` in den authoritativen Fork `/home/borisunckel/phpprojects/webtrees-upstream/webtrees` gespiegelt — Test-Commit `19e44380f5`, Fix-Commit `de5f8f5843`, Branch `security-audit-005-module-action-case-bypass` @ Fork-`main`. Dies sind die PR-relevanten Hashes. |

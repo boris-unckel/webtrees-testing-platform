@@ -66,7 +66,7 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 - **Exploit confirmed**: 0
 - **Regression drafted**: 0
 - In Deep-Dive: 0
-- Fix verified: 3 (SEC-AUDIT-001 Fork-Commit b2dc869b90; SEC-AUDIT-005 Branch `security-audit-005-module-action-case-bypass` @ `3a53e837de` / `f8fdf173cf`, Layer-2 10/10, Layer-3 10/10; SEC-AUDIT-007 Branch `security-audit-007-setupwizard-superglobal` @ `1dcca39388`, 1-Zeilen-Fix LOW, Layer-2 1/1, bereit für manuelle PR)
+- Fix verified: 3 (SEC-AUDIT-001 Fork-Commit b2dc869b90; SEC-AUDIT-005 Branch `security-audit-005-module-action-case-bypass` — authoritative Fork-Commits Test `19e44380f5` + Fix `de5f8f5843`, Layer-2 10/10, Layer-3 10/10; SEC-AUDIT-007 Branch `security-audit-007-setupwizard-superglobal` — authoritative Fork-Commit `2e56788147`, 1-Zeilen-Fix LOW, Layer-2 1/1. Alle in `/home/borisunckel/phpprojects/webtrees-upstream/webtrees` auf Branches ab Fork-`main`, bereit für manuelle PRs.)
 - Done: 0
 - Dropped: 3 (SetupWizard, UpgradeWizardStep, ContactAction — siehe run-2026-04-08T19-01-49/priorities.md)
 - Critical Findings (visitor-sandbox-escape): 0

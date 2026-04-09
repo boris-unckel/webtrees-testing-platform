@@ -7,21 +7,55 @@
 **Vorgänger:** `prompt_05_validation.md` (Validierung gegen unpatched + patched).
 **Nachfolger:** `11_finding_report_template.md` (Report-Struktur für Disclosure).
 
-## 1. Zwei-Repo-Struktur
+## 1. Drei-Repo-Struktur
 
-Der Fix-Workflow koppelt zwei Repos:
+Der Fix-Workflow koppelt drei Pfade — zwei davon sind `git clone`s von webtrees, mit **streng getrennten** Rollen:
 
-| Repo | Pfad | Rolle |
+| Repo / Pfad | Rolle | Mutierbar? |
 |---|---|---|
-| **webtrees-testing-platform** | `/home/borisunckel/phpprojects/webtrees-testing-platform` | Exploit-Reproduktion, Regression-Tests, Audit-Artefakte (Prompts, Traces, Hypothesen) |
-| **webtrees-upstream/webtrees** (Fork) | `/home/borisunckel/phpprojects/webtrees-upstream/webtrees` | Patch-Branches, PR-Quelle zum Upstream `fisharebest/webtrees` |
+| **webtrees-testing-platform** (`/home/borisunckel/phpprojects/webtrees-testing-platform`) | Exploit-Reproduktion, Regression-Tests (Layer 3), Audit-Artefakte (Prompts, Traces, Hypothesen), Task-Frontmatter und INDEX | ja (`main`-Commits) |
+| **Volatile webtrees clone** (`./upstream/webtrees` — unter `webtrees-testing-platform/upstream/webtrees`, `.gitignore`d) | **Read-only-Mount** in den Podman-Compose-Container, Ziel von `make setup` (`git clone`) und `make test-*`. Darf von `make setup` jederzeit neu geklont werden. Auch wenn hier ad-hoc `git checkout -b` und Commits passieren (z. B. um einen Fix-Draft im laufenden Stack zu testen), sind diese Commits **nicht authoritativ** und **nicht persistent** — sie können durch ein `make down && make up && make setup` verloren gehen. | **nur als Scratch** — keine langlebigen Branches |
+| **webtrees-upstream/webtrees (Fork)** (`/home/borisunckel/phpprojects/webtrees-upstream/webtrees`) | **Authoritative** Quelle für Fix-Branches und PRs an Upstream `fisharebest/webtrees`. Alle tatsächlich aufbewahrten Fix-Branches (`security-audit-<NNN>-<slug>`) leben hier. | ja (branches off `main`) |
 
 Der Fork hat:
 - `origin` → `boris-unckel/webtrees` (GitHub-Remote des Users)
 - `upstream` → `fisharebest/webtrees` (Original-Upstream)
-- Arbeits-Branch nach Rebase auf upstream/main: `5349_add_tests`
+- `volatile` (optional, lokal) → `webtrees-testing-platform/upstream/webtrees` (als File-Remote für Cherry-Pick-Mirror-Flows, siehe §1.1)
 
-Die Kopplung zwischen beiden Repos läuft über `WEBTREES_SOURCE` (siehe `08_layer_integration.md` §2.6 und CLAUDE.md „Optionales Modul-Mounting"-Konzept, analog angewendet auf die webtrees-Source selbst).
+Die Kopplung zwischen Testing-Platform und Fix-Repo läuft über `WEBTREES_SOURCE` (siehe `08_layer_integration.md` §2.6 und CLAUDE.md „Optionales Modul-Mounting"-Konzept, analog angewendet auf die webtrees-Source selbst): für Validierungs-Runs gegen einen Fix-Branch wird `WEBTREES_SOURCE=/home/borisunckel/phpprojects/webtrees-upstream/webtrees` gesetzt (und der Branch dort vorher ausgecheckt).
+
+### 1.1 Mirror-Flow: volatile Scratch → authoritative Fork
+
+Wenn ein Fix-Draft im volatilen Clone entstanden ist (typisch während eines Deep-Dives, weil dort der laufende Container-Stack direkt gegen ihn getestet werden kann), **muss** der Fix vor dem Task-Abschluss in den authoritativen Fork gespiegelt werden. Standardablauf:
+
+```bash
+cd /home/borisunckel/phpprojects/webtrees-upstream/webtrees
+
+# Einmalig: File-Remote auf den volatilen Clone setzen
+git remote add volatile \
+    /home/borisunckel/phpprojects/webtrees-testing-platform/upstream/webtrees
+
+# Vor jedem Mirror-Lauf:
+git fetch volatile
+
+# Branch im Fork **vom Fork-main** abzweigen (NICHT vom Volatile-main,
+# der einen anderen Stand haben kann)
+git checkout main
+git checkout -b security-audit-<NNN>-<slug>
+
+# Commits aus dem Volatile-Branch cherry-picken (GPG wird vererbt)
+git cherry-pick -S volatile/security-audit-<NNN>-<slug>~<n>..volatile/security-audit-<NNN>-<slug>
+
+# Signatur prüfen
+git log --show-signature -<n>
+```
+
+Regeln:
+
+1. **Branch-Base ist immer `main` des Fork-Repos.** Nicht `5349_add_tests`, nicht der aktuelle Volatile-Stand. Das garantiert, dass der Fix beim Upstream-PR auf dem aktuellen Stand des Forks (= Rebase-Basis für Upstream) aufsetzt.
+2. **Cherry-pick mit `-S`** — Fix-Commits müssen im authoritativen Fork ebenfalls GPG-signiert sein. Die Signatur des volatilen Commits wird dabei nicht kopiert, sondern durch eine neue ersetzt (anderer Commit-Hash).
+3. **Commit-Hashes im Task-Frontmatter pflegen:** sowohl der volatile (zur Nachvollziehbarkeit des Fix-Workflows) als auch der authoritative Hash werden im Task-File notiert. Der **authoritative** Hash ist der, der in PRs und Disclosure-Dokumenten referenziert wird.
+4. **Volatile-Branch kann danach gelöscht werden** — aber das ist optional. `make setup` würde ihn ohnehin beim nächsten Re-Clone verwerfen.
 
 ## 2. Branch-Naming
 
@@ -42,7 +76,7 @@ security-audit-<NNN>-<slug>
 **Regeln:**
 
 1. Ein Branch pro Task, auch bei mehreren bestätigten Hypothesen (`H1`, `H2`, …). Mehrere Hypothesen derselben Task werden als **zusammenhängender** Fix committet.
-2. Branch wird **vom User gewählten** Base-Branch abgezweigt. Default: `5349_add_tests` (aus der Session-Doku als aktueller Arbeitszweig des Forks). Der Driver nutzt `git rev-parse --abbrev-ref HEAD` in `webtrees-upstream/webtrees` zum Zeitpunkt der Branch-Erzeugung — wenn das nicht `5349_add_tests` ist, warnt der Driver den User **vor** der Branch-Erzeugung.
+2. Branch wird **vom `main`-Branch des Fork-Repos** abgezweigt (User-Vorgabe 2026-04-09 Conversation 2). Nicht vom volatilen Clone, nicht von Feature-Branches wie `5349_add_tests`. Der Driver/Operator nutzt `git rev-parse --abbrev-ref HEAD` in `/home/borisunckel/phpprojects/webtrees-upstream/webtrees` **und** `git rev-parse HEAD` vs. `git rev-parse origin/main` zur Branch-Erzeugung — wenn `HEAD` nicht auf `main` ist oder `main` hinter `origin/main` liegt, wird gewarnt (`git checkout main && git pull` empfohlen) **vor** der Branch-Erzeugung.
 3. Branches bleiben bestehen bis der User sie manuell löscht. Kein automatisches Cleanup.
 
 ## 3. Fix-Draft durch den Driver (Phase D6)
@@ -134,7 +168,7 @@ make test-integration-security-<NNN>
 ```bash
 cd /home/borisunckel/phpprojects/webtrees-upstream/webtrees
 git log -1 security-audit-<NNN>-<slug>
-git diff 5349_add_tests..security-audit-<NNN>-<slug>
+git diff main..security-audit-<NNN>-<slug>
 # Lokale Linting/Style-Prüfung, falls gewünscht
 ```
 
