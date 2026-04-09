@@ -40,7 +40,7 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 
 | ID | Status | Track | Impact | Final Score | Datei | Verticals | Letzte Änderung |
 |---|---|---|---|---|---|---|---|
-| *(leer — alle Tasks abgeschlossen oder abgebrochen)* | | | | | | | |
+| *(leer)* | | | | | | | |
 
 ## Abgeschlossen
 
@@ -53,6 +53,7 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 | SEC-AUDIT-002 | fix_verified | defense-in-depth (stored HTML injection, JS blocked by CSP) | ready_for_manual_pr | 2026-04-09 |
 | SEC-AUDIT-007 | fix_verified | code-quality (LOW, not exploitable) | ready_for_manual_pr | 2026-04-09 |
 | SEC-AUDIT-006 | fix_verified | defense-in-depth (sqli-readwrite, latent) | ready_for_manual_pr | 2026-04-09 |
+| SEC-AUDIT-008 | fix_verified | brute-force (auth-bypass, D-AUTH) | ready_for_manual_pr | 2026-04-09 |
 
 ## Needs Manual Review
 
@@ -62,12 +63,12 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 
 ## Aggregat-Zahlen
 
-- Tasks gesamt: 7
+- Tasks gesamt: 8
 - In Queue: 0
 - **Exploit confirmed**: 0
 - **Regression drafted**: 0
 - In Deep-Dive: 0
-- Fix verified: 6 (SEC-AUDIT-001 Fork-Commit c15b95fef4 (branch -clean, rebased off main); SEC-AUDIT-002 Branch `security-audit-002-upload-blocklist` — authoritative Fork-Commits Test `7b6fb9fc8f` + Fix `3bb05b15d4` + Bypass-Fix `775478141e`, Layer-2 6/6 (36 assertions); SEC-AUDIT-003 Branch `security-audit-003-replacement-image-csp` — authoritative Fork-Commits Test `32e541249e` + Fix `26cbc493a4`, Layer-2 2/2 (5 assertions); SEC-AUDIT-005 Branch `security-audit-005-module-action-case-bypass` — authoritative Fork-Commits Test `19e44380f5` + Fix `de5f8f5843`, Layer-2 10/10, Layer-3 10/10; SEC-AUDIT-007 Branch `security-audit-007-setupwizard-superglobal` — authoritative Fork-Commit `2e56788147`, 1-Zeilen-Fix LOW, Layer-2 1/1; SEC-AUDIT-006 Branch `security-audit-006-renumber-xref-guard` — authoritative Fork-Commits Test `c17c4f6545` + Fix `5735f9e9b1`, Layer-2 2/2 (6 assertions). Alle in `/home/borisunckel/phpprojects/webtrees-upstream/webtrees` auf Branches ab Fork-`main`, bereit für manuelle PRs.)
+- Fix verified: 7 (SEC-AUDIT-008 Branch `security-audit-008-login-rate-limit` — Fork-Commit `c0962a5b68`, Layer-3 3/3 (87 assertions); SEC-AUDIT-001 Fork-Commit c15b95fef4 (branch -clean, rebased off main); SEC-AUDIT-002 Branch `security-audit-002-upload-blocklist` — authoritative Fork-Commits Test `7b6fb9fc8f` + Fix `3bb05b15d4` + Bypass-Fix `775478141e`, Layer-2 6/6 (36 assertions); SEC-AUDIT-003 Branch `security-audit-003-replacement-image-csp` — authoritative Fork-Commits Test `32e541249e` + Fix `26cbc493a4`, Layer-2 2/2 (5 assertions); SEC-AUDIT-005 Branch `security-audit-005-module-action-case-bypass` — authoritative Fork-Commits Test `19e44380f5` + Fix `de5f8f5843`, Layer-2 10/10, Layer-3 10/10; SEC-AUDIT-007 Branch `security-audit-007-setupwizard-superglobal` — authoritative Fork-Commit `2e56788147`, 1-Zeilen-Fix LOW, Layer-2 1/1; SEC-AUDIT-006 Branch `security-audit-006-renumber-xref-guard` — authoritative Fork-Commits Test `c17c4f6545` + Fix `5735f9e9b1`, Layer-2 2/2 (6 assertions). Alle in `/home/borisunckel/phpprojects/webtrees-upstream/webtrees` auf Branches ab Fork-`main`, bereit für manuelle PRs.)
 - No finding: 1 (SEC-AUDIT-004 Enumeration `artifacts/security-audit/sec-audit-004/enumeration.md` bestätigt: kein SVG-Serve-Pfad umgeht `ImageFactory::imageResponse()`.)
 - Done: 0
 - Dropped: 3 (SetupWizard, UpgradeWizardStep, ContactAction — siehe run-2026-04-08T19-01-49/priorities.md)

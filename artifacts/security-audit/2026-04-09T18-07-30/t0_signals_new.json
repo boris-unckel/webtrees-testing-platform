@@ -1,0 +1,3239 @@
+{
+  "run_id": "2026-04-09T18-07-30",
+  "scope_total": 702,
+  "new_candidates": 670,
+  "with_signals": 359,
+  "signals": [
+    {
+      "path": "app/Services/TreeService.php",
+      "kind": "service",
+      "loc": 207,
+      "input_sinks": 0,
+      "db_sinks": 32,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Services/UserService.php",
+      "kind": "service",
+      "loc": 266,
+      "input_sinks": 1,
+      "db_sinks": 25,
+      "dangerous_fns": 0,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Services/MapDataService.php",
+      "kind": "service",
+      "loc": 230,
+      "input_sinks": 0,
+      "db_sinks": 21,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Services/HomePageService.php",
+      "kind": "service",
+      "loc": 238,
+      "input_sinks": 1,
+      "db_sinks": 19,
+      "dangerous_fns": 0,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Module/SiteMapModule.php",
+      "kind": "module",
+      "loc": 313,
+      "input_sinks": 2,
+      "db_sinks": 15,
+      "dangerous_fns": 1,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Http/RequestHandlers/SetupWizard.php",
+      "kind": "handler",
+      "loc": 282,
+      "input_sinks": 2,
+      "db_sinks": 10,
+      "dangerous_fns": 2,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Module/AbstractIndividualListModule.php",
+      "kind": "module",
+      "loc": 549,
+      "input_sinks": 2,
+      "db_sinks": 10,
+      "dangerous_fns": 2,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Services/PendingChangesService.php",
+      "kind": "service",
+      "loc": 224,
+      "input_sinks": 0,
+      "db_sinks": 13,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Module/StoriesModule.php",
+      "kind": "module",
+      "loc": 264,
+      "input_sinks": 3,
+      "db_sinks": 9,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeTreesAction.php",
+      "kind": "handler",
+      "loc": 210,
+      "input_sinks": 1,
+      "db_sinks": 9,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Services/LinkedRecordService.php",
+      "kind": "service",
+      "loc": 198,
+      "input_sinks": 0,
+      "db_sinks": 10,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Http/RequestHandlers/ManageMediaData.php",
+      "kind": "handler",
+      "loc": 259,
+      "input_sinks": 1,
+      "db_sinks": 6,
+      "dangerous_fns": 2,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CheckTree.php",
+      "kind": "handler",
+      "loc": 330,
+      "input_sinks": 2,
+      "db_sinks": 6,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeFactsAction.php",
+      "kind": "handler",
+      "loc": 125,
+      "input_sinks": 2,
+      "db_sinks": 6,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ControlPanel.php",
+      "kind": "handler",
+      "loc": 260,
+      "input_sinks": 0,
+      "db_sinks": 8,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Module/FamilyTreeNewsModule.php",
+      "kind": "module",
+      "loc": 170,
+      "input_sinks": 3,
+      "db_sinks": 5,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/UserJournalModule.php",
+      "kind": "module",
+      "loc": 167,
+      "input_sinks": 3,
+      "db_sinks": 5,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ModuleDataFixTrait.php",
+      "kind": "module",
+      "loc": 220,
+      "input_sinks": 0,
+      "db_sinks": 9,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePrivacyAction.php",
+      "kind": "handler",
+      "loc": 99,
+      "input_sinks": 2,
+      "db_sinks": 6,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Services/GedcomExportService.php",
+      "kind": "service",
+      "loc": 330,
+      "input_sinks": 0,
+      "db_sinks": 5,
+      "dangerous_fns": 2,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Module/FamilyTreeFavoritesModule.php",
+      "kind": "module",
+      "loc": 166,
+      "input_sinks": 3,
+      "db_sinks": 4,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/UserFavoritesModule.php",
+      "kind": "module",
+      "loc": 167,
+      "input_sinks": 3,
+      "db_sinks": 4,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/TopSurnamesModule.php",
+      "kind": "module",
+      "loc": 180,
+      "input_sinks": 1,
+      "db_sinks": 5,
+      "dangerous_fns": 1,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/MediaListModule.php",
+      "kind": "module",
+      "loc": 202,
+      "input_sinks": 3,
+      "db_sinks": 3,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/RelationshipsChartModule.php",
+      "kind": "module",
+      "loc": 529,
+      "input_sinks": 3,
+      "db_sinks": 3,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Services/ServerCheckService.php",
+      "kind": "service",
+      "loc": 209,
+      "input_sinks": 0,
+      "db_sinks": 7,
+      "dangerous_fns": 0,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Module/FixSearchAndReplace.php",
+      "kind": "module",
+      "loc": 233,
+      "input_sinks": 0,
+      "db_sinks": 7,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/RecentChangesModule.php",
+      "kind": "module",
+      "loc": 252,
+      "input_sinks": 1,
+      "db_sinks": 4,
+      "dangerous_fns": 1,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/XrefFactory.php",
+      "kind": "factory",
+      "loc": 39,
+      "input_sinks": 0,
+      "db_sinks": 7,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Http/RequestHandlers/ModuleDeleteSettings.php",
+      "kind": "handler",
+      "loc": 40,
+      "input_sinks": 1,
+      "db_sinks": 5,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Module/LifespansChartModule.php",
+      "kind": "module",
+      "loc": 311,
+      "input_sinks": 3,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/UserMessagesModule.php",
+      "kind": "module",
+      "loc": 112,
+      "input_sinks": 3,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Http/RequestHandlers/UnconnectedPage.php",
+      "kind": "handler",
+      "loc": 79,
+      "input_sinks": 2,
+      "db_sinks": 3,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixUpdate.php",
+      "kind": "handler",
+      "loc": 36,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixUpdateAll.php",
+      "kind": "handler",
+      "loc": 88,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/BadBotBlocker.php",
+      "kind": "middleware",
+      "loc": 1589,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Module/BranchesListModule.php",
+      "kind": "module",
+      "loc": 320,
+      "input_sinks": 3,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Http/RequestHandlers/FixLevel0MediaData.php",
+      "kind": "handler",
+      "loc": 97,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPage.php",
+      "kind": "handler",
+      "loc": 49,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Module/AbstractModule.php",
+      "kind": "module",
+      "loc": 110,
+      "input_sinks": 0,
+      "db_sinks": 5,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ReviewChangesModule.php",
+      "kind": "module",
+      "loc": 167,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 1,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Http/RequestHandlers/AutoCompleteCitation.php",
+      "kind": "handler",
+      "loc": 66,
+      "input_sinks": 2,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesLogPage.php",
+      "kind": "handler",
+      "loc": 82,
+      "input_sinks": 2,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Module/PlaceHierarchyListModule.php",
+      "kind": "module",
+      "loc": 308,
+      "input_sinks": 2,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Services/ModuleService.php",
+      "kind": "service",
+      "loc": 730,
+      "input_sinks": 0,
+      "db_sinks": 3,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Http/RequestHandlers/AbstractModuleComponentAction.php",
+      "kind": "handler",
+      "loc": 76,
+      "input_sinks": 1,
+      "db_sinks": 3,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixData.php",
+      "kind": "handler",
+      "loc": 68,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixPreview.php",
+      "kind": "handler",
+      "loc": 44,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataSave.php",
+      "kind": "handler",
+      "loc": 69,
+      "input_sinks": 1,
+      "db_sinks": 3,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SelectLanguage.php",
+      "kind": "handler",
+      "loc": 25,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SelectTheme.php",
+      "kind": "handler",
+      "loc": 25,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ImportGedcomAction.php",
+      "kind": "handler",
+      "loc": 64,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MediaFileThumbnail.php",
+      "kind": "handler",
+      "loc": 52,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PasswordResetAction.php",
+      "kind": "handler",
+      "loc": 44,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Module/AncestorsChartModule.php",
+      "kind": "module",
+      "loc": 161,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/CompactTreeChartModule.php",
+      "kind": "module",
+      "loc": 104,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/DescendancyChartModule.php",
+      "kind": "module",
+      "loc": 153,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/FamilyBookChartModule.php",
+      "kind": "module",
+      "loc": 126,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/FanChartModule.php",
+      "kind": "module",
+      "loc": 376,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/HourglassChartModule.php",
+      "kind": "module",
+      "loc": 146,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/InteractiveTreeModule.php",
+      "kind": "module",
+      "loc": 135,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/PedigreeChartModule.php",
+      "kind": "module",
+      "loc": 230,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/TimelineChartModule.php",
+      "kind": "module",
+      "loc": 215,
+      "input_sinks": 3,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Services/SiteLogsService.php",
+      "kind": "service",
+      "loc": 65,
+      "input_sinks": 1,
+      "db_sinks": 1,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataImportAction.php",
+      "kind": "handler",
+      "loc": 128,
+      "input_sinks": 2,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageBlock.php",
+      "kind": "handler",
+      "loc": 34,
+      "input_sinks": 2,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageBlock.php",
+      "kind": "handler",
+      "loc": 35,
+      "input_sinks": 2,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Services/CalendarService.php",
+      "kind": "service",
+      "loc": 363,
+      "input_sinks": 0,
+      "db_sinks": 2,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Http/RequestHandlers/SiteLogsPage.php",
+      "kind": "handler",
+      "loc": 73,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/DebugLogger.php",
+      "kind": "middleware",
+      "loc": 58,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/UseDatabase.php",
+      "kind": "middleware",
+      "loc": 30,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Module/HitCountFooterModule.php",
+      "kind": "module",
+      "loc": 123,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/LocationListModule.php",
+      "kind": "module",
+      "loc": 80,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/NoteListModule.php",
+      "kind": "module",
+      "loc": 78,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/RepositoryListModule.php",
+      "kind": "module",
+      "loc": 80,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ResearchTaskModule.php",
+      "kind": "module",
+      "loc": 174,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/SourceListModule.php",
+      "kind": "module",
+      "loc": 77,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/SubmitterListModule.php",
+      "kind": "module",
+      "loc": 84,
+      "input_sinks": 1,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Services/NetworkService.php",
+      "kind": "service",
+      "loc": 43,
+      "input_sinks": 0,
+      "db_sinks": 0,
+      "dangerous_fns": 2,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Http/RequestHandlers/UpgradeWizardStep.php",
+      "kind": "handler",
+      "loc": 179,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Services/DatatablesService.php",
+      "kind": "service",
+      "loc": 109,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Http/RequestHandlers/AbstractTomSelectHandler.php",
+      "kind": "handler",
+      "loc": 40,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddChildToFamilyAction.php",
+      "kind": "handler",
+      "loc": 49,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddChildToFamilyPage.php",
+      "kind": "handler",
+      "loc": 50,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddChildToIndividualAction.php",
+      "kind": "handler",
+      "loc": 39,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddChildToIndividualPage.php",
+      "kind": "handler",
+      "loc": 54,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddMediaFileAction.php",
+      "kind": "handler",
+      "loc": 43,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddNewFact.php",
+      "kind": "handler",
+      "loc": 61,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddParentToIndividualAction.php",
+      "kind": "handler",
+      "loc": 39,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddParentToIndividualPage.php",
+      "kind": "handler",
+      "loc": 49,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddSpouseToFamilyPage.php",
+      "kind": "handler",
+      "loc": 56,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddSpouseToIndividualAction.php",
+      "kind": "handler",
+      "loc": 58,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddSpouseToIndividualPage.php",
+      "kind": "handler",
+      "loc": 57,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddUnlinkedAction.php",
+      "kind": "handler",
+      "loc": 29,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddUnlinkedPage.php",
+      "kind": "handler",
+      "loc": 39,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AutoCompleteFolder.php",
+      "kind": "handler",
+      "loc": 34,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AutoCompletePlace.php",
+      "kind": "handler",
+      "loc": 35,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/BroadcastAction.php",
+      "kind": "handler",
+      "loc": 53,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ChangeFamilyMembersAction.php",
+      "kind": "handler",
+      "loc": 118,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ChangeFamilyMembersPage.php",
+      "kind": "handler",
+      "loc": 29,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateLocationAction.php",
+      "kind": "handler",
+      "loc": 30,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateMediaObjectAction.php",
+      "kind": "handler",
+      "loc": 65,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateMediaObjectFromFile.php",
+      "kind": "handler",
+      "loc": 35,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateNoteAction.php",
+      "kind": "handler",
+      "loc": 35,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateRepositoryAction.php",
+      "kind": "handler",
+      "loc": 47,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSourceAction.php",
+      "kind": "handler",
+      "loc": 65,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSubmissionAction.php",
+      "kind": "handler",
+      "loc": 30,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSubmitterAction.php",
+      "kind": "handler",
+      "loc": 50,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixSelect.php",
+      "kind": "handler",
+      "loc": 30,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditFactPage.php",
+      "kind": "handler",
+      "loc": 60,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditNoteAction.php",
+      "kind": "handler",
+      "loc": 30,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRawFactAction.php",
+      "kind": "handler",
+      "loc": 36,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRawFactPage.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRawRecordAction.php",
+      "kind": "handler",
+      "loc": 55,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRecordAction.php",
+      "kind": "handler",
+      "loc": 39,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRecordPage.php",
+      "kind": "handler",
+      "loc": 52,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EmailPreferencesAction.php",
+      "kind": "handler",
+      "loc": 67,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ExportGedcomClient.php",
+      "kind": "handler",
+      "loc": 33,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ExportGedcomServer.php",
+      "kind": "handler",
+      "loc": 53,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkChildToFamilyAction.php",
+      "kind": "handler",
+      "loc": 81,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkMediaToRecordAction.php",
+      "kind": "handler",
+      "loc": 25,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkSpouseToIndividualAction.php",
+      "kind": "handler",
+      "loc": 58,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LoginAction.php",
+      "kind": "handler",
+      "loc": 80,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LoginPage.php",
+      "kind": "handler",
+      "loc": 71,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataEdit.php",
+      "kind": "handler",
+      "loc": 69,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MediaFileDownload.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeFactsPage.php",
+      "kind": "handler",
+      "loc": 70,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeRecordsAction.php",
+      "kind": "handler",
+      "loc": 41,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeRecordsPage.php",
+      "kind": "handler",
+      "loc": 54,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MessagePage.php",
+      "kind": "handler",
+      "loc": 46,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MessageSelect.php",
+      "kind": "handler",
+      "loc": 21,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ModuleAction.php",
+      "kind": "handler",
+      "loc": 50,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PasswordRequestAction.php",
+      "kind": "handler",
+      "loc": 75,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PasswordResetPage.php",
+      "kind": "handler",
+      "loc": 43,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PasteFact.php",
+      "kind": "handler",
+      "loc": 30,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChanges.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesAcceptChange.php",
+      "kind": "handler",
+      "loc": 30,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesAcceptTree.php",
+      "kind": "handler",
+      "loc": 28,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesLogData.php",
+      "kind": "handler",
+      "loc": 91,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesLogDelete.php",
+      "kind": "handler",
+      "loc": 25,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesLogDownload.php",
+      "kind": "handler",
+      "loc": 41,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesRejectChange.php",
+      "kind": "handler",
+      "loc": 30,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderChildrenAction.php",
+      "kind": "handler",
+      "loc": 42,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderChildrenPage.php",
+      "kind": "handler",
+      "loc": 31,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderFamiliesAction.php",
+      "kind": "handler",
+      "loc": 42,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderMediaAction.php",
+      "kind": "handler",
+      "loc": 41,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderMediaFilesAction.php",
+      "kind": "handler",
+      "loc": 41,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderNamesAction.php",
+      "kind": "handler",
+      "loc": 41,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReportSetupPage.php",
+      "kind": "handler",
+      "loc": 135,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchAdvancedAction.php",
+      "kind": "handler",
+      "loc": 26,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchAdvancedPage.php",
+      "kind": "handler",
+      "loc": 191,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchPhoneticAction.php",
+      "kind": "handler",
+      "loc": 22,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchPhoneticPage.php",
+      "kind": "handler",
+      "loc": 66,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchQuickAction.php",
+      "kind": "handler",
+      "loc": 25,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchReplaceAction.php",
+      "kind": "handler",
+      "loc": 119,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SearchReplacePage.php",
+      "kind": "handler",
+      "loc": 29,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SelectNewFact.php",
+      "kind": "handler",
+      "loc": 20,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageUpdate.php",
+      "kind": "handler",
+      "loc": 39,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UnconnectedAction.php",
+      "kind": "handler",
+      "loc": 20,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UploadMediaAction.php",
+      "kind": "handler",
+      "loc": 85,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserEditAction.php",
+      "kind": "handler",
+      "loc": 119,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserListPage.php",
+      "kind": "handler",
+      "loc": 27,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageUpdate.php",
+      "kind": "handler",
+      "loc": 41,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/CheckCsrf.php",
+      "kind": "middleware",
+      "loc": 47,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/Router.php",
+      "kind": "middleware",
+      "loc": 88,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Module/CensusAssistantModule.php",
+      "kind": "module",
+      "loc": 143,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ColorsTheme.php",
+      "kind": "module",
+      "loc": 158,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/DescendancyModule.php",
+      "kind": "module",
+      "loc": 161,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ModuleAnalyticsTrait.php",
+      "kind": "module",
+      "loc": 79,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ModuleTabTrait.php",
+      "kind": "module",
+      "loc": 69,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ModuleThemeTrait.php",
+      "kind": "module",
+      "loc": 319,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/PedigreeMapModule.php",
+      "kind": "module",
+      "loc": 221,
+      "input_sinks": 2,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Services/UpgradeService.php",
+      "kind": "service",
+      "loc": 203,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Factories/RepositoryFactory.php",
+      "kind": "factory",
+      "loc": 53,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 1,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Http/RequestHandlers/CleanDataFolder.php",
+      "kind": "handler",
+      "loc": 60,
+      "input_sinks": 1,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataExportCSV.php",
+      "kind": "handler",
+      "loc": 115,
+      "input_sinks": 1,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataExportGeoJson.php",
+      "kind": "handler",
+      "loc": 84,
+      "input_sinks": 1,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ModulesAllAction.php",
+      "kind": "handler",
+      "loc": 41,
+      "input_sinks": 1,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePrivacyPage.php",
+      "kind": "handler",
+      "loc": 109,
+      "input_sinks": 1,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserListData.php",
+      "kind": "handler",
+      "loc": 108,
+      "input_sinks": 1,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Module/TopPageViewsModule.php",
+      "kind": "module",
+      "loc": 93,
+      "input_sinks": 1,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Services/HousekeepingService.php",
+      "kind": "service",
+      "loc": 232,
+      "input_sinks": 0,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Factories/FamilyFactory.php",
+      "kind": "factory",
+      "loc": 54,
+      "input_sinks": 0,
+      "db_sinks": 2,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Services/GedcomEditService.php",
+      "kind": "service",
+      "loc": 205,
+      "input_sinks": 0,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Services/HtmlService.php",
+      "kind": "service",
+      "loc": 59,
+      "input_sinks": 0,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Services/MaintenanceModeService.php",
+      "kind": "service",
+      "loc": 62,
+      "input_sinks": 0,
+      "db_sinks": 0,
+      "dangerous_fns": 1,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Http/RequestHandlers/AccountDelete.php",
+      "kind": "handler",
+      "loc": 31,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AccountEdit.php",
+      "kind": "handler",
+      "loc": 60,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AddMediaFileModal.php",
+      "kind": "handler",
+      "loc": 47,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AdminMediaFileDownload.php",
+      "kind": "handler",
+      "loc": 31,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/AdminMediaFileThumbnail.php",
+      "kind": "handler",
+      "loc": 31,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/BroadcastPage.php",
+      "kind": "handler",
+      "loc": 32,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CopyFact.php",
+      "kind": "handler",
+      "loc": 41,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateLocationModal.php",
+      "kind": "handler",
+      "loc": 20,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateMediaObjectModal.php",
+      "kind": "handler",
+      "loc": 30,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateNoteModal.php",
+      "kind": "handler",
+      "loc": 20,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateRepositoryModal.php",
+      "kind": "handler",
+      "loc": 30,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSourceModal.php",
+      "kind": "handler",
+      "loc": 20,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSubmissionModal.php",
+      "kind": "handler",
+      "loc": 18,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateSubmitterModal.php",
+      "kind": "handler",
+      "loc": 18,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateTreeAction.php",
+      "kind": "handler",
+      "loc": 34,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/CreateTreePage.php",
+      "kind": "handler",
+      "loc": 31,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixChoose.php",
+      "kind": "handler",
+      "loc": 33,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DataFixPage.php",
+      "kind": "handler",
+      "loc": 51,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DeleteFact.php",
+      "kind": "handler",
+      "loc": 29,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DeletePath.php",
+      "kind": "handler",
+      "loc": 57,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DeleteRecord.php",
+      "kind": "handler",
+      "loc": 75,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DeleteTreeAction.php",
+      "kind": "handler",
+      "loc": 28,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/DeleteUser.php",
+      "kind": "handler",
+      "loc": 34,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditMediaFileModal.php",
+      "kind": "handler",
+      "loc": 53,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditNotePage.php",
+      "kind": "handler",
+      "loc": 28,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EditRawRecordPage.php",
+      "kind": "handler",
+      "loc": 32,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/EmptyClipboard.php",
+      "kind": "handler",
+      "loc": 24,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ExportGedcomPage.php",
+      "kind": "handler",
+      "loc": 48,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/FamilyPage.php",
+      "kind": "handler",
+      "loc": 98,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/FindDuplicateRecords.php",
+      "kind": "handler",
+      "loc": 32,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/FixLevel0MediaAction.php",
+      "kind": "handler",
+      "loc": 44,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/GedcomRecordPage.php",
+      "kind": "handler",
+      "loc": 79,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/HeaderPage.php",
+      "kind": "handler",
+      "loc": 45,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/HelpText.php",
+      "kind": "handler",
+      "loc": 248,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/HomePage.php",
+      "kind": "handler",
+      "loc": 48,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ImportGedcomPage.php",
+      "kind": "handler",
+      "loc": 41,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/IndividualPage.php",
+      "kind": "handler",
+      "loc": 185,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkChildToFamilyPage.php",
+      "kind": "handler",
+      "loc": 30,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkMediaToFamilyModal.php",
+      "kind": "handler",
+      "loc": 24,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkMediaToIndividualModal.php",
+      "kind": "handler",
+      "loc": 24,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkMediaToSourceModal.php",
+      "kind": "handler",
+      "loc": 24,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LinkSpouseToIndividualPage.php",
+      "kind": "handler",
+      "loc": 52,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/LocationPage.php",
+      "kind": "handler",
+      "loc": 49,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/Logout.php",
+      "kind": "handler",
+      "loc": 32,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ManageMediaAction.php",
+      "kind": "handler",
+      "loc": 29,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ManageMediaPage.php",
+      "kind": "handler",
+      "loc": 41,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ManageTrees.php",
+      "kind": "handler",
+      "loc": 50,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataAdd.php",
+      "kind": "handler",
+      "loc": 64,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataDelete.php",
+      "kind": "handler",
+      "loc": 25,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MapDataList.php",
+      "kind": "handler",
+      "loc": 74,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/Masquerade.php",
+      "kind": "handler",
+      "loc": 35,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MediaPage.php",
+      "kind": "handler",
+      "loc": 53,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/MergeTreesPage.php",
+      "kind": "handler",
+      "loc": 42,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/NotFound.php",
+      "kind": "handler",
+      "loc": 29,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/NotePage.php",
+      "kind": "handler",
+      "loc": 57,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PasswordRequestPage.php",
+      "kind": "handler",
+      "loc": 27,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesAcceptRecord.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesLogAction.php",
+      "kind": "handler",
+      "loc": 24,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesRejectRecord.php",
+      "kind": "handler",
+      "loc": 33,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/PendingChangesRejectTree.php",
+      "kind": "handler",
+      "loc": 27,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectAncestryPhp.php",
+      "kind": "handler",
+      "loc": 56,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectBranchesPhp.php",
+      "kind": "handler",
+      "loc": 47,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectCalendarPhp.php",
+      "kind": "handler",
+      "loc": 51,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectCompactPhp.php",
+      "kind": "handler",
+      "loc": 45,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectDescendencyPhp.php",
+      "kind": "handler",
+      "loc": 56,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectFamListPhp.php",
+      "kind": "handler",
+      "loc": 51,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectFamilyBookPhp.php",
+      "kind": "handler",
+      "loc": 50,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectFamilyPhp.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectFanChartPhp.php",
+      "kind": "handler",
+      "loc": 52,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectGedRecordPhp.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectHourGlassPhp.php",
+      "kind": "handler",
+      "loc": 50,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectIndiListPhp.php",
+      "kind": "handler",
+      "loc": 51,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectIndividualPhp.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectLifeSpanPhp.php",
+      "kind": "handler",
+      "loc": 44,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectMediaListPhp.php",
+      "kind": "handler",
+      "loc": 49,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectMediaViewerPhp.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectModulePhp.php",
+      "kind": "handler",
+      "loc": 59,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectNoteListPhp.php",
+      "kind": "handler",
+      "loc": 43,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectNotePhp.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectPedigreePhp.php",
+      "kind": "handler",
+      "loc": 56,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectPlaceListPhp.php",
+      "kind": "handler",
+      "loc": 46,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectRelationshipPhp.php",
+      "kind": "handler",
+      "loc": 51,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectRepoListPhp.php",
+      "kind": "handler",
+      "loc": 43,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectReportEnginePhp.php",
+      "kind": "handler",
+      "loc": 43,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectRepositoryPhp.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectSourceListPhp.php",
+      "kind": "handler",
+      "loc": 43,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectSourcePhp.php",
+      "kind": "handler",
+      "loc": 38,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectStatisticsPhp.php",
+      "kind": "handler",
+      "loc": 44,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RedirectTimeLinePhp.php",
+      "kind": "handler",
+      "loc": 47,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RegisterPage.php",
+      "kind": "handler",
+      "loc": 55,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RenumberTreePage.php",
+      "kind": "handler",
+      "loc": 33,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderFamiliesPage.php",
+      "kind": "handler",
+      "loc": 31,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderMediaFilesPage.php",
+      "kind": "handler",
+      "loc": 35,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderMediaPage.php",
+      "kind": "handler",
+      "loc": 29,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReorderNamesPage.php",
+      "kind": "handler",
+      "loc": 29,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/ReportListPage.php",
+      "kind": "handler",
+      "loc": 33,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RepositoryPage.php",
+      "kind": "handler",
+      "loc": 52,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/RobotsTxt.php",
+      "kind": "handler",
+      "loc": 49,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SelectDefaultTree.php",
+      "kind": "handler",
+      "loc": 28,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SharedNotePage.php",
+      "kind": "handler",
+      "loc": 57,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SiteLogsAction.php",
+      "kind": "handler",
+      "loc": 23,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SitePreferencesAction.php",
+      "kind": "handler",
+      "loc": 45,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SiteRegistrationAction.php",
+      "kind": "handler",
+      "loc": 29,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SiteTagsAction.php",
+      "kind": "handler",
+      "loc": 42,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SourcePage.php",
+      "kind": "handler",
+      "loc": 52,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SubmissionPage.php",
+      "kind": "handler",
+      "loc": 45,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/SubmitterPage.php",
+      "kind": "handler",
+      "loc": 51,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageBlockEdit.php",
+      "kind": "handler",
+      "loc": 35,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageBlockUpdate.php",
+      "kind": "handler",
+      "loc": 26,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageDefaultUpdate.php",
+      "kind": "handler",
+      "loc": 27,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePageEdit.php",
+      "kind": "handler",
+      "loc": 42,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/TreePreferencesPage.php",
+      "kind": "handler",
+      "loc": 130,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UpgradeWizardPage.php",
+      "kind": "handler",
+      "loc": 74,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserAddAction.php",
+      "kind": "handler",
+      "loc": 59,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserAddPage.php",
+      "kind": "handler",
+      "loc": 28,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserEditPage.php",
+      "kind": "handler",
+      "loc": 77,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageBlockEdit.php",
+      "kind": "handler",
+      "loc": 36,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageBlockUpdate.php",
+      "kind": "handler",
+      "loc": 27,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageDefaultUpdate.php",
+      "kind": "handler",
+      "loc": 27,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UserPageEdit.php",
+      "kind": "handler",
+      "loc": 42,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/RequestHandlers/UsersCleanupAction.php",
+      "kind": "handler",
+      "loc": 37,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/AuthAdministrator.php",
+      "kind": "middleware",
+      "loc": 30,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/AuthEditor.php",
+      "kind": "middleware",
+      "loc": 31,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/AuthLoggedIn.php",
+      "kind": "middleware",
+      "loc": 27,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/AuthManager.php",
+      "kind": "middleware",
+      "loc": 31,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/AuthMember.php",
+      "kind": "middleware",
+      "loc": 31,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/AuthModerator.php",
+      "kind": "middleware",
+      "loc": 31,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/AuthNotRobot.php",
+      "kind": "middleware",
+      "loc": 20,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/BaseUrl.php",
+      "kind": "middleware",
+      "loc": 37,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/ClientIp.php",
+      "kind": "middleware",
+      "loc": 27,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/HandleExceptions.php",
+      "kind": "middleware",
+      "loc": 158,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/LoadRoutes.php",
+      "kind": "middleware",
+      "loc": 37,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/RequestHandler.php",
+      "kind": "middleware",
+      "loc": 23,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Http/Middleware/SecurityHeaders.php",
+      "kind": "middleware",
+      "loc": 33,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Services/CaptchaService.php",
+      "kind": "service",
+      "loc": 50,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Services/EmailService.php",
+      "kind": "service",
+      "loc": 139,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Module/ChartsBlockModule.php",
+      "kind": "module",
+      "loc": 170,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ChartsMenuModule.php",
+      "kind": "module",
+      "loc": 52,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/CheckForNewVersion.php",
+      "kind": "module",
+      "loc": 70,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ContactsFooterModule.php",
+      "kind": "module",
+      "loc": 82,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/CustomCssJsModule.php",
+      "kind": "module",
+      "loc": 60,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/GeonamesAutocomplete.php",
+      "kind": "module",
+      "loc": 94,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/GoogleAnalyticsModule.php",
+      "kind": "module",
+      "loc": 69,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/GoogleMaps.php",
+      "kind": "module",
+      "loc": 114,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/HereMaps.php",
+      "kind": "module",
+      "loc": 119,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/HtmlBlockModule.php",
+      "kind": "module",
+      "loc": 111,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/MapBox.php",
+      "kind": "module",
+      "loc": 136,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/MapGeoLocationGeonames.php",
+      "kind": "module",
+      "loc": 45,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/MapGeoLocationOpenRouteService.php",
+      "kind": "module",
+      "loc": 42,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ModuleCustomTrait.php",
+      "kind": "module",
+      "loc": 103,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/OnThisDayModule.php",
+      "kind": "module",
+      "loc": 188,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/OpenRouteServiceAutocomplete.php",
+      "kind": "module",
+      "loc": 97,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/PrivacyPolicy.php",
+      "kind": "module",
+      "loc": 76,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ReportsMenuModule.php",
+      "kind": "module",
+      "loc": 52,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/ShareAnniversaryModule.php",
+      "kind": "module",
+      "loc": 96,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/TopGivenNamesModule.php",
+      "kind": "module",
+      "loc": 106,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/UpcomingAnniversariesModule.php",
+      "kind": "module",
+      "loc": 215,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Module/YahrzeitModule.php",
+      "kind": "module",
+      "loc": 170,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/RouteFactory.php",
+      "kind": "factory",
+      "loc": 51,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Validator.php",
+      "kind": "core",
+      "loc": 257,
+      "input_sinks": 1,
+      "db_sinks": 0,
+      "dangerous_fns": 0,
+      "type_weight": 0.8
+    },
+    {
+      "path": "app/Http/Middleware/UseTransaction.php",
+      "kind": "middleware",
+      "loc": 20,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 1.0
+    },
+    {
+      "path": "app/Services/MessageService.php",
+      "kind": "service",
+      "loc": 140,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.7
+    },
+    {
+      "path": "app/Factories/AbstractGedcomRecordFactory.php",
+      "kind": "factory",
+      "loc": 40,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/GedcomRecordFactory.php",
+      "kind": "factory",
+      "loc": 134,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/HeaderFactory.php",
+      "kind": "factory",
+      "loc": 48,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/IndividualFactory.php",
+      "kind": "factory",
+      "loc": 47,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/LocationFactory.php",
+      "kind": "factory",
+      "loc": 48,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/MediaFactory.php",
+      "kind": "factory",
+      "loc": 47,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/NoteFactory.php",
+      "kind": "factory",
+      "loc": 48,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/SharedNoteFactory.php",
+      "kind": "factory",
+      "loc": 48,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/SourceFactory.php",
+      "kind": "factory",
+      "loc": 47,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/SubmissionFactory.php",
+      "kind": "factory",
+      "loc": 48,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    },
+    {
+      "path": "app/Factories/SubmitterFactory.php",
+      "kind": "factory",
+      "loc": 48,
+      "input_sinks": 0,
+      "db_sinks": 1,
+      "dangerous_fns": 0,
+      "type_weight": 0.6
+    }
+  ]
+}
