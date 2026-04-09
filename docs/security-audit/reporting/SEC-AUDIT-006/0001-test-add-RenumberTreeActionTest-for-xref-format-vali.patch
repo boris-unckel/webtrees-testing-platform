@@ -1,0 +1,76 @@
+From c17c4f6545aedf7c78fb38516b67085b6c071596 Mon Sep 17 00:00:00 2001
+From: boris-unckel <bu.githubcom@mail.unckel.net>
+Date: Thu, 9 Apr 2026 09:11:21 +0200
+Subject: [PATCH 1/2] test: add RenumberTreeActionTest for xref format
+ validation
+
+RED test: testRenumberSkipsMalformedXref() demonstrates that a
+malformed xref containing SQL metacharacters (single quote) causes
+a QueryException when interpolated into raw Expression() calls.
+Defense-in-depth regression for SEC-AUDIT-006.
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+---
+ .../RenumberTreeActionTest.php                | 40 ++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 2 deletions(-)
+
+diff --git a/tests/app/Http/RequestHandlers/RenumberTreeActionTest.php b/tests/app/Http/RequestHandlers/RenumberTreeActionTest.php
+index 2cc929d853..04cdb50267 100644
+--- a/tests/app/Http/RequestHandlers/RenumberTreeActionTest.php
++++ b/tests/app/Http/RequestHandlers/RenumberTreeActionTest.php
+@@ -19,14 +19,50 @@ declare(strict_types=1);
+ 
+ namespace Fisharebest\Webtrees\Http\RequestHandlers;
+ 
++use Fig\Http\Message\RequestMethodInterface;
++use Fig\Http\Message\StatusCodeInterface;
++use Fisharebest\Webtrees\Individual;
++use Fisharebest\Webtrees\Services\AdminService;
++use Fisharebest\Webtrees\Services\PhpService;
++use Fisharebest\Webtrees\Services\TimeoutService;
+ use Fisharebest\Webtrees\TestCase;
+ use PHPUnit\Framework\Attributes\CoversClass;
+ 
+ #[CoversClass(RenumberTreeAction::class)]
+ class RenumberTreeActionTest extends TestCase
+ {
+-    public function testClass(): void
++    protected static bool $uses_database = true;
++
++    public function testRenumberWithNoDuplicates(): void
++    {
++        $tree = $this->importTree('demo.ged');
++
++        $admin_service = self::createStub(AdminService::class);
++        $admin_service->method('duplicateXrefs')->willReturn([]);
++
++        $timeout_service = new TimeoutService(php_service: new PhpService());
++
++        $handler  = new RenumberTreeAction($admin_service, $timeout_service);
++        $request  = self::createRequest(RequestMethodInterface::METHOD_POST, [], [], [], ['tree' => $tree]);
++        $response = $handler->handle($request);
++
++        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
++    }
++
++    public function testRenumberSkipsMalformedXref(): void
+     {
+-        self::assertTrue(class_exists(RenumberTreeAction::class));
++        $tree = $this->importTree('demo.ged');
++
++        $admin_service = self::createStub(AdminService::class);
++        $admin_service->method('duplicateXrefs')
++            ->willReturn(["I1' OR 1=1--" => Individual::RECORD_TYPE]);
++
++        $timeout_service = new TimeoutService(php_service: new PhpService());
++
++        $handler  = new RenumberTreeAction($admin_service, $timeout_service);
++        $request  = self::createRequest(RequestMethodInterface::METHOD_POST, [], [], [], ['tree' => $tree]);
++        $response = $handler->handle($request);
++
++        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+     }
+ }
+-- 
+2.53.0
+

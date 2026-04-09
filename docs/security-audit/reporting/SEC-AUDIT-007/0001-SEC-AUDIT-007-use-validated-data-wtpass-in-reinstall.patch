@@ -1,0 +1,52 @@
+From 2e567881474227742f7c39e725ffde661b3c74cb Mon Sep 17 00:00:00 2001
+From: boris-unckel <bu.githubcom@mail.unckel.net>
+Date: Thu, 9 Apr 2026 07:20:04 +0200
+Subject: [PATCH] SEC-AUDIT-007: use validated $data['wtpass'] in reinstall
+ path
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+SetupWizard.php line 327 (the reinstall branch where an admin user
+already exists) called $admin->setPassword($_POST['wtpass']) — a raw
+superglobal read that bypasses the Validator::parsedBody() pipeline
+used everywhere else in this handler. The fresh-install branch one
+line above already uses $data['wtpass'], which is populated at
+line 180 via
+
+    $data[$key] = Validator::parsedBody($request)->string($key, $default);
+
+The fix makes the reinstall branch consistent.
+
+Not a live vulnerability: User::setPassword() immediately pushes the
+value through password_hash(). It is never echoed, interpolated into
+SQL, stored verbatim, or logged. The concrete benefits are:
+
+  * API consistency — all request input now flows through Validator.
+  * Error handling — $_POST['wtpass'] raises an Undefined-Index
+    warning when the field is missing; the validated variant returns
+    the DEFAULT_DATA fallback.
+  * Audit hygiene — removes a raw `\$_POST[` hit from the T0 grep
+    pattern used by the security-audit sweep driver.
+
+Reference: docs/security-audit/tasks/SEC-AUDIT-007_setupwizard_superglobal.md
+---
+ app/Http/RequestHandlers/SetupWizard.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/app/Http/RequestHandlers/SetupWizard.php b/app/Http/RequestHandlers/SetupWizard.php
+index 1d4cf35952..d31b3bc1c7 100644
+--- a/app/Http/RequestHandlers/SetupWizard.php
++++ b/app/Http/RequestHandlers/SetupWizard.php
+@@ -324,7 +324,7 @@ final class SetupWizard implements RequestHandlerInterface
+             $admin->setPreference(UserInterface::PREF_LANGUAGE, $data['lang']);
+             $admin->setPreference(UserInterface::PREF_IS_VISIBLE_ONLINE, '1');
+         } else {
+-            $admin->setPassword($_POST['wtpass']);
++            $admin->setPassword($data['wtpass']);
+         }
+         // Make the user an administrator
+         $admin->setPreference(UserInterface::PREF_IS_ADMINISTRATOR, '1');
+-- 
+2.53.0
+

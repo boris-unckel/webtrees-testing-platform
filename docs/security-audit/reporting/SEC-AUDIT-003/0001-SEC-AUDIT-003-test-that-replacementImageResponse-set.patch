@@ -1,0 +1,48 @@
+From 32e541249ee45a02833e3c5a5aa7acb274c453b1 Mon Sep 17 00:00:00 2001
+From: boris-unckel <bu.githubcom@mail.unckel.net>
+Date: Thu, 9 Apr 2026 07:46:59 +0200
+Subject: [PATCH 1/2] SEC-AUDIT-003: test that replacementImageResponse sets
+ CSP header
+
+Asserts the placeholder SVG path returns the same strict
+`script-src none;frame-src none` Content-Security-Policy header
+as the regular imageResponse() path. This pins the symmetry
+between the two response constructors so a future change cannot
+silently weaken the placeholder.
+
+Fails on current main (header is empty).
+---
+ tests/app/Factories/ImageFactoryTest.php | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/tests/app/Factories/ImageFactoryTest.php b/tests/app/Factories/ImageFactoryTest.php
+index b14f9ee8d3..7ebfde72f2 100644
+--- a/tests/app/Factories/ImageFactoryTest.php
++++ b/tests/app/Factories/ImageFactoryTest.php
+@@ -19,6 +19,7 @@ declare(strict_types=1);
+ 
+ namespace Fisharebest\Webtrees\Factories;
+ 
++use Fisharebest\Webtrees\Registry;
+ use Fisharebest\Webtrees\TestCase;
+ use PHPUnit\Framework\Attributes\CoversClass;
+ 
+@@ -29,4 +30,15 @@ class ImageFactoryTest extends TestCase
+     {
+         self::assertTrue(class_exists(ImageFactory::class));
+     }
++
++    public function testReplacementImageResponseSetsContentSecurityPolicyHeader(): void
++    {
++        $response = Registry::imageFactory()->replacementImageResponse('NOT FOUND');
++
++        self::assertSame('image/svg+xml', $response->getHeaderLine('content-type'));
++        self::assertSame(
++            'script-src none;frame-src none',
++            $response->getHeaderLine('content-security-policy'),
++        );
++    }
+ }
+-- 
+2.53.0
+

@@ -1,0 +1,54 @@
+From 26cbc493a4d6b6d78b184bc1dd840d4906aa6232 Mon Sep 17 00:00:00 2001
+From: boris-unckel <bu.githubcom@mail.unckel.net>
+Date: Thu, 9 Apr 2026 07:47:29 +0200
+Subject: [PATCH 2/2] SEC-AUDIT-003: add CSP header to
+ replacementImageResponse()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Previously the placeholder SVG response (used for NOT FOUND, XSS
+block, INTERNAL_SERVER_ERROR and all other error fallback paths
+in ImageFactory, MediaFileThumbnail, MediaFileDownload) returned
+only `content-type: image/svg+xml` — no Content-Security-Policy.
+
+The regular imageResponse() path already sets
+`content-security-policy: script-src none;frame-src none` as a
+defense-in-depth barrier against active content in SVG/HTML
+bodies. The placeholder path did not, which is inconsistent and
+removes a future safety net: if a later change ever interpolates
+user-controlled text into the placeholder body (filename,
+exception message, …), there is no CSP to block inline scripts.
+
+This commit fixes the method so every caller inherits the same
+strict CSP without touching any of the 13 call sites. The symmetry
+with imageResponse() is now explicit and the SEC-AUDIT-003 test
+from the previous commit passes.
+
+No behaviour change for existing SVG placeholders (static text).
+Defense-in-depth only; no known exploitable primitive today.
+---
+ app/Factories/ImageFactory.php | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/app/Factories/ImageFactory.php b/app/Factories/ImageFactory.php
+index 0e39d7993b..1de9ad2179 100644
+--- a/app/Factories/ImageFactory.php
++++ b/app/Factories/ImageFactory.php
+@@ -260,8 +260,12 @@ class ImageFactory implements ImageFactoryInterface
+         $svg = view(name: 'errors/image-svg', data: ['status' => $text]);
+ 
+         // We can't send the actual status code, as browsers won't show images with 4xx/5xx.
++        // We set the same strict Content-Security-Policy as imageResponse() so the
++        // placeholder SVG cannot execute inline scripts even if a future change
++        // introduces user-controlled substitutions into the placeholder body.
+         return response(content: $svg, code: StatusCodeInterface::STATUS_OK, headers: [
+-            'content-type' => 'image/svg+xml',
++            'content-type'            => 'image/svg+xml',
++            'content-security-policy' => 'script-src none;frame-src none',
+         ]);
+     }
+ 
+-- 
+2.53.0
+

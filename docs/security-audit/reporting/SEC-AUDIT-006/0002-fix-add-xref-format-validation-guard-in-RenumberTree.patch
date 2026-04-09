@@ -1,0 +1,52 @@
+From 5735f9e9b1592b1532a234c583ac05afc939ccf4 Mon Sep 17 00:00:00 2001
+From: boris-unckel <bu.githubcom@mail.unckel.net>
+Date: Thu, 9 Apr 2026 09:12:23 +0200
+Subject: [PATCH 2/2] fix: add xref format validation guard in
+ RenumberTreeAction
+
+Defense-in-depth: validate $old_xref against Gedcom::REGEX_XREF before
+interpolating into raw SQL Expression() calls. Malformed xrefs are
+skipped. Eliminates cross-file safety dependency on REGEX_XREF
+constraint for 31 raw REPLACE() expressions.
+
+SEC-AUDIT-006
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+---
+ app/Http/RequestHandlers/RenumberTreeAction.php | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/app/Http/RequestHandlers/RenumberTreeAction.php b/app/Http/RequestHandlers/RenumberTreeAction.php
+index 1088e44153..6d0181ce2a 100644
+--- a/app/Http/RequestHandlers/RenumberTreeAction.php
++++ b/app/Http/RequestHandlers/RenumberTreeAction.php
+@@ -22,6 +22,7 @@ namespace Fisharebest\Webtrees\Http\RequestHandlers;
+ use Fisharebest\Webtrees\Contracts\UserInterface;
+ use Fisharebest\Webtrees\DB;
+ use Fisharebest\Webtrees\Family;
++use Fisharebest\Webtrees\Gedcom;
+ use Fisharebest\Webtrees\FlashMessages;
+ use Fisharebest\Webtrees\I18N;
+ use Fisharebest\Webtrees\Individual;
+@@ -40,6 +41,7 @@ use Psr\Http\Message\ServerRequestInterface;
+ use Psr\Http\Server\RequestHandlerInterface;
+ 
+ use function e;
++use function preg_match;
+ use function redirect;
+ use function route;
+ 
+@@ -68,6 +70,10 @@ final class RenumberTreeAction implements RequestHandlerInterface
+         }
+ 
+         foreach ($xrefs as $old_xref => $type) {
++            if (preg_match('/\A' . Gedcom::REGEX_XREF . '\z/', $old_xref) !== 1) {
++                continue;
++            }
++
+             $new_xref = Registry::xrefFactory()->make($type);
+             switch ($type) {
+                 case Individual::RECORD_TYPE:
+-- 
+2.53.0
+

@@ -1,0 +1,98 @@
+From 775478141ee8882853b1a6e08be19431b0e5ba88 Mon Sep 17 00:00:00 2001
+From: boris-unckel <bu.githubcom@mail.unckel.net>
+Date: Thu, 9 Apr 2026 08:46:23 +0200
+Subject: [PATCH 3/3] fix: move extension blocklist after auto-rename to close
+ bypass
+
+The initial placement checked $file before auto-rename, but the
+auto-rename path derives its extension from the uploaded file's
+client filename.  An attacker could set new_file=safe.jpg + auto=1
+and the .htm extension from getClientFilename() would slip through.
+
+Move the blocklist check after the auto-rename block so it covers
+both the explicit-name path and the auto-generated sha1.ext path.
+Add testUploadFileRejectsDangerousExtensionViaAutoRename to pin
+this specific bypass scenario.
+
+SEC-AUDIT-002
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+---
+ app/Services/MediaFileService.php           | 14 +++++-----
+ tests/app/Services/MediaFileServiceTest.php | 30 +++++++++++++++++++++
+ 2 files changed, 37 insertions(+), 7 deletions(-)
+
+diff --git a/app/Services/MediaFileService.php b/app/Services/MediaFileService.php
+index 3b5147bc5a..633b4d04c5 100644
+--- a/app/Services/MediaFileService.php
++++ b/app/Services/MediaFileService.php
+@@ -167,13 +167,6 @@ class MediaFileService
+                     $file = $uploaded_file->getClientFilename();
+                 }
+ 
+-                // Do not allow obvious script files.
+-                if (preg_match('/(\.(php|pl|cgi|bash|sh|bat|exe|com|htm|html|shtml))$/i', $file, $match)) {
+-                    FlashMessages::addMessage(I18N::translate('Filenames are not allowed to have the extension "%s".', $match[1]));
+-
+-                    return '';
+-                }
+-
+                 // The folder
+                 $folder = strtr($folder, ['\\' => '/']);
+                 $folder = trim($folder, '/');
+@@ -188,6 +181,13 @@ class MediaFileService
+                     $file      = sha1((string) $uploaded_file->getStream()) . '.' . $extension;
+                 }
+ 
++                // Do not allow obvious script files.
++                if (preg_match('/(\.(php|pl|cgi|bash|sh|bat|exe|com|htm|html|shtml))$/i', $file, $match)) {
++                    FlashMessages::addMessage(I18N::translate('Filenames are not allowed to have the extension "%s".', $match[1]));
++
++                    return '';
++                }
++
+                 try {
+                     $tree->mediaFilesystem()->writeStream($folder . $file, $uploaded_file->getStream()->detach());
+ 
+diff --git a/tests/app/Services/MediaFileServiceTest.php b/tests/app/Services/MediaFileServiceTest.php
+index e4f9b10de6..211adcfe99 100644
+--- a/tests/app/Services/MediaFileServiceTest.php
++++ b/tests/app/Services/MediaFileServiceTest.php
+@@ -138,4 +138,34 @@ class MediaFileServiceTest extends TestCase
+ 
+         self::assertSame('safe.jpg', $result, 'Upload of file with safe extension should succeed');
+     }
++
++    public function testUploadFileRejectsDangerousExtensionViaAutoRename(): void
++    {
++        $tree = $this->importTree('demo.ged');
++
++        // The uploaded file has a dangerous client filename (.htm) but the
++        // request new_file overrides it to a safe name.  With auto=1 the
++        // auto-rename path picks up the original client filename extension.
++        $temp_file = $this->temp_dir . '/evil.htm';
++        file_put_contents($temp_file, '<html><body>xss</body></html>');
++
++        $uploaded_file = $this->createUploadedFile($temp_file, 'text/html');
++
++        $request = self::createRequest(
++            method: RequestMethodInterface::METHOD_POST,
++            params: [
++                'file_location' => 'upload',
++                'folder'        => '',
++                'auto'          => '1',
++                'new_file'      => 'safe.jpg',
++            ],
++            files: ['file' => $uploaded_file],
++            attributes: ['tree' => $tree],
++        );
++
++        $service = new MediaFileService(php_service: new PhpService());
++        $result  = $service->uploadFile($request);
++
++        self::assertSame('', $result, 'Auto-rename must not bypass the extension blocklist');
++    }
+ }
+-- 
+2.53.0
+

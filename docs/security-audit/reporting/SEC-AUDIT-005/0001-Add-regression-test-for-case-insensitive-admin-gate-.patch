@@ -1,0 +1,124 @@
+From 19e44380f58c47f96592fa766b284a423aa7ee54 Mon Sep 17 00:00:00 2001
+From: boris-unckel <bu.githubcom@mail.unckel.net>
+Date: Thu, 9 Apr 2026 07:04:53 +0200
+Subject: [PATCH 1/2] Add regression test for case-insensitive admin-gate
+ bypass
+
+ModuleAction::handle() used str_contains($action, 'Admin') as the
+admin-only gate, but PHP method dispatch is case-insensitive: a URL
+like /module/faq/adminedit bypasses the gate yet still dispatches to
+postAdminEditAction.
+
+Add a data-provider test with six casing variants (Admin, admin,
+ADMIN, AdMiN, admin-edit, adminedit) and expose a getAdminEditAction
+method on the fooModule helper so the adminedit variant exercises
+the full case-insensitive dispatch path. Each variant must raise
+HttpAccessDeniedException from the handler gate before any method
+lookup happens.
+
+This test fails five of six rows against the str_contains gate (the
+baseline Admin row still passes). A separate commit fixes the gate
+so the test turns green.
+---
+ .../Http/RequestHandlers/ModuleActionTest.php | 71 +++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+
+diff --git a/tests/app/Http/RequestHandlers/ModuleActionTest.php b/tests/app/Http/RequestHandlers/ModuleActionTest.php
+index 24f0f37700..f76ae6ed59 100644
+--- a/tests/app/Http/RequestHandlers/ModuleActionTest.php
++++ b/tests/app/Http/RequestHandlers/ModuleActionTest.php
+@@ -28,6 +28,7 @@ use Fisharebest\Webtrees\Module\ModuleInterface;
+ use Fisharebest\Webtrees\Services\ModuleService;
+ use Fisharebest\Webtrees\TestCase;
+ use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\Attributes\DataProvider;
+ use Psr\Http\Message\ResponseInterface;
+ 
+ use function response;
+@@ -119,6 +120,63 @@ class ModuleActionTest extends TestCase
+         $handler->handle($request);
+     }
+ 
++    /**
++     * SEC-AUDIT-005 regression: the admin-only gate in ModuleAction::handle()
++     * must fire for every casing variant of the action attribute.
++     *
++     * Root cause: the handler used `str_contains($action, 'Admin')` (case-sensitive)
++     * as admin gate, but PHP method dispatch (`$module->$method($request)` and
++     * `method_exists`) is case-insensitive. A lowercase URL like
++     * `/module/faq/adminedit` bypassed the gate yet still dispatched to
++     * `postAdminEditAction`. CVSS 3.1 = 8.1 (High) on default install,
++     * 9.4 (Critical) with the bundled custom-css-js module enabled.
++     *
++     * The fooModule helper exposes `getAdminEditAction()` so that the
++     * `adminedit` variant has a real dispatch target: on unfixed code the
++     * handler would reach the method and return HTTP 200 (no exception),
++     * which this test explicitly forbids by `expectException`.
++     *
++     * Discovered in verify-2026-04-08T21-45-10 V1e.2. See
++     * docs/security-audit/tasks/SEC-AUDIT-005_module_action_case_bypass.md
++     * for the full task record.
++     */
++    #[DataProvider('caseBypassProvider')]
++    public function testAdminActionCaseBypass(string $actionAttr): void
++    {
++        $this->expectException(HttpAccessDeniedException::class);
++        $this->expectExceptionMessage('Admin only action');
++
++        $module_service = $this->createMock(ModuleService::class);
++        $module_service
++            ->expects($this->once())
++            ->method('findByName')
++            ->with('test')
++            ->willReturn($this->fooModule());
++
++        $user    = new GuestUser();
++        $request = self::createRequest()
++            ->withAttribute('module', 'test')
++            ->withAttribute('action', $actionAttr)
++            ->withAttribute('user', $user);
++        $handler = new ModuleAction($module_service);
++        $handler->handle($request);
++    }
++
++    /**
++     * @return array<string, array{0: string}>
++     */
++    public static function caseBypassProvider(): array
++    {
++        return [
++            'baseline capital Admin'  => ['Admin'],
++            'all lowercase admin'     => ['admin'],
++            'all uppercase ADMIN'     => ['ADMIN'],
++            'mixed case AdMiN'        => ['AdMiN'],
++            'lowercase hyphen'        => ['admin-edit'],
++            'lowercase no separator'  => ['adminedit'],
++        ];
++    }
++
+     private function fooModule(): ModuleInterface
+     {
+         return new class () extends AbstractModule {
+@@ -126,6 +184,19 @@ class ModuleActionTest extends TestCase
+             {
+                 return response('It works!');
+             }
++
++            /**
++             * SEC-AUDIT-005 regression target. An unfixed ModuleAction::handle()
++             * dispatches to this method when $action='adminedit' is passed —
++             * because PHP method dispatch is case-insensitive and matches
++             * this camelCase declaration. The test expects the admin gate to
++             * fire *before* dispatch and treats any successful return as a
++             * regression.
++             */
++            public function getAdminEditAction(): ResponseInterface
++            {
++                return response('SEC-AUDIT-005: admin method reached without auth gate');
++            }
+         };
+     }
+ }
+-- 
+2.53.0
+

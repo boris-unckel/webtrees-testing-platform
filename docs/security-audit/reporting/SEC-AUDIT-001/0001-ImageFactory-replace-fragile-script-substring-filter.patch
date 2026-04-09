@@ -1,0 +1,170 @@
+From c15b95fef48b9ee96eb0a77bfe9a48d7dbbfb3be Mon Sep 17 00:00:00 2001
+From: boris-unckel <bu.githubcom@mail.unckel.net>
+Date: Wed, 8 Apr 2026 22:20:17 +0200
+Subject: [PATCH] ImageFactory: replace fragile <script substring filter with
+ DOM-based SVG blocker
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The previous guard `str_contains($data, '<script')` was case-sensitive and
+only matched the literal lowercase `<script` substring. It was bypassable
+by:
+
+- `<SCRIPT>alert(1)</SCRIPT>` — case variation
+- `<svg onload="alert(1)"/>` — event handler attributes
+- `<a xlink:href="javascript:alert(1)">` — javascript: URLs
+
+The content-security-policy header that imageResponse() sets
+(`script-src none;frame-src none`) remains the primary defense and
+already blocks the real-world exploit in modern browsers. This commit
+strengthens the defense-in-depth layer by parsing SVG through
+DOMDocument (with LIBXML_NONET to prevent XXE/SSRF on malformed
+payloads) and recursively rejecting documents that contain script-like
+elements (script, foreignObject, iframe, object, embed, handler),
+event-handler attributes (on*), or javascript: URLs in any attribute.
+
+Malformed SVGs are treated conservatively and replaced with the same
+`x-image-exception` placeholder as known-dangerous payloads.
+---
+ app/Factories/ImageFactory.php | 99 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 97 insertions(+), 2 deletions(-)
+
+diff --git a/app/Factories/ImageFactory.php b/app/Factories/ImageFactory.php
+index 0e39d7993b..48a87bdb9f 100644
+--- a/app/Factories/ImageFactory.php
++++ b/app/Factories/ImageFactory.php
+@@ -19,6 +19,8 @@ declare(strict_types=1);
+ 
+ namespace Fisharebest\Webtrees\Factories;
+ 
++use DOMDocument;
++use DOMElement;
+ use Fig\Http\Message\StatusCodeInterface;
+ use Fisharebest\Webtrees\Auth;
+ use Fisharebest\Webtrees\Contracts\ImageFactoryInterface;
+@@ -47,11 +49,17 @@ use function addcslashes;
+ use function basename;
+ use function get_class;
+ use function implode;
++use function libxml_clear_errors;
++use function libxml_use_internal_errors;
+ use function pathinfo;
++use function preg_replace;
+ use function response;
+-use function str_contains;
++use function str_starts_with;
++use function stripos;
++use function strtolower;
+ use function view;
+ 
++use const LIBXML_NONET;
+ use const PATHINFO_EXTENSION;
+ 
+ class ImageFactory implements ImageFactoryInterface
+@@ -267,7 +275,7 @@ class ImageFactory implements ImageFactoryInterface
+ 
+     protected function imageResponse(string $data, string $mime_type, string $filename): ResponseInterface
+     {
+-        if ($mime_type === 'image/svg+xml' && str_contains(haystack: $data, needle: '<script')) {
++        if ($mime_type === 'image/svg+xml' && $this->svgContainsActiveContent(data: $data)) {
+             return $this->replacementImageResponse(text: 'XSS')
+                 ->withHeader('x-image-exception', 'SVG image blocked due to XSS.');
+         }
+@@ -285,6 +293,93 @@ class ImageFactory implements ImageFactoryInterface
+             ->withHeader('content-disposition', 'attachment; filename="' . addcslashes(string: basename(path: $filename), characters: '"'));
+     }
+ 
++    /**
++     * Determine whether an SVG document contains active content (script elements,
++     * event-handler attributes, javascript: URLs) that could execute in a browser.
++     *
++     * This is a defense-in-depth blocker. The primary defense against SVG-based XSS
++     * is the "content-security-policy: script-src none;frame-src none" header that
++     * imageResponse() sets on every served file. This method adds an additional
++     * blocking layer so that malicious SVGs are replaced before reaching the client,
++     * protecting users whose browsers do not honor CSP and guarding against CSP
++     * policy drift. Malformed XML is treated as suspicious and blocked.
++     *
++     * @param string $data Raw SVG bytes as read from the filesystem.
++     *
++     * @return bool True if the SVG contains active content and should be blocked.
++     */
++    private function svgContainsActiveContent(string $data): bool
++    {
++        $previous_error_state = libxml_use_internal_errors(use_errors: true);
++
++        try {
++            $document = new DOMDocument();
++            // LIBXML_NONET disables network access so external DTDs and entities
++            // cannot be fetched — mitigates XXE/SSRF on malformed payloads.
++            $loaded = $document->loadXML(source: $data, options: LIBXML_NONET);
++
++            if ($loaded === false || !$document->documentElement instanceof DOMElement) {
++                // Malformed SVG — treat conservatively and block.
++                return true;
++            }
++
++            return $this->svgElementIsDangerous(element: $document->documentElement);
++        } finally {
++            libxml_clear_errors();
++            libxml_use_internal_errors(use_errors: $previous_error_state);
++        }
++    }
++
++    /**
++     * Recursively walk a DOM element looking for dangerous elements, event-handler
++     * attributes, or javascript: URLs.
++     *
++     * @param DOMElement $element
++     *
++     * @return bool True if the element or any descendant contains active content.
++     */
++    private function svgElementIsDangerous(DOMElement $element): bool
++    {
++        static $dangerous_tags = [
++            'script'        => true,
++            'foreignobject' => true,
++            'iframe'        => true,
++            'object'        => true,
++            'embed'         => true,
++            'handler'       => true,
++        ];
++
++        if (isset($dangerous_tags[strtolower(string: $element->localName)])) {
++            return true;
++        }
++
++        foreach ($element->attributes as $attribute) {
++            $name = strtolower(string: $attribute->nodeName);
++
++            // Event-handler attributes (onload, onclick, onmouseover, …).
++            if (str_starts_with(haystack: $name, needle: 'on')) {
++                return true;
++            }
++
++            // javascript: URLs — normalize whitespace so "java\tscript:" and similar
++            // variants that HTML parsers would tolerate are still caught.
++            $value         = (string) $attribute->nodeValue;
++            $value_compact = preg_replace(pattern: '/\s+/', replacement: '', subject: $value) ?? '';
++
++            if (stripos(haystack: $value_compact, needle: 'javascript:') === 0) {
++                return true;
++            }
++        }
++
++        foreach ($element->childNodes as $child) {
++            if ($child instanceof DOMElement && $this->svgElementIsDangerous(element: $child)) {
++                return true;
++            }
++        }
++
++        return false;
++    }
++
+     protected function imageManager(): ImageManager
+     {
+         if ($this->php_service->extensionLoaded(extension: 'imagick')) {
+-- 
+2.53.0
+

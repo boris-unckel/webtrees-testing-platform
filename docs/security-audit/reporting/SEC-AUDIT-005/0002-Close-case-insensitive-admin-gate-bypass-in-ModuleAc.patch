@@ -1,0 +1,46 @@
+From de5f8f5843f4f50e32b291b4ebe4b7f7a2c4b59d Mon Sep 17 00:00:00 2001
+From: boris-unckel <bu.githubcom@mail.unckel.net>
+Date: Thu, 9 Apr 2026 07:05:11 +0200
+Subject: [PATCH 2/2] Close case-insensitive admin-gate bypass in ModuleAction
+
+Replace str_contains($action, 'Admin') with
+stripos($action, 'Admin') !== false so the admin-only gate matches
+every casing variant, including the lowercase forms PHP method
+dispatch would accept. Drop the now-unused str_contains function
+import.
+
+Turns the data-provider regression test added in the preceding
+commit green (10/10 in ModuleActionTest).
+---
+ app/Http/RequestHandlers/ModuleAction.php | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/app/Http/RequestHandlers/ModuleAction.php b/app/Http/RequestHandlers/ModuleAction.php
+index 3fdceed9e5..84cbe31603 100644
+--- a/app/Http/RequestHandlers/ModuleAction.php
++++ b/app/Http/RequestHandlers/ModuleAction.php
+@@ -31,7 +31,7 @@ use Psr\Http\Server\RequestHandlerInterface;
+ 
+ use function is_string;
+ use function method_exists;
+-use function str_contains;
++use function stripos;
+ use function strtolower;
+ 
+ final class ModuleAction implements RequestHandlerInterface
+@@ -72,7 +72,11 @@ final class ModuleAction implements RequestHandlerInterface
+         $method = $verb . $action . 'Action';
+ 
+         // Actions with "Admin" in the name are for administrators only.
+-        if (str_contains($action, 'Admin') && !Auth::isAdmin($user)) {
++        // Use case-insensitive comparison because PHP method dispatch is
++        // case-insensitive: `$module->postAdminEditAction(...)` is also
++        // reachable via a URL action like `adminedit` / `AdminEdit` /
++        // `ADMINEDIT`, so the gate must match every casing.
++        if (stripos($action, 'Admin') !== false && !Auth::isAdmin($user)) {
+             throw new HttpAccessDeniedException('Admin only action');
+         }
+ 
+-- 
+2.53.0
+

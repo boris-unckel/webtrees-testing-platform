@@ -1,0 +1,156 @@
+From 7b6fb9fc8f6778640109ae8f2451ae9376cb2c1b Mon Sep 17 00:00:00 2001
+From: boris-unckel <bu.githubcom@mail.unckel.net>
+Date: Thu, 9 Apr 2026 08:44:03 +0200
+Subject: [PATCH 1/3] test: add MediaFileServiceTest for dangerous-extension
+ upload rejection
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Red-first commit: tests assert that MediaFileService::uploadFile()
+rejects files with dangerous extensions (.php, .htm, .html, .shtml),
+mirroring the blocklist enforced by UploadMediaAction.
+
+All four dangerous-extension test cases intentionally fail (RED)
+against the current codebase — the fix follows in the next commit.
+
+SEC-AUDIT-002
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+---
+ tests/app/Services/MediaFileServiceTest.php | 113 +++++++++++++++++++-
+ 1 file changed, 111 insertions(+), 2 deletions(-)
+
+diff --git a/tests/app/Services/MediaFileServiceTest.php b/tests/app/Services/MediaFileServiceTest.php
+index c524cc5f2d..e4f9b10de6 100644
+--- a/tests/app/Services/MediaFileServiceTest.php
++++ b/tests/app/Services/MediaFileServiceTest.php
+@@ -19,14 +19,123 @@ declare(strict_types=1);
+ 
+ namespace Fisharebest\Webtrees\Services;
+ 
++use Fig\Http\Message\RequestMethodInterface;
++use Fisharebest\Webtrees\Site;
+ use Fisharebest\Webtrees\TestCase;
+ use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\Attributes\DataProvider;
++
++use function file_put_contents;
++use function is_dir;
++use function mkdir;
++use function rmdir;
++use function scandir;
++use function str_repeat;
++use function sys_get_temp_dir;
++use function uniqid;
++use function unlink;
+ 
+ #[CoversClass(MediaFileService::class)]
+ class MediaFileServiceTest extends TestCase
+ {
+-    public function testClass(): void
++    protected static bool $uses_database = true;
++
++    private string $temp_dir;
++
++    protected function setUp(): void
++    {
++        parent::setUp();
++
++        $this->temp_dir = sys_get_temp_dir() . '/wt_test_media_' . uniqid();
++        mkdir($this->temp_dir . '/media', 0o755, true);
++        Site::setPreference('INDEX_DIRECTORY', $this->temp_dir . '/');
++    }
++
++    protected function tearDown(): void
++    {
++        $this->removeDirectory($this->temp_dir);
++
++        parent::tearDown();
++    }
++
++    private function removeDirectory(string $path): void
++    {
++        if (is_dir($path)) {
++            foreach (scandir($path) as $item) {
++                if ($item !== '.' && $item !== '..') {
++                    $full = $path . '/' . $item;
++                    is_dir($full) ? $this->removeDirectory($full) : unlink($full);
++                }
++            }
++            rmdir($path);
++        }
++    }
++
++    /**
++     * @return array<string,array{string}>
++     */
++    public static function dangerousExtensionProvider(): array
++    {
++        return [
++            'php'   => ['exploit.php'],
++            'htm'   => ['evil.htm'],
++            'html'  => ['evil.html'],
++            'shtml' => ['evil.shtml'],
++        ];
++    }
++
++    #[DataProvider('dangerousExtensionProvider')]
++    public function testUploadFileRejectsDangerousExtension(string $filename): void
+     {
+-        self::assertTrue(class_exists(MediaFileService::class));
++        $tree = $this->importTree('demo.ged');
++
++        $temp_file = $this->temp_dir . '/upload_source.tmp';
++        file_put_contents($temp_file, '<html><body>test</body></html>');
++
++        $uploaded_file = $this->createUploadedFile($temp_file, 'text/html');
++
++        $request = self::createRequest(
++            method: RequestMethodInterface::METHOD_POST,
++            params: [
++                'file_location' => 'upload',
++                'folder'        => '',
++                'auto'          => '0',
++                'new_file'      => $filename,
++            ],
++            files: ['file' => $uploaded_file],
++            attributes: ['tree' => $tree],
++        );
++
++        $service = new MediaFileService(php_service: new PhpService());
++        $result  = $service->uploadFile($request);
++
++        self::assertSame('', $result, 'Upload of file with dangerous extension "' . $filename . '" should be rejected');
++    }
++
++    public function testUploadFileSafeExtensionAccepted(): void
++    {
++        $tree = $this->importTree('demo.ged');
++
++        $temp_file = $this->temp_dir . '/safe_image.jpg';
++        file_put_contents($temp_file, "\xFF\xD8\xFF\xE0" . str_repeat("\x00", 20));
++
++        $uploaded_file = $this->createUploadedFile($temp_file, 'image/jpeg');
++
++        $request = self::createRequest(
++            method: RequestMethodInterface::METHOD_POST,
++            params: [
++                'file_location' => 'upload',
++                'folder'        => '',
++                'auto'          => '0',
++                'new_file'      => 'safe.jpg',
++            ],
++            files: ['file' => $uploaded_file],
++            attributes: ['tree' => $tree],
++        );
++
++        $service = new MediaFileService(php_service: new PhpService());
++        $result  = $service->uploadFile($request);
++
++        self::assertSame('safe.jpg', $result, 'Upload of file with safe extension should succeed');
+     }
+ }
+-- 
+2.53.0
+
