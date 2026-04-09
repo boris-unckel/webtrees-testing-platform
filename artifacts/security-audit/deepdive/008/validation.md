@@ -43,7 +43,12 @@ OK (3 tests, 87 assertions)
 
 ### Step 3 — Layer-2-Regression (make test-unit gegen volatile+fix)
 
-*Status: läuft in Background, Ergebnis folgt.*
+```
+Tests: 3296, Assertions: 150475, Warnings: 70
+OK, but there were issues! (Exit 0)
+```
+
+**Urteil:** PASS — keine neuen Failures. Die 70 Warnings sind Upstream-Bestand (vorhanden vor dem Fix).
 
 ## Probe-Verifikation D3/D4
 
