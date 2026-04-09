@@ -16,7 +16,44 @@ Cutoff: `final_score < 0.25` → kein Task.
 
 Normierung: `*_norm = value / max_value_in_run`. `danger * reach` ist bereits 0..1 skaliert (dangerous_count gewichtet mit reachability: visitor=1.0, member=0.7, editor=0.6, manager=0.4, admin=0.2).
 
-## Sweep-Ergebnis: `clean_post_fix`
+## ⚠️ VERIFICATION UPDATE (2026-04-08, Run verify-2026-04-08T21-45-10) ⚠️
+
+**Der `clean_post_fix`-Status dieses Sweeps ist durch die Verification-Runde REVIDIERT.**
+
+Zusammenfassung der Korrekturen (siehe `artifacts/security-audit/verify-2026-04-08T21-45-10/verification_report.md` für Details):
+
+1. **1 CRITICAL Finding neu entdeckt**: **SEC-AUDIT-005** — ModuleAction substring-admin-gate bypass. Unauthenticated visitor kann `post*Admin*Action`-Methoden von FAQ/Stories/RelationshipsChart aufrufen via lowercase URL (z.B. `/module/faq/admindelete`). **End-to-end PoC verifiziert.** CVSS 3.1 = 8.1 (High) default, 9.4 (Critical) mit custom-css-js. Diese Lücke wurde vom Sweep T1 übersehen, weil `ModuleAction.php` gelesen wurde, aber die Case-Sensitivity-Asymmetrie zwischen `str_contains` (case-sensitive) und PHP-Method-Dispatch (case-insensitive) nicht geprüft wurde. Status: `exploit_confirmed`. Task: `docs/security-audit/tasks/SEC-AUDIT-005_module_action_case_bypass.md`.
+
+2. **Scope-Korrekturen**:
+   - Handler-Count: Sweep zählte **313**, tatsächlich **335** Files unter `app/Http/RequestHandlers/` (V1e.1). T1 hatte nur ~20 gelesen. V1e.1 hat alle 335 mechanisch gescannt.
+   - Middleware-Count: Sweep zählte **20**, tatsächlich **34** Files unter `app/Http/Middleware/` (V1e.2).
+
+3. **Allowlist-Text-Korrektur** (Zeile 50 dieser Datei): "Der Function-Allowlist ist *absichtlich* auf `[stristr]` beschränkt" ist **faktisch falsch**. Symfony ExpressionLanguage::__construct() registriert unconditional die Defaults `[constant, min, max, enum]` vor dem Provider. Der tatsächliche Allowlist ist `[constant, min, max, enum, stristr]`. Kein Live-Exploit, weil keine attacker-kontrollierte Input-Eingabe in den 16 bundled Reports einen EL-Eval trifft. Aber: **Drittmodul-Autoren, die `<SetVar value="$uservar + 1"/>` verwenden, exponieren `constant()`**. Siehe `verify-2026-04-08T21-45-10/v1a_reportparser_findings.md` §Claim A.
+
+4. **RenumberTreeAction-Defense-in-Depth** → **SEC-AUDIT-006 queued** (V3-User-Decision 2026-04-09): Zeile 98 dieser Datei `"Mass xref-renumber via query builder"` ist **irreführend**. Die Methode verwendet 31× `new Expression("REPLACE(i_gedcom, '0 @$old_xref@ INDI', ...)")` mit PHP-String-Interpolation statt Parameter-Bindung. Sicherheit hängt ausschließlich von `Gedcom::REGEX_XREF` in einer anderen Datei ab. Nicht exploitable heute, aber defense-in-depth Gap. `final_score ≈ 0.263` (marginal über Cutoff). Track: `admin`, Label: `defense-in-depth`. Task: `docs/security-audit/tasks/SEC-AUDIT-006_renumber_tree_raw_expression.md`.
+
+5. **SetupWizard.php:327 (V1e.1)** → **SEC-AUDIT-007 queued** (V3-User-Decision 2026-04-09): Raw `$_POST['wtpass']` statt `$data['wtpass']`. Code-Qualität, nicht exploitable (Password wird sofort gehasht). 1-Zeilen-Fix. Track: `admin`, Label: `code-quality`. Task: `docs/security-audit/tasks/SEC-AUDIT-007_setupwizard_superglobal.md`.
+
+6. **V1e.2 Middleware-Observations (6 MEDIUM)**: kein CSP-Header in SecurityHeaders; PublicFiles-Substring-Traversal-Check ist fragil; DebugLogger dev-only SQL-Header-Leak; BREACH bei CompressResponse; CheckCsrf non-constant-time compare; HandleExceptions fallback-Pfad ohne HTML-Escape. Alle als Observations dokumentiert, keine neuen Tasks.
+
+7. **V1e.3 Testlücken und `class_exists`-Smoke-Tests** → **OUT-OF-SCOPE FÜR SECURITY-TRACK** (V3-User-Decision 2026-04-09): Die 11 Testlücken aus `verify-2026-04-08T21-45-10/v1e3_layer3_test_coverage.md` (1 CRITICAL TEST-V1e3-MA1, 2 HOCH, 6 MEDIUM, 2 NIEDRIG) und die Meta-Beobachtung „20 von 31 Middleware-Tests im Upstream sind reine `class_exists`-Smoke-Tests" werden **nicht** als SEC-AUDIT-Tasks geführt. Das ist bekannter Sachverhalt und gehört in den **regulären Testqualität-Track** (siehe Memory `project_testquality_status.md`), nicht in den Security-Audit. **Ausnahme**: TEST-V1e3-MA1 (Regression für SEC-AUDIT-005) bleibt als Regression-Test-Pflicht direkt im Deep-Dive D5 von SEC-AUDIT-005 verankert (siehe Task-File).
+
+8. **Sweep-Methodik-Verbesserungen für zukünftige Runs** (V1e.1 + V1e.2 + V1e.3 Feedback):
+   - M1: `new Expression(` zur T0-Grep-Liste hinzufügen (Laravel raw-SQL-Primitive, die der aktuelle Grep übersieht).
+   - M3: Case-Sensitivity-Probe — jede String-basierte Gate-Prüfung auf Input-Methoden-Name muss beide Casings testen. Das wäre die einzige Methodik-Änderung, die SEC-AUDIT-005 beim nächsten Mal automatisch fangen würde.
+   - M4/M5: Scope-Counts (Handler 313→335, Middleware 20→34) in zukünftigen Runs mit `ls app/Http/RequestHandlers/*.php | wc -l` gegenprüfen statt auf T0-Output zu vertrauen.
+
+### Revidierter Sweep-Status
+
+Der ursprüngliche Status `clean_post_fix` wird revidiert auf:
+
+**`one_critical_missed_by_t1`** — Der Sweep T1 hat eine CRITICAL-Lücke in einer Datei übersehen, die T1 gelesen hatte. Die Methodik-Verbesserungen (M1, M3) sind notwendig, bevor zukünftige Sweeps wieder als `clean_post_fix` klassifiziert werden können.
+
+Der unten stehende ursprüngliche Sweep-Text bleibt unverändert als historisches Artefakt erhalten. Die Verification-Runde hat ihn als teilweise überholt markiert.
+
+---
+
+## Sweep-Ergebnis: `clean_post_fix` *(ORIGINAL — siehe VERIFICATION UPDATE oben für Revision)*
 
 Dieser Sweep findet **keinen** neuen queueable Kandidaten. Der Codebase befindet sich nach SEC-AUDIT-001 in einem post-hardened Zustand für die klassisch OWASP-sichtbare Visitor/Member/Editor-Angriffsfläche:
 

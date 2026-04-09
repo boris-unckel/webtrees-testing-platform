@@ -1,0 +1,31 @@
+{
+  "run_id": "verify-2026-04-08T21-45-10",
+  "run_type": "verification",
+  "parent_sweep_run": "2026-04-08T20-58-28",
+  "parent_sweep_outcome": "clean_post_fix",
+  "initiator": "user request: address unverified claims from sweep review-walkthrough",
+  "started": "2026-04-08T21:45:10Z",
+  "stack_health_at_start": {
+    "webtrees": "Up",
+    "mysql": "Up",
+    "otel-collector": "Up",
+    "jaeger": "Up",
+    "playwright": "Up"
+  },
+  "upstream_head": "34dff096c21652db243cda862afee224fd6ca92a",
+  "fork_branch_under_review": "security-audit-001-svg-filter-hardening@b2dc869b90",
+  "phases": [
+    "V0 pre-flight",
+    "V1a ExpressionLanguage/ReportParser deep-verify",
+    "V1b Search-services raw-SQL audit",
+    "V1c HtmlService::sanitize() review",
+    "V1e.1 handler coverage (313 via Subagent)",
+    "V1e.2 middleware coverage (20)",
+    "V1e.3 Layer-3 test coverage",
+    "V2 consolidation -> verification_report.md",
+    "V3 priorities update",
+    "V4 commit"
+  ],
+  "scope_clarification": "This is a first-class verification round, NOT a side-track. Addresses claims made in 2026-04-08T20-58-28 run-summary.md that were not independently verified during T1 triage. Outcome feeds back into sweep priorities before SEC-AUDIT-002..004 deep-dives proceed.",
+  "anti_scheinsicherheit_note": "Every claim in the parent run-summary that mentions 'confirmed', 'verified', 'bound parameters', 'no exploit path' is re-checked against actual code in this run. If a claim was based on partial reading, it is marked refined. If a claim was wrong, it is marked refuted and a task candidate is created."
+}

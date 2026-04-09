@@ -40,9 +40,12 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 
 | ID | Status | Track | Impact | Final Score | Datei | Verticals | Letzte Änderung |
 |---|---|---|---|---|---|---|---|
+| **SEC-AUDIT-005** | **exploit_confirmed** | **non-admin** | **auth-bypass (unauthenticated admin-method invocation)** | **0.85 (CRITICAL)** | **app/Http/RequestHandlers/ModuleAction.php** | **V3_auth_bypass, V4_xss, V9_arbitrary_file_write** | **2026-04-08** |
 | SEC-AUDIT-002 | queued | non-admin | stored-xss / path-traversal-write | 0.0 (spin-off) | app/Services/MediaFileService.php | V4_xss, V9_arbitrary_file_write | 2026-04-08 |
 | SEC-AUDIT-003 | queued | non-admin | defense-in-depth (csp gap) | 0.0 (spin-off) | app/Factories/ImageFactory.php | V4_xss | 2026-04-08 |
 | SEC-AUDIT-004 | queued | non-admin | audit/enumeration | 0.0 (spin-off) | app/Factories/ImageFactory.php | V4_xss | 2026-04-08 |
+| SEC-AUDIT-006 | queued | admin | defense-in-depth (sqli-readwrite, latent) | 0.263 | app/Http/RequestHandlers/RenumberTreeAction.php | V5_sqli_readwrite | 2026-04-09 |
+| SEC-AUDIT-007 | queued | admin | code-quality (LOW, not exploitable) | 0.05 | app/Http/RequestHandlers/SetupWizard.php | V11_info_disclosure | 2026-04-09 |
 
 ## Abgeschlossen
 
@@ -58,14 +61,16 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 
 ## Aggregat-Zahlen
 
-- Tasks gesamt: 4
-- In Queue: 3 (SEC-AUDIT-002/003/004 — alle Spin-offs aus SEC-AUDIT-001 Deep-Dive)
+- Tasks gesamt: 7
+- In Queue: 5 (SEC-AUDIT-002/003/004 Spin-offs aus SEC-AUDIT-001; SEC-AUDIT-006/007 aus verify-2026-04-08T21-45-10 V1b/V1e.1 nach V3-User-Decision)
+- **Exploit confirmed**: 1 (**SEC-AUDIT-005** — ModuleAction case-bypass, CRITICAL, entdeckt in verify-2026-04-08T21-45-10 V1e.2, End-to-End-PoC verifiziert)
 - In Deep-Dive: 0
 - Fix verified: 1 (SEC-AUDIT-001, Fork-Commit b2dc869b90, bereit für manuelle PR)
 - Done: 0
 - Dropped: 3 (SetupWizard, UpgradeWizardStep, ContactAction — siehe run-2026-04-08T19-01-49/priorities.md)
 - Critical Findings (visitor-sandbox-escape): 0
-- Halt-Flag aktiv: nein
+- **Critical Findings (visitor-auth-bypass / non-admin-rce-equiv)**: **1 (SEC-AUDIT-005)**
+- Halt-Flag aktiv: nein (Severity ist HIGH/CRITICAL aber kein visitor-sandbox-escape → kein automatischer Halt; User entscheidet in V4)
 
 ## Driver-Invarianten
 
