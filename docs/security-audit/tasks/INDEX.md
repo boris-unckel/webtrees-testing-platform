@@ -76,6 +76,18 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 - **Critical Findings (visitor-auth-bypass / non-admin-rce-equiv)**: 1 (SEC-AUDIT-005, geschlossen und verifiziert 2026-04-09)
 - Halt-Flag aktiv: nein
 
+## Sweep-4-Ergebnis (2026-04-09)
+
+Alle ausstehenden Vertikalen V2/V3/V7/V8/V9 untersucht — keine neuen Tasks.
+
+| Vertikal | Befund | Analyse |
+|---|---|---|
+| V2 `default_resn` Child-Fact | no_finding | Record- und Fact-Ebene sind unabhängige Systeme. Fact-RESN versteckt nur den Fact, nicht den Record. Intentional design. |
+| V3 RelationshipService Graph-Abort | no_finding | `isRelated()` gibt `false` bei Distanzüberschreitung (→ hidden). Kein falscher Default. `return true`-Shortcut (kein verlinktes Individuum) entspricht Fallback für Member. |
+| V7 Admin-Backup Path-Traversal | no_finding | `AdminMediaFileDownload` + `DeletePath` admin-only, Flysystem verhindert Path-Traversal. Kein Non-Admin-Trigger-Pfad. |
+| V8 Module-Install Zip-Slip | no_finding | Zip-Extraction nur aus vertrauenswürdiger Quelle (webtrees.net). Kein User-Controlled-Zip-Upload im Web-Interface. Admin-only. |
+| V9 Wizard TOCTOU | no_finding | `ReadConfigIni`-Middleware leitet auf Wizard nur wenn config.ini.php fehlt. Kein Re-Zugriff nach Installation. Re-Install graceful handled. |
+
 ## Driver-Invarianten
 
 Der Driver prüft bei jedem Lauf:
