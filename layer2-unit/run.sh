@@ -34,7 +34,6 @@ mkdir -p /tmp/phpunit-cache && chown www-data:www-data /tmp/phpunit-cache
 su -s /bin/bash www-data -c "cd ${WEBTREES_DIR} && vendor/bin/phpunit \
     --configuration=/tests/layer2-unit/phpunit-unit.xml \
     --log-junit='${ARTIFACTS}/phpunit-unit.xml' \
-    --coverage-html='${ARTIFACTS}/coverage-html' \
     --coverage-clover='${ARTIFACTS}/coverage.xml'" \
     2>&1 | tee "${ARTIFACTS}/phpunit-output.log"
 
