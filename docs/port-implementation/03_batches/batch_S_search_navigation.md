@@ -24,13 +24,13 @@
 
 | # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
 |---|-----------|------------|-------------|--------|-----------|
-| 5 | `SearchAdvancedActionTest.php` | `SearchAdvancedAction` | `SearchService` | `pending` | S05–S06, nur Stub |
+| 5 | `SearchAdvancedActionTest.php` | `SearchAdvancedAction` | — | `completed` | S05–S06, Redirect mit fields/modifiers/other_field |
 | 6 | `SearchAdvancedPageTest.php` | `SearchAdvancedPage` | `SearchService` | `completed` | S05 |
-| 7 | `SearchQuickActionTest.php` | `SearchQuickAction` | `SearchService` | `pending` | S09, nur Stub |
+| 7 | `SearchQuickActionTest.php` | `SearchQuickAction` | Registry | `completed` | S09, Record-Found + Not-Found Pfade |
 | 8 | `SearchGeneralPageTest.php` | `SearchGeneralPage` | `SearchService` | `completed` | S05 |
-| 9 | `SearchPhoneticActionTest.php` | `SearchPhoneticAction` | `SearchService` | `pending` | S07–S08, nur Stub |
+| 9 | `SearchPhoneticActionTest.php` | `SearchPhoneticAction` | — | `completed` | S07–S08, Redirect mit phonetischen Params |
 | 10 | `SearchPhoneticPageTest.php` | `SearchPhoneticPage` | `SearchService` | `completed` | S07 |
-| 11 | `SearchReplaceActionTest.php` | `SearchReplaceAction` | `SearchService` | `pending` | S13, nur Stub |
+| 11 | `SearchReplaceActionTest.php` | `SearchReplaceAction` | `SearchService` | `completed` | S13, 3 Context-Pfade (all/name/place) mit Mock |
 | 12 | `SearchReplacePageTest.php` | `SearchReplacePage` | `SearchService` | `completed` | S13 |
 
 ### Navigations-Handler (Template 3 — Registry-Mock)
@@ -51,15 +51,15 @@
 | # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
 |---|-----------|------------|-------------|--------|-----------|
 | 21 | `CalendarPageTest.php` | `CalendarPage` | `CalendarService` | `completed` | S31 |
-| 22 | `CalendarEventsTest.php` | `CalendarEvents` | `CalendarService` | `pending` | S31, nur Stub |
-| 23 | `CalendarActionTest.php` | `CalendarAction` | `CalendarService` | `pending` | S31, nur Stub |
+| 22 | `CalendarEventsTest.php` | `CalendarEvents` | `CalendarService` | `completed` | S31, Mock CalendarService, Day-View mit leeren Events |
+| 23 | `CalendarActionTest.php` | `CalendarAction` | — | `completed` | S31, Redirect mit Kalender-Params |
 
 ### Weitere Seiten (Template 1)
 
 | # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
 |---|-----------|------------|-------------|--------|-----------|
 | 24 | `RegisterPageTest.php` | `RegisterPage` | `CaptchaService` | `completed` | S33 |
-| 25 | `RegisterActionTest.php` | `RegisterAction` | `UserService` | `pending` | S33, nur Stub |
+| 25 | `RegisterActionTest.php` | `RegisterAction` | `CaptchaService`, `EmailService`, `RateLimitService`, `UserService` | `completed` | S33, Registration-Disabled → NotFoundException |
 | 26 | `HelpTextTest.php` | `HelpText` | — | `completed` | S50, T2 (kein Konstruktor) |
 | 27 | `MapDataImportPageTest.php` | `MapDataImportPage` | `MapDataService` | `completed` | S48 |
 | 28 | `MapDataImportActionTest.php` | `MapDataImportAction` | `MapDataService` | `completed` | S48 |

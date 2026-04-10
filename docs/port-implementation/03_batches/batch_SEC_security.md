@@ -14,8 +14,8 @@ SEC-PUB01–04, SEC-W01, SEC-WZ01–04, SEC-HDR01–04, SEC-BOT01, SEC-UTL01
 |---|-----------|------------|----------|-------------|--------|-----------|
 | 1 | `MediaFileDownloadTest.php` | `MediaFileDownload` | T3 | `MediaFileService`, `Registry::mediaFactory()` | `completed` | SEC-M01 |
 | 2 | `MediaFileThumbnailTest.php` | `MediaFileThumbnail` | T3 | `MediaFileService`, `Registry::mediaFactory()` | `completed` | SEC-M02 |
-| 3 | `PublicFilesTest.php` (Middleware) | `PublicFiles` | T2 | — | `pending` | SEC-PUB01–04, nur Stub |
-| 4 | `SetupWizardTest.php` | `SetupWizard*` | T1 | `ServerCheckService`, `MigrationService` | `pending` | SEC-W01, SEC-WZ01–04, nur Stub |
+| 3 | `PublicFilesTest.php` (Middleware) | `PublicFiles` | T2 | — | `completed` | SEC-PUB01–04, 3 Pfade: non-public, traversal, not-found |
+| 4 | `SetupWizardTest.php` | `SetupWizard` | T1 | `ServerCheckService`, `MigrationService` | `skipped` | SEC-W01, SEC-WZ01–04, handle() nutzt DB::connect, Filesystem → L3-only |
 | 5 | `PingTest.php` | `Ping` | T2 | — | `completed` | SEC-UTL01 (bereits substanziell, Verbesserung prüfen) |
 | 6 | `RobotsTxtTest.php` | `RobotsTxt` | T2 | — | `completed` | SEC-UTL01 |
 | 7 | `SiteRegistrationActionTest.php` | `SiteRegistrationAction` | T1 | `UserService` | `completed` | SEC-UTL01 |
@@ -27,8 +27,8 @@ SEC-PUB01–04, SEC-W01, SEC-WZ01–04, SEC-HDR01–04, SEC-BOT01, SEC-UTL01
 
 | # | Test-Datei (vermutlich) | SUT | Template | Status | Bemerkung |
 |---|------------------------|-----|----------|--------|-----------|
-| 11 | Middleware-Tests für SecurityHeaders | `SecurityHeaders` | T2 | `pending` | SEC-HDR01–04, Mock Request+Response |
-| 12 | Middleware-Tests für BadBotBlocker | `BadBotBlocker` | T2 | `pending` | SEC-BOT01, Mock Request mit User-Agent |
+| 11 | `SecurityHeadersTest.php` | `SecurityHeaders` | T2 | `completed` | SEC-HDR01–04, 3 Testmethoden: Headers, No-Overwrite, HSTS-HTTPS-only |
+| 12 | `BadBotBlockerTest.php` | `BadBotBlocker` | T2 | `completed` | SEC-BOT01, 3 Pfade: empty-UA, bad-UA, normal passthrough |
 
 ## Ausgeschlossen (Layer 3 / Layer 4)
 

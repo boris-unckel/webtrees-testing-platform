@@ -14,19 +14,19 @@
 | # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
 |---|-----------|------------|-------------|--------|-----------|
 | 1 | `AddChildToFamilyPageTest.php` | `AddChildToFamilyPage` | `GedcomEditService` | `completed` | E01 |
-| 2 | `AddChildToFamilyActionTest.php` | `AddChildToFamilyAction` | `GedcomEditService` | `pending` | E01, nur Stub |
+| 2 | `AddChildToFamilyActionTest.php` | `AddChildToFamilyAction` | `GedcomEditService` | `completed` | E01 |
 | 3 | `AddChildToIndividualPageTest.php` | `AddChildToIndividualPage` | `GedcomEditService` | `completed` | E01 |
 | 4 | `AddChildToIndividualActionTest.php` | `AddChildToIndividualAction` | `GedcomEditService` | `completed` | E01 |
 | 5 | `AddParentToIndividualPageTest.php` | `AddParentToIndividualPage` | `GedcomEditService` | `completed` | E01 |
 | 6 | `AddParentToIndividualActionTest.php` | `AddParentToIndividualAction` | `GedcomEditService` | `completed` | E01 |
 | 7 | `AddSpouseToFamilyPageTest.php` | `AddSpouseToFamilyPage` | `GedcomEditService` | `completed` | E01 |
-| 8 | `AddSpouseToFamilyActionTest.php` | `AddSpouseToFamilyAction` | `GedcomEditService` | `pending` | E01, nur Stub |
+| 8 | `AddSpouseToFamilyActionTest.php` | `AddSpouseToFamilyAction` | `GedcomEditService` | `completed` | E01 |
 | 9 | `AddSpouseToIndividualPageTest.php` | `AddSpouseToIndividualPage` | `GedcomEditService` | `completed` | E01 |
 | 10 | `AddSpouseToIndividualActionTest.php` | `AddSpouseToIndividualAction` | `GedcomEditService` | `completed` | E01 |
 | 11 | `AddNewFactTest.php` | `AddNewFact` | `GedcomEditService` | `completed` | E01 |
 | 12 | `LinkChildToFamilyActionTest.php` | `LinkChildToFamilyAction` | `GedcomEditService` | `completed` | E01 |
 | 13 | `EditFactPageTest.php` | `EditFactPage` | `GedcomEditService` | `completed` | E02 |
-| 14 | `EditFactActionTest.php` | `EditFactAction` | `GedcomEditService` | `pending` | E02, nur Stub |
+| 14 | `EditFactActionTest.php` | `EditFactAction` | `GedcomEditService` | `completed` | E02 |
 | 15 | `CopyFactTest.php` | `CopyFact` | — | `completed` | E02, ggf. T2 |
 | 16 | `DeleteFactTest.php` | `DeleteFact` | — | `completed` | E02, ggf. T2 |
 | 17 | `EditRawRecordPageTest.php` | `EditRawRecordPage` | — | `completed` | E03 |
@@ -60,7 +60,7 @@
 | # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
 |---|-----------|------------|-------------|--------|-----------|
 | 46 | `ReorderChildrenPageTest.php` | `ReorderChildrenPage` | — | `completed` | E06 |
-| 47 | `ReorderChildrenActionTest.php` | `ReorderChildrenAction` | — | `pending` | E06, nur Stub |
+| 47 | `ReorderChildrenActionTest.php` | `ReorderChildrenAction` | — | `completed` | E06 |
 | 48 | `ReorderMediaPageTest.php` | `ReorderMediaPage` | — | `completed` | E06 |
 | 49 | `ReorderMediaActionTest.php` | `ReorderMediaAction` | — | `completed` | E06 |
 | 50 | `ReorderFamiliesPageTest.php` | `ReorderFamiliesPage` | — | `completed` | E06 |

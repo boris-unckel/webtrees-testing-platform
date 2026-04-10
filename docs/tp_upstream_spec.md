@@ -22,25 +22,24 @@ Referenzen: [Feature-Matrizen](tds_conditions_ref.md) | [Abdeckungsmatrix](tds_c
 
 | Metrik | Vorher (Baseline) | Nachher | Delta |
 |---|---|---|---|
-| Testmethoden | 3296 | 3774 | +478 |
-| Assertions | 150475 | 154609 | +4134 |
-| Geänderte Dateien | — | 264 | — |
-| Eingefügter Code | — | +14040 Zeilen | — |
+| Testmethoden | 3283 | 3800 | +517 |
+| Assertions | 150396 | 152711 | +2315 |
+| Geänderte Dateien | — | 278 | — |
 | Neue Failures | — | 0 | — |
 | Bug-Kandidaten | — | 0 | — |
 
 ### Batches
 
-| Batch | Kategorie | Tests portiert | Status |
-|---|---|---|---|
-| `batch_SEC` | Sicherheit (Login, Logout, PasswordReset, Verify, Robots) | ~12 | abgeschlossen |
-| `batch_P` | Datenschutz & Zugriff (UserEdit, AccountEdit, PendingChanges) | ~17 | abgeschlossen |
-| `batch_S` | Suche & Navigation (AutoComplete, Search, Calendar, Help, Register) | ~37 | abgeschlossen |
-| `batch_G` | GEDCOM Import/Export (Upload, EditMedia, Check, Export, Import) | ~12 | abgeschlossen |
-| `batch_A` | Administration (CreateTree, Preferences, DataFix, SiteLogs) | ~10 | abgeschlossen |
-| `batch_E` | Datenpflege (AddChild, EditFact, CreateNote/Source/Repo, Reorder) | ~51 | abgeschlossen |
-| `batch_K` | Kommunikation (Contact, Message, Broadcast) | ~6 | abgeschlossen |
-| `batch_U` | Utilities (SelectLanguage, SelectTheme, Ping, TomSelect) | ~23 | abgeschlossen |
+| Batch | Kategorie | Completed | Skipped | Status |
+|---|---|---|---|---|
+| `batch_SEC` | Sicherheit (Login, Logout, PasswordReset, Verify, Robots, Middleware) | 11 | 1 | abgeschlossen |
+| `batch_P` | Datenschutz & Zugriff (UserEdit, AccountEdit, PendingChanges) | 17 | 0 | abgeschlossen |
+| `batch_S` | Suche & Navigation (AutoComplete, Search, Calendar, Help, Register) | 41 | 1 | abgeschlossen |
+| `batch_G` | GEDCOM Import/Export (Upload, EditMedia, Check, Export, Import) | 9 | 2 | abgeschlossen |
+| `batch_A` | Administration (CreateTree, Preferences, DataFix, SiteLogs) | 13 | 1 | abgeschlossen |
+| `batch_E` | Datenpflege (AddChild, EditFact, CreateNote/Source/Repo, Reorder) | 46 | 5 | abgeschlossen |
+| `batch_K` | Kommunikation (Contact, Message, Broadcast) | 6 | 0 | abgeschlossen |
+| `batch_U` | Utilities (SelectLanguage, SelectTheme, Ping, TomSelect) | 1 | 0 | abgeschlossen |
 
 ## Test-Double-Konventionen
 
@@ -59,10 +58,12 @@ Die Tests folgen dem Maintainer-Anforderungsprofil (R1–R11 aus `port_analysis_
 
 | Template | Entscheidung | Dateien |
 |---|---|---|
-| **T1** (Handler+Service) | SUT hat Service-Konstruktor-Dependencies | LoginAction, RobotsTxt, ContactAction |
+| **T1** (Handler+Service) | SUT hat Service-Konstruktor-Dependencies | LoginAction, RobotsTxt, ContactAction, SearchReplaceAction |
 | **T2** (Handler-Simple) | SUT hat keine Konstruktor-Dependencies | SiteRegistrationAction, HelpText, AdsTxt |
 | **T3** (Handler+Registry) | SUT greift auf `Registry::*Factory()` zu | CopyFact, DeleteFact, IndividualPage |
 | **T4** (Module+handle) | SUT ist ein Module mit `handle()` | Chart-/List-Module |
+| **Middleware** | PSR-15-Middleware: `$middleware->process($request, $handler)` | SecurityHeaders, PublicFiles, BadBotBlocker |
+| **Service** | Zustandslose Logik: direkte Instanziierung ohne Mocks | GedcomService, GedcomExportService, RomanNumeralsService |
 
 ### Kritische Patterns
 
@@ -73,6 +74,11 @@ Die Tests folgen dem Maintainer-Anforderungsprofil (R1–R11 aus `port_analysis_
 | SUT ruft `response()` ohne Body auf | Assert `STATUS_NO_CONTENT` (204), nicht `STATUS_OK` (200) |
 | SUT nutzt `Validator::parsedBody()->boolean()` | `(string) false === ''`, nicht `'0'` |
 | SUT nutzt MySQL-spezifische Funktionen (LEAST, GREATEST) | Test als Layer-3-only ausschließen |
+| SUT nutzt `DB::table()` / `DB::connect()` direkt | Layer-3-only (z. B. GedcomLoad, SetupWizard) |
+| `Site::getPreference()` hat Defaults | Explizit `Site::setPreference()` im Test setzen (z. B. `USE_REGISTRATION_MODULE` Default `'1'`) |
+| Middleware-Test: OTel fügt Attribute hinzu | Kein `->with($request)` auf Mock-Handler — Request wird durch OTel modifiziert |
+| Middleware-Test: Server-Params (HTTP_USER_AGENT) | `Nyholm\Psr7\ServerRequest` direkt nutzen statt `TestCase::createRequest()` |
+| `route()` kodiert Params in Pfad | Assert `calendar%2Fday` statt `view=day` — 'view' wird Teil der Route |
 
 ## Layer-2 vs. Layer-3 Abgrenzung
 
@@ -92,7 +98,9 @@ Vollständige Ausschluss-Liste: `docs/port-implementation/04_exclusions.md`
 |---|---|---|
 | `LoginPageTest` | TreeService gemockt, 2 neue Testmethoden (withTree, noTreeRedirect) | verbessert |
 | `SelectLanguageTest` | Mock statt echtem User, Session-Verifikation | verbessert |
-| `BroadcastPageTest` | Bereits adäquat — keine Änderung nötig | übersprungen |
+| `BroadcastPageTest` | Negativ-Test (HttpBadRequestException), MessageService gemockt | verbessert |
+| `UpgradeWizardStepTest` | UpgradeService-Mocking, Exception-Pfade | verbessert |
+| Redirect-Tests (29) | Edge Cases, Pattern-Konsistenz geprüft | verbessert |
 
 ## Redundanz und Rückbau
 
@@ -109,9 +117,10 @@ der webtrees-eigenen Test-Infrastruktur lauffähig (kein Container nötig).
 | Punkt | Status | Aktion |
 |---|---|---|
 | PR-Vorbereitung | ausstehend | Commit-Historie aufräumen, PR-Beschreibung verfassen |
-| Redirect-Tests (29 Dateien) | ausstehend | Bestandsverbesserung §1 — optional |
-| UpgradeWizardStepTest | ausstehend | Bestandsverbesserung §2 — optional |
 | Upstream-Bug FamilyFactory | bekannt | TypeError bei Privat-Familien (betrifft PRIV_NONE/PRIV_USER) |
+
+Alle 8 Batches abgeschlossen, 0 Pending-Stubs verbleiben. 10 Tests als Skipped markiert
+(8× Testdatei fehlt im Upstream, 2× L3-only: SetupWizard, GedcomLoad).
 
 ## Cross-Referenzen
 

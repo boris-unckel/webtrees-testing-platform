@@ -15,23 +15,23 @@
 |---|-----------|------------|-------------|--------|-----------|
 | 1 | `CreateTreePageTest.php` | `CreateTreePage` | `TreeService` | `completed` | A01 |
 | 2 | `CreateTreeActionTest.php` | `CreateTreeAction` | `TreeService` | `completed` | A01 |
-| 3 | `DeleteTreeActionTest.php` | `DeleteTreeAction` | `TreeService` | `pending` | A01, nur Stub |
+| 3 | `DeleteTreeActionTest.php` | `DeleteTreeAction` | `TreeService` | `completed` | A01 |
 | 4 | `TreePageDefaultEditTest.php` | `TreePageDefaultEdit` | `TreeService` | `completed` | A01 |
-| 5 | `TreePreferencesPageTest.php` | `TreePreferencesPage` | `TreeService` | `pending` | A04, nur Stub |
+| 5 | `TreePreferencesPageTest.php` | `TreePreferencesPage` | `TreeService` | `completed` | A04 |
 | 6 | `TreePreferencesActionTest.php` | `TreePreferencesAction` | `TreeService` | `completed` | A04 |
-| 7 | `SitePreferencesPageTest.php` | `SitePreferencesPage` | — | `pending` | A06, nur Stub |
+| 7 | `SitePreferencesPageTest.php` | `SitePreferencesPage` | `ModuleService` | `completed` | A06 |
 | 8 | `SitePreferencesActionTest.php` | `SitePreferencesAction` | — | `completed` | A06, ggf. T2 |
 | 9 | `DataFixPageTest.php` | `DataFixPage` | `DataFixService` | `completed` | A09 |
 | 10 | `DataFixActionTest.php` | `DataFixAction` | `DataFixService` | `skipped` | A09, Testdatei existiert nicht |
 | 11 | `SiteLogsPageTest.php` | `SiteLogsPage` | — | `completed` | A10 |
 | 12 | `SiteLogsDownloadTest.php` | `SiteLogsDownload` | — | `completed` | A10 |
-| 13 | `SiteLogsDeleteTest.php` | `SiteLogsDelete` | — | `pending` | A10, nur Stub |
+| 13 | `SiteLogsDeleteTest.php` | `SiteLogsDelete` | `SiteLogsService` | `completed` | A10 |
 
 ### Service-Tests (L2-fähige Methoden)
 
 | # | Test-Datei | SUT-Klasse | Template | Status | Bemerkung |
 |---|-----------|------------|----------|--------|-----------|
-| 14 | `RomanNumeralsServiceTest.php` | `RomanNumeralsService` | T2 | `pending` | Ship as-is von 5349 noch nicht portiert, nur Stub |
+| 14 | `RomanNumeralsServiceTest.php` | `RomanNumeralsService` | T2 | `completed` | 4 Testmethoden: numberToRomanNumerals, romanNumeralsToNumber, Edge Cases |
 
 ### Bestehende substanzielle Tests (Verbesserung in P2)
 

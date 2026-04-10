@@ -18,11 +18,11 @@ zustandslose Hilfsmethoden sind L2-portierbar.
 | # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
 |---|-----------|------------|-------------|--------|-----------|
 | 1 | `UploadMediaActionTest.php` | `UploadMediaAction` | `MediaFileService` | `completed` | G21, G30 |
-| 2 | `EditMediaFileActionTest.php` | `EditMediaFileAction` | `MediaFileService` | `pending` | G28, nur Stub |
+| 2 | `EditMediaFileActionTest.php` | `EditMediaFileAction` | `MediaFileService` | `completed` | G28 |
 | 3 | `EditMediaFileModalTest.php` | `EditMediaFileModal` | `MediaFileService` | `completed` | G28 |
 | 4 | `CheckTreeTest.php` | `CheckTree` | `TreeService` | `completed` | G24 |
-| 5 | `GedcomLoadTest.php` | `GedcomLoad` | `TreeService`, `GedcomImportService` | `pending` | G25, nur Stub |
-| 6 | `MediaFileServiceTest.php`* | `MediaFileService` | diverse | `pending` | G27, nur Stub |
+| 5 | `GedcomLoadTest.php` | `GedcomLoad` | `GedcomImportService`, `TimeoutService` | `skipped` | G25, handle() nutzt DB::table('gedcom_chunk') direkt → L3-only |
+| 6 | `MediaFileServiceTest.php` | `MediaFileService` | `PhpService` | `completed` | G27, createMediaFileGedcom: local/URL/Note |
 | 7 | `ImportGedcomActionTest.php` | `ImportGedcomAction` | `GedcomImportService` | `completed` | A02 overlap |
 | 8 | `ExportGedcomPageTest.php` | `ExportGedcomPage` | `GedcomExportService` | `completed` | A03 overlap |
 | 9 | `ExportGedcomActionTest.php` | `ExportGedcomAction` | `GedcomExportService` | `skipped` | Testdatei existiert nicht (ExportGedcomServerTest stattdessen) |
@@ -31,8 +31,8 @@ zustandslose Hilfsmethoden sind L2-portierbar.
 
 | # | Test-Datei | SUT-Klasse | Template | Status | Bemerkung |
 |---|-----------|------------|----------|--------|-----------|
-| 10 | `GedcomServiceTest.php` | `GedcomService` | T2 | `pending` | Ship as-is von 5349 noch nicht portiert, nur Stub |
-| 11 | `GedcomExportServiceTest.php` (partiell) | `GedcomExportService` | T1 | `pending` | G18–G19, nur Stub |
+| 10 | `GedcomServiceTest.php` | `GedcomService` | T2 | `completed` | 5 Testmethoden: canonicalTag, Synonyme, Passthrough, Lat/Long |
+| 11 | `GedcomExportServiceTest.php` | `GedcomExportService` | T1 | `completed` | G18–G19, wrapLongLines: short/long/multi |
 
 ### Bestehende substanzielle Tests (Verbesserung in P2)
 

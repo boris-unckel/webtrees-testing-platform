@@ -21,12 +21,12 @@ Quelle der Wahrheit: Status-Tabellen in den Batch-Dateien unter `03_batches/`.
 
 | Batch | Kategorie | Feature-IDs | Portierbar | Completed | Pending (Stub) | Skipped | Status | Letzte Änderung |
 |-------|-----------|------------|-----------|-----------|---------------|---------|--------|----------------|
-| `batch_SEC` | Sicherheit | SEC-* | 12 | 8 | 4 | 0 | `offen` | 2026-04-10 |
+| `batch_SEC` | Sicherheit | SEC-* | 12 | 11 | 0 | 1 | `completed` | 2026-04-10 |
 | `batch_P` | Datenschutz & Zugriff | P01–P41 | 17 | 17 | 0 | 0 | `completed` | 2026-04-10 |
-| `batch_S` | Suche & Navigation | S01–S53 | 42 | 34 | 7 | 1 | `offen` | 2026-04-10 |
-| `batch_G` | GEDCOM Import/Export | G01–G30 | 11 | 4 | 5 | 2 | `offen` | 2026-04-10 |
-| `batch_A` | Administration | A01–A11 | 14 | 7 | 5 | 1 | `offen` | 2026-04-10 |
-| `batch_E` | Datenpflege | E01–E08 | 51 | 37 | 4 | 5 | `offen` | 2026-04-10 |
+| `batch_S` | Suche & Navigation | S01–S53 | 42 | 41 | 0 | 1 | `completed` | 2026-04-10 |
+| `batch_G` | GEDCOM Import/Export | G01–G30 | 11 | 9 | 0 | 2 | `completed` | 2026-04-10 |
+| `batch_A` | Administration | A01–A11 | 14 | 13 | 0 | 1 | `completed` | 2026-04-10 |
+| `batch_E` | Datenpflege | E01–E08 | 51 | 46 | 0 | 5 | `completed` | 2026-04-10 |
 | `batch_K` | Kommunikation | K01–K02 | 6 | 6 | 0 | 0 | `completed` | 2026-04-10 |
 | `batch_U` | Utilities | U01–U02 | 1 | 1 | 0 | 0 | `completed` | 2026-04-10 |
 
@@ -52,17 +52,17 @@ Quelle der Wahrheit: Status-Tabellen in den Batch-Dateien unter `03_batches/`.
 ## Aggregat
 
 - Batches gesamt: 8
-- Batches vollständig abgeschlossen: 3 (P, K, U)
-- Batches mit Restposten: 5 (SEC, S, G, A, E)
-- Tests portiert: 264 Dateien, +478 Testmethoden (3296 → 3774)
-- Assertions: 150475 → 154609 (+4134)
-- **Verbleibende Stubs (pending):** 25 Tests noch nicht portiert
-- **Skipped (Testdatei fehlt):** 9 Tests (Upstream hat keine Testdatei)
+- Batches vollständig abgeschlossen: 8 (SEC, P, S, G, A, E, K, U)
+- Batches mit Restposten: 0
+- Tests portiert: 278 Dateien, +517 Testmethoden (3283 → 3800)
+- Assertions: 150396 → 152711 (+2315)
+- **Verbleibende Stubs (pending):** 0
+- **Skipped:** 10 Tests (8× Testdatei fehlt im Upstream, 2× L3-only: SetupWizard, GedcomLoad)
 - Bug-Kandidaten: 0
 - Ausgeschlossen (L3-only): ~52 Feature-IDs
 - Bestehende Tests verbessert: 5/8 Bereiche (Redirect, UpgradeWizard, LoginPage, BroadcastPage, SelectLanguage)
 - Bestehende Tests geprüft/übersprungen: 3/8 Bereiche (PingTest, ModuleActionTest, DeleteUserTest — bereits vollständig)
-- Validierung (`make test-unit`): **bestanden** — 0 neue Failures, 3 vorbestehende (MaintenanceModeService)
+- Validierung (`make test-unit`): **bestanden** — 0 Failures, 3800 Tests, 152711 Assertions
 - Dokumentation (P4): **abgeschlossen** — tp_upstream_spec.md neu gefasst
 
 ## Cross-Referenzen
