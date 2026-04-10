@@ -56,6 +56,10 @@ clean: ## Stack stoppen, Volumes und Passwoerter loeschen
 	fi
 
 setup: up ## webtrees im Container einrichten (DB-Migration, Fixtures, Admin-User)
+	@$(MAKE) --no-print-directory _setup-exec
+
+# Sub-Make: .env wird neu gelesen, damit nach generate-passwords die aktuellen Passwoerter gelten.
+_setup-exec:
 	$(COMPOSE) exec webtrees /usr/local/bin/setup-webtrees.sh
 
 test-all: setup test-static test-unit test-integration test-e2e test-performance ## Alle Teststufen ausführen
