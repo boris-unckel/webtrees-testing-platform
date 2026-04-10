@@ -87,6 +87,8 @@ test-static: ## Statischer Test (PHPStan + PHPCS + Trivy)
 
 test-unit: ## Teststufe 1 — Komponententest (PHPUnit, isoliert)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer2-unit/run.sh
+	mkdir -p artifacts/layer2
+	podman cp webtrees:/artifacts/layer2/coverage.xml artifacts/layer2/coverage.xml
 
 test-integration: ## Teststufe 2 — Komponentenintegrationstest (PHPUnit + MySQL)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer3-integration/run.sh
