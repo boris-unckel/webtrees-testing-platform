@@ -17,22 +17,22 @@ zustandslose Hilfsmethoden sind L2-portierbar.
 
 | # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
 |---|-----------|------------|-------------|--------|-----------|
-| 1 | `UploadMediaActionTest.php` | `UploadMediaAction` | `MediaFileService` | `pending` | G21, G30 |
-| 2 | `EditMediaFileActionTest.php` | `EditMediaFileAction` | `MediaFileService` | `pending` | G28 |
-| 3 | `EditMediaFileModalTest.php` | `EditMediaFileModal` | `MediaFileService` | `pending` | G28 |
-| 4 | `CheckTreeTest.php` | `CheckTree` | `TreeService` | `pending` | G24 |
-| 5 | `GedcomLoadTest.php` | `GedcomLoad` | `TreeService`, `GedcomImportService` | `pending` | G25 (Handler-Teil, CLI→L3) |
-| 6 | `MediaFileServiceTest.php`* | `MediaFileService` | diverse | `pending` | G27 |
-| 7 | `ImportGedcomActionTest.php` | `ImportGedcomAction` | `GedcomImportService` | `pending` | A02 overlap |
-| 8 | `ExportGedcomPageTest.php` | `ExportGedcomPage` | `GedcomExportService` | `pending` | A03 overlap |
-| 9 | `ExportGedcomActionTest.php` | `ExportGedcomAction` | `GedcomExportService` | `pending` | A03 overlap |
+| 1 | `UploadMediaActionTest.php` | `UploadMediaAction` | `MediaFileService` | `completed` | G21, G30 |
+| 2 | `EditMediaFileActionTest.php` | `EditMediaFileAction` | `MediaFileService` | `pending` | G28, nur Stub |
+| 3 | `EditMediaFileModalTest.php` | `EditMediaFileModal` | `MediaFileService` | `completed` | G28 |
+| 4 | `CheckTreeTest.php` | `CheckTree` | `TreeService` | `completed` | G24 |
+| 5 | `GedcomLoadTest.php` | `GedcomLoad` | `TreeService`, `GedcomImportService` | `pending` | G25, nur Stub |
+| 6 | `MediaFileServiceTest.php`* | `MediaFileService` | diverse | `pending` | G27, nur Stub |
+| 7 | `ImportGedcomActionTest.php` | `ImportGedcomAction` | `GedcomImportService` | `completed` | A02 overlap |
+| 8 | `ExportGedcomPageTest.php` | `ExportGedcomPage` | `GedcomExportService` | `completed` | A03 overlap |
+| 9 | `ExportGedcomActionTest.php` | `ExportGedcomAction` | `GedcomExportService` | `skipped` | Testdatei existiert nicht (ExportGedcomServerTest stattdessen) |
 
 ### Service-Tests (L2-fähige Methoden)
 
 | # | Test-Datei | SUT-Klasse | Template | Status | Bemerkung |
 |---|-----------|------------|----------|--------|-----------|
-| 10 | `GedcomServiceTest.php` | `GedcomService` | T2 | `pending` | **Ship as-is** von 5349: 12 pure Tests (canonicalTag, readLatitude/Longitude) |
-| 11 | `GedcomExportServiceTest.php` (partiell) | `GedcomExportService` | T1 | `pending` | G18–G19: nur `wrapLongLines()`, `createHeader()` → pure Funktionen, kein Mock nötig |
+| 10 | `GedcomServiceTest.php` | `GedcomService` | T2 | `pending` | Ship as-is von 5349 noch nicht portiert, nur Stub |
+| 11 | `GedcomExportServiceTest.php` (partiell) | `GedcomExportService` | T1 | `pending` | G18–G19, nur Stub |
 
 ### Bestehende substanzielle Tests (Verbesserung in P2)
 

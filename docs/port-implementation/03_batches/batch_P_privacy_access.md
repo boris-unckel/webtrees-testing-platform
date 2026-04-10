@@ -15,23 +15,23 @@ Portierbar sind vor allem die Auth-Middleware- und User-Management-Handler.
 
 | # | Test-Datei | SUT-Klasse | Template | Dependencies | Status | Bemerkung |
 |---|-----------|------------|----------|-------------|--------|-----------|
-| 1 | `DeleteUserTest.php` | `DeleteUser` | T1 | `UserService` | `pending` | P37, bereits substanziell (3 Methoden), Verbesserung prüfen |
-| 2 | `UserEditPageTest.php` | `UserEditPage` | T1 | `UserService` | `pending` | P37 |
-| 3 | `UserEditActionTest.php` | `UserEditAction` | T1 | `UserService` | `pending` | P37 |
-| 4 | `UserAddPageTest.php` | `UserAddPage` | T1 | `UserService` | `pending` | P37 |
-| 5 | `UserAddActionTest.php` | `UserAddAction` | T1 | `UserService` | `pending` | P37 |
-| 6 | `MasqueradeTest.php` | `Masquerade` | T1 | `UserService` | `pending` | P29, bereits substanziell (3 Methoden), Verbesserung prüfen |
-| 7 | `AccountEditPageTest.php` | `AccountEditPage` | T1 | `UserService` | `pending` | P38 |
-| 8 | `AccountEditActionTest.php` | `AccountEditAction` | T1 | `UserService` | `pending` | P38 |
-| 9 | `AccountDeleteTest.php` | `AccountDelete` | T1 | `UserService` | `pending` | P38 |
-| 10 | `LoginActionTest.php` | `LoginAction` | T1 | `AuthenticationService` | `pending` | P39 |
-| 11 | `LogoutTest.php` | `Logout` | T2 | — | `pending` | P39 |
-| 12 | `PendingChangesAcceptRecordTest.php` | `PendingChangesAcceptRecord` | T1 | `PendingChangesService` | `pending` | P40 |
-| 13 | `PendingChangesAcceptTreeTest.php` | `PendingChangesAcceptTree` | T1 | `PendingChangesService` | `pending` | P40 |
-| 14 | `PendingChangesRejectRecordTest.php` | `PendingChangesRejectRecord` | T1 | `PendingChangesService` | `pending` | P40 |
-| 15 | `PendingChangesRejectTreeTest.php` | `PendingChangesRejectTree` | T1 | `PendingChangesService` | `pending` | P40 |
-| 16 | `MergeRecordsPageTest.php` | `MergeRecordsPage` | T3 | `TreeService`, Registry | `pending` | P41 |
-| 17 | `MergeRecordsActionTest.php` | `MergeRecordsAction` | T3 | `TreeService`, Registry | `pending` | P41 |
+| 1 | `DeleteUserTest.php` | `DeleteUser` | T1 | `UserService` | `completed` | P37, bereits substanziell (3 Methoden), Verbesserung prüfen |
+| 2 | `UserEditPageTest.php` | `UserEditPage` | T1 | `UserService` | `completed` | P37 |
+| 3 | `UserEditActionTest.php` | `UserEditAction` | T1 | `UserService` | `completed` | P37 |
+| 4 | `UserAddPageTest.php` | `UserAddPage` | T1 | `UserService` | `completed` | P37 |
+| 5 | `UserAddActionTest.php` | `UserAddAction` | T1 | `UserService` | `completed` | P37 |
+| 6 | `MasqueradeTest.php` | `Masquerade` | T1 | `UserService` | `completed` | P29, bereits substanziell (3 Methoden), Verbesserung prüfen |
+| 7 | `AccountEditTest.php` | `AccountEdit` | T1 | `UserService` | `completed` | P38, Dateiname korrigiert |
+| 8 | `AccountUpdateTest.php` | `AccountUpdate` | T1 | `UserService` | `completed` | P38, Dateiname korrigiert |
+| 9 | `AccountDeleteTest.php` | `AccountDelete` | T1 | `UserService` | `completed` | P38 |
+| 10 | `LoginActionTest.php` | `LoginAction` | T1 | `AuthenticationService` | `completed` | P39 |
+| 11 | `LogoutTest.php` | `Logout` | T2 | — | `completed` | P39 |
+| 12 | `PendingChangesAcceptRecordTest.php` | `PendingChangesAcceptRecord` | T1 | `PendingChangesService` | `completed` | P40 |
+| 13 | `PendingChangesAcceptTreeTest.php` | `PendingChangesAcceptTree` | T1 | `PendingChangesService` | `completed` | P40 |
+| 14 | `PendingChangesRejectRecordTest.php` | `PendingChangesRejectRecord` | T1 | `PendingChangesService` | `completed` | P40 |
+| 15 | `PendingChangesRejectTreeTest.php` | `PendingChangesRejectTree` | T1 | `PendingChangesService` | `completed` | P40 |
+| 16 | `MergeRecordsPageTest.php` | `MergeRecordsPage` | T3 | `TreeService`, Registry | `completed` | P41 |
+| 17 | `MergeRecordsActionTest.php` | `MergeRecordsAction` | T3 | `TreeService`, Registry | `completed` | P41 |
 
 ### Bestehende substanzielle Tests (Verbesserung in Phase P2)
 

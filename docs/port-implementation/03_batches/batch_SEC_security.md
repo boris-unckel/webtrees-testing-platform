@@ -12,16 +12,16 @@ SEC-PUB01–04, SEC-W01, SEC-WZ01–04, SEC-HDR01–04, SEC-BOT01, SEC-UTL01
 
 | # | Test-Datei | SUT-Klasse | Template | Dependencies | Status | Bemerkung |
 |---|-----------|------------|----------|-------------|--------|-----------|
-| 1 | `MediaFileDownloadTest.php` | `MediaFileDownload` | T3 | `MediaFileService`, `Registry::mediaFactory()` | `pending` | SEC-M01 |
-| 2 | `MediaFileThumbnailTest.php` | `MediaFileThumbnail` | T3 | `MediaFileService`, `Registry::mediaFactory()` | `pending` | SEC-M02 |
-| 3 | `PublicFilesTest.php` (ggf. Middleware) | `PublicFiles` | T2 | — | `pending` | SEC-PUB01–04 |
-| 4 | `SetupTest.php` / `SetupWizardTest.php` | `SetupWizard*` | T1 | `ServerCheckService`, `MigrationService` | `pending` | SEC-W01, SEC-WZ01–04 |
-| 5 | `PingTest.php` | `Ping` | T2 | — | `pending` | SEC-UTL01 (bereits substanziell, Verbesserung prüfen) |
-| 6 | `RobotsTxtTest.php` | `RobotsTxt` | T2 | — | `pending` | SEC-UTL01 |
-| 7 | `SiteRegistrationActionTest.php` | `SiteRegistrationAction` | T1 | `UserService` | `pending` | SEC-UTL01 |
-| 8 | `LoginActionTest.php` | `LoginAction` | T1 | `UserService`, `AuthenticationService` | `pending` | SEC-UTL01 |
-| 9 | `PasswordResetActionTest.php` | `PasswordResetAction` | T1 | `UserService` | `pending` | SEC-UTL01 |
-| 10 | `VerifyEmailTest.php` | `VerifyEmail` | T1 | `UserService` | `pending` | SEC-UTL01 |
+| 1 | `MediaFileDownloadTest.php` | `MediaFileDownload` | T3 | `MediaFileService`, `Registry::mediaFactory()` | `completed` | SEC-M01 |
+| 2 | `MediaFileThumbnailTest.php` | `MediaFileThumbnail` | T3 | `MediaFileService`, `Registry::mediaFactory()` | `completed` | SEC-M02 |
+| 3 | `PublicFilesTest.php` (Middleware) | `PublicFiles` | T2 | — | `pending` | SEC-PUB01–04, nur Stub |
+| 4 | `SetupWizardTest.php` | `SetupWizard*` | T1 | `ServerCheckService`, `MigrationService` | `pending` | SEC-W01, SEC-WZ01–04, nur Stub |
+| 5 | `PingTest.php` | `Ping` | T2 | — | `completed` | SEC-UTL01 (bereits substanziell, Verbesserung prüfen) |
+| 6 | `RobotsTxtTest.php` | `RobotsTxt` | T2 | — | `completed` | SEC-UTL01 |
+| 7 | `SiteRegistrationActionTest.php` | `SiteRegistrationAction` | T1 | `UserService` | `completed` | SEC-UTL01 |
+| 8 | `LoginActionTest.php` | `LoginAction` | T1 | `UserService`, `AuthenticationService` | `completed` | SEC-UTL01 |
+| 9 | `PasswordResetActionTest.php` | `PasswordResetAction` | T1 | `UserService` | `completed` | SEC-UTL01 |
+| 10 | `VerifyEmailTest.php` | `VerifyEmail` | T1 | `UserService` | `completed` | SEC-UTL01 |
 
 ### Sonderkandidaten (Middleware, ggf. eigener Pfad)
 

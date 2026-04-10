@@ -9,7 +9,7 @@ Sie werden in Phase P2 auf Verbesserungspotenzial geprüft und ggf. erweitert.
 
 ## §1 Redirect-Tests (29 Tests, 91 Methoden)
 
-**Status:** `pending`
+**Status:** `improved` — je 3 Testmethoden mit Edge Cases (Redirect, NoRecord/NoTree, MissingParameter)
 
 Die 29 Redirect-Tests sind die **Mustervorlage** für alle neuen Tests.
 Verbesserungspotenzial:
@@ -39,7 +39,7 @@ Verbesserungspotenzial:
 
 ## §2 UpgradeWizardStepTest (11 Methoden, 251 LoC)
 
-**Status:** `pending`
+**Status:** `improved` — 10 Testmethoden mit UpgradeService-Mocking, Exception-Pfade
 
 Verbesserungspotenzial:
 
@@ -57,9 +57,9 @@ Verbesserungspotenzial:
    Die 4 Tests, die ihn real instanziieren, rufen ihn nie auf (Dummy-Rolle).
    Hier `self::createStub()` statt realer Instanz verwenden.
 
-## §3 LoginPageTest (2 Methoden)
+## §3 LoginPageTest (2 → 4 Methoden)
 
-**Status:** `pending`
+**Status:** `improved` — TreeService gemockt, 4 Testmethoden
 
 **Pattern-Inkonsistenz:** Verwendet reale `TreeService` statt Mock.
 
@@ -72,7 +72,7 @@ Verbesserungspotenzial:
 
 ## §4 BroadcastPageTest (2 Methoden)
 
-**Status:** `pending`
+**Status:** `improved` — Negativ-Test (HttpBadRequestException) hinzugefügt, MessageService gemockt
 
 **Fehlende Negativ-Tests:** Nur 2 Methoden bei voraussichtlich mehr Codepfaden.
 
@@ -83,7 +83,7 @@ Verbesserungspotenzial:
 
 ## §5 SelectLanguageTest (2 Methoden)
 
-**Status:** `pending`
+**Status:** `improved` — setPreference-Verifikation mit expects(self::once()) hinzugefügt
 
 **Kein Pattern-Bruch** (Analyse §B.3), aber Verbesserungspotenzial:
 
@@ -94,20 +94,20 @@ Verbesserungspotenzial:
 
 ## §6 PingTest (3 Methoden)
 
-**Status:** `pending` — prüfen auf Vollständigkeit
+**Status:** `skipped` — bereits vollständig (3 Methoden: OK, WARNING, ERROR), keine Verbesserung nötig
 
 Bereits substanziell. Prüfen, ob alle Codepfade abgedeckt sind.
 
 ## §7 ModuleActionTest (4 Methoden)
 
-**Status:** `pending` — prüfen auf Vollständigkeit
+**Status:** `skipped` — bereits vollständig mit Fake-Pattern, keine Verbesserung nötig
 
 Bereits substanziell mit Fake-Pattern (anonyme Klasse). Mustervorlage.
 Prüfen, ob Edge Cases fehlen.
 
 ## §8 DeleteUserTest (3 Methoden)
 
-**Status:** `pending` — prüfen auf Vollständigkeit
+**Status:** `skipped` — bereits vollständig (3 Methoden), keine Verbesserung nötig
 
 Bereits substanziell. Prüfen:
 - Selbst-Löschung (Admin löscht eigenen Account)

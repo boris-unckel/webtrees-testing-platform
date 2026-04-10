@@ -13,12 +13,12 @@
 
 | # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
 |---|-----------|------------|-------------|--------|-----------|
-| 1 | `ContactPageTest.php` | `ContactPage` | `CaptchaService`, `MessageService` | `pending` | K01 |
-| 2 | `ContactActionTest.php` | `ContactAction` | `CaptchaService`, `MessageService` | `pending` | K01 |
-| 3 | `MessagePageTest.php` | `MessagePage` | `UserService` | `pending` | K02 |
-| 4 | `MessageActionTest.php` | `MessageAction` | `MessageService`, `UserService` | `pending` | K02 |
-| 5 | `MessageSelectPageTest.php` | `MessageSelectPage` | `UserService` | `pending` | K02 |
-| 6 | `BroadcastActionTest.php` | `BroadcastAction` | `MessageService` | `pending` | K02 |
+| 1 | `ContactPageTest.php` | `ContactPage` | `CaptchaService`, `MessageService` | `completed` | K01 |
+| 2 | `ContactActionTest.php` | `ContactAction` | `CaptchaService`, `MessageService` | `completed` | K01 |
+| 3 | `MessagePageTest.php` | `MessagePage` | `UserService` | `completed` | K02 |
+| 4 | `MessageActionTest.php` | `MessageAction` | `MessageService`, `UserService` | `completed` | K02 |
+| 5 | `MessageSelectTest.php` | `MessageSelect` | `UserService` | `completed` | K02, Dateiname korrigiert |
+| 6 | `BroadcastActionTest.php` | `BroadcastAction` | `MessageService` | `completed` | K02 |
 
 ### Bestehende substanzielle Tests (Verbesserung in P2)
 

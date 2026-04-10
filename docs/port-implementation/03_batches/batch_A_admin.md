@@ -13,25 +13,25 @@
 
 | # | Test-Datei | SUT-Klasse | Dependencies | Status | Bemerkung |
 |---|-----------|------------|-------------|--------|-----------|
-| 1 | `CreateTreePageTest.php` | `CreateTreePage` | `TreeService` | `pending` | A01 |
-| 2 | `CreateTreeActionTest.php` | `CreateTreeAction` | `TreeService` | `pending` | A01 |
-| 3 | `DeleteTreeActionTest.php` | `DeleteTreeAction` | `TreeService` | `pending` | A01 |
-| 4 | `TreePageDefaultEditTest.php` | `TreePageDefaultEdit` | `TreeService` | `pending` | A01 |
-| 5 | `TreePreferencesPageTest.php` | `TreePreferencesPage` | `TreeService` | `pending` | A04 |
-| 6 | `TreePreferencesActionTest.php` | `TreePreferencesAction` | `TreeService` | `pending` | A04 |
-| 7 | `SitePreferencesPageTest.php` | `SitePreferencesPage` | — | `pending` | A06, ggf. T2 |
-| 8 | `SitePreferencesActionTest.php` | `SitePreferencesAction` | — | `pending` | A06, ggf. T2 |
-| 9 | `DataFixPageTest.php` | `DataFixPage` | `DataFixService` | `pending` | A09 |
-| 10 | `DataFixActionTest.php` | `DataFixAction` | `DataFixService` | `pending` | A09 |
-| 11 | `SiteLogsPageTest.php` | `SiteLogsPage` | — | `pending` | A10 |
-| 12 | `SiteLogsDownloadTest.php` | `SiteLogsDownload` | — | `pending` | A10 |
-| 13 | `SiteLogsDeleteTest.php` | `SiteLogsDelete` | — | `pending` | A10 |
+| 1 | `CreateTreePageTest.php` | `CreateTreePage` | `TreeService` | `completed` | A01 |
+| 2 | `CreateTreeActionTest.php` | `CreateTreeAction` | `TreeService` | `completed` | A01 |
+| 3 | `DeleteTreeActionTest.php` | `DeleteTreeAction` | `TreeService` | `pending` | A01, nur Stub |
+| 4 | `TreePageDefaultEditTest.php` | `TreePageDefaultEdit` | `TreeService` | `completed` | A01 |
+| 5 | `TreePreferencesPageTest.php` | `TreePreferencesPage` | `TreeService` | `pending` | A04, nur Stub |
+| 6 | `TreePreferencesActionTest.php` | `TreePreferencesAction` | `TreeService` | `completed` | A04 |
+| 7 | `SitePreferencesPageTest.php` | `SitePreferencesPage` | — | `pending` | A06, nur Stub |
+| 8 | `SitePreferencesActionTest.php` | `SitePreferencesAction` | — | `completed` | A06, ggf. T2 |
+| 9 | `DataFixPageTest.php` | `DataFixPage` | `DataFixService` | `completed` | A09 |
+| 10 | `DataFixActionTest.php` | `DataFixAction` | `DataFixService` | `skipped` | A09, Testdatei existiert nicht |
+| 11 | `SiteLogsPageTest.php` | `SiteLogsPage` | — | `completed` | A10 |
+| 12 | `SiteLogsDownloadTest.php` | `SiteLogsDownload` | — | `completed` | A10 |
+| 13 | `SiteLogsDeleteTest.php` | `SiteLogsDelete` | — | `pending` | A10, nur Stub |
 
 ### Service-Tests (L2-fähige Methoden)
 
 | # | Test-Datei | SUT-Klasse | Template | Status | Bemerkung |
 |---|-----------|------------|----------|--------|-----------|
-| 14 | `RomanNumeralsServiceTest.php` | `RomanNumeralsService` | T2 | `pending` | **Ship as-is** von 5349: 4 Tests, 18 Datenpunkte |
+| 14 | `RomanNumeralsServiceTest.php` | `RomanNumeralsService` | T2 | `pending` | Ship as-is von 5349 noch nicht portiert, nur Stub |
 
 ### Bestehende substanzielle Tests (Verbesserung in P2)
 
