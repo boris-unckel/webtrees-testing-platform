@@ -150,11 +150,13 @@ Jede neue Sourcecode-Datei muss einen SPDX-Header erhalten. **Die Lizenz hängt 
 
 ### Fork-Repo (GPL-3.0-or-later)
 
-| Dateityp | Kommentar-Syntax | Platzierung |
-|---|---|---|
-| `.php` | `// SPDX-License-Identifier: GPL-3.0-or-later` | Nach `<?php` |
-| `.xml` | `<!-- SPDX-License-Identifier: GPL-3.0-or-later -->` | Nach `<?xml?>` |
-| `.md` | `<!-- SPDX-License-Identifier: GPL-3.0-or-later -->` | Erste Zeile |
+**Wichtig:** Die meisten Upstream-Dateien enthalten bereits einen ausführlichen GPL-Lizenz-Header-Kommentar (mehrzeiliger Boilerplate-Block). In diesem Fall **keinen** SPDX-Identifier ergänzen und den bestehenden Header **nicht** durch SPDX ersetzen. SPDX-Header nur in Dateien einfügen, die **keinen** bestehenden Lizenz-Header haben (neue Dateien oder headerlose Source-Dateien).
+
+| Dateityp | Kommentar-Syntax | Platzierung | Bedingung |
+|---|---|---|---|
+| `.php` | `// SPDX-License-Identifier: GPL-3.0-or-later` | Nach `<?php` | Nur wenn kein Lizenz-Header vorhanden |
+| `.xml` | `<!-- SPDX-License-Identifier: GPL-3.0-or-later -->` | Nach `<?xml?>` | Nur wenn kein Lizenz-Header vorhanden |
+| `.md` | `<!-- SPDX-License-Identifier: GPL-3.0-or-later -->` | Erste Zeile | Nur wenn kein Lizenz-Header vorhanden |
 
 ## Kein Perl
 
