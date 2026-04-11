@@ -97,10 +97,11 @@ podman-compose logs -f webtrees         # Live-Log des webtrees-Containers
 ```bash
 # Läuft gerade ein PHPUnit-Prozess?
 podman-compose exec webtrees pgrep -a -f phpunit
-
-# Live-Output des laufenden Testlaufs verfolgen
-podman-compose exec webtrees tail -f /artifacts/layer3/phpunit-output.log
 ```
+
+Hinweis: PHPUnit schreibt keine Live-Log-Datei mehr (Phase B des
+Log-Plans). Live-Output ist nur über die aufrufende Shell sichtbar;
+persistiert bleibt die JUnit-XML nach Testende.
 
 **Einzelne Testklasse ausführen (ohne Coverage):**
 ```bash

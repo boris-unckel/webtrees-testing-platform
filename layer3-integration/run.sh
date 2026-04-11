@@ -16,13 +16,11 @@ cd "${WEBTREES_DIR}"
 
 COVERAGE_DIR="/coverage"
 
+EXIT_CODE=0
 vendor/bin/phpunit \
     --configuration=/tests/layer3-integration/phpunit-integration.xml \
     --log-junit="${ARTIFACTS}/phpunit-integration.xml" \
-    --coverage-clover="${COVERAGE_DIR}/layer3-coverage.xml" \
-    2>&1 | tee "${ARTIFACTS}/phpunit-output.log"
-
-EXIT_CODE=${PIPESTATUS[0]}
+    --coverage-clover="${COVERAGE_DIR}/layer3-coverage.xml" || EXIT_CODE=$?
 
 # Bei Fehler: DB-Dump als Artefakt
 if [ "${EXIT_CODE}" -ne 0 ]; then

@@ -113,7 +113,6 @@ Alle PHPUnit-Prozesse laufen im Container `webtrees`, nicht auf dem Host:
 
 ```bash
 podman-compose exec webtrees pgrep -a -f phpunit                           # Läuft ein Testlauf?
-podman-compose exec webtrees tail -f /artifacts/layer3/phpunit-output.log  # Live-Output
 podman-compose exec webtrees kill <PID>                                    # Abbrechen
 ```
 

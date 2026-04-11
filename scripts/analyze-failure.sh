@@ -48,7 +48,7 @@ collect_layer1() {
 
 collect_layer2() {
     echo "## Komponententest (Layer 2)" >> "${CONTEXT_FILE}"
-    for f in "${ARTIFACTS}/layer2/phpunit-unit.xml" "${ARTIFACTS}/layer2/phpunit-output.log"; do
+    for f in "${ARTIFACTS}/layer2/phpunit-unit.xml"; do
         if [ -f "$f" ]; then
             echo "### $(basename "$f")" >> "${CONTEXT_FILE}"
             echo '```' >> "${CONTEXT_FILE}"
@@ -60,7 +60,7 @@ collect_layer2() {
 
 collect_layer3() {
     echo "## Komponentenintegrationstest (Layer 3)" >> "${CONTEXT_FILE}"
-    for f in "${ARTIFACTS}/layer3/phpunit-integration.xml" "${ARTIFACTS}/layer3/phpunit-output.log" "${ARTIFACTS}/layer3/php-errors.log"; do
+    for f in "${ARTIFACTS}/layer3/phpunit-integration.xml" "${ARTIFACTS}/layer3/php-errors.log"; do
         if [ -f "$f" ]; then
             echo "### $(basename "$f")" >> "${CONTEXT_FILE}"
             echo '```' >> "${CONTEXT_FILE}"
