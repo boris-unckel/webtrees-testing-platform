@@ -18,6 +18,12 @@ fixtures/privacy-test.ged
 .env.local
 .env.*.local
 
+# Claude Code — lokale/ephemere Dateien (user-spezifische Permissions + Laufzeit-Locks).
+# Projekt-geteilte Artefakte wie .claude/settings.json, .claude/commands/ und
+# .claude/agents/ bleiben bewusst trackable (kein pauschales .claude/-Ignore).
+.claude/settings.local.json
+.claude/*.lock
+
 # macOS
 .DS_Store
 
