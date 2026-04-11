@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: AGPL-3.0-or-later
-# Performanztest — Playwright-Metrics + Baseline-Vergleich
+# Systemtest — Playwright mit OTel-Korrelation
 # Wird im Playwright-Container ausgefuehrt. Zusaetzliche Argumente werden
-# als Spec-Filter an Playwright durchgereicht.
+# als Spec-Filter an Playwright durchgereicht (fuer quick-Variante).
 #
 # TEST_RUN_ID wird vom Makefile gesetzt und hier nicht neu erzeugt.
 
 set -euo pipefail
 
-ARTIFACTS="/artifacts/layer5"
+ARTIFACTS="/artifacts/layer4"
 mkdir -p "${ARTIFACTS}"
 
-echo "=== Teststufe 4 — Performanztest ==="
+echo "=== Teststufe 3 — Systemtest ==="
 
-cd /tests/performance
+cd /tests/e2e
 
 EXIT_CODE=0
 npx playwright test \
     --config=playwright.config.ts \
     "$@" || EXIT_CODE=$?
 
-echo "=== Performanztest abgeschlossen (Exit: ${EXIT_CODE}) ==="
+echo "=== Systemtest abgeschlossen (Exit: ${EXIT_CODE}) ==="
 exit "${EXIT_CODE}"
