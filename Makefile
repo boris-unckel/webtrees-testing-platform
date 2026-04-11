@@ -44,7 +44,11 @@ down: ## Stack stoppen
 
 clean: ## Stack stoppen, Volumes und Passwoerter loeschen
 	$(COMPOSE) down -v
-	rm -rf artifacts/layer*/*
+	# podman unshare: noetig, weil Artefakte via Bind-Mount mit Container-UIDs
+	# (z. B. 100032 fuer www-data) geschrieben werden und vom Host nicht geloescht
+	# werden koennen. Im User-Namespace ist der Aufrufer root und darf alles.
+	podman unshare rm -rf artifacts/layer1 artifacts/layer2 artifacts/layer3 artifacts/layer4 artifacts/layer5
+	mkdir -p artifacts/layer1 artifacts/layer2 artifacts/layer3 artifacts/layer4 artifacts/layer5
 	: > artifacts/traces.json && chmod 666 artifacts/traces.json
 	@if [ -f .env ]; then \
 		for key in MYSQL_ROOT_PASSWORD MYSQL_PASSWORD \
@@ -63,6 +67,7 @@ _setup-exec:
 	$(COMPOSE) exec webtrees /usr/local/bin/setup-webtrees.sh
 
 test-all: setup test-static test-unit test-integration test-e2e test-performance ## Alle Teststufen ausführen
+	@python3 scripts/summarize-test-all.py --artifacts-dir artifacts/
 
 test-static: ## Statischer Test (PHPStan + PHPCS + Trivy)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer1-static/run.sh
@@ -91,8 +96,6 @@ test-static: ## Statischer Test (PHPStan + PHPCS + Trivy)
 
 test-unit: ## Teststufe 1 — Komponententest (PHPUnit, isoliert)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer2-unit/run.sh
-	mkdir -p artifacts/layer2
-	podman cp webtrees:/artifacts/layer2/coverage.xml artifacts/layer2/coverage.xml
 
 test-integration: ## Teststufe 2 — Komponentenintegrationstest (PHPUnit + MySQL)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer3-integration/run.sh
@@ -118,33 +121,36 @@ test-integration-security-%: ## Security-Audit-Einzeltask (z. B. make test-integ
 test-e2e-quick: ## Systemtest — 3 repraesentative Faelle mit OTel-Korrelation
 	@RUN_ID=$$(uuidgen); \
 	echo "Testlauf: $$RUN_ID"; \
+	mkdir -p artifacts/layer4; \
 	scripts/truncate-perfschema.sh || true; \
-	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright npx playwright test \
-	    --config=/tests/e2e/playwright.config.ts \
+	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright /bin/bash /tests/e2e/run.sh \
 	    homepage.spec.ts individual.spec.ts search-forms.spec.ts; \
 	scripts/extract-perfschema.sh layer4 || true; \
 	scripts/trace-report.sh --run-id $$RUN_ID --layer 4 \
-	    --output-json artifacts/trace-report-$$RUN_ID.json || true
+	    --output-json artifacts/layer4/trace-report.json \
+	    --output-text artifacts/layer4/trace-report.txt || true
 
 test-e2e: ## Teststufe 3 — Systemtest (Playwright) mit OTel-Korrelation
 	@RUN_ID=$$(uuidgen); \
 	echo "Testlauf: $$RUN_ID"; \
+	mkdir -p artifacts/layer4; \
 	scripts/truncate-perfschema.sh || true; \
-	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright npx playwright test \
-	    --config=/tests/e2e/playwright.config.ts; \
+	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright /bin/bash /tests/e2e/run.sh; \
 	scripts/extract-perfschema.sh layer4 || true; \
 	scripts/trace-report.sh --run-id $$RUN_ID --layer 4 \
-	    --output-json artifacts/trace-report-$$RUN_ID.json || true
+	    --output-json artifacts/layer4/trace-report.json \
+	    --output-text artifacts/layer4/trace-report.txt || true
 
 test-performance: ## Performanztest (Playwright-Metrics + Baseline-Vergleich + OTel)
 	@RUN_ID=$$(uuidgen); \
 	echo "Testlauf: $$RUN_ID"; \
+	mkdir -p artifacts/layer5; \
 	scripts/truncate-perfschema.sh || true; \
-	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright npx playwright test \
-	    --config=/tests/performance/playwright.config.ts; \
+	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright /bin/bash /tests/performance/run.sh; \
 	scripts/extract-perfschema.sh layer5 || true; \
 	scripts/trace-report.sh --run-id $$RUN_ID --layer 5 \
-	    --output-json artifacts/trace-report-$$RUN_ID.json || true
+	    --output-json artifacts/layer5/trace-report.json \
+	    --output-text artifacts/layer5/trace-report.txt || true
 
 perfschema-truncate: ## PerfSchema-Daten zuruecksetzen
 	scripts/truncate-perfschema.sh

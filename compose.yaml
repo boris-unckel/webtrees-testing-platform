@@ -24,6 +24,8 @@ services:
       - ./modules/otel-spans:/var/www/html/modules_v4/otel_spans:ro,z
       # Security-Trace-Modul (Whitebox-Audit-Middleware, nur aktiv mit WEBTREES_SECURITY_TRACE=1)
       - ./modules/security-trace:/var/www/html/modules_v4/security_trace:ro,z
+      # Artefakt-Bind-Mount (Phase A-Mess Vergleichslauf — ggf. nach Messung wieder entfernen)
+      - ./artifacts:/artifacts:rw,z
       # Security-Trace-Artefakte (nur beschrieben, wenn Modul aktiv)
       - ./artifacts/security-trace:/artifacts/security-trace:rw,z
       # GEDCOM-Fixtures
@@ -113,6 +115,8 @@ services:
       MYSQL_HOST: mysql
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      # Playwright-Ausgaben ohne ANSI-Farben (Phase H)
+      FORCE_COLOR: "0"
     depends_on:
       - webtrees
     networks:
