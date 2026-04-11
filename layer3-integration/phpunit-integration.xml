@@ -25,6 +25,14 @@
         <env name="MYSQL_DATABASE" value="webtrees_test"/>
         <env name="MYSQL_USER" value="webtrees"/>
         <env name="MYSQL_PASSWORD" value="webtrees_test"/>
+        <!-- R4 (Phase K): PHPUnit-interner PHP-Prozess. display_errors=On druckt
+             Errors einmal auf stderr; log_errors=On würde zusätzlich (über die
+             stderr-Fallback-Semantik im PHPUnit-Kontext) eine zweite Kopie mit
+             "PHP "-Präfix ausgeben. Wir unterdrücken log_errors scoped auf
+             PHPUnit, damit Deprecations/Warnings nur einmal im stdout-Log
+             landen. Der CLI-Fall wird separat im Containerfile gelöst
+             (/var/log/php_errors.log). -->
+        <ini name="log_errors" value="0"/>
     </php>
 
     <source>

@@ -21,6 +21,15 @@
         </testsuite>
     </testsuites>
 
+    <php>
+        <!-- R4 (Phase K): siehe phpunit-integration.xml. log_errors im
+             PHPUnit-Kontext erzeugt eine zweite "PHP Deprecated:"-Kopie auf
+             stderr (statt den File-Log zu schreiben). Deshalb scoped
+             deaktiviert; display_errors=On bleibt aktiv und druckt Errors
+             einmal. -->
+        <ini name="log_errors" value="0"/>
+    </php>
+
     <source>
         <include>
             <directory suffix=".php">/var/www/html/app</directory>

@@ -84,7 +84,9 @@ RUN echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/webtrees-test.ini \
     && echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
     && echo "display_errors = On" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
     && echo "log_errors = On" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
-    && echo "error_log = /var/log/php_errors.log" >> /usr/local/etc/php/conf.d/webtrees-test.ini
+    && echo "error_log = /var/log/php_errors.log" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
+    && touch /var/log/php_errors.log \
+    && chmod 666 /var/log/php_errors.log
 
 # pcov-Konfiguration für Coverage
 RUN echo "pcov.enabled = 1" > /usr/local/etc/php/conf.d/pcov.ini \
