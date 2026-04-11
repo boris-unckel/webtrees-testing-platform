@@ -42,18 +42,38 @@ Verwandte Dokumente:
 | **Scope** | Service-Klassen der Feature-Matrizen (G01–G23, S01–S24, S26–S40, P01–P29) |
 | **Reporting** | Coverage-HTML als CI-Artefakt (7 Tage Retention) |
 
-### Ist-Stand (Teststufe 2, Stand: 2026-04-04, nach AP A-01 + AP B-01–B-07 + AP C-01–C-07)
+### Ist-Stand (Stand: 2026-04-11, Commit: 72bb731)
 
-> Basis: `make test-integration` (alle 43 Testklassen, 425 Tests, 1.364 Assertions).
-> Vorherige Baseline (384 Tests, nach AP1–AP15): 29,3% / 21,6%.
+> Vollständiger Layer-Vergleich: [`docs/coverage-runs/2026-04-11_layer2-vs-layer3.md`](coverage-runs/2026-04-11_layer2-vs-layer3.md)
 
-| Metrik | Wert (Voll-Lauf) |
+#### Layer 2 — Upstream-Unit-Tests (Teststufe 1, `make test-unit`)
+
+| Metrik | Wert |
 |---|---|
-| Anweisungsüberdeckung | 32,4% (14.260 / 44.043 Statements) — Ratchet-Basis |
-| Methodenüberdeckung | 22,8% (1.009 / 4.433 Methoden) |
-| Pakete mit >50%-Coverage | Http/Routes (99,7%), CustomTags (97,2%), GedcomFilters (81,5%) |
-| Pakete mit 0%-Coverage | CommonMark (partiell abgedeckt via Cli-Tests) |
-| Größte unabgedeckte Pakete | Module (restliche Methoden), Http/RequestHandlers (restliche Handler) |
+| Anweisungsüberdeckung | **39,82 %** (17.527 / 44.021 Statements) |
+| Methodenüberdeckung | 36,06 % (1.598 / 4.432 Methoden) |
+| Pakete mit >80 %-Coverage | Census (99,8 %), SurnameTradition (89,8 %), Report (79,1 %), Elements (86,9 %) |
+| Pakete mit 0 %-Coverage | CustomTags, Cli, GedcomFilters, Helpers, Statistics |
+
+#### Layer 3 — Integrationstests (Teststufe 2, `make test-integration`)
+
+> Vorherige Werte (2026-04-04, nach AP A-01 + AP B-01–B-07 + AP C-01–C-07): 32,4 % / 22,8 %.
+
+| Metrik | Wert |
+|---|---|
+| Anweisungsüberdeckung | **39,83 %** (17.540 / 44.035 Statements) — Ratchet-Basis |
+| Methodenüberdeckung | 36,19 % (1.604 / 4.432 Methoden) |
+| Pakete mit >80 %-Coverage | CustomTags (97,2 %), Helpers (94,1 %), GedcomFilters (81,5 %), Date (77,0 %) |
+| Pakete mit 0 %-Coverage | Statistics, Schema (<4 %), Census (<3 %) |
+| Größte unabgedeckte Pakete | Http/RequestHandlers (35 %), Module (restliche Methoden) |
+
+#### Komplementarität
+
+Layer 2 und Layer 3 decken überwiegend **verschiedene Bereiche** ab:
+- L2 stärker: Census (−97,6 %), Elements (−58,5 %), SurnameTradition (−67,1 %), Http (−26,4 %), Report (−21,3 %)
+- L3 stärker: Services (+39,7 %), CustomTags (+97,2 %), Date (+70,3 %), Cli (+45,2 %), Module (+14,0 %)
+
+Nettobilanz: +6.645 Statements wo L3 besser / −6.648 wo L2 besser → Gesamtdifferenz ≈ 0.
 
 **Begründung:** Das Projekt startet bei ~0% substanzieller Überdeckung (95% Stub-Tests).
 Ein willkürlicher Zielwert (z. B. 80%) wäre spekulativ. Die Ratchet-Strategie schützt
