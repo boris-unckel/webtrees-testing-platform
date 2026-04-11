@@ -18,7 +18,7 @@ export default defineConfig({
   reporter: [
     ['html', { outputFolder: '/artifacts/layer5/playwright-report', open: 'never' }],
     ['json', { outputFile: '/artifacts/layer5/performance-results.json' }],
-    ['list'],
+    ['line'],
   ],
   use: {
     baseURL: process.env.BASE_URL || 'http://webtrees:80',

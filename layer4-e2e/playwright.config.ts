@@ -17,7 +17,8 @@ export default defineConfig({
   workers: 1, // Sequentiell — shared State (Login-Session)
   reporter: [
     ['html', { outputFolder: '/artifacts/layer4/playwright-report', open: 'never' }],
-    ['list'],
+    ['json', { outputFile: '/artifacts/layer4/playwright-results.json' }],
+    ['line'],
   ],
   use: {
     baseURL: process.env.BASE_URL || 'http://webtrees:80',

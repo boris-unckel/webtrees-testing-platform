@@ -42,7 +42,7 @@ rm -f "${TESTS_DATA_DIR}/offline.txt" "${TESTS_DATA_DIR}/foo"
 echo "[1/4] composer install..."
 cd "${WEBTREES_DIR}"
 if [ ! -f vendor/autoload.php ]; then
-    composer install --no-interaction --no-progress --prefer-dist 2>&1
+    composer install --no-interaction --no-progress --no-ansi --prefer-dist 2>&1
 else
     echo "  vendor/autoload.php existiert bereits, übersprungen"
 fi
@@ -56,7 +56,7 @@ if [ "${OTEL_SDK_DISABLED:-false}" != "true" ]; then
     cp "${WEBTREES_DIR}/composer.lock" /tmp/composer.lock
     COMPOSER=/tmp/composer.json \
     COMPOSER_VENDOR_DIR="${WEBTREES_DIR}/vendor" \
-    composer require --dev --no-interaction --no-progress \
+    composer require --dev --no-interaction --no-progress --no-ansi \
       open-telemetry/sdk \
       open-telemetry/exporter-otlp \
       open-telemetry/opentelemetry-auto-pdo \
