@@ -186,15 +186,15 @@ def classify_span(span: Span) -> str:
     return "Unknown"
 
 
-def print_span_tree(span: Span, indent: int = 2):
+def print_span_tree(span: Span, indent: int = 2, file=sys.stdout):
     layer = classify_span(span)
     prefix = " " * indent
     name_part = span.name
     if "webtrees.action" in span.attributes:
         name_part = f"webtrees.action: {span.attributes['webtrees.action']}"
-    print(f"{prefix}+-- {layer}: {span.duration_ms}ms  [{name_part}]")
+    print(f"{prefix}+-- {layer}: {span.duration_ms}ms  [{name_part}]", file=file)
     for child in span.children:
-        print_span_tree(child, indent + 4)
+        print_span_tree(child, indent + 4, file=file)
 
 
 def load_perfschema(perfschema_dir: str) -> dict:
@@ -210,27 +210,27 @@ def load_perfschema(perfschema_dir: str) -> dict:
     return data
 
 
-def print_perfschema(perfschema: dict):
-    print("\n--- Performance Schema (Testlauf-Aggregat) ---")
+def print_perfschema(perfschema: dict, file=sys.stdout):
+    print("\n--- Performance Schema (Testlauf-Aggregat) ---", file=file)
 
     stmts = perfschema.get("statements_by_digest")
     if stmts:
-        print("Top SQL by Latenz:")
+        print("Top SQL by Latenz:", file=file)
         for i, s in enumerate(stmts[:10], 1):
             digest = s.get("digest_text", "?")[:80]
             print(f"  {i}. {digest}  "
                   f"avg={s.get('avg_ms', '?')}ms  "
                   f"calls={s.get('count', '?')}  "
-                  f"rows={s.get('rows_examined', '?')}")
+                  f"rows={s.get('rows_examined', '?')}", file=file)
 
     io_waits = perfschema.get("table_io_waits")
     if io_waits:
-        print("\nTable I/O:")
+        print("\nTable I/O:", file=file)
         for t in io_waits[:5]:
             print(f"  {t.get('table_name', '?')}:  "
                   f"reads={t.get('count_read', '?')}  "
                   f"writes={t.get('count_write', '?')}  "
-                  f"total_wait={t.get('total_wait_ms', '?')}ms")
+                  f"total_wait={t.get('total_wait_ms', '?')}ms", file=file)
 
     # Warnungen
     warnings = []
@@ -245,7 +245,7 @@ def print_perfschema(perfschema: dict):
         if tmp_disk > 0:
             warnings.append(f"Temp-Tabellen auf Disk: {tmp_disk} Queries")
 
-    print(f"\nWarnungen: {'; '.join(warnings) if warnings else 'keine'}")
+    print(f"\nWarnungen: {'; '.join(warnings) if warnings else 'keine'}", file=file)
 
 
 def generate_json_report(run_id: str, spans: list, browser_spans: list,
@@ -281,6 +281,73 @@ def generate_json_report(run_id: str, spans: list, browser_spans: list,
     return report
 
 
+def _write_details(fh, run_id, spans, browser_spans, cases, perfschema):
+    """Schreibt den vollständigen Span-Baum + PerfSchema in einen File-Handle.
+
+    Identisch zur alten stdout-Ausgabe, aber parametrisierbar — wird bei
+    --stdout-mode=full auf sys.stdout angewendet und bei --output-text auf
+    die Ziel-Datei.
+    """
+    print(f"=== Testlauf: {run_id[:8]} "
+          f"({datetime.now(timezone.utc).isoformat()}) ===", file=fh)
+    print(f"Gefundene Spans: {len(spans)}", file=fh)
+
+    playwright_spans = [s for s in spans if s.service_name == "playwright-tests"]
+    if playwright_spans:
+        print(f"Playwright-Root-Spans: {len(playwright_spans)}", file=fh)
+        for ps in playwright_spans:
+            print(f"  test: {ps.attributes.get('test.case_id', '?')}  "
+                  f"trace_id={ps.trace_id[:8]}...", file=fh)
+
+    trace_ids = {s.trace_id for s in spans}
+    if browser_spans:
+        trace_linked = sum(1 for bs in browser_spans if bs.trace_id in trace_ids)
+        print(f"Browser-Spans: {len(browser_spans)} "
+              f"(trace-korreliert: {trace_linked}, "
+              f"temporal: {len(browser_spans) - trace_linked})", file=fh)
+
+    for case_id, case_spans in sorted(cases.items()):
+        print(f"\nTestfall: {case_id}", file=fh)
+        roots = build_hierarchy(case_spans + [
+            bs for bs in browser_spans
+            if any(bs.start_ns >= s.start_ns - 1_000_000_000
+                   and bs.end_ns <= s.end_ns + 1_000_000_000
+                   for s in case_spans)
+        ])
+        for root in roots:
+            layer = classify_span(root)
+            print(f"  {layer}: {root.duration_ms}ms  [{root.name}]", file=fh)
+            for child in root.children:
+                print_span_tree(child, indent=4, file=fh)
+
+    if perfschema:
+        print_perfschema(perfschema, file=fh)
+
+
+def _write_summary(fh, run_id, spans, browser_spans, cases):
+    """Kompakte Zusammenfassung (~20-50 Zeilen): nur Metadaten und
+    Testcase-Liste ohne Span-Baum, ohne PerfSchema."""
+    print(f"=== Testlauf: {run_id[:8]} "
+          f"({datetime.now(timezone.utc).isoformat()}) ===", file=fh)
+    print(f"Gefundene Spans: {len(spans)}", file=fh)
+
+    playwright_spans = [s for s in spans if s.service_name == "playwright-tests"]
+    if playwright_spans:
+        print(f"Playwright-Root-Spans: {len(playwright_spans)}", file=fh)
+
+    trace_ids = {s.trace_id for s in spans}
+    if browser_spans:
+        trace_linked = sum(1 for bs in browser_spans if bs.trace_id in trace_ids)
+        print(f"Browser-Spans: {len(browser_spans)} "
+              f"(trace-korreliert: {trace_linked}, "
+              f"temporal: {len(browser_spans) - trace_linked})", file=fh)
+
+    print(f"Testfälle: {len(cases)}", file=fh)
+    for case_id in sorted(cases.keys()):
+        span_count = len(cases[case_id])
+        print(f"  - {case_id}  (spans: {span_count})", file=fh)
+
+
 def main():
     parser = argparse.ArgumentParser(description="OTel Trace Report Generator")
     parser.add_argument("--run-id", required=True, help="Test Run ID (UUID)")
@@ -289,6 +356,12 @@ def main():
     parser.add_argument("--perfschema-dir",
                         help="Path to PerfSchema JSON directory")
     parser.add_argument("--output-json", help="Output JSON report path")
+    parser.add_argument("--output-text",
+                        help="Output TXT report path (Span-Baum + PerfSchema)")
+    parser.add_argument("--stdout-mode",
+                        choices=["summary", "full", "silent"],
+                        default="summary",
+                        help="stdout verbosity (default: summary)")
     parser.add_argument("--layer", choices=["3", "4", "5"],
                         help="Layer number (determines PerfSchema path)")
     args = parser.parse_args()
@@ -305,23 +378,17 @@ def main():
 
     # Parse spans
     spans = parse_traces(args.traces_file, args.run_id)
-    print(f"=== Testlauf: {args.run_id[:8]} ({datetime.now(timezone.utc).isoformat()}) ===")
-    print(f"Gefundene Spans: {len(spans)}")
 
     if not spans:
-        print("Keine Spans fuer diese Run-ID gefunden.")
+        if args.stdout_mode != "silent":
+            print(f"=== Testlauf: {args.run_id[:8]} "
+                  f"({datetime.now(timezone.utc).isoformat()}) ===")
+            print("Keine Spans fuer diese Run-ID gefunden.")
         if args.output_json:
+            os.makedirs(os.path.dirname(args.output_json) or ".", exist_ok=True)
             with open(args.output_json, "w") as f:
                 json.dump({"run_id": args.run_id, "total_spans": 0}, f, indent=2)
         return
-
-    # Playwright root-spans
-    playwright_spans = [s for s in spans if s.service_name == "playwright-tests"]
-    if playwright_spans:
-        print(f"Playwright-Root-Spans: {len(playwright_spans)}")
-        for ps in playwright_spans:
-            print(f"  test: {ps.attributes.get('test.case_id', '?')}  "
-                  f"trace_id={ps.trace_id[:8]}...")
 
     # trace_ids from all matched spans (for trace_id-based browser correlation)
     trace_ids = {s.trace_id for s in spans}
@@ -336,35 +403,33 @@ def main():
         time_max + 5_000_000_000,
         trace_ids=trace_ids,
     )
-    if browser_spans:
-        trace_linked = sum(1 for bs in browser_spans if bs.trace_id in trace_ids)
-        print(f"Browser-Spans: {len(browser_spans)} "
-              f"(trace-korreliert: {trace_linked}, "
-              f"temporal: {len(browser_spans) - trace_linked})")
 
-    # Group by test case and display
     cases = group_by_test_case(spans)
-    for case_id, case_spans in sorted(cases.items()):
-        print(f"\nTestfall: {case_id}")
-        roots = build_hierarchy(case_spans + [
-            bs for bs in browser_spans
-            if any(bs.start_ns >= s.start_ns - 1_000_000_000
-                   and bs.end_ns <= s.end_ns + 1_000_000_000
-                   for s in case_spans)
-        ])
-        for root in roots:
-            layer = classify_span(root)
-            print(f"  {layer}: {root.duration_ms}ms  [{root.name}]")
-            for child in root.children:
-                print_span_tree(child, indent=4)
 
-    # PerfSchema
+    # PerfSchema laden (für _write_details und JSON-Report)
     perfschema = {}
     if perfschema_dir and os.path.exists(perfschema_dir):
         perfschema = load_perfschema(perfschema_dir)
-        print_perfschema(perfschema)
-    elif perfschema_dir:
-        print(f"\nPerfSchema-Verzeichnis nicht gefunden: {perfschema_dir}")
+    elif perfschema_dir and args.stdout_mode != "silent":
+        print(f"PerfSchema-Verzeichnis nicht gefunden: {perfschema_dir}",
+              file=sys.stderr)
+
+    # stdout-Ausgabe nach Modus
+    if args.stdout_mode == "full":
+        _write_details(sys.stdout, args.run_id, spans, browser_spans, cases,
+                       perfschema)
+    elif args.stdout_mode == "summary":
+        _write_summary(sys.stdout, args.run_id, spans, browser_spans, cases)
+    # silent: keine stdout-Ausgabe
+
+    # TXT-Datei (immer voll, unabhängig vom stdout-Modus)
+    if args.output_text:
+        os.makedirs(os.path.dirname(args.output_text) or ".", exist_ok=True)
+        with open(args.output_text, "w") as fh:
+            _write_details(fh, args.run_id, spans, browser_spans, cases,
+                           perfschema)
+        if args.stdout_mode != "silent":
+            print(f"TXT-Report: {args.output_text}")
 
     # JSON output
     if args.output_json:
@@ -372,7 +437,8 @@ def main():
         os.makedirs(os.path.dirname(args.output_json) or ".", exist_ok=True)
         with open(args.output_json, "w") as f:
             json.dump(report, f, indent=2)
-        print(f"\nJSON-Report: {args.output_json}")
+        if args.stdout_mode != "silent":
+            print(f"JSON-Report: {args.output_json}")
 
 
 if __name__ == "__main__":
