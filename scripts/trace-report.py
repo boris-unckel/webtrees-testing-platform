@@ -48,7 +48,7 @@ def _extract_attrs(attr_list: list) -> dict:
 
 
 def parse_traces(traces_path: str, run_id: str) -> list:
-    spans = []
+    all_spans = []
     with open(traces_path) as f:
         for line in f:
             line = line.strip()
@@ -64,11 +64,9 @@ def parse_traces(traces_path: str, run_id: str) -> list:
                     scope = ss.get("scope", {}).get("name", "unknown")
                     for s in ss.get("spans", []):
                         attrs = _extract_attrs(s.get("attributes", []))
-                        if attrs.get("test.run_id") != run_id:
-                            continue
                         start = int(s["startTimeUnixNano"])
                         end = int(s["endTimeUnixNano"])
-                        spans.append(Span(
+                        all_spans.append(Span(
                             trace_id=s["traceId"],
                             span_id=s["spanId"],
                             parent_span_id=s.get("parentSpanId") or None,
@@ -80,7 +78,15 @@ def parse_traces(traces_path: str, run_id: str) -> list:
                             scope=scope,
                             attributes=attrs,
                         ))
-    return spans
+
+    # Pass 1: trace_ids von Spans mit passender test.run_id sammeln
+    matched_trace_ids = {
+        s.trace_id for s in all_spans
+        if s.attributes.get("test.run_id") == run_id
+    }
+
+    # Pass 2: alle Spans dieser Traces zurückgeben (inkl. PDO-Child-Spans)
+    return [s for s in all_spans if s.trace_id in matched_trace_ids]
 
 
 def parse_browser_spans(traces_path: str, time_min: int, time_max: int,
@@ -130,10 +136,22 @@ def parse_browser_spans(traces_path: str, time_min: int, time_max: int,
     return spans
 
 
+def resolve_test_case(span: Span, by_id: dict) -> str:
+    """Geht die Span-Hierarchie aufwärts bis test.case_id gefunden."""
+    current = span
+    while current is not None:
+        case_id = current.attributes.get("test.case_id")
+        if case_id:
+            return case_id
+        current = by_id.get(current.parent_span_id)
+    return "(unbekannt)"
+
+
 def group_by_test_case(spans: list) -> dict:
+    by_id = {s.span_id: s for s in spans}
     groups = defaultdict(list)
     for span in spans:
-        case_id = span.attributes.get("test.case_id", "(unbekannt)")
+        case_id = resolve_test_case(span, by_id)
         groups[case_id].append(span)
     return dict(groups)
 

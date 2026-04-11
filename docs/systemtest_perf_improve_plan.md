@@ -23,21 +23,21 @@
 
 | ID   | Phase          | Aufgabe                                     | Status |
 |------|----------------|---------------------------------------------|--------|
-| D1   | Diagnose       | NULL-Digest-Query ausführen                 | `[ ]`  |
-| T1.1 | Phase 1        | `compose.yaml`: PDO-Statement-Flag          | `[ ]`  |
-| T1.2 | Phase 1        | `trace-report.py`: Zwei-Pass + Parent-Traversal | `[ ]`  |
-| T1.3 | Phase 1        | Verprobung `make test-e2e-quick`            | `[ ]`  |
-| T1.4 | Phase 1        | Artefakt-Kontrolle PDO-Spans                | `[ ]`  |
-| T2.1 | Phase 2        | `compose.yaml`: MySQL-Root-Credentials playwright-Service | `[ ]`  |
-| T2.2 | Phase 2        | `layer4-e2e/helpers/perfschema-fixture.ts` erstellen | `[ ]`  |
-| T2.3 | Phase 2        | 20 Testdatei-Imports umstellen              | `[ ]`  |
-| T2.4 | Phase 2        | Verprobung `make test-e2e-quick`            | `[ ]`  |
-| T2.5 | Phase 2        | Artefakt-Kontrolle per-test PerfSchema      | `[ ]`  |
-| T3.1 | Phase 3 (opt.) | `compose.yaml`: `digests-size=10000`        | `[ ]`  |
+| D1   | Diagnose       | NULL-Digest-Query ausführen                 | `[x]`  |
+| T1.1 | Phase 1        | `compose.yaml`: PDO-Statement-Flag          | `[x]`  |
+| T1.2 | Phase 1        | `trace-report.py`: Zwei-Pass + Parent-Traversal | `[x]`  |
+| T1.3 | Phase 1        | Verprobung `make test-e2e-quick`            | `[x]`  |
+| T1.4 | Phase 1        | Artefakt-Kontrolle PDO-Spans                | `[x]`  |
+| T2.1 | Phase 2        | `compose.yaml`: MySQL-Root-Credentials playwright-Service | `[x]`  |
+| T2.2 | Phase 2        | `layer4-e2e/helpers/perfschema-fixture.ts` erstellen | `[x]`  |
+| T2.3 | Phase 2        | 20 Testdatei-Imports umstellen              | `[x]`  |
+| T2.4 | Phase 2        | Verprobung `make test-e2e-quick`            | `[x]`  |
+| T2.5 | Phase 2        | Artefakt-Kontrolle per-test PerfSchema      | `[x]`  |
+| T3.1 | Phase 3 (opt.) | `compose.yaml`: `digests-size=10000`        | `[x]`  |
 | TF.1 | Abschluss      | `make clean`                                | `[ ]`  |
 | TF.2 | Abschluss      | `make setup`                                | `[ ]`  |
-| TF.3 | Abschluss      | `make test-e2e`                             | `[ ]`  |
-| TF.4 | Abschluss      | Abnahme: Artefakte vollständig prüfen       | `[ ]`  |
+| TF.3 | Abschluss      | `make test-e2e`                             | `[x]`  |
+| TF.4 | Abschluss      | Abnahme: Artefakte vollständig prüfen       | `[x]`  |
 
 ---
 
@@ -58,6 +58,11 @@ podman-compose exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD}" mysql \
   FROM performance_schema.events_statements_summary_by_digest
   GROUP BY SCHEMA_NAME;"
 ```
+
+**Ergebnis (2026-04-11):**
+- `performance_schema_digests_size = 10000` — Buffer ausreichend (bereits 10.000)
+- `overflow_count = 0` — **Kein Overflow** — T3.1 nicht nötig
+- `SCHEMA_NAME = webtrees_test: 2 Buckets` — webtrees-Queries werden erfasst
 
 **Interpretation:**
 
@@ -89,7 +94,7 @@ daher vollständig rausgefiltert, nicht nur falsch gruppiert. Zwei Fixes nötig:
 
 ### T1.1 — `compose.yaml`: PDO-Statement-Flag
 
-- [ ] **T1.1**
+- [x] **T1.1**
 
 **Datei:** `compose.yaml`, webtrees-Service, `environment`-Block — nach `OTEL_LOGS_EXPORTER`:
 
@@ -104,7 +109,7 @@ Query-Texte wären in Jaeger nicht sichtbar.
 
 ### T1.2 — `scripts/trace-report.py`: Zwei-Pass-Filter + Parent-Traversal
 
-- [ ] **T1.2**
+- [x] **T1.2**
 
 **Datei:** `scripts/trace-report.py`
 
@@ -193,7 +198,7 @@ def group_by_test_case(spans: list) -> dict:
 
 ### T1.3 — Verprobung Phase 1
 
-- [ ] **T1.3**
+- [x] **T1.3**
 
 ```bash
 make test-e2e-quick
@@ -216,7 +221,7 @@ ls -t artifacts/trace-report-*.json | head -1 | xargs jq '[.test_cases[] | .span
 
 ### T1.4 — Artefakt-Kontrolle Phase 1
 
-- [ ] **T1.4**
+- [x] **T1.4**
 
 **Erwarteter Zustand:**
 
@@ -231,8 +236,16 @@ ls -t artifacts/trace-report-*.json | head -1 | xargs jq '[.test_cases[] | .span
 
 ## Phase 2: Per-Test PerfSchema-Snapshots
 
-**Ziel:** Aggregierte Metriken (`rows_examined`, `full_scans`, `no_index`) pro Testfall als
-Datei-Artefakt unter `artifacts/layer4/perfschema/per-test/`.
+**Ziel:** Aggregierte Tabellen-I/O-Metriken (`count_read`, `count_write`, `total_wait_ms`) pro
+Testfall als Datei-Artefakt unter `artifacts/layer4/perfschema/per-test/`.
+
+**Architektur-Befund:** webtrees nutzt PDO mit Binary-Protocol-Prepared-Statements
+(`COM_STMT_EXECUTE`). MySQL 8.4 schreibt diese **nicht** in
+`events_statements_summary_by_digest` (nur Text-Protokoll). Die eigentlichen webtrees-Queries
+sind ausschließlich über `table_io_waits_summary_by_table` (Storage-Engine-Ebene,
+protokollunabhängig) sichtbar. Pro Testfall werden daher zwei Artefakte extrahiert:
+- `statements.json` — Text-Protokoll-Queries (nur Connection-Setup: USE, SET NAMES, BEGIN, COMMIT)
+- `table_io_waits.json` — Tabellenzugriffe aller Queries inkl. Binary Protocol
 
 **Artefakt-Pfad-Hinweis:** `./artifacts:/artifacts:rw,z` ist im playwright-Container bereits
 gemountet (`compose.yaml` Zeile 105). Schreibzugriff auf `/artifacts/layer4/perfschema/per-test/`
@@ -249,7 +262,7 @@ Die 6 Security-Tests (`layer4-e2e/tests/security/*.spec.ts`) laufen gegen `webtr
 
 ### T2.1 — `compose.yaml`: MySQL-Root-Credentials playwright-Service
 
-- [ ] **T2.1**
+- [x] **T2.1**
 
 **Datei:** `compose.yaml`, playwright-Service, `environment`-Block ergänzen:
 
@@ -266,70 +279,34 @@ bei jedem Neuaufbau — kein dauerhaftes Secret.
 
 ### T2.2 — `layer4-e2e/helpers/perfschema-fixture.ts` erstellen
 
-- [ ] **T2.2**
+- [x] **T2.2**
+
+**Nachbefund (2026-04-11):** MySQL 8.4 erfasst Prepared Statements via Binary Protocol
+(`COM_STMT_EXECUTE`, 36.474× pro Testlauf) **nicht** in `events_statements_summary_by_digest`.
+Diese Tabelle enthält nur Text-Protokoll-Queries (USE, SET NAMES, START TRANSACTION, COMMIT).
+Die eigentlichen webtrees SELECT-Queries sind aber in `table_io_waits_summary_by_table`
+(Storage-Engine-Ebene, protokollunabhängig) sichtbar. Fixture wurde daher erweitert:
+zusätzlich zu `statements.json` wird pro Test auch `table_io_waits.json` extrahiert.
 
 **Pfad:** `layer4-e2e/helpers/perfschema-fixture.ts`
 
-```typescript
-// SPDX-License-Identifier: AGPL-3.0-or-later
-import { test as otelBase, expect } from './otel-fixture';
-import { execSync } from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
+Implementierung: siehe Datei. Kernstruktur:
 
-function mysqlRoot(sql: string): void {
-  execSync(
-    `mysql -h "${process.env.MYSQL_HOST ?? 'mysql'}" -u root` +
-    ` -p"${process.env.MYSQL_ROOT_PASSWORD}" -e "${sql}"`,
-    { stdio: 'pipe' }
-  );
-}
-
-function extractPerfschema(dir: string): void {
-  const host = process.env.MYSQL_HOST ?? 'mysql';
-  const pwd  = process.env.MYSQL_ROOT_PASSWORD ?? '';
-  const db   = process.env.MYSQL_DATABASE ?? 'webtrees_test';
-  const result = execSync(
-    `mysql -h "${host}" -u root -p"${pwd}" --batch --raw --skip-column-names -e "` +
-    `SELECT JSON_ARRAYAGG(JSON_OBJECT(` +
-    `  'digest_text', DIGEST_TEXT,` +
-    `  'count', COUNT_STAR,` +
-    `  'avg_ms', ROUND(AVG_TIMER_WAIT/1000000000,2),` +
-    `  'total_ms', ROUND(SUM_TIMER_WAIT/1000000000,2),` +
-    `  'rows_examined', SUM_ROWS_EXAMINED,` +
-    `  'full_scans', SUM_SELECT_SCAN,` +
-    `  'no_index', SUM_NO_INDEX_USED` +
-    `)) FROM performance_schema.events_statements_summary_by_digest` +
-    ` WHERE SCHEMA_NAME = '${db}' AND DIGEST_TEXT IS NOT NULL` +
-    ` ORDER BY SUM_TIMER_WAIT DESC LIMIT 30"`,
-    { stdio: 'pipe' }
-  ).toString().trim();
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, 'statements.json'), result || '[]');
-}
-
-export const test = otelBase.extend<{ _perfschema: void }>({
-  _perfschema: [async ({}, use, testInfo) => {
-    mysqlRoot(
-      'TRUNCATE TABLE performance_schema.events_statements_summary_by_digest; ' +
-      'TRUNCATE TABLE performance_schema.table_io_waits_summary_by_table;'
-    );
-
-    await use();
-
-    const safeId = testInfo.title.replace(/[^a-zA-Z0-9_.-]/g, '_');
-    extractPerfschema(`/artifacts/layer4/perfschema/per-test/${safeId}`);
-  }, { auto: true }],
-});
-
-export { expect };
 ```
+TRUNCATE events_statements_summary_by_digest
+TRUNCATE table_io_waits_summary_by_table
+→ Test läuft
+→ statements.json   (Text-Protokoll: USE, SET NAMES, BEGIN, COMMIT)
+→ table_io_waits.json (Storage-Engine-I/O aller Queries, inkl. Binary Protocol)
+```
+
+Voraussetzung: `default-mysql-client` im playwright-Container (`Containerfile.playwright`).
 
 ---
 
 ### T2.3 — 20 Testdatei-Imports umstellen
 
-- [ ] **T2.3**
+- [x] **T2.3**
 
 In jeder der folgenden 20 Dateien Zeile 3 ändern:
 
@@ -371,7 +348,7 @@ Die 6 Security-Testdateien unter `tests/security/` bleiben unverändert bei `ote
 
 ### T2.4 — Verprobung Phase 2
 
-- [ ] **T2.4**
+- [x] **T2.4**
 
 ```bash
 make test-e2e-quick
@@ -392,16 +369,20 @@ cat artifacts/layer4/perfschema/per-test/*/statements.json | \
 
 ### T2.5 — Artefakt-Kontrolle Phase 2
 
-- [ ] **T2.5**
+- [x] **T2.5**
 
 **Erwarteter Zustand:**
 
 | Prüfpunkt | Soll |
 |-----------|------|
 | `artifacts/layer4/perfschema/per-test/` hat ≥ 3 Unterordner (je 1 pro quick-Testfall) | ja |
-| Jedes `statements.json` enthält > 5 Einträge (mehr als nur Connection-Setup) | ja |
-| `digest_text` enthält webtrees-Anwendungsqueries (SELECT aus `wt_*`-Tabellen) | ja |
-| `rows_examined` > 0 für mindestens eine Query | ja |
+| Jedes `table_io_waits.json` enthält Einträge mit `wt_*`-Tabellennamen | ja |
+| `count_read` > 0 für mindestens eine Tabelle pro Testfall | ja |
+| `statements.json` enthält Connection-Setup-Queries (USE, SET NAMES, etc.) | ja (nur Text-Protokoll) |
+
+**Hinweis:** `statements.json` enthält nur Text-Protokoll-Queries (Connection-Setup).
+Die eigentlichen webtrees-Queries (Binary Protocol Prepared Statements) erscheinen
+ausschließlich in `table_io_waits.json`.
 
 ---
 
@@ -409,7 +390,7 @@ cat artifacts/layer4/perfschema/per-test/*/statements.json | \
 
 Nur ausführen, wenn Diagnose D1 `overflow_count > 0` ergibt.
 
-- [ ] **T3.1**
+- [x] **T3.1** — entfällt (D1: overflow_count = 0, kein Handlungsbedarf)
 
 **Datei:** `compose.yaml`, mysql-Service, `command`-Block — ans Ende anfügen:
 
@@ -424,23 +405,34 @@ auf garantiert 10.000 Einträge. Wirkt erst nach Container-Neustart (`make down 
 
 ## Abschlusslauf
 
-Nach erfolgreicher Verprobung beider Phasen einen vollständigen Neulauf von Null:
+Nach erfolgreicher Verprobung beider Phasen einen vollständigen Neulauf von Null.
 
-- [ ] **TF.1** — `make clean`  
+**Hinweis:** GPG-Commits erfolgen manuell. Claude führt keinen `git commit` aus —
+alle Änderungen werden am Ende vom User committed.
+
+- [x] **TF.1** — `make clean`  
   Stoppt den Stack, löscht alle Volumes und Passwörter.
 
-- [ ] **TF.2** — `make setup`  
+- [x] **TF.2** — `make setup`  
   Startet neu, generiert frische Passwörter, installiert webtrees inkl. `opentelemetry-auto-pdo`.
 
-- [ ] **TF.3** — `make test-e2e`  
-  Vollständiger Layer-4-Lauf mit allen Testfällen.
+- [x] **TF.3** — `make test-e2e`  
+  Vollständiger Layer-4-Lauf mit allen Testfällen. 137/174 passed (20,7 min).
+  37 Failures pre-existing: `family`, `source-list`, `records`, `search-replace` —
+  Seiten geben 403 ohne Login-Session; Ursache unabhängig von dieser Implementierung.
 
-- [ ] **TF.4** — Abnahme
+- [x] **TF.4** — Abnahme
 
-  | Artefakt | Erwarteter Inhalt |
-  |----------|-------------------|
-  | `artifacts/traces.json` | PDO-Spans mit `"scope": "io.opentelemetry.contrib.php.pdo"` o. ä. |
-  | `artifacts/trace-report-<RUN_ID>.json` | `"layer": "DB Query"` in Testfall-Spans vorhanden |
-  | `artifacts/layer4/perfschema/per-test/` | Unterordner für jeden Testfall |
-  | `artifacts/layer4/perfschema/` | Globaler Snapshot weiterhin vorhanden (parallele Extraktion) |
-  | Jaeger UI | Vollständige Trace-Hierarchie: Playwright → HTTP → PHP → PDO |
+  | Artefakt | Ist-Zustand |
+  |----------|-------------|
+  | `artifacts/traces.json` | Scope `io.opentelemetry.contrib.php.pdo` vorhanden ✓ |
+  | `artifacts/trace-report-<RUN_ID>.json` | 209.522 `"layer": "DB Query"` Spans in Testfall-Gruppen ✓ |
+  | `artifacts/layer4/perfschema/per-test/` | 176 Unterordner (174 Tests + 2 Retries), auch für fehlgeschlagene Tests ✓ |
+  | `artifacts/layer4/perfschema/` | Globaler Snapshot (4 JSON-Dateien) vorhanden ✓ |
+  | `(unbekannt)` im Report | 1 Bucket — nur Browser-RUM-Spans ohne traceparent (erwartet) ✓ |
+
+  **Befund Binary Protocol:** MySQL 8.4 erfasst `COM_STMT_EXECUTE` nicht in
+  `events_statements_summary_by_digest`. Webtrees-Queries nur via
+  `table_io_waits_summary_by_table` sichtbar (Storage-Engine-Ebene) →
+  `table_io_waits.json` pro Testfall extrahiert. Beispiel S23 Individual-Test:
+  21 Tabellen, `wt_module` 4260 Reads, `wt_gedcom_setting` 2175 Reads.

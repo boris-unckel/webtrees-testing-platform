@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { test, expect } from '../helpers/otel-fixture';
+import { test, expect } from '../helpers/perfschema-fixture';
 import { ADMIN_PASSWORD } from '../helpers/auth';
 
 /**

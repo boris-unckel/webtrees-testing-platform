@@ -57,6 +57,7 @@ services:
       OTEL_TRACES_EXPORTER: ${OTEL_TRACES_EXPORTER:-otlp}
       OTEL_METRICS_EXPORTER: ${OTEL_METRICS_EXPORTER:-none}
       OTEL_LOGS_EXPORTER: ${OTEL_LOGS_EXPORTER:-none}
+      OTEL_PHP_INSTRUMENTATION_PDO_DB_STATEMENT: "true"
       # Security-Audit (nur aktiv, wenn explizit gesetzt — siehe modules/security-trace)
       WEBTREES_SECURITY_TRACE: ${WEBTREES_SECURITY_TRACE:-}
     depends_on:
@@ -109,6 +110,9 @@ services:
       WEBTREES_ADMIN_PASSWORD: ${WEBTREES_ADMIN_PASSWORD}
       WEBTREES_TEST_USER_PASSWORD: ${WEBTREES_TEST_USER_PASSWORD}
       MYSQL_SECURITY_PASSWORD: ${MYSQL_SECURITY_PASSWORD}
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     depends_on:
       - webtrees
     networks:

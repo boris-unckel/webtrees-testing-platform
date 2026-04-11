@@ -5,6 +5,10 @@ FROM docker.io/library/node:22-bookworm
 # Playwright-Systemabhängigkeiten (ohne Browser — wird nach npm install installiert)
 RUN npx playwright@latest install-deps chromium
 
+# MySQL-Client für PerfSchema-Fixture (perfschema-fixture.ts)
+RUN apt-get update && apt-get install -y --no-install-recommends default-mysql-client \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /tests
 
 # package.json für Playwright + OTel SDK

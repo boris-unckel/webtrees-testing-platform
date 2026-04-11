@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { test, expect } from '../helpers/otel-fixture';
+import { test, expect } from '../helpers/perfschema-fixture';
 import { loginAsRole, logoutRole, type PrivacyRole } from '../helpers/privacy-roles';
 
 /**
