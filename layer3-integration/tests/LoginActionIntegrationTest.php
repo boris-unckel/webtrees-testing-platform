@@ -10,6 +10,7 @@ use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\Http\RequestHandlers\LoginAction;
 use Fisharebest\Webtrees\Registry;
+use Fisharebest\Webtrees\Services\RateLimitService;
 use Fisharebest\Webtrees\Services\UpgradeService;
 
 /**
@@ -37,6 +38,7 @@ class LoginActionIntegrationTest extends MysqlTestCase
     {
         $handler = new LoginAction(
             Registry::container()->get(UpgradeService::class),
+            new RateLimitService(),
             $this->userService,
         );
 
