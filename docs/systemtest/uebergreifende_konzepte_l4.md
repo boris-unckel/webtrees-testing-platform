@@ -1,205 +1,168 @@
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 
-# Übergreifende Konzepte — Systemtest-Iteration L4
+# Übergreifende Konzepte — Systemtest-Iteration L4 (Runde 2)
 
 **Erstellt:** 2026-04-12
-**Basis:** [`testcov_systemtests_delta.md`](../testcov_systemtests_delta.md),
+**Basis:** [`testcov_komponentenintegration_systemtests_delta.md`](../testcov_komponentenintegration_systemtests_delta.md),
 [`wf_code-to-systemtest_guide.md`](../wf_code-to-systemtest_guide.md)
 
 Dieses Dokument beschreibt **neue, iterationsspezifische Konzepte** für die
-L4-Systemtest-Erweiterung (29 Features). Bereits dokumentierte Basis-Patterns
-(Theme-Loop, Privacy-Role, Admin-Only, API-Only, Security-Audit) sind in
-[wf_code-to-systemtest_guide.md Abschnitt 4](../wf_code-to-systemtest_guide.md)
+L4-Systemtest-Erweiterung (3 Features: M16, A08, S53). Die erste Iteration
+(29 Features) ist abgeschlossen (Commit 679ef1b, 513 Tests). Bereits dokumentierte
+Basis-Patterns (Theme-Loop, Privacy-Role, Admin-Only, API-Only, Security-Audit)
+sind in [wf_code-to-systemtest_guide.md Abschnitt 4](../wf_code-to-systemtest_guide.md)
 beschrieben und werden hier nur referenziert, nicht wiederholt.
 
----
-
-## 1 Formular-Submit-Verification
-
-**Betroffene Features:** E01, E02, E03, E04, P37, P38, A01, A04, K01, K02
-
-**Problem:** Bestehende L4-Tests prüfen überwiegend Seiten-Rendering (GET → DOM sichtbar).
-Viele der neuen Features erfordern Formular-Interaktion: Felder ausfüllen, POST absenden,
-Ergebnis nach Redirect verifizieren.
-
-**Ablauf:**
-
-1. Formular-Seite laden (`page.goto`)
-2. Felder ausfüllen (`page.fill`, `page.selectOption`, `page.check`)
-3. Submit (`button[type="submit"]` klicken)
-4. `waitForLoadState('networkidle')` — POST + Redirect abwarten
-5. Redirect-Ziel prüfen (`expect(page).toHaveURL(...)`)
-6. Ergebnis im DOM verifizieren (`expect(locator).toContainText(...)`)
-
-**Kombination:** Typischerweise mit Theme-Loop (Formular-Rendering ist theme-abhängig)
-oder Admin-Only (Editor-/Admin-Rolle erforderlich).
-
-**Abgrenzung:** Schritt 6 unterscheidet dieses Pattern von Smoke-Tests. Es wird nicht nur
-geprüft, dass die Seite lädt, sondern dass die Aktion einen **fachlich sichtbaren Effekt** hat.
+Die Konzepte der ersten Iteration (Formular-Submit-Verification, JS-Widget-Interaktion,
+Such-Ausführungs-Verification, Mehrstufiger-Workflow, Modal-Dialog-Interaktion,
+Chart-Rendering-Verification) bleiben gültig, sind aber für die drei neuen Features
+nicht relevant.
 
 ---
 
-## 2 JS-Widget-Interaktion
+## 1 Error-Page-Verification (Provozierte Fehler)
 
-**Betroffene Features:** E08 (TomSelect/AutoComplete), S47 (Interaktiver Stammbaum)
+**Betroffenes Feature:** M16 (Exception-Handling & Error-Page-Rendering)
 
-**Problem:** JavaScript-Widgets (Dropdowns, Canvas, SVG) erfordern spezifische
-Playwright-Interaktionen, die über `fill`/`click` hinausgehen.
+**Problem:** Die bisherigen L4-Tests prüfen `expect(response?.status()).toBeLessThan(500)`
+als generische Schutzklausel. M16 erfordert das Gegenteil — absichtlich Fehler provozieren
+und die Error-Page-Darstellung verifizieren.
 
-### 2.1 TomSelect/AutoComplete (E08)
+### 1.1 Fehler-Provokation
 
-- Input in `.ts-control input` tippen
-- `.ts-dropdown .option`-Selektor auf `visible` warten
-- Eintrag per Klick wählen
-- Hidden-Input-Wert (XREF) verifizieren
+Verschiedene HTTP-Fehlercodes können durch gezielte Requests ausgelöst werden:
 
-**Achtung:** TomSelect-Selektoren können zwischen Themes variieren.
-Theme-Loop empfohlen. Exakte Selektoren in S2 aus View-Templates ableiten.
-
-### 2.2 Canvas/SVG-Widget (S47)
-
-- Canvas/SVG-Element auf Sichtbarkeit prüfen
-- Knoten-Interaktion (Klick auf Personen-Element)
-- Detail-Panel-Inhalt verifizieren
-
-**Hinweis:** Ob das Widget `<canvas>` oder `<svg>` rendert, muss in S2 aus dem
-Upstream-JavaScript-Code ermittelt werden. Die Interaktions-API unterscheidet sich
-grundlegend zwischen beiden Varianten.
-
----
-
-## 3 Such-Ausführungs-Verification
-
-**Betroffene Features:** S05, S06, S07, S08, S10
-
-**Problem:** `search-forms.spec.ts` prüft nur das Rendering der Suchformulare. Die
-eigentliche Suchausführung (Eingabe → Submit → Ergebnistabelle mit fachlich korrekten
-Treffern) fehlt.
-
-**Ablauf:**
-
-1. Suchseite laden
-2. Suchfelder befüllen (Name, Datum, phonetischer Modus etc.)
-3. Submit
-4. Ergebnistabelle prüfen: Mindestens ein Treffer vorhanden
-5. Erwarteten Treffer namentlich verifizieren (aus GEDCOM-Demo-Daten bekannt)
-
-**Abgrenzung zu `search-forms.spec.ts`:** Bestehende Tests → Formular-Rendering.
-Neue Tests → Suchergebnis-Qualität (fachlich korrekte Treffer).
-
-### Phonetische Suche (S07, S08)
-
-Zusätzlicher Aspekt: Der phonetische Algorithmus muss über das Suchergebnis nachgewiesen
-werden — exakte Schreibweise liefert keinen Treffer, phonetische Variante schon.
-Die konkreten Testdaten hängen von den GEDCOM-Fixtures im Demo-Baum ab (S2-Analyse).
-
-### Paginierung (S10)
-
-Suchergebnis mit vielen Treffern → Paginierungs-Controls (`.pagination`) sichtbar →
-Seitenwechsel → andere Ergebnisse auf Seite 2.
-
----
-
-## 4 Mehrstufiger-Workflow
-
-**Betroffene Features:** P30, P41 (Merge), P40 (Pending Changes)
-
-**Problem:** Diese Features bestehen aus mehreren aufeinanderfolgenden Seiten/Aktionen
-mit Zustandsübergängen. Ein einzelner `page.goto()` + Assert reicht nicht.
-
-### 4.1 Merge-Workflow (P30 → P41)
-
-```
-Schritt 1: Merge-Seite laden, zwei XREFs eingeben (P30)
-Schritt 2: Vorschau prüfen (P30)
-Schritt 3: Merge bestätigen und ausführen (P41)
-Schritt 4: Ergebnis verifizieren — ein Record bleibt, einer ist weg (P41)
-```
-
-### 4.2 Pending-Changes-Workflow (P40)
-
-```
-Schritt 1: Als Editor einloggen, Änderung erzeugen → Pending Change entsteht
-Schritt 2: Als Moderator einloggen, Pending-Changes-Seite öffnen
-Schritt 3: Accept/Reject klicken
-Schritt 4: Ergebnis verifizieren — Änderung sichtbar/nicht sichtbar
-```
-
-**Multi-Role:** P40 erfordert Login-Wechsel innerhalb eines Tests.
-Helper-Kombination: `loginAsRole(page, 'editor')` → Aktion → `logoutRole(page)` →
-`loginAsRole(page, 'moderator')` → Verification.
-
-**Baum:** Privacy-Baum (Rollen-User vorhanden) oder Demo-Baum (Admin-Login).
-Entscheidung in S2/S3 pro Feature.
-
----
-
-## 5 Modal-Dialog-Interaktion
-
-**Betroffene Features:** E04 (Nebenrecords), E05 (Medienobjekte)
-
-**Ablauf:**
-
-1. Auslöser-Button klicken (`data-bs-target`-Attribut aus View-Template)
-2. `.modal.show`-Selektor auf `visible` warten
-3. Felder im Modal ausfüllen (`.modal.show input[name="..."]`)
-4. Modal-Submit
-5. Modal-Schließung verifizieren (`.modal.show` → `not.toBeVisible`)
-6. Ergebnis auf der Hauptseite prüfen (Verknüpfung, XREF sichtbar)
-
-**Bootstrap-Konvention:** webtrees nutzt Bootstrap-Modale. Der aktive Modal-Selektor
-ist `.modal.show`. Die konkreten `data-bs-target`-Werte werden in S2 ermittelt.
-
----
-
-## 6 Chart-Rendering-Verification
-
-**Betroffene Features:** S16 (Beziehungsfinder), S18 (5 Chart-Typen), S41 (Statistik)
-
-**Abgrenzung:** `pedigree.spec.ts` testet bereits einen Chart-Typ als Referenz.
-Die neuen Tests folgen dem gleichen Theme-Loop-Grundmuster.
-
-**Smoke-Level (S18):** Pro Chart-Typ: Route laden, kein 5xx, Chart-Container sichtbar.
-DataProvider-artig über ein Array von Chart-Routen iterieren.
-
-**Spec-C-Level (S16):** Über Smoke hinaus: Zwei Personen auswählen, Beziehungspfad-Anzeige
-verifizieren. Nutzt zusätzlich Formular-Submit-Verification (Konzept 1).
-
-**Statistik (S41):** Statistik-Seite laden, Diagramm-/Tabellen-Container sichtbar.
-Konkrete Statistik-Werte nur prüfen, wenn aus Demo-GEDCOM deterministisch ableitbar.
-
----
-
-## 7 Upstream-Only-Analyse (ohne L3-Referenz)
-
-**Betroffene Features:** K01 (Kontaktformular), K02 (Benutzer-Nachrichten)
-
-**Problem:** Für diese Features existieren keine L3-Komponentenintegrationstests.
-Schritt S3 (L3-Referenz analysieren) wird durch eine direkte Upstream-Code-Analyse ersetzt.
-
-**Angepasstes Vorgehen in S3:**
-
-1. Route identifizieren (`WebRoutes.php`)
-2. Handler-Klasse lesen: Guards, Validierung, Erfolgs-/Fehlerpfade
-3. View-Template lesen: Formularfelder, Selektoren, Pflichtfelder
-4. Fachliche Szenarien direkt aus dem Code ableiten
-5. Im Spezifikations-Template dokumentieren: `L3-Referenztest: keiner (Upstream-Ableitung)`
-
-**Einschränkung:** Ohne L3-Referenz fehlen EP/BVA-Vorlagen. Die Testtiefe orientiert sich
-am sichtbaren UI-Verhalten (Spec-C statt EP-complete).
-
----
-
-## 8 Empfehlung: Test-Datei-Zusammenlegung
-
-Einige Features sind fachlich so eng gekoppelt, dass getrennte `.spec.ts`-Dateien
-unpraktisch wären. Empfehlung für gemeinsame Test-Dateien:
-
-| Features | Gemeinsame Spec-Datei | Grund |
+| Fehlercode | Provokation | Route |
 |---|---|---|
-| S05 + S06 | `advanced-search-execution.spec.ts` | Gleiche Suchseite, unterschiedliche Felder |
-| S07 + S08 | `phonetic-search-execution.spec.ts` | Gleiche Suchseite, unterschiedlicher Algorithmus |
-| P30 + P41 | `merge-records.spec.ts` | Sequenzieller Workflow (Auswahl → Ausführung) |
+| 404 Not Found | Nicht existierende URL aufrufen | `/tree/demo/individual/XREF_NOT_EXISTS` |
+| 403 Forbidden | Admin-Seite ohne Login aufrufen | `/admin/control-panel` |
+| 410 Gone | Gelöschten Record aufrufen | Abhängig von Test-Setup |
+| 405 Method Not Allowed | POST auf GET-only-Route | `request.post('/tree/demo')` |
 
-**Jedes Feature erhält trotzdem eine eigene Spezifikations-Datei** (`testspezi/`).
-Die Zusammenlegung betrifft nur den Test-Code und wird in S5/S6 entschieden.
+### 1.2 Error-Page DOM-Assertions
+
+Die Error-Pages rendern einen `.alert.alert-danger`-Container:
+
+```typescript
+// 404 prüfen
+const response = await page.goto('/tree/demo/individual/NONEXISTENT_XREF_12345');
+expect(response?.status()).toBe(404);
+await expect(page.locator('.alert.alert-danger')).toBeVisible();
+```
+
+### 1.3 Kein Theme-Loop nötig
+
+Error-Pages verwenden das Layout `layouts/default` (mit Theme-CSS) oder das
+Fallback-Layout `layouts/error` (ohne Theme). Die Fehleranzeige selbst ist
+Bootstrap-basiert und nicht theme-spezifisch. Ein Theme-Loop wäre möglich, aber
+der Mehrwert ist gering — Spec-C ohne Theme-Loop reicht.
+
+---
+
+## 2 Admin-DataTable-Verification
+
+**Betroffenes Feature:** A08 (Medienverwaltung Admin)
+
+**Problem:** Die Admin-Media-Seiten nutzen jQuery DataTables mit AJAX-Datenquellen.
+Nach Formular-Interaktion (Radio-Button-Klick, Folder-Auswahl) wird die Tabelle
+asynchron neu geladen.
+
+### 2.1 DataTable-Wait-Pattern
+
+```typescript
+// Formular-Änderung → AJAX-Reload abwarten
+await page.check('input[name="files"][value="local"]');
+await page.waitForLoadState('networkidle');
+
+// DataTable-Container prüfen
+await expect(page.locator('table#wt-datatables-admin-media')).toBeVisible();
+```
+
+### 2.2 Admin-Route-Group
+
+Alle Admin-Media-Routen liegen unter `/admin/` und erfordern `AuthAdministrator`-Middleware.
+Das bestehende Admin-Only-Pattern (-> wf_code-to-systemtest_guide.md 4.5) ist direkt
+anwendbar.
+
+### 2.3 FixLevel0-Media-Interaktion
+
+Die FixLevel0-Seite enthält Buttons mit `data-*`-Attributen für AJAX-Aktionen.
+Da die AJAX-Endpoints POST-basiert sind und nach dem Button-Klick die DataTable
+neu laden, muss `waitForResponse` oder `waitForLoadState('networkidle')` genutzt
+werden.
+
+---
+
+## 3 Legacy-Redirect-API-Testing
+
+**Betroffenes Feature:** S53 (Legacy-URL-Weiterleitungen)
+
+**Problem:** Die ~27 Legacy-Redirect-Handler antworten mit HTTP 301 und
+`Location`-Header. Sie rendern keine HTML-Seite — klassische DOM-Assertions
+greifen nicht.
+
+### 3.1 Redirect-Follow-Kontrolle
+
+Playwright folgt Redirects standardmäßig. Für Status-Code-Prüfungen muss
+der Redirect *nicht* gefolgt werden:
+
+```typescript
+// API-Kontext: Redirects nicht folgen
+const response = await request.get('/individual.php?ged=demo&pid=I1', {
+    maxRedirects: 0,
+});
+expect(response.status()).toBe(301);
+expect(response.headers()['location']).toMatch(/\/tree\/demo\/individual\/I1/);
+```
+
+Alternativ mit `page.goto()` und Response-Abfang:
+
+```typescript
+const [response] = await Promise.all([
+    page.waitForResponse(resp => resp.url().includes('individual.php')),
+    page.goto('/individual.php?ged=demo&pid=I1'),
+]);
+// page.goto() folgt dem Redirect — der Status bezieht sich auf die finale Seite
+// Deshalb besser: API-Only-Pattern mit request-Kontext
+```
+
+### 3.2 Stichproben-Ansatz
+
+Da alle 27 Handler dem gleichen Pattern folgen, werden stichprobenartig
+5–8 repräsentative Handler getestet:
+
+| Handler | Legacy-URL | Erwarteter Redirect |
+|---|---|---|
+| RedirectIndividualPhp | `/individual.php?ged=demo&pid=I1` | `/tree/demo/individual/I1` |
+| RedirectFamilyPhp | `/family.php?ged=demo&famid=F1` | `/tree/demo/family/F1` |
+| RedirectSourcePhp | `/source.php?ged=demo&sid=S1` | `/tree/demo/source/S1` |
+| RedirectCalendarPhp | `/calendar.php?ged=demo&view=month` | `/tree/demo/calendar/month/...` |
+| RedirectPedigreePhp | `/pedigree.php?ged=demo&rootid=I1` | `/tree/demo/pedigree/...` |
+
+### 3.3 Gone-Exception-Tests (410)
+
+Für ungültige XREFs oder nicht existierende Bäume:
+
+```typescript
+const response = await request.get('/individual.php?ged=demo&pid=INVALID_XREF_999', {
+    maxRedirects: 0,
+});
+expect(response.status()).toBe(410);
+```
+
+### 3.4 Canonical-Link-Header
+
+Die Redirect-Handler setzen einen `Link: <url>; rel="canonical"` Header für SEO.
+Dieser kann als zusätzliche Assertion geprüft werden.
+
+---
+
+## 4 Empfehlung: Test-Datei-Zuordnung
+
+| Feature | Spec-Datei | Pattern | Fixture |
+|---|---|---|---|
+| M16 | `error-handling.spec.ts` | Spec-C (provozierte Fehler) | `perfschema-fixture` |
+| A08 | `media-admin.spec.ts` | Admin-Only + DataTable | `perfschema-fixture` |
+| S53 | `legacy-url-redirects.spec.ts` | API-Only (Redirect-Status) | `otel-fixture` |
+
+**M16 und A08** liegen in `layer4-e2e/tests/`, **S53** ebenfalls (kein Security-Test).
