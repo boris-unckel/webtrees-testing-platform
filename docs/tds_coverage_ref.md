@@ -141,7 +141,7 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 > **Fußnote (L2-Spalte):** Der in der L2-Spalte angezeigte Testumfang entspricht dem Stand
 > des Branch [`port-layer2-test-doubles`](../webtrees-upstream/webtrees) im Upstream-Fork
-> (Commit `841616f4b5`, 2026-04-11) und ist im Upstream-`main` noch nicht akzeptiert.
+> (Commit `59548226a4`, 2026-04-12) und ist im Upstream-`main` noch nicht akzeptiert.
 > Einzelheiten zur L2-Klassifikation siehe Snapshot
 > [`coverage-runs/2026-04-11_gap-analyse-fork.md`](coverage-runs/2026-04-11_gap-analyse-fork.md).
 
