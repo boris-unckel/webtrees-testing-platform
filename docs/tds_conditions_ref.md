@@ -11,6 +11,33 @@ sowie die Reverse-Engineering-Methodik, mit der sie abgeleitet wurden.
 
 ---
 
+## Teststufen und Layer — Nomenklatur
+
+Dieses Projekt verwendet zwei Bezugssysteme, die sich gegenseitig ergänzen:
+
+| ISTQB-Teststufe               | Layer (Makefile/Verzeichnis)         | Pfad                    |
+|-------------------------------|--------------------------------------|-------------------------|
+| —                             | L1 — Statische Analyse               | `layer1-static/`        |
+| Teststufe 1 — Komponententest | L2 — `make test-unit`                | `layer2-unit/` (Upstream-Fork-Testbasis) |
+| Teststufe 2 — KIT             | L3 — `make test-integration`         | `layer3-integration/`   |
+| Teststufe 3 — Systemtest      | L4 — `make test-e2e`                 | `layer4-e2e/`           |
+| — (Querschnitt)               | L5 — `make test-performance`         | `layer5-performance/`   |
+
+In den Feature-Matrizen dieses Dokuments wird die Teststufen-Spalte als ISTQB-Nummer (1–3) geführt
+(historisch gewachsen, Bezug: `tp_decisions_spec.md`). In der Abdeckungsmatrix
+([`tds_coverage_ref.md`](tds_coverage_ref.md)) werden die Spalten per Layer (L2/L3/L4) benannt,
+weil die Layer die physische Testinfrastruktur beschreiben, in der die Tests laufen.
+
+---
+
+## Domänen-Navigation
+
+[G](#g) · [S](#s) · [P](#p) · [SEC](#sec) · [E](#e) · [A](#a) · [K](#k) · [U](#u) · [M](#m)
+
+> **Platzhalter:** Die Domäne `M` (Middleware) wird in Plan-Phase 5.1 angelegt; der Anker ist bis dahin leer.
+
+---
+
 ## RE-Methodik: 4 Schritte
 
 **Schritt 1 — Code-Topologie erfassen (Feature-Discovery)**
@@ -57,84 +84,27 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 ## Befund: Gap-Analyse der existierenden webtrees-Tests
 
-> Stand: webtrees 2.2.6-dev. Analyse vom 2026-03-26.
-
-**Gesamtbild:**
-- 1233 Testdateien in `tests/app/`, 5 in `tests/feature/`
-- **~95% sind Stub-Tests** (nur `testClass()` — verifiziert, dass die PHP-Klasse existiert)
-- **~4% sind triviale Tests** (wenige Assertions, keine fachliche Tiefe)
-- **~1% sind substanzielle Tests** (echte fachliche Assertions mit Datenprüfung)
-
-### Domäne: GEDCOM Import/Export
-
-| Komponente | Public Methods | Test-Status | Assertions |
-|---|---|---|---|
-| `GedcomImportService` | 3 (`importRecord`, `updatePlaces`, `updateRecord`) | Stub | 1 (`testClass`) |
-| `GedcomExportService` | 5 (`downloadResponse`, `export`, `createHeader`, `wrapLongLines`, Konstruktor) | Stub | 1 (`testClass`) |
-| `ImportGedcomAction` (Handler) | 1 | Stub | 1 |
-| `ImportGedcomPage` (Handler) | 1 | Stub | 1 |
-| `ExportGedcomClient` (Handler) | 1 | Stub | 1 |
-| `ExportGedcomServer` (Handler) | 1 | Stub | 1 |
-| `GedcomEncodingFilter` | — | Substanziell | Encoding-Tests vorhanden |
-| `ImportGedcomTest` (Feature) | — | Minimal | 1 Test: `demo.ged` importieren (keine Ergebnisprüfung) |
-| Element-Klassen | 216 | 212 Tests | Meist Pattern-Validierung (gut) |
-
-**Ungetestete Kernlogik (Import):**
-- Record-Import mit Typ-Erkennung (INDI, FAM, SOUR, …)
-- Place-Hierarchie-Aufbau beim Import
-- Date-Parsing und Index-Aktualisierung
-- Name-Extraktion und Soundex-Generierung
-- Inline-Media-Konvertierung
-- Legacy-Format-Konvertierung (TNG, PLAC_DEFN)
-
-**Ungetestete Kernlogik (Export):**
-- 4 Export-Formate: GEDCOM, ZIP, ZIP+Media, GEDZIP
-- Privacy-Filterung nach Access-Level (PRIV_NONE, PRIV_USER, PRIV_PRIVATE, PRIV_HIDE)
-- Encoding-Konvertierung (UTF-8 → ANSEL, Windows-1252, etc.)
-- Zeilenumbrüche (CRLF/LF) und CONC/CONT-Wrapping
-- Header-Generierung mit Metadaten
-- Media-Datei-Einbettung in ZIP-Export
-
-### Domäne: Suche und Navigation
-
-| Komponente | Public Methods | Test-Status | Assertions |
-|---|---|---|---|
-| `SearchService` | 20 Suchmethoden | Minimal | 1 Testmethode, prüft nur "Collection nicht leer" |
-| `SearchGeneralPage` (Handler) | 1 | Stub | 1 |
-| `SearchAdvancedPage` (Handler) | 1 | Stub | 1 |
-| `SearchPhoneticPage` (Handler) | 1 | Stub | 1 |
-| `SearchQuickAction` (Handler) | 1 | Stub | 1 |
-| `SearchReplacePage` (Handler) | 1 | Stub | 1 |
-| 13 Chart-Module | je 1–3 | Stub | je 1 (`testClass`) |
-| 10 List-Module | je 1–3 | Stub | je 1 (`testClass`) |
-| `IndividualListTest` (Feature) | — | **Substanziell** | 7 Testmethoden, ~50 Assertions (Collation, Initialen, Nachnamen) |
-| 16 AutoComplete/TomSelect | je 1 | Stub | je 1 |
-
-**Ungetestete Kernlogik (Suche):**
-- Allgemeine Suche: Query-Parsing (Anführungszeichen, CJK-Splitting, Leerzeichen)
-- Suche über 6 Record-Typen (Individuals, Families, Sources, Notes, Repositories, Locations)
-- Erweiterte Suche: 75 GEDCOM-Felder mit Datum-Modifikatoren (±0 bis ±20 Jahre)
-- Phonetische Suche: Russell-Soundex und Daitch-Mokotoff-Soundex
-- Paginierung, Offset, Limit
-- Cross-Tree-Suche (über mehrere Stammbäume)
-- Zugriffskontrolle auf Suchergebnisse
-- Search-and-Replace (Bulk-Editor, erfordert Edit-Recht)
-
-**Ungetestete Kernlogik (Navigation):**
-- 13 Chart-Typen: kein einziger Rendering-Test
-- Chart-Parameter und -Optionen (Generationstiefe, Layout, etc.)
-- 10 List-Module: nur IndividualList substanziell getestet
-- Sortierung und Collation (locale-spezifisch)
-- AutoComplete/TomSelect-AJAX-Endpoints (16 Stück)
+> **Historisch (Stand 2026-03-26):** Die ursprüngliche Gap-Analyse gegen Upstream-`main`
+> (~95 % Stub-Tests, Schwerpunkt GEDCOM-Import/Export und Suche/Navigation) ist durch den
+> Fork-Branch `port-layer2-test-doubles` in Teilen überholt. Wortlaut archiviert unter
+> [`coverage-runs/historical/2026-03-26_gap-analyse.md`](coverage-runs/historical/2026-03-26_gap-analyse.md).
+>
+> **Aktueller Stand (2026-04-11):** Neuerhebung gegen Fork-Branch `port-layer2-test-doubles` —
+> Stub-Quote L2 reduziert auf 55.1 %, 271 Testdateien als `Substantial`/`EP-complete`
+> klassifiziert. Vollständiger Snapshot (inkl. L2/L3/L4-Quartile, Domänen-Aggregate und
+> Top/Tail-Listen): [`coverage-runs/2026-04-11_gap-analyse-fork.md`](coverage-runs/2026-04-11_gap-analyse-fork.md).
 
 ---
+
+<a id="g"></a>
 
 ## Feature-Matrix: GEDCOM Import/Export
 
 > Abgeleitet aus Code-Analyse von `GedcomImportService`, `GedcomExportService`,
 > `GedcomEncodingFilter`, `Elements/`, Request-Handlern und dem GEDCOM 5.5.1-Standard.
 >
-> Teststufen: 1 = Komponententest, 2 = Komponentenintegrationstest, 3 = Systemtest
+> Teststufen: 1 = Komponententest, 2 = Komponentenintegrationstest, 3 = Systemtest.
+> Layer-Zuordnung: siehe [Mapping-Tabelle am Dokumentanfang](#teststufen-und-layer--nomenklatur).
 
 | # | Feature | Abgeleitete Anforderung | Teststufe | Prio |
 |---|---|---|---|---|
@@ -168,15 +138,19 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | G28 | OBJE-Metadaten bearbeiten *(spezifikationsbasiert)* | EditMediaFileAction::handle — Happy Path: gültige fact_id + title+type → change-Tabelle enthält pending GEDCOM mit neuem Titel (DB-Postcondition); Fact-not-found-Guard (fact_id='') → Redirect zu TreePage | 2 | Niedrig |
 | G29 | GEDCOM-Bearbeitungsservice *(spezifikationsbasiert)* | GedcomEditService: editLinesToGedcom — Mehrzeilenwerte (CONT), Sub-Level-Struktur, Leerstring-Handling; insertMissingLevels — Subtag-Expansion, Level-1/2-Pfade | 2 | Niedrig |
 | G30 | Mediendatei-Upload (HTTP-Formular) | UploadMediaPage/UploadMediaAction: Datei-Upload via Web-Formular → Datei gespeichert, OBJE-Record in DB erzeugt (verschieden von G27: URL-basierter Upload via MediaFileService) | 2, 3 | Mittel |
+| G31 | GEDCOM-Import via CLI | `TreeImport` CLI-Command (`tree-import <tree-name> <gedcom-file>`): liest GEDCOM-Datei, löscht bestehenden Baum-Inhalt, importiert via `GedcomImportService` mit Optionen `--encoding`/`--keep-media`/`--conc-spaces`/`--gedcom-media-path`; Fail-Fast bei unbekanntem Baum und nicht-existierender Datei → FAILURE. Unterscheidet sich von G25 `GedcomLoad` (HTTP-RequestHandler) und A02 `ImportGedcomPage/Action` (HTTP-Formular). | 2 | Hoch |
 
 ---
+
+<a id="s"></a>
 
 ## Feature-Matrix: Suche und Navigation
 
 > Abgeleitet aus Code-Analyse von `SearchService` (20 public Methods),
 > 9 Search-Handlern, 13 Chart-Modulen, 10 List-Modulen, 16 AutoComplete-Handlern.
 >
-> Teststufen: 1 = Komponententest, 2 = Komponentenintegrationstest, 3 = Systemtest
+> Teststufen: 1 = Komponententest, 2 = Komponentenintegrationstest, 3 = Systemtest.
+> Layer-Zuordnung: siehe [Mapping-Tabelle am Dokumentanfang](#teststufen-und-layer--nomenklatur).
 
 | # | Feature | Abgeleitete Anforderung | Teststufe | Prio |
 |---|---|---|---|---|
@@ -234,6 +208,8 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 ---
 
+<a id="p"></a>
+
 ## Feature-Matrix: Datenschutz & Zugriffskontrolle
 
 > Abgeleitet aus Code-Analyse von `Individual::canShow()`, `Individual::canShowByType()`,
@@ -241,6 +217,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 > Tree-Preferences (Privacy-Einstellungen), User-Preferences (Relationship Privacy).
 >
 > Teststufen: 2 = Komponentenintegrationstest, 3 = Systemtest.
+> Layer-Zuordnung: siehe [Mapping-Tabelle am Dokumentanfang](#teststufen-und-layer--nomenklatur).
 > Rollen: B = Besucher, M = Mitglied, E = Bearbeiter, Mo = Moderator, V = Verwalter.
 
 | # | Feature | Abgeleitete Anforderung | Rollen | Teststufe | Prio |
@@ -286,21 +263,22 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | P39 | Authentifizierung-Aktionen | LoginAction: korrekte/falsche Credentials → Redirect zu Baum / Fehler; Logout → Session ungültig + Redirect; RegisterAction: neues Konto anlegen → Bestätigungs-E-Mail / Redirect; PasswordRequestAction/ResetAction → Token erzeugt / Passwort gesetzt; VerifyEmail → Account aktiviert (ergänzt S32–S34 Seiten-Smoke) | B, M | 2, 3 | Hoch |
 | P40 | Änderungsverwaltung (HTTP-Handler) | PendingChanges: Liste offener Änderungen → 200 + Einträge; PendingChangesAcceptChange/AcceptRecord → DB-Status 'accepted'; PendingChangesRejectChange/RejectRecord → DB-Status 'rejected' oder gelöscht (ergänzt P28 Playwright-Systemtest auf Handler-Ebene) | Mo, V | 2 | Hoch |
 | P41 | Datensatz-Zusammenführung (vollständig) | MergeRecordsPage: Vergleichs-Formular zweier Records → 200; MergeRecordsAction: Records zusammenführen → ein Record per change-Tabelle gelöscht, einer aktualisiert (verschieden von P30 Fakten-Merge) | E, V | 2 | Mittel |
+| P42 | CLI Benutzer-Listing | `UserList` CLI-Command (`user-list`): gibt alle registrierten Benutzer zeilenweise auf STDOUT aus — Spalten `user_id`, `user_name`, `real_name`, `email`, sowie aggregierte `user_setting`-Werte (Admin/Verified/Approved). Primär nicht-destruktiv, Lesezugriff. Unterscheidet sich von A07 `UserListPage` (HTTP-Admin-Seite) und P35 `UserEdit` (CLI-Bearbeitung). | V | 2 | Niedrig |
 
 > **Querschnittsanforderung Theme-Abdeckung (Phase 5c):** Jeder Systemtest-Testfall (Teststufe 3) für tree-gebundene Seiten
 > MUSS alle 5 Standard-Themes abdecken: `webtrees`, `clouds`, `colors`, `fab`, `xenea`. Theme-Abdeckung ist keine eigene
 > Testbedingung mehr (S25 aufgelöst), sondern eine strukturelle Eigenschaft jedes Testfalls. Ausnahmen: `auth.spec.ts` (S33, S34)
 > und `login.spec.ts` (S32) — nicht tree-gebunden, kein Theme-Loop.
 
-> **E2E-Gap-Analyse (2026-03-27):** Abgleich der vorhandenen Playwright-Specs (`layer4-e2e/tests/`)
-> mit den 170 GET-Routen in `WebRoutes.php` (webtrees Upstream). Von ~47 für eingeloggte
-> Nicht-Admin-Nutzer erreichbaren Seiten-Routen werden 8 URLs in den bestehenden Specs
-> abgedeckt. S26–S39 schließen die wichtigsten Lücken. Nicht aufgenommen: Editor-Formulare
-> (Add/Edit-Seiten, erfordern Schreibrechte), Admin-Panel-Seiten, AJAX-Endpoints (TomSelect),
-> Asset-Routen. Korrektur: S24 (Familienseite) war fehlzugeordnet — `navigation.spec.ts`
-> testet `/tree/demo/family-list` (→ S20), nicht `/tree/demo/family/{xref}`.
+> **E2E-Gap-Analyse (archiviert):** Die ursprüngliche 2026-03-27-Analyse (8 von ~47
+> Nicht-Admin-Routen in Specs abgedeckt, S26–S39 als Lückenschluss) ist wörtlich archiviert
+> unter [`coverage-runs/historical/2026-03-27_e2e-gap.md`](coverage-runs/historical/2026-03-27_e2e-gap.md).
+> Aktuelle L4-Kennzahlen (Stand 2026-04-11: 26 Specs, `Stub 0 / Smoke 11 / Substantial 15`):
+> [`coverage-runs/2026-04-11_gap-analyse-fork.md`](coverage-runs/2026-04-11_gap-analyse-fork.md) §3.1 und §3.6.
 
 ---
+
+<a id="sec"></a>
 
 ## Feature-Matrix: Sicherheit (SEC)
 
@@ -343,12 +321,15 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 ---
 
+<a id="e"></a>
+
 ## Feature-Matrix: Datenpflege / Erfassung (E)
 
 > Alle Handler, die GEDCOM-Datensätze via Web-UI erzeugen oder ändern.
 > Abgrenzung: G = Datenformat/Import/Export; S = Ansicht/Navigation; P = Zugriffskontrolle/Auth.
 > Rollen: B = Besucher, M = Mitglied, E = Bearbeiter, Mo = Moderator, V = Verwalter.
 > Teststufen: 2 = Komponentenintegrationstest, 3 = Systemtest.
+> Layer-Zuordnung: siehe [Mapping-Tabelle am Dokumentanfang](#teststufen-und-layer--nomenklatur).
 
 | # | Feature | Abgeleitete Anforderung | Rollen | Teststufe | Prio |
 |---|---|---|---|---|---|
@@ -363,11 +344,14 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 ---
 
+<a id="a"></a>
+
 ## Feature-Matrix: Administration (A)
 
 > Admin-Only-Operationen: Stammbaum-Verwaltung, Modul-Konfiguration, Site-Einstellungen, System-Werkzeuge.
 > Getrennt von fachlichen Features (E, G, S, P). Rolle: V = Verwalter / Admin.
 > Teststufen: 2 = Komponentenintegrationstest, 3 = Systemtest.
+> Layer-Zuordnung: siehe [Mapping-Tabelle am Dokumentanfang](#teststufen-und-layer--nomenklatur).
 
 | # | Feature | Abgeleitete Anforderung | Teststufe | Prio |
 |---|---|---|---|---|
@@ -382,8 +366,15 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | A09 | Datenpflege-Werkzeuge | DataFixPage/Choose/Select/Update: Datenpflege-Script auswählen + anwenden → DB-Änderungen; CleanDataFolder: temporäre Dateien bereinigen; FindDuplicateRecords → XREFs mit Duplikaten gelistet; AddUnlinkedPage/Action → neues INDI ohne FAM anlegen | 2, 3 | Niedrig |
 | A10 | Protokolle & Monitoring | PendingChangesLogPage/Data/Action/Delete/Download: Change-Log abrufen/filtern/löschen/exportieren; SiteLogsDownload: Site-Log als CSV; PhpInformation: phpinfo() → 200 | 2, 3 | Niedrig |
 | A11 | System & Upgrade | UpgradeWizardPage/Confirm: Update-Wizard Schritte → Versions-Check + Download; CheckForNewVersionNow → Versions-Check-Response; Masquerade: Admin übernimmt Nutzer-Session → SessionUser geändert; BroadcastPage/Action: Nachricht an alle Nutzer; EmailPreferencesPage/Action: SMTP-Konfiguration testen | 2, 3 | Niedrig |
+| A12 | CLI Wartungsmodus aktivieren | `SiteOffline` CLI-Command (`site-offline [message]`): erstellt/überschreibt `data/offline.txt` mit optionalem Klartext → alle nachfolgenden HTTP-Requests werden von der `CheckForMaintenanceMode`-Middleware (M22) mit HTTP 503 + Offline-Seite beantwortet (Admin-Session ausgenommen). Destruktiv im Sinne „sperrt alle Nutzer aus". | 2 | Mittel |
+| A13 | CLI Wartungsmodus deaktivieren | `SiteOnline` CLI-Command (`site-online`): löscht `data/offline.txt` → Middleware M22 lässt wieder alle Requests passieren. Komplement zu A12. | 2 | Niedrig |
+| A14 | CLI initialer Config-Setup | `ConfigIni` CLI-Command (`config-ini`): schreibt `data/config.ini.php` mit DB-Parametern (host, port, user, password, database, tblpfx) aus Command-Optionen; prüft DB-Verbindbarkeit via `PDO` → Early-Exit mit FAILURE bei Verbindungsfehler. Einmalig vor `make setup` genutzt; produktiv riskant, weil falsche Werte die gesamte Plattform unerreichbar machen. | 2 | Hoch |
+| A15 | CLI Übersetzung kompilieren | `CompilePoFiles` CLI-Command (`compile-po-files`): liest `.po`-Dateien aus `resources/lang/<locale>/`, konvertiert sie in PHP-Arrays, speichert als `.php` im selben Verzeichnis → Runtime-Translation-Lookup nutzt anschließend die kompilierten `.php`-Dateien. Keine DB-Änderungen; Fail-Silent bei fehlender `.po`-Datei. | 2 | Niedrig |
+| A16 | CLI Baum-Listing | `TreeList` CLI-Command (`tree-list`): gibt alle konfigurierten Stammbäume zeilenweise auf STDOUT aus — Spalten `gedcom_id`, `tree_name`, `tree_title`, `imported` (bool). Reines Lesewerkzeug; Unterscheidet sich von A01 `ManageTrees` (HTTP-Admin-Seite). | 2 | Niedrig |
 
 ---
+
+<a id="k"></a>
 
 ## Feature-Matrix: Kommunikation (K)
 
@@ -397,6 +388,8 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 ---
 
+<a id="u"></a>
+
 ## Feature-Matrix: Querschnitts-Utilities (U)
 
 > Utility-Klassen ohne Domänenzuordnung — direkt im root-Namespace `Fisharebest\Webtrees`.
@@ -406,6 +399,51 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 |---|---|---|---|---|
 | U01 | Validator (root-Paket) *(spezifikationsbasiert)* | `Validator.float()`: EP/BVA-Matrix (EP1 float-String→float, EP2 integer-String→float, EP3 int-Typ→float, EP4 negativ, EP5 zero-BV, EP-inv1 non-numeric→throw, EP-inv2 non-numeric+default, EP-miss1 fehlt→throw, EP-miss2 fehlt+default); `__construct` UTF-8: key-invalid→throw, value-invalid→throw, serverParams-ASCII→kein-throw; `integer()` negativer-String→-42; `array()` non-array-non-null→throw | 2 | Mittel |
 | U02 | CountryService (`Statistics/Service/`) *(SKIP — deprecated)* | `getAllCountries()`, `iso3166()`, `mapTwoLetterToName()`: reine Lookup-Logik ohne DB/Tree-Abhängigkeit; kein Test geplant. Begründung: Klasse ist in webtrees als `@deprecated` markiert und soll in 2.3 entfernt werden — Testaufwand wäre sofort wertlos. | — | — |
+
+---
+
+<a id="m"></a>
+
+## Feature-Matrix: Middleware (M)
+
+> PSR-15 HTTP-Middleware unter `upstream/webtrees/app/Http/Middleware/`. Jede Middleware
+> verarbeitet Request und/oder Response in der Kette `ReadConfigIni → BaseUrl → ClientIp →
+> UseDatabase → UpdateDatabaseSchema → UseSession → UseLanguage → UseTheme → BootModules →
+> LoadRoutes → Router → CheckCsrf → RequestHandler → EmitResponse`. Die 7 Rollen-basierten
+> `Auth*`-Klassen sind zu einer logischen Cluster-Einheit (M01) zusammengefasst, weil sie
+> denselben Zugriffskontroll-Mechanismus für verschiedene Rollen-Ebenen implementieren.
+> **Stand:** 28 IDs für 34 Middleware-Klassen (2026-04-11, Plan-Phase 5.1).
+
+| # | Feature | Abgeleitete Anforderung | Teststufe | Prio |
+|---|---|---|---|---|
+| M01 | Rollenbasierte Zugriffskontrolle | `AuthLoggedIn`: Session-User ≠ Guest → weiter, sonst 302 Login; `AuthMember`/`AuthEditor`/`AuthModerator`/`AuthManager`/`AuthAdministrator`: Benutzerrolle vs. Ziel-Rolle per Tree → 200/403/302; `AuthNotRobot`: Request-Attribut `robot` ≠ true → weiter. Zusammen bilden sie die Autorisierungs-Stufenleiter der Plattform. | 2, 3 | Hoch |
+| M02 | Bad-Bot-Blocker (UA-basiert) | `BadBotBlocker`: User-Agent-Regex-Liste + WordPress-Pfad-Heuristik + DNS-Whois-Reverse-Lookup + Cookie-Heuristik → blockiert bekannte Bot-UAs mit 403. (L3 bereits als SEC-BOT01 getestet, `BadBotBlockerIntegrationTest` 15 Tests.) | 2, 3 | Hoch |
+| M03 | Client-IP-Ermittlung (Proxy-Trust) | `ClientIp`: Request → Client-IP aus `X-Forwarded-For`/`Forwarded`/Remote-Addr extrahieren unter Berücksichtigung konfigurierter Proxy-Trust-Liste → Request-Attribut `client-ip`. | 2 | Mittel |
+| M04 | CSRF-Token-Validierung | `CheckCsrf`: POST-Request → Vergleich `$_POST['_csrf']` bzw. `X-CSRF-TOKEN` Header mit Session-Token → 403 auf Mismatch, GET passiert durch. | 2 | Hoch |
+| M05 | Security-Headers (OWASP) | `SecurityHeaders`: Response ergänzt `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: same-origin`, ggf. CSP. (L4 als SEC-HDR01–HDR04 getestet, `security-headers.spec.ts`.) | 2, 3 | Hoch |
+| M06 | Session-Initialisierung | `UseSession`: PHP-Session starten, Session-Cookie-Flags (`HttpOnly`, `SameSite`, `Secure`) setzen, `LAST_ACTIVE_TIMESTAMP` aktualisieren. | 2 | Hoch |
+| M07 | Datenbank-Verbindung | `UseDatabase`: Eloquent-Capsule mit Credentials aus `config.ini.php` initialisieren → globaler DB-Singleton. | 2 | Hoch |
+| M08 | Datenbank-Schema-Migration | `UpdateDatabaseSchema` (mit `MigrationService`): Schema-Version-Check + Migrations-Chain ausführen bis Ziel-Version erreicht → DB-Struktur aktuell. | 2 | Hoch |
+| M09 | Base-URL-Ermittlung | `BaseUrl`: Base-URL aus `config.ini.php` `base_url` lesen oder aus Request `Host`/`Scheme`/`Port` rekonstruieren → Request-Attribut `base_url`. | 2 | Mittel |
+| M10 | Routen-Laden | `LoadRoutes` (mit `ApiRoutes`, `WebRoutes`): Core-Routing-Tabellen laden und Router im DI-Container hinterlegen. | 2 | Mittel |
+| M11 | URL-Routing | `Router` (mit `ModuleService`, `RouterContainer`, `TreeService`): Request-URL → Routing-Tabelle → RequestHandler-FQCN (ggf. mit Tree/Module-Parameter-Injection). | 2 | Hoch |
+| M12 | Request-Handler-Dispatch | `RequestHandler`: Routing-Ergebnis → FQCN aus Container instanziieren + `handle()` aufrufen → Response. | 2 | Hoch |
+| M13 | Sprachauswahl | `UseLanguage` (mit `ModuleService`): Sprache aus Session/Cookie/`Accept-Language`-Header/Siteprefs priorisieren, I18N initialisieren (`gettext`/`I18N::init`). | 2 | Mittel |
+| M14 | Theme-Auswahl | `UseTheme` (mit `ModuleService`): Theme aus Session/Siteprefs priorisieren → Container-Binding `ModuleThemeInterface`. | 2 | Niedrig |
+| M15 | PHP-Error-zu-Exception-Konvertierung | `ErrorHandler`: `set_error_handler()`-Hook konvertiert PHP-Notices/Warnings in `ErrorException`. | 2 | Mittel |
+| M16 | Exception-Handling & Error-Page-Rendering | `HandleExceptions` (mit `PhpService`, `TreeService`): Gefangene Exceptions → passende Error-Page (403/404/500) mit Stack-Trace (nur im Debug-Modus). | 2, 3 | Hoch |
+| M17 | Debug-Logger (SQL/Perf) | `DebugLogger`: SQL-Query-Zählung, Response-Time, Memory-Peak → Debug-Response-Header oder Log-Datei (nur wenn Debug-Flag aktiv). | 2 | Niedrig |
+| M18 | Housekeeping (Thumbnails/Logs/Temp) | `DoHousekeeping` (mit `HousekeepingService`): zufällig 1/1000 Requests → löscht alte Thumbnail-Cache-Einträge, Temp-Dateien, Log-Rotation, Session-Cleanup. | 2 | Niedrig |
+| M19 | Response-Kompression | `CompressResponse` (mit `PhpService`, `StreamFactoryInterface`): `Accept-Encoding: gzip/deflate` → Response-Body streamt komprimiert. | 2 | Niedrig |
+| M20 | Content-Length-Header | `ContentLength`: Response-Body-Länge berechnen → `Content-Length`-Header setzen falls noch nicht vorhanden. | 2 | Niedrig |
+| M21 | Config-Ini-Lesen | `ReadConfigIni` (mit `SetupWizard`): `config.ini.php` parsen → Request-Attribute für DB-Creds, Base-URL, Debug-Flag etc.; wenn nicht vorhanden → Setup-Wizard-Redirect. | 2, 3 | Hoch |
+| M22 | Wartungsmodus | `CheckForMaintenanceMode` (mit `MaintenanceModeService`): Wartungs-Marker in `data/offline.txt` → HTTP 503 + Offline-Seite für Nicht-Admins. | 2, 3 | Mittel |
+| M23 | Update-Prüfung | `CheckForNewVersion` (mit `UpgradeService`): asynchron verfügbare webtrees-Versionen prüfen (nur bei GET-Requests) → Versions-Info im Container. | 2 | Niedrig |
+| M24 | Public-Files-Serving | `PublicFiles`: statische Dateien aus `/public/` direkt serven mit `Cache-Control: public, max-age=N` — umgeht RequestHandler-Chain. | 2, 3 | Mittel |
+| M25 | GEDCOM-Tag-Registrierung | `RegisterGedcomTags` (mit `Gedcom`): erweiterte/Custom-GEDCOM-Tags im `ElementFactory` registrieren (z. B. `_WT_USER`, `_FNRL`) → Element-Lookup vollständig. | 2 | Mittel |
+| M26 | Modul-Bootstrap | `BootModules` (mit `ModuleService`, `ModuleThemeInterface`): aktive Module aus DB laden, jede `boot()`-Methode aufrufen, pro Modul Theme-Hook ausführen. | 2 | Mittel |
+| M27 | DB-Transaktion mit Retry | `UseTransaction`: Request-Handler in `DB::transaction()` wrappen + Deadlock-Retry-Logik bei `SQLSTATE 40001`/`1213`. | 2 | Hoch |
+| M28 | Response-Emittierung | `EmitResponse` (mit `PhpService`): finale Response in Chunks via `echo` an Client senden + `fastcgi_finish_request()`-Cleanup. | 2 | Niedrig |
 
 ---
 

@@ -16,6 +16,7 @@
 **Commit-Referenz (Testing-Platform):** `f672a96` (main)
 **Commit-Referenz (Upstream-Fork, L2-Quelle):** `841616f4b5` (`port-layer2-test-doubles`, noch nicht im Upstream-main)
 **Commit-Referenz (Anwendungscode):** `security-audit-consolidated` in `upstream/webtrees/`
+**Umsetzungsplan:** [`coverage_doc_improvement_plan.md`](coverage_doc_improvement_plan.md)
 
 ---
 
