@@ -10,6 +10,8 @@ import { loginAsRole, logoutRole } from '../helpers/privacy-roles';
  *
  */
 
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test.describe('Access Control', () => {
   test.afterEach(async ({ page }) => {
     await logoutRole(page);

@@ -11,6 +11,8 @@ import { test, expect } from '../helpers/perfschema-fixture';
  * @see docs/tds_conditions_ref.md S33, S34, AP 5b-2e
  */
 
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test.describe('Auth Pages', () => {
   test('S33 — registration page renders', async ({ page }) => {
     const response = await page.goto('/register');

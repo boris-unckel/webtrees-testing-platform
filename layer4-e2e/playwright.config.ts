@@ -10,6 +10,7 @@ import { defineConfig } from '@playwright/test';
  * @see docs/tds_conditions_ref.md Teststufe 3
  */
 export default defineConfig({
+  globalSetup: './helpers/global-setup.ts',
   testDir: './tests',
   testIgnore: '**/security/**',
   timeout: 30_000,
@@ -22,6 +23,7 @@ export default defineConfig({
   ],
   use: {
     baseURL: process.env.BASE_URL || 'http://webtrees:80',
+    storageState: '/tmp/.auth/admin.json',
     screenshot: 'only-on-failure',
     trace: 'on-first-retry',
     headless: true,

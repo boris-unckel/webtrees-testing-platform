@@ -2,7 +2,6 @@
 
 import { test, expect } from '../helpers/perfschema-fixture';
 import { themes, switchTheme } from '../helpers/theme-switch';
-import { ADMIN_PASSWORD } from '../helpers/auth';
 
 /**
  * Systemtest: Navigation und Seitenstruktur
@@ -16,13 +15,6 @@ for (const theme of themes) {
       await switchTheme(browser, theme);
     });
 
-    test.beforeEach(async ({ page }) => {
-      await page.goto('/login/demo');
-      await page.fill('input[name="username"]', 'admin');
-      await page.fill('input[name="password"]', ADMIN_PASSWORD);
-      await page.locator('button[type="submit"]').last().click();
-      await page.waitForLoadState('networkidle');
-    });
 
     test(`S23 — individual list renders [${theme}]`, async ({ page }) => {
       await page.goto('/tree/demo/individual-list');

@@ -11,6 +11,8 @@ import { loginAsRole, logoutRole, type PrivacyRole } from '../helpers/privacy-ro
  *
  */
 
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test.describe('Privacy Visibility', () => {
   test.afterEach(async ({ page }) => {
     await logoutRole(page);

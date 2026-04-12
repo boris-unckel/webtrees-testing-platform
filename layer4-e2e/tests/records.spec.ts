@@ -2,7 +2,6 @@
 
 import { test, expect } from '../helpers/perfschema-fixture';
 import { themes, switchTheme } from '../helpers/theme-switch';
-import { ADMIN_PASSWORD } from '../helpers/auth';
 
 /**
  * Systemtest: Record-Seiten (Source, Media, Repository, Submitter, Note)
@@ -19,13 +18,6 @@ for (const theme of themes) {
       await switchTheme(browser, theme);
     });
 
-    test.beforeEach(async ({ page }) => {
-      await page.goto('/login/demo');
-      await page.fill('input[name="username"]', 'admin');
-      await page.fill('input[name="password"]', ADMIN_PASSWORD);
-      await page.locator('button[type="submit"]').last().click();
-      await page.waitForLoadState('networkidle');
-    });
 
     test(`S26 — source page renders [${theme}]`, async ({ page }) => {
       const response = await page.goto('/tree/demo/source/X1102');

@@ -2,7 +2,6 @@
 
 import { test, expect } from '../helpers/perfschema-fixture';
 import { themes, switchTheme } from '../helpers/theme-switch';
-import { ADMIN_PASSWORD } from '../helpers/auth';
 
 /**
  * Systemtest: Search-and-Replace (Bulk-Editor)
@@ -18,13 +17,6 @@ for (const theme of themes) {
       await switchTheme(browser, theme);
     });
 
-    test.beforeEach(async ({ page }) => {
-      await page.goto('/login/demo');
-      await page.fill('input[name="username"]', 'admin');
-      await page.fill('input[name="password"]', ADMIN_PASSWORD);
-      await page.locator('button[type="submit"]').last().click();
-      await page.waitForLoadState('networkidle');
-    });
 
     test(`S13 — search-and-replace page renders for admin [${theme}]`, async ({ page }) => {
       const response = await page.goto('/tree/demo/search-replace');
@@ -49,21 +41,24 @@ for (const theme of themes) {
   });
 }
 
-// Visitor test (outside theme loop — no login)
-test('S13 — search-and-replace page not accessible for visitor', async ({ page }) => {
-  const response = await page.goto('/tree/demo/search-replace');
-  const status = response?.status() ?? 0;
-  const url = page.url();
+// Visitor-Test: eigener Describe-Block mit leerem storageState
+test.describe('Visitor', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
 
-  // webtrees leitet nicht-authentifizierte Benutzer auf die Login-Seite um,
-  // zeigt eine Fehlermeldung an oder verweigert Zugriff (Status 403/302/200+redirect)
-  const isRedirectedToLogin = url.includes('login');
-  const isAccessDenied = status === 403 || status === 302;
-  const pageContent = await page.locator('body').textContent() ?? '';
-  const hasAccessDeniedMessage = pageContent.includes('sign in') ||
-    pageContent.includes('login') ||
-    pageContent.includes('not authorized') ||
-    pageContent.includes('Access denied');
+  test('S13 — search-and-replace page not accessible for visitor', async ({ page }) => {
+    const response = await page.goto('/tree/demo/search-replace');
+    const status = response?.status() ?? 0;
+    const url = page.url();
 
-  expect(isRedirectedToLogin || isAccessDenied || hasAccessDeniedMessage).toBeTruthy();
+    // webtrees leitet nicht-authentifizierte Benutzer auf die Login-Seite um
+    const isRedirectedToLogin = url.includes('login');
+    const isAccessDenied = status === 403 || status === 302;
+    const pageContent = await page.locator('body').textContent() ?? '';
+    const hasAccessDeniedMessage = pageContent.includes('sign in') ||
+      pageContent.includes('login') ||
+      pageContent.includes('not authorized') ||
+      pageContent.includes('Access denied');
+
+    expect(isRedirectedToLogin || isAccessDenied || hasAccessDeniedMessage).toBeTruthy();
+  });
 });

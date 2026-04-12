@@ -9,6 +9,8 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
  * @see docs/tds_conditions_ref.md S23
  */
 
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test.describe('Login', () => {
   test('should show login page', async ({ page }) => {
     await page.goto('/login/demo');

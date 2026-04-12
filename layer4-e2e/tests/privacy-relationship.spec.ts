@@ -11,6 +11,8 @@ import { loginAsRelationshipUser, logoutRole } from '../helpers/privacy-roles';
  *
  */
 
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test.describe('Privacy Relationship', () => {
   test.afterEach(async ({ page }) => {
     await logoutRole(page);

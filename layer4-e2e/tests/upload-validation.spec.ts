@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { test, expect } from '../helpers/perfschema-fixture';
-import { ADMIN_PASSWORD } from '../helpers/auth';
 
 /**
  * Systemtest: Upload-Validierung (GEDCOM-Import)
@@ -12,13 +11,6 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
  * @see docs/tds_conditions_ref.md G21, AP 9-3
  */
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('/login/demo');
-  await page.fill('input[name="username"]', 'admin');
-  await page.fill('input[name="password"]', ADMIN_PASSWORD);
-  await page.locator('button[type="submit"]').last().click();
-  await page.waitForLoadState('networkidle');
-});
 
 test('G21 — import page renders for admin', async ({ page }) => {
   const response = await page.goto('/tree/demo/import');
