@@ -45,6 +45,7 @@ Aktueller Stand: siehe [Testbedingungen](tds_conditions_ref.md) und [Abdeckungsm
 | [Test-Iteration (gemeinsam)](wf_test-iteration_guide.md) | Gemeinsamer Kern aller Test-Iterationen: Methodik (EP/BVA), Mock-Infrastruktur, Patterns, 5-Phasen-Arbeitsablauf, Pflicht-Constraints, Abschlussschritte (Voll-Lauf, Ratchet, Commit). |
 | [Coverage → Test](wf_coverage-to-test_guide.md) | Entry: Testziele aus Coverage/CRAP-Analyse. Stack starten, Coverage messen, CRAP-Score analysieren, Implementierungsplan erstellen. Strukturvorlagen in Anhang A/B. AP-Dateien in `docs/coverage-runs/`. |
 | [Code → Test](wf_code-to-test_guide.md) | Entry: Testziele aus Upstream-Code-Analyse. Handler-Inventarisierung, Feature-Analyse, Detailkonzepte. Vorlagen für Analyse-Prompt und Feature-Detailkonzepte. |
+| [Code → Systemtest](wf_code-to-systemtest_guide.md) | Entry: Systemtests (L4 Playwright) aus Code-Analyse. L3-Referenzanalyse, Playwright-Patterns (Theme-Loop, Privacy-Role, Admin-Only, API-Only, Security-Audit), Feature-Spezifikationen unter `docs/systemtest/testspezi/`. |
 
 ---
 
