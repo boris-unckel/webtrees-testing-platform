@@ -158,12 +158,12 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S02 | Allgemeine Suche (Familien) | Suchbegriff → passende Familien zurückgegeben | 2 | Hoch |
 | S03 | Allgemeine Suche (Quellen, Notizen, Repos) | Suchbegriff → passende Records je Typ | 2 | Mittel |
 | S04 | Query-Parsing | Anführungszeichen, Mehrwort-Suche, CJK-Splitting korrekt | 1 | Hoch |
-| S05 | Erweiterte Suche (Felder) | 75 GEDCOM-Felder → Feld-spezifische Filterung | 2 | Hoch |
-| S06 | Erweiterte Suche (Datum-Modifikatoren) | Geburtsdatum ±5 Jahre → korrekte Eingrenzung | 2 | Hoch |
-| S07 | Phonetische Suche (Russell) | Russell-Soundex → ähnlich klingende Namen gefunden | 2 | Mittel |
-| S08 | Phonetische Suche (Daitch-Mokotoff) | DM-Soundex → osteuropäische Namensvarianten gefunden | 2 | Mittel |
+| S05 | Erweiterte Suche (Felder) | 75 GEDCOM-Felder → Feld-spezifische Filterung | 2, 3 | Hoch |
+| S06 | Erweiterte Suche (Datum-Modifikatoren) | Geburtsdatum ±5 Jahre → korrekte Eingrenzung | 2, 3 | Hoch |
+| S07 | Phonetische Suche (Russell) | Russell-Soundex → ähnlich klingende Namen gefunden | 2, 3 | Mittel |
+| S08 | Phonetische Suche (Daitch-Mokotoff) | DM-Soundex → osteuropäische Namensvarianten gefunden | 2, 3 | Mittel |
 | S09 | Quick-Search (XREF) | "I123" eingeben → direkt zum Record weitergeleitet | 3 | Mittel |
-| S10 | Paginierung | Suche mit >50 Ergebnissen → Offset/Limit korrekt | 2 | Mittel |
+| S10 | Paginierung | Suche mit >50 Ergebnissen → Offset/Limit korrekt | 2, 3 | Mittel |
 | S11 | Cross-Tree-Suche | Suche über 2+ Bäume → Ergebnisse aus allen Bäumen | 2 | Mittel |
 | S12 | Zugriffskontrolle (Suche) | Eingeschränkte Records → nicht in Suchergebnissen für Visitor | 2 | Hoch |
 | S13 | Search-and-Replace | Bulk-Ersetzung in GEDCOM → nur bei Edit-Recht möglich | 3 | Mittel |
@@ -193,7 +193,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S38 | Erweiterte Suche (Seitenaufruf) | /search-advanced aufrufen → Formular mit Feldfiltern sichtbar | 3 | Hoch |
 | S39 | Phonetische Suche (Seitenaufruf) | /search-phonetic aufrufen → Formular sichtbar | 3 | Mittel |
 | S40 | Navigation: Homepage (Baumseite) | Homepage/Baumseite aufrufen → Baumstatistik oder Willkommensblock dargestellt, keine HTTP-Fehler | 3 | Hoch |
-| S41 | Statistikdaten-Abfragen *(spezifikationsbasiert)* | StatisticsData: countEventsByMonth whereBetween-Branch (EP5 alle Jahre, EP6 Jahresfilter 1900–2000, EP8 invertierter Bereich=leer); commonSurnames Sort-EP-Matrix (DataProvider alpha/count/rcount, EP13 threshold-Filter); parentsQuery Sex-EP (DataProvider F→WIFE, M→HUSB) | V | 2 | Mittel |
+| S41 | Statistikdaten-Abfragen *(spezifikationsbasiert)* | StatisticsData: countEventsByMonth whereBetween-Branch (EP5 alle Jahre, EP6 Jahresfilter 1900–2000, EP8 invertierter Bereich=leer); commonSurnames Sort-EP-Matrix (DataProvider alpha/count/rcount, EP13 threshold-Filter); parentsQuery Sex-EP (DataProvider F→WIFE, M→HUSB) | V | 2, 3 | Mittel |
 | S42 | Such-HTTP-Handler *(spezifikationsbasiert)* | SearchGeneralPage::handle → Single-Result-Redirect EP2/EP4 (Individual/Family → 302), Default-Fallback EP8, Multi-Result EP1/EP3 (200 OK) | 6 | Mittel |
 | S43 | Report-Generierung HTTP *(spezifikationsbasiert)* | ReportSetupPage: Setup-Formular → 200 OK; ReportGenerate: format='PDF'→application/pdf (EP2), destination='download'→content-disposition:attachment (EP6), unbekannter Report→redirect (B1), HTML-Ausgabe (EP1) | 8 | Mittel |
 | S44 | Report-Parser Erweitert *(spezifikationsbasiert, Pragmatisch C)* | ReportParserGenerate: Vorfahren-Bericht (EP1 addAncestors→non-empty HTML), Nachkommen-Bericht (EP3 addDescendancy→non-empty HTML), Individual-Bericht mit Fakten+Bild (EP7 factsStartHandler+imageStartHandler→non-empty HTML) | 3 | Mittel |
@@ -202,7 +202,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S47 | Interaktiver Stammbaum *(spezifikationsbasiert, Pragmatisch C)* | TreeView: getDetails X1030→XREF im Output (EP5 Partner-Validierung); getIndividuals 'p'-Request→assertNotEmpty+HTML (EP1 Person mit Eltern); getIndividuals 'c'-Request→assertNotEmpty+HTML (EP3 Person mit Kindern) | 3 | Mittel |
 | S48 | Standortdaten-Import Admin *(spezifikationsbasiert)* | MapDataImportAction: EP1+EP5 option=add korrektes CSV (`;`-Trenner, Level-Format)→DB-Postcondition lat/lng via assertEqualsWithDelta; EP6 Null-Island (0,0) multi-level Ort→gefiltert, place_location leer; 2 Smoke-Tests für malformed CSV (Fehlerresilienz) | 4 | Mittel |
 | S49 | Medienverwaltungsliste Admin *(spezifikationsbasiert)* | ManageMediaData: `files`-EP-Matrix (local/external/unused) per Einzeltest, JSON-Struktur `{data, recordsTotal, recordsFiltered}` per Assertion; unused-Branch (handleCollection) gesondert abgedeckt | 3 | Mittel |
-| S50 | Hilfetexte *(spezifikationsbasiert)* | HelpText::handle → alle 12 Topic-IDs per DataProvider (200 OK), unbekannte ID → 200 + generischer Hilfetext | 2 | Niedrig |
+| S50 | Hilfetexte *(spezifikationsbasiert)* | HelpText::handle → alle 12 Topic-IDs per DataProvider (200 OK), unbekannte ID → 200 + generischer Hilfetext | 2, 3 | Niedrig |
 | S52 | Standortdaten-Verwaltung (CRUD) | MapDataList: Übersicht → 200; MapDataAdd/Edit/Save: Formular + Speichern → DB-Update place_location; MapDataDelete/DeleteUnused: Einträge löschen; MapDataExportCSV → CSV-Download (ergänzt S48 Import) | 2, 3 | Niedrig |
 | S53 | Legacy-URL-Weiterleitungen | ~27 Redirect*-Handler (RedirectIndividualPhp, RedirectFanChartPhp, RedirectCalendarPhp usw.) leiten alte webtrees 1.x-URLs auf aktuelle Routen um → HTTP 301/302, kein 404 | 3 | Niedrig |
 
@@ -251,18 +251,18 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | P27 | Bearbeiter: Datensatz bearbeiten | Fakt hinzufügen → pending change in DB. `auto_accept` → sofort akzeptiert. | E | 2, 3 | Hoch |
 | P28 | Moderator: Änderungen akzeptieren | Moderator akzeptiert/verwirft Pending Change → DB-Status aktualisiert. | Mo | 2, 3 | Hoch |
 | P29 | RESN locked / Zugriffsverbot | B/M: kein Edit. E auf RESN-locked: kein Edit. V: Edit erlaubt. `privacy, locked`: additiv. | B, M, E, V | 2, 3 | Hoch |
-| P30 | Datensätze zusammenführen *(spezifikationsbasiert)* | MergeFactsAction: 6 Guard-Branches (record-not-found, same-record, tag-mismatch, pending-deletion) → Redirect zu MergeRecordsPage; Happy Path → change-Eintrag mit new_gedcom='' + Redirect zu ManageTrees | E, V | 2 | Mittel |
+| P30 | Datensätze zusammenführen *(spezifikationsbasiert)* | MergeFactsAction: 6 Guard-Branches (record-not-found, same-record, tag-mismatch, pending-deletion) → Redirect zu MergeRecordsPage; Happy Path → change-Eintrag mit new_gedcom='' + Redirect zu ManageTrees | E, V | 2, 3 | Mittel |
 | P31 | Familienmitglieder bearbeiten *(spezifikationsbasiert)* | ChangeFamilyMembersAction: Vater-Austausch (B1+B5/EP1), Mutter-Entfernung (B2/EP2), Kind-Hinzufügen (B4/EP3), Kind-Entfernen (B3/EP4) → change-Einträge in DB; kein-Änderung (EP5) → change-count=0 | E, V | 2 | Mittel |
 | P32 | Record-Ansicht und -Löschung *(spezifikationsbasiert)* | DeleteRecord: SOUR-Löschung → change-Tabellen-Assert new_gedcom='' (EP1); Familie-Kaskade: 1 Mitglied + keine Fakten → Familie mitgelöscht (EP5). GedcomRecordPage: INDI/FAM/SOUR/REPO → 302-Redirect (EP1×4 DataProvider); Non-Standard-Record → 200+Link-Header (EP2) | E, V | 2 | Mittel |
 | P33 | Stammbaum-Privacy-Einstellungen *(spezifikationsbasiert)* | TreePrivacyAction: Mismatched-Arrays → HttpBadRequestException (EP3/EP4); Rule-Typ-Matrix (tag+xref EP5, tag-only EP6, xref-only EP7, beide-leer EP8) → default_resn-Tabellen-Assert; HIDE_LIVE_PEOPLE gespeichert (EP9) | V | 2 | Mittel |
 | P34 | Stammbaum-Umnummerierung *(spezifikationsbasiert)* | RenumberTreeAction: keine Cross-Tree-Duplikate → Redirect, kein Umbenennen (B2/EP1); Cross-Tree-INDI-Duplikat → XREF in individuals umbenannt (B3/EP2, DB-Postcondition); Pending-Edits-Guard (B1/EP4) → Redirect, XREF bleibt erhalten | V | 2 | Niedrig |
 | P35 | CLI Benutzer-Verwaltung *(spezifikationsbasiert)* | UserEdit CLI: alle 15 Guard-Branches — Konflikt-Flags (B1–B5), Create-Validierung (B6–B9 inkl. Random-PW), Edit-Validierung (B10–B11), Edit-Felder (B13–B15), Delete → Rückkürcode SUCCESS/FAILURE/INVALID | V | 2 | Mittel |
 | P36 | CLI Einstellungs-Verwaltung *(spezifikationsbasiert)* | Settings-Commands (SiteSetting, TreeSetting, UserSetting, UserTreeSetting): --list/--delete-Konflikte (B1/B2), Delete-Branches (B4–B7), Get-Branches (B9–B11), Set-Branches (B12–B14), Entity-not-found (EP11) | V | 2 | Mittel |
-| P37 | HTTP Benutzer-Bearbeitung *(spezifikationsbasiert)* | UserEditAction: user-not-found → HttpNotFoundException (B1); Duplikat-Email + Duplikat-Username → Redirect zurück zu UserEditPage (B5/B6, B7/B8); Self-Edit-Admin-Guard → admin-Status bleibt (B4); Passwort-Update/Kein-Update (B3); Path-Length-Reset bei leerem gedcomid (EP12) | V | 2 | Mittel |
+| P37 | HTTP Benutzer-Bearbeitung *(spezifikationsbasiert)* | UserEditAction: user-not-found → HttpNotFoundException (B1); Duplikat-Email + Duplikat-Username → Redirect zurück zu UserEditPage (B5/B6, B7/B8); Self-Edit-Admin-Guard → admin-Status bleibt (B4); Passwort-Update/Kein-Update (B3); Path-Length-Reset bei leerem gedcomid (EP12) | V | 2, 3 | Mittel |
 | P38 | Account-Selbstverwaltung | AccountEdit: eigenes Profil-Formular → 200; AccountUpdate: Name/E-Mail/Passwort/Theme/Sprache speichern → Redirect; AccountDelete: eigenes Konto löschen → Session beendet, Redirect zu Login | M, E, V | 2, 3 | Mittel |
 | P39 | Authentifizierung-Aktionen | LoginAction: korrekte/falsche Credentials → Redirect zu Baum / Fehler; Logout → Session ungültig + Redirect; RegisterAction: neues Konto anlegen → Bestätigungs-E-Mail / Redirect; PasswordRequestAction/ResetAction → Token erzeugt / Passwort gesetzt; VerifyEmail → Account aktiviert (ergänzt S32–S34 Seiten-Smoke) | B, M | 2, 3 | Hoch |
-| P40 | Änderungsverwaltung (HTTP-Handler) | PendingChanges: Liste offener Änderungen → 200 + Einträge; PendingChangesAcceptChange/AcceptRecord → DB-Status 'accepted'; PendingChangesRejectChange/RejectRecord → DB-Status 'rejected' oder gelöscht (ergänzt P28 Playwright-Systemtest auf Handler-Ebene) | Mo, V | 2 | Hoch |
-| P41 | Datensatz-Zusammenführung (vollständig) | MergeRecordsPage: Vergleichs-Formular zweier Records → 200; MergeRecordsAction: Records zusammenführen → ein Record per change-Tabelle gelöscht, einer aktualisiert (verschieden von P30 Fakten-Merge) | E, V | 2 | Mittel |
+| P40 | Änderungsverwaltung (HTTP-Handler) | PendingChanges: Liste offener Änderungen → 200 + Einträge; PendingChangesAcceptChange/AcceptRecord → DB-Status 'accepted'; PendingChangesRejectChange/RejectRecord → DB-Status 'rejected' oder gelöscht (ergänzt P28 Playwright-Systemtest auf Handler-Ebene) | Mo, V | 2, 3 | Hoch |
+| P41 | Datensatz-Zusammenführung (vollständig) | MergeRecordsPage: Vergleichs-Formular zweier Records → 200; MergeRecordsAction: Records zusammenführen → ein Record per change-Tabelle gelöscht, einer aktualisiert (verschieden von P30 Fakten-Merge) | E, V | 2, 3 | Mittel |
 | P42 | CLI Benutzer-Listing | `UserList` CLI-Command (`user-list`): gibt alle registrierten Benutzer zeilenweise auf STDOUT aus — Spalten `user_id`, `user_name`, `real_name`, `email`, sowie aggregierte `user_setting`-Werte (Admin/Verified/Approved). Primär nicht-destruktiv, Lesezugriff. Unterscheidet sich von A07 `UserListPage` (HTTP-Admin-Seite) und P35 `UserEdit` (CLI-Bearbeitung). | V | 2 | Niedrig |
 
 > **Querschnittsanforderung Theme-Abdeckung (Phase 5c):** Jeder Systemtest-Testfall (Teststufe 3) für tree-gebundene Seiten
@@ -340,7 +340,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | E05 | Medienobjekte anlegen & verknüpfen | CreateMediaObjectModal/Action/FromFile: OBJE-Record anlegen → DB-Eintrag; AddMediaFileModal/Action: Mediendatei zu OBJE hinzufügen → change; LinkMediaToRecordAction/IndividualModal/FamilyModal/SourceModal: OBJE mit anderem Record verknüpfen → change | E, V | 2, 3 | Mittel |
 | E06 | Sortierung (Reorder) | ReorderChildrenPage: Kindreihenfolge → change; ReorderNamesPage: Namenreihenfolge → change; ReorderFamiliesPage: Familienreihenfolge → change; ReorderMediaPage/Action, ReorderMediaFilesPage/Action: Medien/Mediendatei-Reihenfolge | E, V | 2, 3 | Niedrig |
 | E07 | Mediendatei-Download & Thumbnail | MediaFileDownload: Datei abrufen → 200 + korrekter Content-Type; MediaFileThumbnail: Thumbnail generieren → 200 + image/* | M, E, V | 2, 3 | Mittel |
-| E08 | TomSelect & AutoComplete (Edit-Hilfs-APIs) | TomSelectIndividual/MediaObject/Source/Repository/Note/SharedNote: AJAX-Dropdown → JSON mit passenden Records; AutoCompleteCitation: Zitations-Vorschläge → JSON; AutoCompleteFolder: Ordner-Vorschläge für Medienpfad → JSON | E, V | 2 | Niedrig |
+| E08 | TomSelect & AutoComplete (Edit-Hilfs-APIs) | TomSelectIndividual/MediaObject/Source/Repository/Note/SharedNote: AJAX-Dropdown → JSON mit passenden Records; AutoCompleteCitation: Zitations-Vorschläge → JSON; AutoCompleteFolder: Ordner-Vorschläge für Medienpfad → JSON | E, V | 2, 3 | Niedrig |
 
 ---
 

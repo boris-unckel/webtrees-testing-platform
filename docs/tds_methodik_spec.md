@@ -15,11 +15,11 @@ Verwandte Dokumente:
 
 ## Testfall-Verteilung nach Teststufe
 
-| Teststufe | GEDCOM (G01–G23) | Suche/Nav (S01–S39) | Privacy (P01–P29) | Sicherheit (SEC) | Gesamt |
-|---|---|---|---|---|---|
-| Teststufe 1 — Komponententest | G05, G06, G11, G17, G18, G19, G22, G23 (8) | S04 (1) | — | — | **9** |
-| Teststufe 2 — Komponentenintegrationstest (Dateisystem) | G01–G04, G07–G10, G12–G16, G24 (14) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (13) | P01–P24, P27–P29 (27) | SEC-H01–H02, SEC-D01–D02, SEC-C01–C03, SEC-PUB01, SEC-WZ03 (9) | **63** |
-| Teststufe 3 — Systemtest (HTTP/Playwright) | G20, G21 (2) | S09, S13–S18, S20, S23–S24, S26–S40 (25) | P01–P03, P14–P19, P22, P24–P29 (18) | SEC-H03–H06, SEC-M01–M03, SEC-PUB02–PUB04, SEC-W01, SEC-WZ01–WZ04, SEC-HDR01–HDR04 (18) | **63** |
+| Teststufe | GEDCOM (G01–G31) | Suche/Nav (S01–S53) | Privacy (P01–P42) | Sicherheit (SEC) | E/A/K | Gesamt |
+|---|---|---|---|---|---|---|
+| Teststufe 1 — Komponententest | G05, G06, G11, G17, G18, G19, G22, G23 (8) | S04 (1) | — | — | — | **9** |
+| Teststufe 2 — Komponentenintegrationstest (Dateisystem) | G01–G04, G07–G10, G12–G16, G24 (14) | S01–S03, S05–S08, S10–S12, S19, S21, S22 (13) | P01–P24, P27–P29, P30, P37, P38 (30) | SEC-H01–H02, SEC-D01–D02, SEC-C01–C03, SEC-PUB01, SEC-WZ03 (9) | E01–E08 (8), A01–A07 (7) | **81** |
+| Teststufe 3 — Systemtest (HTTP/Playwright) | G20, G21 (2) | S05–S10, S13–S18, S20, S23–S24, S26–S41, S46, S47, S50 (34) | P01–P03, P14–P19, P22, P24–P30, P37, P38, P40, P41 (21) | SEC-H03–H06, SEC-M01–M03, SEC-PUB02–PUB04, SEC-W01, SEC-WZ01–WZ04, SEC-HDR01–HDR04 (18) | E01–E06, E08 (7), A01, A04, A05, A07 (4), K01, K02 (2) | **88** |
 | **Nur Teststufe 2** | — | — | P04–P13, P20–P21, P23 (13) | SEC-H01–H02, SEC-D01–D02, SEC-C01–C02, SEC-PUB01 (7) | — |
 | **Nur Teststufe 3** | — | — | P25, P26 (2) | SEC-H03–H06, SEC-M01–M03, SEC-PUB02–PUB04, SEC-W01, SEC-WZ01–WZ02, SEC-WZ04, SEC-HDR01–HDR04 (17) | — |
 | **Beide Teststufen** | — | — | 14 Features (P01–P03, P14–P19, P22, P24, P27–P29) | SEC-C03, SEC-WZ03 (2) | — |
@@ -72,12 +72,12 @@ Verwandte Dokumente:
 | **Äquivalenzklassenbildung** | G05, G08, G17, S04, S07–S08 | Eingaben mit klar abgrenzbaren Klassen: 5 GEDCOM-Datumstypen, 4 Encoding-Varianten, Suchsyntax-Varianten, 2 Soundex-Algorithmen |
 | **Grenzwertanalyse** | G18, S06, S10 | Numerische Grenzen: Zeilenlänge exakt 253/254 Zeichen (CONC/CONT), Datumstoleranz ±0/±1/±20 Jahre, Paginierung 0/1/50/51 Ergebnisse |
 | **Entscheidungstabellentest** | G16, S12 | Kombinatorik: 4 Access-Levels × 6 Record-Typen = 24 Privacy-Kombinationen; Rolle × Record-Sichtbarkeit |
-| **Anwendungsfall-Test** | G20, G21, S09, S13–S18, S23–S24, S26–S40 | Systemtest-Szenarien mit Nutzerinteraktion: Import-Export-Roundtrip, Chart-Rendering, Seitennavigation, Record-Seiten, Auth-Formulare, Kalender |
+| **Anwendungsfall-Test** | G20, G21, S05–S10, S13–S18, S23–S24, S26–S41, S46, S47, S50, E01–E06, E08, K01, K02 | Systemtest-Szenarien mit Nutzerinteraktion: Import-Export-Roundtrip, Chart-Rendering, Seitennavigation, Record-Seiten, Auth-Formulare, Kalender, Suche (Felder/Datum/Phonetisch/Paginierung), Statistik, Homepage-Blöcke, Interaktiver Stammbaum, Hilfetexte, Datenerfassung (Personen/Fakten/Raw-GEDCOM/Nebenrecords/Medien/Reorder/TomSelect), Kontaktformular, Nachrichten |
 | **Erfahrungsbasierter Test** | G10, G11, S17 | Keine formale Spezifikation verfügbar: Legacy-Formate (TNG), Custom-Tags (Ancestry, FamilySearch), Nischen-Charts |
 | **Grenzwertanalyse** | P04–P06, P08–P13 | Datumsgrenzen: MAX_ALIVE_AGE ±1, KEEP_ALIVE ±1, isDead()-Inferenz-Offsets (Eltern +45, Ehepartner −10/+40, Kinder −15, Enkel −30) |
 | **Äquivalenzklassenbildung** | P16–P19, P20–P21 | RESN-Werte (none, privacy, confidential) × Rollen; default_resn-Typen (xref, tag_type, xref+tag_type) |
 | **Entscheidungstabellentest** | P14–P15, P24 | SHOW_LIVING_NAMES (3 Stufen) × Rollen; Suche × Privacy-Zustand × Rolle |
-| **Anwendungsfall-Test** | P25–P29 | End-to-End-Szenarien: Seitenaufruf → Sichtbarkeitsprüfung → Edit → Pending Change → DB-Persistenz |
+| **Anwendungsfall-Test** | P25–P30, P37, P38, P40, P41, A01, A04, A05, A07 | End-to-End-Szenarien: Seitenaufruf → Sichtbarkeitsprüfung → Edit → Pending Change → DB-Persistenz; Merge-Workflow, Benutzer-Admin, Account-Selbstverwaltung, Pending-Changes-Workflow, Stammbaum-Management, Präferenzen, Modul-Konfiguration, Benutzerverwaltung |
 | **Paarweiser Test** | P01–P03 | Kombinatorik: REQUIRE_AUTHENTICATION × HIDE_LIVE_PEOPLE × SHOW_DEAD_PEOPLE × Rolle — paarweise statt volles Produkt |
 | **Entscheidungstabellentest** | SEC-H03–SEC-H06, SEC-M01–SEC-M03 | Kombination URL-Pfad × HTTP-Methode × erwarteter Status (403/200/302). Entscheidungstabelle: `.htaccess` greift ja/nein × Auth vorhanden ja/nein |
 | **Erfahrungsbasierter Test** | SEC-H06, SEC-PUB04 | URL-Encoding-Varianten und Path-Traversal-Muster aus OWASP Testing Guide. Keine formale Spezifikation für Umgehungsversuche |

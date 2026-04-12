@@ -10,8 +10,8 @@ Dieses Dokument bildet die Testabdeckung pro Feature-Matrix-ID ab. Jedes Feature
 - [Überdeckungsstrategie](tp_ratchet_spec.md)
 - [Testentwurfsverfahren](tds_methodik_spec.md)
 
-**Aktueller Stand (2026-04-12):** **173 abgedeckt** (172 spezifikationsbasiert + 1
-strukturbasiert), **35 nicht abgedeckt**, **1 SKIP** (U02 deprecated) / **209 Features
+**Aktueller Stand (2026-04-12):** **175 abgedeckt** (174 spezifikationsbasiert + 1
+strukturbasiert), **33 nicht abgedeckt**, **1 SKIP** (U02 deprecated) / **209 Features
 gesamt** (Vorgänger-Snapshot 170; Zuwachs: +28 Middleware M01–M28, +7 CLI G31/P42/A12–A16;
 Differenz zu 209 durch Korrektur historischer Zählfehler in G/SEC-Domäne).
 Historischer Snapshot (vor M-/CLI-Erweiterung):
@@ -159,20 +159,20 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 | S02 | Allg. Suche (Familien) | `SearchServiceTest` [Smoke] ✅ *(1 Test/7 Assertions)* | — | — | OK | — |
 | S03 | Allg. Suche (SOUR, NOTE, REPO) | `SearchServiceTest` [Smoke] ✅ *(1 Test/7 Assertions; Sources, Repos, Submitters)* | — | — | OK | — |
 | S04 | Query-Parsing | `SearchServiceTest` [Smoke] ✅ *(1 Test/7 Assertions; Multi-word, non-matching)* | — | — | OK | — |
-| S05 | Erweiterte Suche (Felder) | — | `SearchIntegrationTest` [Spec-C] ✅ *(5 Tests: Name, Nachname, Sterbedatum, Multi-Feld, leere Felder)* | — | OK | — |
-| S06 | Erweiterte Suche (Datum) | — | `SearchIntegrationTest` [Spec-C] ✅ *(3 Tests: ±0, ±5, ±20 Jahre)* | — | OK | — |
-| S07 | Phonetische Suche (Russell) | — *(`GedcomImportServiceTest` nur Stub 1 Test)* | `SearchIntegrationTest` [Smoke] ✅ *(2 Tests: Treffer + kein Treffer)* | — | OK | — |
-| S08 | Phonetische Suche (DM) | — *(`GedcomImportServiceTest` nur Stub 1 Test)* | `SearchIntegrationTest` [Smoke] ✅ *(2 Tests: Treffer + kein Treffer)* | — | OK | — |
+| S05 | Erweiterte Suche (Felder) | — | `SearchIntegrationTest` [Spec-C] ✅ *(5 Tests: Name, Nachname, Sterbedatum, Multi-Feld, leere Felder)* | `advanced-search-execution.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
+| S06 | Erweiterte Suche (Datum) | — | `SearchIntegrationTest` [Spec-C] ✅ *(3 Tests: ±0, ±5, ±20 Jahre)* | `advanced-search-execution.spec.ts` [Spec-C] ✅ *(1 Test × 5 Themes)* | OK | — |
+| S07 | Phonetische Suche (Russell) | — *(`GedcomImportServiceTest` nur Stub 1 Test)* | `SearchIntegrationTest` [Smoke] ✅ *(2 Tests: Treffer + kein Treffer)* | `phonetic-search-execution.spec.ts` [Spec-C] ✅ *(2 Tests × 5 Themes)* | OK | — |
+| S08 | Phonetische Suche (DM) | — *(`GedcomImportServiceTest` nur Stub 1 Test)* | `SearchIntegrationTest` [Smoke] ✅ *(2 Tests: Treffer + kein Treffer)* | `phonetic-search-execution.spec.ts` [Spec-C] ✅ *(1 Test × 5 Themes)* | OK | — |
 | S09 | Quick-Search (XREF) | — | — | `navigation.spec.ts` [Smoke] ✅ *(3 Tests)* | OK | — |
-| S10 | Paginierung | `SearchServiceTest` [Smoke] ✅ *(1 Test/7 Assertions)* | `SearchIntegrationTest` [Spec-C] ✅ *(3 Tests: Limit, Offset, Offset+Limit)* | — | OK | — |
+| S10 | Paginierung | `SearchServiceTest` [Smoke] ✅ *(1 Test/7 Assertions)* | `SearchIntegrationTest` [Spec-C] ✅ *(3 Tests: Limit, Offset, Offset+Limit)* | `search-pagination.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
 | S11 | Cross-Tree-Suche | — | `SearchIntegrationTest` [Smoke] ✅ *(2 Tests: Ergebnisse aus beiden Bäumen, Tree-spezifischer Name)* | — | OK | — |
 | S12 | Zugriffskontrolle (Suche) | `SearchServiceTest` [Smoke] ✅ *(1 Test/7 Assertions; Guest vs Admin)* | — | — | OK | — |
 | S13 | Search-and-Replace | — | — | `search-replace.spec.ts` [Spec-C] ✅ *(3 Tests; 2×5 Themes + 1 Visitor)* | OK | — |
 | S14 | Chart: Pedigree | `PedigreeChartModuleTest` [Spec-C] ✅ *(4 Tests)* | — | `pedigree.spec.ts` [Spec-C] ✅ *(2 Tests × 5 Themes)* | OK | — |
 | S15 | Chart: Nachkommen | `DescendancyChartModuleTest` [Spec-C] ✅ *(4 Tests)* | — | — | OK | — |
-| S16 | Chart: Beziehungsfinder | — *(`RelationshipServiceTest` nur Stub 1 Test)* | `RelationshipServiceIntegrationTest` [Spec-C] ✅ *(16 Tests: direkte Pfade, Onkel/Tante, Großeltern, Ehepartner)* | — | OK | — |
+| S16 | Chart: Beziehungsfinder | — *(`RelationshipServiceTest` nur Stub 1 Test)* | `RelationshipServiceIntegrationTest` [Spec-C] ✅ *(16 Tests: direkte Pfade, Onkel/Tante, Großeltern, Ehepartner)* | `relationship-chart.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
 | S17 | Chart: Fächerchart | `FanChartModuleTest` [Spec-C] ✅ *(4 Tests)* | — | — | OK | — |
-| S18 | Chart: alle 13 Typen (Smoke) | 6 Chart-Tests [Spec-C] ✅ *(je 4 Tests: Ancestors, CompactTree, Descendancy, Fan, Hourglass, Pedigree)* + `StatisticsChartModuleTest` [Spec-C] ✅ *(3 Tests + 2 DataProvider)* | `ChartModuleIntegrationTest` [Spec-C] ✅ *(17 Tests + 4 DataProvider: Timeline, Lifespan, FamilyBook, Relationships, Branches)* | — | OK (13/13) | — |
+| S18 | Chart: alle 13 Typen (Smoke) | 6 Chart-Tests [Spec-C] ✅ *(je 4 Tests: Ancestors, CompactTree, Descendancy, Fan, Hourglass, Pedigree)* + `StatisticsChartModuleTest` [Spec-C] ✅ *(3 Tests + 2 DataProvider)* | `ChartModuleIntegrationTest` [Spec-C] ✅ *(17 Tests + 4 DataProvider: Timeline, Lifespan, FamilyBook, Relationships, Branches)* | `chart-types.spec.ts` [Spec-C] ✅ *(5 Tests × 5 Themes)* | OK (13/13) | — |
 | S19 | Liste: Personen (Nachnamen) | `IndividualListModuleTest` [Spec-C] ✅ *(3 Tests: handle, show_all, listIsEmpty)* | `ListModuleIntegrationTest` [Smoke] ✅ *(17 Tests; initial-Filter 'W' via handle())* | `navigation.spec.ts` [Smoke] ✅ *(3 Tests)* | OK | — |
 | S20 | Liste: alle 10 Typen (Smoke) | 7 List-Tests [Spec-C] ✅ *(je 3–4 Tests: Individual, Family, Source, Repository, Note, Media, Submitter)* | `ListModuleIntegrationTest` [Spec-C] ✅ *(3 Tests: Location, PlaceHierarchy, Branches)* | — | OK (10/10) | — |
 | S21 | AutoComplete (Personen) | `AutoCompleteSurnameTest` [Spec-C] ✅ *(4 Tests/8 Assertions)* | — | — | OK | — |
@@ -194,16 +194,16 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 | S38 | Erweiterte Suche (Seitenaufruf) | — | — | `search-forms.spec.ts` [Smoke] ✅ *(2 Tests)* | OK | — |
 | S39 | Phonetische Suche (Seitenaufruf) | — | — | `search-forms.spec.ts` [Smoke] ✅ *(2 Tests)* | OK | — |
 | S40 | Navigation: Homepage (Baumseite) | — | — | `homepage.spec.ts` [Spec-C] ✅ *(2 Tests × 5 Themes)* | OK | — |
-| S41 | Statistikdaten-Abfragen | — | `StatisticsDataIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 13 Tests: 4 alt + EP5/EP6/EP8 whereBetween, DataProvider sort×3, EP13 threshold, DataProvider sex×2)* + `StatisticsIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | — |
+| S41 | Statistikdaten-Abfragen | — | `StatisticsDataIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 13 Tests: 4 alt + EP5/EP6/EP8 whereBetween, DataProvider sort×3, EP13 threshold, DataProvider sex×2)* + `StatisticsIntegrationTest` ✅ *(CRAP-Smoke)* | `statistics-page.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
 | S42 | Such-HTTP-Handler | — | `SearchRequestHandlerIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 6 Tests: Single-Result-Redirect EP2/EP4, Default-Fallback EP8, Multi-Result EP1/EP3)* | — | OK | — |
 | S43 | Report-Generierung HTTP | — | `ReportIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 8 Tests: EP2 PDF→application/pdf, EP6 download→content-disposition, B1 unknown-redirect, 5 bisherige HTML/SAX-Tests)* | — | OK | — |
 | S44 | Report-Parser Erweitert | — | `ReportParserGenerateExtendedIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert Pragmatisch C, 3 Tests: EP1 Vorfahren+assertNotEmpty+HTML, EP3 Nachkommen+assertNotEmpty+HTML, EP7 Individual+Fakten+Bild+assertNotEmpty+HTML)* | — | OK | — |
 | S45 | Report-Primitive PDF/HTML | — | `ReportPdfObjectsIntegrationTest` + `ReportHtmlObjectsIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert+strukturbasiert, 23 Tests: 13 HTML (fill/border/newline Assertions TextBox+Cell) + 10 PDF (3 Image-Branch-Tests + 7 Basis))* | — | OK | — |
-| S46 | Homepage-Block-Module | — | `BlockModuleIntegrationTest` [EP] ✅ *(spezifikationsbasiert Pragmatisch C, 14 Tests: 10 alt + DataProvider infoStyles×4 EP4/EP5/EP6/EP6b)* | — | OK | — |
-| S47 | Interaktiver Stammbaum | — | `InteractiveTreeIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert Pragmatisch C, 3 Tests: getDetails→XREF im Output, 'p'-Request→non-empty HTML, 'c'-Request→non-empty HTML)* | — | OK | — |
+| S46 | Homepage-Block-Module | — | `BlockModuleIntegrationTest` [EP] ✅ *(spezifikationsbasiert Pragmatisch C, 14 Tests: 10 alt + DataProvider infoStyles×4 EP4/EP5/EP6/EP6b)* | `homepage-blocks.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
+| S47 | Interaktiver Stammbaum | — | `InteractiveTreeIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert Pragmatisch C, 3 Tests: getDetails→XREF im Output, 'p'-Request→non-empty HTML, 'c'-Request→non-empty HTML)* | `interactive-tree.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
 | S48 | Standortdaten-Import Admin | — | `MapDataImportIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 4 Tests: EP1+EP5 add→DB-Postcondition lat/lng, EP6 Null-Island→gefiltert, 2 Smoke-Fehlerresilienz)* | — | OK | — |
 | S49 | Medienverwaltungsliste Admin | — | `ManageMediaDataIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 3 Tests: EP1 local + EP2 external + EP3 unused, JSON-Struktur-Assertions)* | — | OK | — |
-| S50 | Hilfetexte | — | `HelpTextIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 13 Tests: DataProvider 12 Topics + unknown-Topic)* | — | OK | — |
+| S50 | Hilfetexte | — | `HelpTextIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 13 Tests: DataProvider 12 Topics + unknown-Topic)* | `help-texts.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
 | S52 | Standortdaten-Verwaltung (CRUD) | — | `MapDataCrudIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 5 Tests: MapDataSave INSERT→DB, UPDATE→DB, MapDataDelete→entfernt, MapDataExportCSV→text/csv, MapDataList GET→200)* | — | OK | — |
 | S53 | Legacy-URL-Weiterleitungen | — | — | — | — | — |
 
@@ -244,18 +244,18 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 | P27 | Bearbeiter: Datensatz bearbeiten | — | `AccessControlTest` [Spec-C] ✅ *(12 Tests)* | `access-control.spec.ts` [Spec-C] ✅ *(5 Tests)* | OK | — |
 | P28 | Moderator: Änderungen akzeptieren | — | `AccessControlTest` [Spec-C] ✅ *(12 Tests)* | `access-control.spec.ts` [Spec-C] ✅ *(5 Tests)* | OK | — |
 | P29 | RESN locked / Zugriffsverbot | — | `AccessControlTest` [Spec-C] ✅ *(12 Tests)* | `access-control.spec.ts` [Spec-C] ✅ *(5 Tests)* | OK | — |
-| P30 | Datensätze zusammenführen | — | `MergeFactsActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 5 Tests: B1/EP2 not-found, B3/EP4 same-record, B4/EP5 tag-mismatch, B5/EP6 pending-deletion, EP1 change-DB-Assert)* + `MergeFactsIntegrationTest` ✅ *(CRAP-Smoke)* + `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | — |
+| P30 | Datensätze zusammenführen | — | `MergeFactsActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 5 Tests: B1/EP2 not-found, B3/EP4 same-record, B4/EP5 tag-mismatch, B5/EP6 pending-deletion, EP1 change-DB-Assert)* + `MergeFactsIntegrationTest` ✅ *(CRAP-Smoke)* + `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke)* | `merge-records.spec.ts` [Spec-C] ✅ *(3 Tests)* | OK | — |
 | P31 | Familienmitglieder bearbeiten | — | `ChangeFamilyMembersActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 5 Tests: EP1 replace-husband, EP2 remove-wife, EP3 add-child, EP4 remove-child, EP5 no-change)* + `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | — |
 | P32 | Record-Ansicht und -Löschung | — | `DeleteRecordIntegrationTest` + `GedcomRecordPageIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 2+5 Tests: EP1 SOUR-Löschung, EP5 Familie-Kaskade; DataProvider INDI/FAM/SOUR/REPO→Redirect, EP2 _CUST→200+Link)* + `RequestHandlerBatchAIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | — |
 | P33 | Stammbaum-Privacy-Einstellungen | — | `TreePrivacyActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 6 Tests: EP3/EP4 mismatched-arrays, EP5 tag+xref, EP6 tag-only, EP7 xref-only, EP8 beide-leer count-gleich, EP9 HIDE_LIVE_PEOPLE)* + `RequestHandlerBatchAIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | — |
 | P34 | Stammbaum-Umnummerierung | — | `RenumberTreeActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 3 Tests: B2/EP1 keine-Duplikate, B3/EP2 INDI-Rename-Postcondition, B1/EP4 Pending-Edits-Guard)* + `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | — |
 | P35 | CLI Benutzer-Verwaltung | — | `UserEditCommandIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 16 Tests: B1–B11 Guards, DataProvider B3/B4/B5, B13–B15 Edit-Felder)* | — | OK | — |
 | P36 | CLI Einstellungs-Verwaltung | — | `CliSettingsBatchIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 17 Tests: --list/--delete-Konflikte, Delete nonexistent, Get nonexistent, same-value Warn, Update, EP11 Tree/User/UserTree not found)* | — | OK | — |
-| P37 | HTTP Benutzer-Bearbeitung | — | `UserEditActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 7 Tests: B1 not-found, B5/B6 Duplikat-Email, B7/B8 Duplikat-Username, B4 Self-Edit-Admin, B3 Passwort, EP12 Path-Reset); `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke, 1 Test)* | — | OK | — |
-| P38 | Account-Selbstverwaltung | — | `AccountSelfManagementIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: Edit GET 200, Update POST E-Mail, Delete admin-Guard, Delete non-admin gelöscht)* | — | OK | — |
+| P37 | HTTP Benutzer-Bearbeitung | — | `UserEditActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 7 Tests: B1 not-found, B5/B6 Duplikat-Email, B7/B8 Duplikat-Username, B4 Self-Edit-Admin, B3 Passwort, EP12 Path-Reset); `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke, 1 Test)* | `user-edit-admin.spec.ts` [Spec-C] ✅ *(4 Tests)* | OK | — |
+| P38 | Account-Selbstverwaltung | — | `AccountSelfManagementIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: Edit GET 200, Update POST E-Mail, Delete admin-Guard, Delete non-admin gelöscht)* | `account-self-management.spec.ts` [Spec-C] ✅ *(3 Tests)* | OK | — |
 | P39 | Authentifizierung-Aktionen | — | `LoginActionIntegrationTest` [Smoke] ✅ *(spezifikationsbasiert, 1 Test: EP1 CLI-Kontext $_COOKIE=[]→doLogin wirft→handler fängt→302)* | — | OK | — |
-| P40 | Änderungsverwaltung (HTTP-Handler) | — | `PendingChangesIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: AcceptRecord ungültig→204, RejectRecord ungültig→204, PendingChanges GET→200)* | — | OK | — |
-| P41 | Datensatz-Zusammenführung (vollständig) | — | `MergeRecordsIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: Page GET valid/empty XREFs, Action POST matching INDIs→302)* | — | OK | — |
+| P40 | Änderungsverwaltung (HTTP-Handler) | — | `PendingChangesIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: AcceptRecord ungültig→204, RejectRecord ungültig→204, PendingChanges GET→200)* | `pending-changes.spec.ts` [Spec-C] ✅ *(4 Tests)* | OK | — |
+| P41 | Datensatz-Zusammenführung (vollständig) | — | `MergeRecordsIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: Page GET valid/empty XREFs, Action POST matching INDIs→302)* | `merge-records.spec.ts` [Spec-C] ✅ *(1 Test)* | OK | — |
 | P42 | CLI Benutzer-Listing | — | — | — | — | Nicht abgedeckt; Plan-Iteration 2 (analog P35/P36 als `UserListCommandIntegrationTest`) |
 
 <a id="sec"></a>
@@ -310,14 +310,14 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
 |---|---|---|---|---|---|---|
-| E01 | Person/Familie anlegen & verknüpfen | — | `AddRelationIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 6 Tests: AddChildToIndividualPage GET→200, Action POST→302, DataProvider AddParent/AddSpouseToIndi/AddChild/AddSpouseToFam→200)* | — | OK | — |
-| E02 | Fakten bearbeiten | — | `EditFactIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: EditFactPage unknown fact_id→redirect, DeleteFact unknown fact_id→204, AddNewFact GET→200)* | — | OK | — |
-| E03 | Rohdaten-Edit (Raw GEDCOM) | — | `EditRawGedcomIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: EditRawFactPage unknown fact_id→redirect, EditRawRecordPage GET→200, EditRawFactAction unknown fact_id→redirect)* | — | OK | — |
-| E04 | Nebenrecords anlegen | — | `CreateSubrecordIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: CreateNoteModal GET→200, CreateNoteAction POST→JSON-XREF, CreateSourceModal GET→200, CreateRepositoryModal GET→200)* | — | OK | — |
-| E05 | Medienobjekte anlegen & verknüpfen | — | `MediaObjectIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: CreateMediaObjectModal GET→200, LinkMediaToRecordAction POST→302, LinkMediaToIndividualModal GET→200)* | — | OK | — |
-| E06 | Sortierung (Reorder) | — | `ReorderIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: ReorderChildren/Names/Families GET→200, unknown FAM→404)* | — | OK | — |
+| E01 | Person/Familie anlegen & verknüpfen | — | `AddRelationIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 6 Tests: AddChildToIndividualPage GET→200, Action POST→302, DataProvider AddParent/AddSpouseToIndi/AddChild/AddSpouseToFam→200)* | `person-family-create.spec.ts` [Spec-C] ✅ *(4 Tests × 5 Themes)* | OK | — |
+| E02 | Fakten bearbeiten | — | `EditFactIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: EditFactPage unknown fact_id→redirect, DeleteFact unknown fact_id→204, AddNewFact GET→200)* | `fact-edit.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
+| E03 | Rohdaten-Edit (Raw GEDCOM) | — | `EditRawGedcomIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: EditRawFactPage unknown fact_id→redirect, EditRawRecordPage GET→200, EditRawFactAction unknown fact_id→redirect)* | `raw-gedcom-edit.spec.ts` [Spec-C] ✅ *(2 Tests)* | OK | — |
+| E04 | Nebenrecords anlegen | — | `CreateSubrecordIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: CreateNoteModal GET→200, CreateNoteAction POST→JSON-XREF, CreateSourceModal GET→200, CreateRepositoryModal GET→200)* | `subrecord-create.spec.ts` [Spec-C] ✅ *(4 Tests × 5 Themes)* | OK | — |
+| E05 | Medienobjekte anlegen & verknüpfen | — | `MediaObjectIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: CreateMediaObjectModal GET→200, LinkMediaToRecordAction POST→302, LinkMediaToIndividualModal GET→200)* | `media-object.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
+| E06 | Sortierung (Reorder) | — | `ReorderIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: ReorderChildren/Names/Families GET→200, unknown FAM→404)* | `reorder.spec.ts` [Spec-C] ✅ *(3 Tests)* | OK | — |
 | E07 | Mediendatei-Download & Thumbnail | — | `MediaFileDeliveryIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: Thumbnail unknown XREF→200, Thumbnail known XREF no fact_id→200, Download unknown XREF→HttpNotFoundException)* | — | OK | — |
-| E08 | TomSelect & AutoComplete | — | `TomSelectIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 5 Tests: TomSelectIndividual leer/XREF/Name, TomSelectSource leer, AutoCompleteFolder)* | — | OK | — |
+| E08 | TomSelect & AutoComplete | — | `TomSelectIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 5 Tests: TomSelectIndividual leer/XREF/Name, TomSelectSource leer, AutoCompleteFolder)* | `tomselect-autocomplete.spec.ts` [Spec-C] ✅ *(4 Tests × 5 Themes)* | OK | — |
 
 <a id="a"></a>
 
@@ -327,13 +327,13 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
 |---|---|---|---|---|---|---|
-| A01 | Stammbaum-Management | — | `TreeManagementIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: CreateTree Duplikat→302, CreateTree Neu→DB, DeleteTree→204, ManageTrees GET→200)* | — | OK | — |
+| A01 | Stammbaum-Management | — | `TreeManagementIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: CreateTree Duplikat→302, CreateTree Neu→DB, DeleteTree→204, ManageTrees GET→200)* | `tree-management.spec.ts` [Spec-C] ✅ *(4 Tests)* | OK | — |
 | A02 | Stammbaum-Import (HTTP-Formular) | — | `ImportGedcomActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 4 Tests: UPLOAD_ERR_NO_FILE→302, UPLOAD_ERR_PARTIAL→Exception, leerer server_file→302, ImportGedcomPage GET→200)* | — | OK | — |
 | A03 | Stammbaum-Export (HTTP-Formular) | — | `ExportGedcomIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: Client format=gedcom→attachment, format=zip→application/zip, ExportGedcomServer→302, ExportGedcomPage GET→200)* | — | OK | — |
-| A04 | Stammbaum-Präferenzen | — | `TreePreferencesIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: Page GET→200, Action POST→302+preference saved, Action POST→meta_description saved)* | — | OK | — |
-| A05 | Modul-Konfiguration | — | `ModuleConfigIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 7 Tests: ModulesAllPage GET→200, ModulesAllAction POST→302, DataProvider Analytics/Blocks/Charts/Menus/Reports→200)* | — | OK | — |
+| A04 | Stammbaum-Präferenzen | — | `TreePreferencesIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: Page GET→200, Action POST→302+preference saved, Action POST→meta_description saved)* | `tree-preferences.spec.ts` [Spec-C] ✅ *(2 Tests)* | OK | — |
+| A05 | Modul-Konfiguration | — | `ModuleConfigIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 7 Tests: ModulesAllPage GET→200, ModulesAllAction POST→302, DataProvider Analytics/Blocks/Charts/Menus/Reports→200)* | `module-configuration.spec.ts` [Spec-C] ✅ *(6 Tests)* | OK | — |
 | A06 | Site-Präferenzen | — | `SitePreferencesIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: Page GET→200, Action POST valid→302, POST saves LANGUAGE, POST invalid directory→302)* | — | OK | — |
-| A07 | Benutzerverwaltung Admin | — | `UserAdminIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: UserListPage GET→200, mit filter, UsersCleanupPage GET→200)* | — | OK | — |
+| A07 | Benutzerverwaltung Admin | — | `UserAdminIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: UserListPage GET→200, mit filter, UsersCleanupPage GET→200)* | `user-admin.spec.ts` [Spec-C] ✅ *(3 Tests)* | OK | — |
 | A08 | Medienverwaltung Admin | — | — | — | — | — |
 | A09 | Datenpflege-Werkzeuge | — | `DataMaintenanceIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: FindDuplicateRecords GET→200, DataFixPage leer→200, DataFixPage fix-place-names→200, DataFixChoose GET→200)* | — | OK | — |
 | A10 | Protokolle & Monitoring | — | `LogsMonitoringIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: PendingChangesLogPage GET→200, SiteLogsDownload→CSV, Disposition attachment, PhpInformation→200)* | — | OK | — |
@@ -352,8 +352,8 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
 |---|---|---|---|---|---|---|
-| K01 | Kontaktformular | — | — | — | — | — |
-| K02 | Benutzer-Nachrichten | — | — | — | — | — |
+| K01 | Kontaktformular | — | — | `contact-form.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
+| K02 | Benutzer-Nachrichten | — | — | `user-messages.spec.ts` [Spec-C] ✅ *(3 Tests)* | OK | — |
 
 <a id="u"></a>
 
@@ -411,10 +411,14 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 #### Zusammenfassung Abdeckung
 
-**Aktueller Stand (2026-04-12):** 173 abgedeckt / 35 nicht abgedeckt / 1 SKIP / 209 gesamt.
+**Aktueller Stand (2026-04-12):** 175 abgedeckt / 33 nicht abgedeckt / 1 SKIP / 209 gesamt.
 
-Nicht abgedeckte IDs: G05, G06, G31, S53, P42, A08, A12–A16, K01, K02, M03, M06–M21,
-M23, M25–M28 (22 M-Stubs, 7 neue CLI-IDs, 3 historische Lücken, 3 bestehende Lücken).
+Nicht abgedeckte IDs: G05, G06, G31, S53, P42, A08, A12–A16, M03, M06–M21,
+M23, M25–M28 (22 M-Stubs, 7 neue CLI-IDs, 3 historische Lücken, 1 bestehende Lücke).
+
+Zuwachs durch L4-Systemtest-Iteration (2026-04-12): +2 Features (K01, K02) erstmalig
+abgedeckt; 27 weitere Features (E01–E06, E08, S05–S08, S10, S16, S18, S41, S46, S47, S50,
+P30, P37, P38, P40, P41, A01, A04, A05, A07) mit zusätzlicher L4-Abdeckung ergänzt.
 
 Der Vorgänger-Stand (165 / 5 / 170) ist als datierter Snapshot archiviert:
 [`coverage-runs/2026-04-11_abdeckung-snapshot.md`](coverage-runs/2026-04-11_abdeckung-snapshot.md).

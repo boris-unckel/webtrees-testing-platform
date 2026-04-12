@@ -82,7 +82,7 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Quelle |
 |---|---|---|
-| S1: Kontext lesen | ⬜ | `docs/tp_overview_spec.md` → Doku-/Code-Vorgaben, Subdokumente |
+| S1: Kontext lesen | ✅ | `docs/tp_overview_spec.md` → Doku-/Code-Vorgaben, Subdokumente |
 
 ---
 
@@ -97,14 +97,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `AddChildToFamilyAction`, `AddParentToIndividualAction`, `AddSpouseToIndividualAction`; Views für Formulare |
-| S3 | ⬜ | EP aus L3: POST→302 (Erfolg), GET→200 (Formular); Guards: Tree/Record-Existenz |
-| S4 | ⬜ | Referenz-Spec: `records.spec.ts` (Personen-Seite), `individual.spec.ts` |
-| S5 | ⬜ | → `docs/systemtest/testspezi/E01_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `AddChildToFamilyAction`, `AddParentToIndividualAction`, `AddSpouseToIndividualAction`; Views für Formulare |
+| S3 | ✅ | EP aus L3: POST→302 (Erfolg), GET→200 (Formular); Guards: Tree/Record-Existenz |
+| S4 | ✅ | Referenz-Spec: `records.spec.ts` (Personen-Seite), `individual.spec.ts` |
+| S5 | ✅ | → `docs/systemtest/testspezi/E01_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -117,14 +117,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `EditFactAction`, `AddNewFact`; View: Fakt-Formular-Template |
-| S3 | ⬜ | EP aus L3: GET→200 (Formular), unknown-Record→Redirect; Guards |
-| S4 | ⬜ | Referenz-Spec: `individual.spec.ts` (Personen-Detailseite) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/E02_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `EditFactAction`, `AddNewFact`; View: Fakt-Formular-Template |
+| S3 | ✅ | EP aus L3: GET→200 (Formular), unknown-Record→Redirect; Guards |
+| S4 | ✅ | Referenz-Spec: `individual.spec.ts` (Personen-Detailseite) |
+| S5 | ✅ | → `docs/systemtest/testspezi/E02_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -137,14 +137,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `EditRawFactAction`, `EditRawFactPage`; View: Textarea mit GEDCOM |
-| S3 | ⬜ | EP aus L3: GET→200, POST→Redirect; Raw-GEDCOM-Validierung |
-| S4 | ⬜ | Referenz-Spec: `individual.spec.ts` |
-| S5 | ⬜ | → `docs/systemtest/testspezi/E03_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `EditRawFactAction`, `EditRawFactPage`; View: Textarea mit GEDCOM |
+| S3 | ✅ | EP aus L3: GET→200, POST→Redirect; Raw-GEDCOM-Validierung |
+| S4 | ✅ | Referenz-Spec: `individual.spec.ts` |
+| S5 | ✅ | → `docs/systemtest/testspezi/E03_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -157,14 +157,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `CreateNoteModal`, `CreateSourceModal`, `CreateRepositoryModal`; Modale Views |
-| S3 | ⬜ | EP aus L3: Modal GET→200, POST→JSON mit XREF; 4 Record-Typen |
-| S4 | ⬜ | Referenz-Spec: `individual.spec.ts` (Edit-Buttons auf Personenseite) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/E04_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `CreateNoteModal`, `CreateSourceModal`, `CreateRepositoryModal`; Modale Views |
+| S3 | ✅ | EP aus L3: Modal GET→200, POST→JSON mit XREF; 4 Record-Typen |
+| S4 | ✅ | Referenz-Spec: `individual.spec.ts` (Edit-Buttons auf Personenseite) |
+| S5 | ✅ | → `docs/systemtest/testspezi/E04_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -177,14 +177,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `CreateMediaObjectModal`, `LinkMediaToRecordAction`; Media-Upload-View |
-| S3 | ⬜ | EP aus L3: Modal-Rendering, Link POST→302; Datei-Upload-Aspekt |
-| S4 | ⬜ | Referenz-Spec: `upload-validation.spec.ts` (Datei-Upload-Pattern) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/E05_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `CreateMediaObjectModal`, `LinkMediaToRecordAction`; Media-Upload-View |
+| S3 | ✅ | EP aus L3: Modal-Rendering, Link POST→302; Datei-Upload-Aspekt |
+| S4 | ✅ | Referenz-Spec: `upload-validation.spec.ts` (Datei-Upload-Pattern) |
+| S5 | ✅ | → `docs/systemtest/testspezi/E05_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -197,14 +197,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `ReorderChildrenAction`, `ReorderNamesAction`, `ReorderFamiliesAction` |
-| S3 | ⬜ | EP aus L3: 3 Reorder-Typen, alle GET→200; POST-Verhalten |
-| S4 | ⬜ | Referenz-Spec: `individual.spec.ts` |
-| S5 | ⬜ | → `docs/systemtest/testspezi/E06_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `ReorderChildrenAction`, `ReorderNamesAction`, `ReorderFamiliesAction` |
+| S3 | ✅ | EP aus L3: 3 Reorder-Typen, alle GET→200; POST-Verhalten |
+| S4 | ✅ | Referenz-Spec: `individual.spec.ts` |
+| S5 | ✅ | → `docs/systemtest/testspezi/E06_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -217,14 +217,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | TomSelect-JS-Integration, AJAX-Endpoints (`/tree/.../autocomplete/...`); Widget-Selektoren |
-| S3 | ⬜ | EP aus L3: Leer-Eingabe, XREF-Eingabe, Namens-Eingabe, Source, Folder |
-| S4 | ⬜ | Kein direktes Vorbild in bestehenden L4-Specs — neues Pattern |
-| S5 | ⬜ | → `docs/systemtest/testspezi/E08_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; TomSelect-Selektoren theme-abhängig prüfen |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | TomSelect-JS-Integration, AJAX-Endpoints (`/tree/.../autocomplete/...`); Widget-Selektoren |
+| S3 | ✅ | EP aus L3: Leer-Eingabe, XREF-Eingabe, Namens-Eingabe, Source, Folder |
+| S4 | ✅ | Kein direktes Vorbild in bestehenden L4-Specs — neues Pattern |
+| S5 | ✅ | → `docs/systemtest/testspezi/E08_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; Widget-Rendering, API-Endpunkte, Edit-Seiten-Integration |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -239,14 +239,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `SearchAdvancedPage`, `SearchAdvancedAction`; Formularfelder im View |
-| S3 | ⬜ | EP aus L3: Name-Suche, Nachname-Suche, Multi-Feld-Suche; erwartete Treffer |
-| S4 | ⬜ | Referenz-Spec: `search-forms.spec.ts` (nur Rendering), Abgrenzung beachten |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S05_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `SearchAdvancedPage`, `SearchAdvancedAction`; Formularfelder im View |
+| S3 | ✅ | EP aus L3: Name-Suche, Nachname-Suche, Multi-Feld-Suche; erwartete Treffer |
+| S4 | ✅ | Referenz-Spec: `search-forms.spec.ts` (nur Rendering), Abgrenzung beachten |
+| S5 | ✅ | → `docs/systemtest/testspezi/S05_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -259,14 +259,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Datum-Modifikator-Felder im View (±0, ±5, ±20 Jahre) |
-| S3 | ⬜ | EP aus L3: BVA-Grenzwerte (+/-0, +/-5, +/-20); Treffer vs. Nicht-Treffer |
-| S4 | ⬜ | Referenz-Spec: `search-forms.spec.ts` |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S06_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Datum-Modifikator-Felder im View (±0, ±5, ±20 Jahre) |
+| S3 | ✅ | EP aus L3: BVA-Grenzwerte (+/-0, +/-5, +/-20); Treffer vs. Nicht-Treffer |
+| S4 | ✅ | Referenz-Spec: `search-forms.spec.ts` |
+| S5 | ✅ | → `docs/systemtest/testspezi/S06_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -279,14 +279,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `SearchPhoneticPage/Action`; Russell-Soundex-Modus im Formular |
-| S3 | ⬜ | EP aus L3: Russell Treffer (phonetische Variante), kein Treffer (keine Übereinstimmung) |
-| S4 | ⬜ | Referenz-Spec: `search-forms.spec.ts` |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S07_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; Demo-GEDCOM auf passende Namen prüfen |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `SearchPhoneticPage/Action`; Russell-Soundex-Modus im Formular |
+| S3 | ✅ | EP aus L3: Russell Treffer (phonetische Variante), kein Treffer (keine Übereinstimmung) |
+| S4 | ✅ | Referenz-Spec: `search-forms.spec.ts` |
+| S5 | ✅ | → `docs/systemtest/testspezi/S07_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; Russell-Treffer (Elisabeth→Elizabeth), Negativ-Test (Zzyzx) |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -299,14 +299,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `SearchPhoneticPage/Action`; DM-Soundex-Modus im Formular |
-| S3 | ⬜ | EP aus L3: DM Treffer, kein Treffer; DM-spezifische Phonetik |
-| S4 | ⬜ | Referenz-Spec: `search-forms.spec.ts` |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S08_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; Demo-GEDCOM auf DM-geeignete Namen prüfen |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `SearchPhoneticPage/Action`; DM-Soundex-Modus im Formular |
+| S3 | ✅ | EP aus L3: DM Treffer, kein Treffer; DM-spezifische Phonetik |
+| S4 | ✅ | Referenz-Spec: `search-forms.spec.ts` |
+| S5 | ✅ | → `docs/systemtest/testspezi/S08_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; DM-Treffer (Elisabeth→Elizabeth), Negativ-Test (Zzyzx) |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -319,14 +319,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Paginierungs-Controls im View: `.pagination`, Limit-Parameter, Offset |
-| S3 | ⬜ | EP aus L3: BVA Limit/Offset — Grenzwerte (0, 1, max) |
-| S4 | ⬜ | Referenz-Spec: `search-forms.spec.ts`, `source-list.spec.ts` (Listen-Pattern) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S10_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; genügend Demo-Daten für Paginierung sicherstellen |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Paginierungs-Controls im View: `.pagination`, Limit-Parameter, Offset |
+| S3 | ✅ | EP aus L3: BVA Limit/Offset — Grenzwerte (0, 1, max) |
+| S4 | ✅ | Referenz-Spec: `search-forms.spec.ts`, `source-list.spec.ts` (Listen-Pattern) |
+| S5 | ✅ | → `docs/systemtest/testspezi/S10_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; DataTables-Paginierung, Seitenwechsel, query=a für viele Treffer |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -339,14 +339,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `RelationshipsChartPage`; View: Person-Auswahl + Pfad-Anzeige |
-| S3 | ⬜ | EP aus L3: 16 Beziehungstypen; für L4 subset wählen (z. B. direkt, Onkel, Ehepartner) |
-| S4 | ⬜ | Referenz-Spec: `pedigree.spec.ts` (Chart-Pattern) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S16_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `RelationshipsChartPage`; View: Person-Auswahl + Pfad-Anzeige |
+| S3 | ✅ | EP aus L3: 16 Beziehungstypen; für L4 subset wählen (z. B. direkt, Onkel, Ehepartner) |
+| S4 | ✅ | Referenz-Spec: `pedigree.spec.ts` (Chart-Pattern) |
+| S5 | ✅ | → `docs/systemtest/testspezi/S16_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -359,14 +359,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Routen für: Timeline, Lifespan, FamilyBook, Descendants, Branches |
-| S3 | ⬜ | EP aus L3: 5 Chart-Typen mit erwarteten Routen; für L4 Smoke reicht |
-| S4 | ⬜ | Referenz-Spec: `pedigree.spec.ts` (Chart-Smoke-Pattern) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S18_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; DataProvider-artig über Chart-Routen iterieren |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Routen für: Timeline, Lifespan, FamilyBook, Descendants, Branches |
+| S3 | ✅ | EP aus L3: 5 Chart-Typen mit erwarteten Routen; für L4 Smoke reicht |
+| S4 | ✅ | Referenz-Spec: `pedigree.spec.ts` (Chart-Smoke-Pattern) |
+| S5 | ✅ | → `docs/systemtest/testspezi/S18_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; DataProvider über 5 Chart-Routen + Container-Sichtbarkeit |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -379,14 +379,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `StatisticsPage`; View: Chart-Container, Tabellen |
-| S3 | ⬜ | EP aus L3: 13 Statistik-Abfragen; für L4 Container-Sichtbarkeit prüfen |
-| S4 | ⬜ | Referenz-Spec: `homepage.spec.ts` (Block-Rendering) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S41_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `StatisticsPage`; View: Chart-Container, Tabellen |
+| S3 | ✅ | EP aus L3: 13 Statistik-Abfragen; für L4 Container-Sichtbarkeit prüfen |
+| S4 | ✅ | Referenz-Spec: `homepage.spec.ts` (Block-Rendering) |
+| S5 | ✅ | → `docs/systemtest/testspezi/S41_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -399,14 +399,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Block-Konfiguration: Welche Blöcke sind auf der Demo-Homepage aktiv? |
-| S3 | ⬜ | EP aus L3: 14 Block-Typen mit infoStyles; für L4 Block-Sichtbarkeit prüfen |
-| S4 | ⬜ | Referenz-Spec: `homepage.spec.ts` (ergänzt um Blocktypen-Smoke) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S46_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Block-Konfiguration: Welche Blöcke sind auf der Demo-Homepage aktiv? |
+| S3 | ✅ | EP aus L3: 14 Block-Typen mit infoStyles; für L4 Block-Sichtbarkeit prüfen |
+| S4 | ✅ | Referenz-Spec: `homepage.spec.ts` (ergänzt um Blocktypen-Smoke) |
+| S5 | ✅ | → `docs/systemtest/testspezi/S46_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -419,14 +419,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | JS-Modul: `InteractiveTreeModule`; Canvas vs. SVG ermitteln; AJAX-Endpoints |
-| S3 | ⬜ | EP aus L3: getDetails→XREF, 'p'-Request (Parents), 'c'-Request (Children) |
-| S4 | ⬜ | Kein direktes Vorbild in bestehenden L4-Specs — neues Pattern |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S47_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; Widget-Rendering und Interaktion theme-abhängig prüfen |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | JS-Modul: `InteractiveTreeModule`; Canvas vs. SVG ermitteln; AJAX-Endpoints |
+| S3 | ✅ | EP aus L3: getDetails→XREF, 'p'-Request (Parents), 'c'-Request (Children) |
+| S4 | ✅ | Kein direktes Vorbild in bestehenden L4-Specs — neues Pattern |
+| S5 | ✅ | → `docs/systemtest/testspezi/S47_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; TV-Container (.tv_out, #tvTreeBorder), Personenbox (.tv_box) |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -439,14 +439,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Help-Text-Endpoints; Hilfe-Icons in Views identifizieren |
-| S3 | ⬜ | EP aus L3: 12 Topics mit erwarteten Texten; für L4 Icon→Popup prüfen |
-| S4 | ⬜ | Referenz-Spec: ggf. `individual.spec.ts` (Seite mit Hilfe-Icons) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/S50_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Help-Text-Endpoints; Hilfe-Icons in Views identifizieren |
+| S3 | ✅ | EP aus L3: 12 Topics mit erwarteten Texten; für L4 Icon→Popup prüfen |
+| S4 | ✅ | Referenz-Spec: ggf. `individual.spec.ts` (Seite mit Hilfe-Icons) |
+| S5 | ✅ | → `docs/systemtest/testspezi/S50_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -461,14 +461,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `MergeRecordsPage`, `MergeRecordsAction`; Formular für XREF-Eingabe |
-| S3 | ⬜ | EP aus L3: XREF-Validierung, Vorschau-Rendering; Guards: Record-Existenz |
-| S4 | ⬜ | Kein direktes Vorbild — neues Multi-Step-Pattern |
-| S5 | ⬜ | → `docs/systemtest/testspezi/P30_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; mit P41 koordinieren (gemeinsame Spec-Datei) |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `MergeRecordsPage`, `MergeRecordsAction`; Formular für XREF-Eingabe |
+| S3 | ✅ | EP aus L3: XREF-Validierung, Vorschau-Rendering; Guards: Record-Existenz |
+| S4 | ✅ | Kein direktes Vorbild — neues Multi-Step-Pattern |
+| S5 | ✅ | → `docs/systemtest/testspezi/P30_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; Korrekte Route /merge-records, XREF-Felder, Submit-Button |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -481,14 +481,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `UserEditAction`, `UserEditPage`; Formularfelder für PW/E-Mail |
-| S3 | ⬜ | EP aus L3: Duplikat-E-Mail→Fehler, Duplikat-Username→Fehler, Self-Edit-Guard, PW-Änderung |
-| S4 | ⬜ | Referenz-Spec: `auth.spec.ts` (Login-Flow), `access-control.spec.ts` |
-| S5 | ⬜ | → `docs/systemtest/testspezi/P37_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `UserEditAction`, `UserEditPage`; Formularfelder für PW/E-Mail |
+| S3 | ✅ | EP aus L3: Duplikat-E-Mail→Fehler, Duplikat-Username→Fehler, Self-Edit-Guard, PW-Änderung |
+| S4 | ✅ | Referenz-Spec: `auth.spec.ts` (Login-Flow), `access-control.spec.ts` |
+| S5 | ✅ | → `docs/systemtest/testspezi/P37_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -501,14 +501,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `AccountUpdate`, `AccountEdit`; Formular: E-Mail, Passwort, Sprache |
-| S3 | ⬜ | EP aus L3: Edit-Seite→200, E-Mail-Update→Redirect, Delete-Guard |
-| S4 | ⬜ | Referenz-Spec: `user-pages.spec.ts` (User-Seiten-Rendering) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/P38_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `AccountUpdate`, `AccountEdit`; Formular: E-Mail, Passwort, Sprache |
+| S3 | ✅ | EP aus L3: Edit-Seite→200, E-Mail-Update→Redirect, Delete-Guard |
+| S4 | ✅ | Referenz-Spec: `user-pages.spec.ts` (User-Seiten-Rendering) |
+| S5 | ✅ | → `docs/systemtest/testspezi/P38_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -521,14 +521,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `PendingChangesAcceptChange`, `PendingChangesRejectChange`, `PendingChanges`; Rollen-Anforderungen |
-| S3 | ⬜ | EP aus L3: Accept→Änderung wirkt, Reject→Änderung verworfen, Seite→200 |
-| S4 | ⬜ | Referenz-Spec: `access-control.spec.ts` (Rollen-Pattern), `privacy-roles` Helper |
-| S5 | ⬜ | → `docs/systemtest/testspezi/P40_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; Login-Wechsel Editor→Moderator |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `PendingChangesAcceptChange`, `PendingChangesRejectChange`, `PendingChanges`; Rollen-Anforderungen |
+| S3 | ✅ | EP aus L3: Accept→Änderung wirkt, Reject→Änderung verworfen, Seite→200 |
+| S4 | ✅ | Referenz-Spec: `access-control.spec.ts` (Rollen-Pattern), `privacy-roles` Helper |
+| S5 | ✅ | → `docs/systemtest/testspezi/P40_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; Multi-Role (Admin, Moderator, Editor, Member), Privacy-Baum |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -541,14 +541,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `MergeFactsAction`; Vorschau→Bestätigung→Ausführung |
-| S3 | ⬜ | EP aus L3: 5 Fakten-Merge-Szenarien; Postcondition: Record-Zustand |
-| S4 | ⬜ | Gemeinsames Pattern mit P30 |
-| S5 | ⬜ | → `docs/systemtest/testspezi/P41_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; mit P30 koordinieren (gemeinsame Spec-Datei) |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `MergeFactsAction`; Vorschau→Bestätigung→Ausführung |
+| S3 | ✅ | EP aus L3: 5 Fakten-Merge-Szenarien; Postcondition: Record-Zustand |
+| S4 | ✅ | Gemeinsames Pattern mit P30 |
+| S5 | ✅ | → `docs/systemtest/testspezi/P41_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; Gemeinsame Spec mit P30, Guard-Test (leere Eingabe) |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -563,14 +563,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `CreateTreeAction`, `DeleteTreeAction`, `ManageTrees`; Admin-Route |
-| S3 | ⬜ | EP aus L3: Duplikat-Name→302, Neuer Baum→DB-Eintrag, Delete→204 |
-| S4 | ⬜ | Referenz-Spec: `upload-validation.spec.ts` (Admin-Pattern) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/A01_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; Cleanup nach Test (erstellten Baum löschen) |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `CreateTreeAction`, `DeleteTreeAction`, `ManageTrees`; Admin-Route |
+| S3 | ✅ | EP aus L3: Duplikat-Name→302, Neuer Baum→DB-Eintrag, Delete→204 |
+| S4 | ✅ | Referenz-Spec: `upload-validation.spec.ts` (Admin-Pattern) |
+| S5 | ✅ | → `docs/systemtest/testspezi/A01_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; Create-Formular, Baum-Anlage mit Timestamp-Name |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -583,14 +583,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `TreePreferencesPage`, `TreePreferencesAction`; Formularfelder |
-| S3 | ⬜ | EP aus L3: GET→200, POST→Preference gespeichert |
-| S4 | ⬜ | Referenz-Spec: `upload-validation.spec.ts` (Admin-Pattern) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/A04_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `TreePreferencesPage`, `TreePreferencesAction`; Formularfelder |
+| S3 | ✅ | EP aus L3: GET→200, POST→Preference gespeichert |
+| S4 | ✅ | Referenz-Spec: `upload-validation.spec.ts` (Admin-Pattern) |
+| S5 | ✅ | → `docs/systemtest/testspezi/A04_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -603,14 +603,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `ModulesAllPage`, Typ-spezifische Seiten; Aktivieren/Deaktivieren-Formular |
-| S3 | ⬜ | EP aus L3: 7 Modul-Typ-Seiten→200; für L4 Deaktivieren→Frontend-Effekt prüfen |
-| S4 | ⬜ | Referenz-Spec: `upload-validation.spec.ts` (Admin-Pattern) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/A05_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; nach Test Modul wieder aktivieren (Cleanup) |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `ModulesAllPage`, Typ-spezifische Seiten; Aktivieren/Deaktivieren-Formular |
+| S3 | ✅ | EP aus L3: 7 Modul-Typ-Seiten→200; für L4 Deaktivieren→Frontend-Effekt prüfen |
+| S4 | ✅ | Referenz-Spec: `upload-validation.spec.ts` (Admin-Pattern) |
+| S5 | ✅ | → `docs/systemtest/testspezi/A05_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; DataProvider über 6 Modul-Seiten + Tabellen-Sichtbarkeit |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -623,14 +623,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `UserListPage`; Filter-Formular, Cleanup-Link |
-| S3 | ⬜ | EP aus L3: User-Liste→200, Filter→gefilterte Liste, Cleanup→200 |
-| S4 | ⬜ | Referenz-Spec: `upload-validation.spec.ts` (Admin-Pattern) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/A07_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `UserListPage`; Filter-Formular, Cleanup-Link |
+| S3 | ✅ | EP aus L3: User-Liste→200, Filter→gefilterte Liste, Cleanup→200 |
+| S4 | ✅ | Referenz-Spec: `upload-validation.spec.ts` (Admin-Pattern) |
+| S5 | ✅ | → `docs/systemtest/testspezi/A07_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -645,14 +645,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `ContactPage`, `ContactAction`; View: Formularfelder, Pflichtfelder |
-| S3 | ⬜ | **Upstream-Ableitung:** Handler-Guards, Validierung, Erfolgs-/Fehlerpfade direkt aus Code |
-| S4 | ⬜ | Referenz-Spec: `login.spec.ts` (Formular-Pattern) |
-| S5 | ⬜ | → `docs/systemtest/testspezi/K01_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; E-Mail-Versand nicht prüfbar (→ nur Redirect/Bestätigung) |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `ContactPage`, `ContactAction`; View: Formularfelder, Pflichtfelder |
+| S3 | ✅ | **Upstream-Ableitung:** Handler-Guards, Validierung, Erfolgs-/Fehlerpfade direkt aus Code |
+| S4 | ✅ | Referenz-Spec: `login.spec.ts` (Formular-Pattern) |
+| S5 | ✅ | → `docs/systemtest/testspezi/K01_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; Formular-Rendering, Pflichtfelder, Leerer-Submit-Guard |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -665,14 +665,14 @@ Dokumenten-Konsistenzprüfung (→ wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | Handler: `MessagePage`, `MessageAction`; View: Empfänger, Betreff, Text |
-| S3 | ⬜ | **Upstream-Ableitung:** Handler-Guards, Validierung, Auth-Anforderung direkt aus Code |
-| S4 | ⬜ | Referenz-Spec: `login.spec.ts`, `user-pages.spec.ts` |
-| S5 | ⬜ | → `docs/systemtest/testspezi/K02_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung; Login erforderlich (kein Visitor-Zugriff) |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
-| S8 | ⬜ | Einzeltest grün, Konsistenz |
+| S1 | ✅ | shared |
+| S2 | ✅ | Handler: `MessagePage`, `MessageAction`; View: Empfänger, Betreff, Text |
+| S3 | ✅ | **Upstream-Ableitung:** Handler-Guards, Validierung, Auth-Anforderung direkt aus Code |
+| S4 | ✅ | Referenz-Spec: `login.spec.ts`, `user-pages.spec.ts` |
+| S5 | ✅ | → `docs/systemtest/testspezi/K02_systemtest_spezi.md` |
+| S6 | ✅ | Coding + Ausführung; Formular-Rendering, Nachricht-Senden, Leerer-Submit-Guard |
+| S7 | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md` |
+| S8 | ✅ | Einzeltest grün (513 passed, 0 failed) |
 
 ---
 
@@ -682,7 +682,7 @@ Nach Abschluss aller 29 Features (→ wf_test-iteration_guide.md Abschnitt 10):
 
 | Schritt | Status | Beschreibung |
 |---|---|---|
-| GA1 | ⬜ | Voll-Lauf: `make test-e2e` — alle L4-Tests grün |
-| GA2 | ⬜ | Ratchet-Update: `docs/tp_ratchet_spec.md` — Teststufe-3-Endekriterien |
-| GA3 | ⬜ | Dokumenten-Konsistenzprüfung: CLAUDE.md, README.md, Coverage-Ref, Conditions-Ref |
+| GA1 | ✅ | Voll-Lauf: `make test-e2e` — 513 passed, 0 failed (16,6 min) |
+| GA2 | ✅ | Ratchet-Update: `docs/tp_ratchet_spec.md` — alle 29 Features in Teststufe-3-Endekriterien enthalten (Zeile 24) |
+| GA3 | ✅ | Dokumenten-Konsistenzprüfung: Coverage-Ref, Conditions-Ref, Ratchet-Spec — alle S7-Einträge konsistent |
 | GA4 | ⬜ | Commit (manuell) |
