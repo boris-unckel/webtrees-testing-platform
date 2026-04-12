@@ -20,7 +20,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  * AP B-05: UserTreeSetting::execute (380), TreeSetting::execute (342),
  *          SiteSetting::execute (306), UserSetting::execute (306)
  *
- * @see docs/testing-bigpicture.md P36
+ * @see docs/tds_conditions_ref.md P36
  * @covers \Fisharebest\Webtrees\Cli\Commands\SiteSetting
  * @covers \Fisharebest\Webtrees\Cli\Commands\TreeSetting
  * @covers \Fisharebest\Webtrees\Cli\Commands\UserSetting

@@ -37,7 +37,7 @@ use Psr\Http\Message\ServerRequestInterface;
  *
  * Folgt dem Muster der webtrees-eigenen TestCase, nutzt aber MySQL statt SQLite.
  *
- * @see docs/testing-bigpicture.md N4 (Phase 4)
+ * @see docs/tds_conditions_ref.md N4 (Phase 4)
  */
 abstract class MysqlTestCase extends TestCase
 {

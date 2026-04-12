@@ -7,7 +7,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
 /**
  * Systemtest: Quellenliste (SourceListPage)
  *
- * @see docs/testing-bigpicture.md S20, AP 5c-3c
+ * @see docs/tds_conditions_ref.md S20, AP 5c-3c
  */
 
 for (const theme of themes) {

@@ -7,7 +7,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
 /**
  * Systemtest: Familienseite (FamilyPage)
  *
- * @see docs/testing-bigpicture.md S24, AP 5c-2b
+ * @see docs/tds_conditions_ref.md S24, AP 5c-2b
  */
 
 for (const theme of themes) {

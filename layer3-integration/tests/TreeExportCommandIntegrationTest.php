@@ -21,7 +21,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  *
  * AP C-03: TreeExport::execute (CRAP 240)
  *
- * @see docs/testing-bigpicture.md G26
+ * @see docs/tds_conditions_ref.md G26
  * @covers \Fisharebest\Webtrees\Cli\Commands\TreeExport
  */
 class TreeExportCommandIntegrationTest extends MysqlTestCase

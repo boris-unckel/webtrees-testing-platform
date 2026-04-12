@@ -20,7 +20,7 @@ use Fisharebest\Webtrees\Services\TimeoutService;
  * Beziehungen (6× DB::table() in handle()).
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CheckTree
- * @see docs/testing-bigpicture.md G24
+ * @see docs/tds_conditions_ref.md G24
  */
 class CheckTreeIntegrationTest extends MysqlTestCase
 {

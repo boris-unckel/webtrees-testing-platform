@@ -15,7 +15,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  *
  * Alle 12 bekannten Topic-IDs + Fehlerbehandlung für unbekannte Topics.
  *
- * @see docs/testing-bigpicture.md S50
+ * @see docs/tds_conditions_ref.md S50
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\HelpText
  */
 class HelpTextIntegrationTest extends MysqlTestCase

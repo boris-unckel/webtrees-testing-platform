@@ -20,7 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Assertion: change-Tabelle (pending-Einträge für betroffene Records).
  * B7/B8 (Datumsreihenfolge-Sortierung) ausgeklammert — Pragmatisch C, komplex.
  *
- * @see docs/testing-bigpicture.md P31
+ * @see docs/tds_conditions_ref.md P31
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ChangeFamilyMembersAction
  */
 class ChangeFamilyMembersActionIntegrationTest extends MysqlTestCase

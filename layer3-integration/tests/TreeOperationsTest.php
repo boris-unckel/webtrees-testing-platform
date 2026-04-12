@@ -20,7 +20,7 @@ use Psr\Http\Message\StreamFactoryInterface;
  *
  * @covers \Fisharebest\Webtrees\Services\TreeService
  * @covers \Fisharebest\Webtrees\Services\GedcomExportService
- * @see docs/testing-bigpicture.md G13, G14, G15, G16, G17
+ * @see docs/tds_conditions_ref.md G13, G14, G15, G16, G17
  */
 class TreeOperationsTest extends MysqlTestCase
 {
@@ -513,7 +513,7 @@ class TreeOperationsTest extends MysqlTestCase
      * Nach einem Upstream-Fix am Privacy-Filtering für PRIV_NONE kann die
      * Assertion auf Record-Counts verschärft werden.
      *
-     * @see docs/testing-bigpicture.md G16
+     * @see docs/tds_conditions_ref.md G16
      */
     public function test_export_with_priv_none_produces_valid_gedcom(): void
     {
@@ -536,7 +536,7 @@ class TreeOperationsTest extends MysqlTestCase
     /**
      * G16 — Export mit PRIV_USER: Mitglieder-Sicht liefert valide GEDCOM.
      *
-     * @see docs/testing-bigpicture.md G16
+     * @see docs/tds_conditions_ref.md G16
      */
     public function test_export_with_priv_user_produces_valid_gedcom(): void
     {

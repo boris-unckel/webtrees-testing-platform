@@ -20,7 +20,7 @@ use Fisharebest\Webtrees\Report\ReportHtmlTextBox;
  * HtmlRenderer::run() und die render()-Methoden verwenden echo — Output-Buffering
  * im Test nötig.
  *
- * @see docs/testing-bigpicture.md S45
+ * @see docs/tds_conditions_ref.md S45
  * @covers \Fisharebest\Webtrees\Report\ReportHtmlTextBox
  * @covers \Fisharebest\Webtrees\Report\ReportHtmlCell
  * @covers \Fisharebest\Webtrees\Report\HtmlRenderer

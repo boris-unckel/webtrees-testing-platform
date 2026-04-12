@@ -8,7 +8,7 @@ import * as path from 'path';
 /**
  * Performanztest: Stammbaum-Ansicht (Pedigree Chart)
  *
- * @see docs/testing-bigpicture.md Performanztest, S14
+ * @see docs/tds_conditions_ref.md Performanztest, S14
  */
 
 const BASELINE_DIR = '/tests/performance/baselines';

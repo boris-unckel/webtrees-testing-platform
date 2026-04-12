@@ -20,7 +20,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * nicht-standardisierter Record-Typ (_CUST) → 200 record-page mit Link-Header (EP2).
  * Befund aus P1: Smoke-Tests prüften nur < 400; tatsächliches Verhalten ist 302-Redirect.
  *
- * @see docs/testing-bigpicture.md P32
+ * @see docs/tds_conditions_ref.md P32
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\GedcomRecordPage
  */
 class GedcomRecordPageIntegrationTest extends MysqlTestCase

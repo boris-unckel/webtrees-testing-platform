@@ -11,7 +11,7 @@ import * as path from 'path';
  * Misst Ladezeit der Startseite und vergleicht mit Baseline.
  * Schwellwert: +20% = Warnung
  *
- * @see docs/testing-bigpicture.md Performanztest
+ * @see docs/tds_conditions_ref.md Performanztest
  */
 
 const BASELINE_DIR = '/tests/performance/baselines';

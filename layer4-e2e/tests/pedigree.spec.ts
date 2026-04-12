@@ -7,7 +7,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
 /**
  * Systemtest: Stammbaum / Ahnentafel (PedigreePage)
  *
- * @see docs/testing-bigpicture.md S14, AP 5c-3b
+ * @see docs/tds_conditions_ref.md S14, AP 5c-3b
  */
 
 for (const theme of themes) {

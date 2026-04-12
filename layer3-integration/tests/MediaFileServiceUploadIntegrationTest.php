@@ -17,7 +17,7 @@ use Nyholm\Psr7\UploadedFile;
  *
  * AP C-05: MediaFileService::uploadFile (CRAP 210)
  *
- * @see docs/testing-bigpicture.md G27
+ * @see docs/tds_conditions_ref.md G27
  * @covers \Fisharebest\Webtrees\Services\MediaFileService
  */
 class MediaFileServiceUploadIntegrationTest extends MysqlTestCase

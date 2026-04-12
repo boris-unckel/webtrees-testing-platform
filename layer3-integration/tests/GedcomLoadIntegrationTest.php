@@ -20,7 +20,7 @@ use Fisharebest\Webtrees\Tree;
  *
  * AP B-07: GedcomLoad::handle (CRAP 306)
  *
- * @see docs/testing-bigpicture.md G25
+ * @see docs/tds_conditions_ref.md G25
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\GedcomLoad
  */
 class GedcomLoadIntegrationTest extends MysqlTestCase

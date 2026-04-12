@@ -15,7 +15,7 @@ use Fisharebest\Webtrees\Tree;
  * Testet die kaskadische Logik: Expliziter Tod → Datierte Events →
  * Geburts-Check → Verwandten-Inferenz → Fallback (lebend).
  *
- * @see docs/testing-bigpicture.md P08, P09, P10, P11, P12, P13
+ * @see docs/tds_conditions_ref.md P08, P09, P10, P11, P12, P13
  * @covers \Fisharebest\Webtrees\Individual::isDead
  */
 class IsDeadTest extends PrivacyTestCase

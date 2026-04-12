@@ -7,7 +7,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
 /**
  * Systemtest: Personenseite — Fakten, Familien, Events
  *
- * @see docs/testing-bigpicture.md S23, AP 5c-2a
+ * @see docs/tds_conditions_ref.md S23, AP 5c-2a
  */
 
 for (const theme of themes) {

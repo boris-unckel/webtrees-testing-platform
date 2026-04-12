@@ -16,7 +16,7 @@ use Fisharebest\Webtrees\Services\LinkedRecordService;
  *
  * AP C-02: MergeFactsAction::handle (CRAP 240)
  *
- * @see docs/testing-bigpicture.md P30
+ * @see docs/tds_conditions_ref.md P30
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MergeFactsAction
  */
 class MergeFactsIntegrationTest extends MysqlTestCase

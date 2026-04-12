@@ -16,7 +16,7 @@ use Fisharebest\Webtrees\Tree;
  * Testet Suche über INDI, FAM, SOUR, REPO, Orte, Medien und Submitter.
  *
  * @covers \Fisharebest\Webtrees\Services\SearchService
- * @see docs/testing-bigpicture.md S01, S02, S03, S04, S05, S06, S07, S08, S10, S11, S12, S22
+ * @see docs/tds_conditions_ref.md S01, S02, S03, S04, S05, S06, S07, S08, S10, S11, S12, S22
  */
 class SearchIntegrationTest extends MysqlTestCase
 {

@@ -18,7 +18,7 @@ use Fig\Http\Message\StatusCodeInterface;
  *
  * AP B-04: MapDataImportAction::handle (CRAP 420)
  *
- * @see docs/testing-bigpicture.md S48
+ * @see docs/tds_conditions_ref.md S48
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MapDataImportAction
  */
 class MapDataImportIntegrationTest extends MysqlTestCase

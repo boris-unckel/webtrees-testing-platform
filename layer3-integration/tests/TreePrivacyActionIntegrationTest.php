@@ -21,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * beide-leer kein Insert (EP8), Privacy-Setting gespeichert (EP9).
  * Assertion: default_resn-Tabelle + tree->getPreference().
  *
- * @see docs/testing-bigpicture.md P33
+ * @see docs/tds_conditions_ref.md P33
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePrivacyAction
  */
 class TreePrivacyActionIntegrationTest extends MysqlTestCase

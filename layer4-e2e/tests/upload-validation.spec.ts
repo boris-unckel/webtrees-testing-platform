@@ -9,7 +9,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
  * Testet, dass ungültige Dateien beim GEDCOM-Upload erkannt und abgelehnt werden.
  * Kein Theme-Loop — Admin-Seiten sind nicht tree-gebunden.
  *
- * @see docs/testing-bigpicture.md G21, AP 9-3
+ * @see docs/tds_conditions_ref.md G21, AP 9-3
  */
 
 test.beforeEach(async ({ page }) => {

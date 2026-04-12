@@ -7,7 +7,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
 /**
  * Systemtest: Suchformulare (erweiterte + phonetische Suche)
  *
- * @see docs/testing-bigpicture.md S38, S39, AP 5c-2e
+ * @see docs/tds_conditions_ref.md S38, S39, AP 5c-2e
  */
 
 for (const theme of themes) {

@@ -7,7 +7,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
 /**
  * Systemtest: Kalenderansicht (Monat + Jahr)
  *
- * @see docs/testing-bigpicture.md S31, AP 5c-2d
+ * @see docs/tds_conditions_ref.md S31, AP 5c-2d
  */
 
 for (const theme of themes) {

@@ -7,7 +7,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
 /**
  * Systemtest: Navigation und Seitenstruktur
  *
- * @see docs/testing-bigpicture.md S23, S20, S09, AP 5c-2g
+ * @see docs/tds_conditions_ref.md S23, S20, S09, AP 5c-2g
  */
 
 for (const theme of themes) {

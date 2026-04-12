@@ -15,7 +15,7 @@ use Fisharebest\Webtrees\DB;
  * Prüft, dass Records korrekt in die Datenbank importiert werden.
  *
  * @covers \Fisharebest\Webtrees\Services\GedcomImportService
- * @see docs/testing-bigpicture.md G01, G02, G03, G04, G07, G08, G09, G10, G11, G12, G23
+ * @see docs/tds_conditions_ref.md G01, G02, G03, G04, G07, G08, G09, G10, G11, G12, G23
  */
 class GedcomImportTest extends MysqlTestCase
 {

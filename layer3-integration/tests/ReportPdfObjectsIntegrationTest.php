@@ -25,7 +25,7 @@ use Fisharebest\Webtrees\Report\ReportPdfTextBox;
  * PdfRenderer::setup() initialisiert TcpdfWrapper (TCPDF).
  * AddPage() muss vor render() aufgerufen werden.
  *
- * @see docs/testing-bigpicture.md S45
+ * @see docs/tds_conditions_ref.md S45
  * @covers \Fisharebest\Webtrees\Report\ReportPdfTextBox
  * @covers \Fisharebest\Webtrees\Report\ReportPdfCell
  * @covers \Fisharebest\Webtrees\Report\ReportPdfFootnote

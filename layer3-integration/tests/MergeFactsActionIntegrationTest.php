@@ -22,7 +22,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Guard-Redirect → MergeRecordsPage (Location enthält 'xref1').
  * Happy-Path-Redirect → ManageTrees (Location enthält kein 'xref1').
  *
- * @see docs/testing-bigpicture.md P30
+ * @see docs/tds_conditions_ref.md P30
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MergeFactsAction
  */
 class MergeFactsActionIntegrationTest extends MysqlTestCase

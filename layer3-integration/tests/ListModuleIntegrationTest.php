@@ -37,7 +37,7 @@ use Fisharebest\Webtrees\Services\SearchService;
  * @covers \Fisharebest\Webtrees\Module\LocationListModule
  * @covers \Fisharebest\Webtrees\Module\PlaceHierarchyListModule
  * @covers \Fisharebest\Webtrees\Module\BranchesListModule
- * @see docs/testing-bigpicture.md S19, S20
+ * @see docs/tds_conditions_ref.md S19, S20
  */
 class ListModuleIntegrationTest extends MysqlTestCase
 {

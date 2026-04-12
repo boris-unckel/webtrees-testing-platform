@@ -7,7 +7,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
 /**
  * Systemtest: Benutzerseiten (Meine Seite, Kontakt, Berichte)
  *
- * @see docs/testing-bigpicture.md S35, S36, S37, AP 5c-2f
+ * @see docs/tds_conditions_ref.md S35, S36, S37, AP 5c-2f
  */
 
 for (const theme of themes) {

@@ -18,7 +18,7 @@ use Fisharebest\Webtrees\Services\LinkedRecordService;
  * Familie-Kaskade (EP5): Einzel-Mitglied + keine Fakten → Familie mitgelöscht.
  * change-Tabelle: deleteRecord() schreibt immer new_gedcom='' (unabhängig von auto_accept).
  *
- * @see docs/testing-bigpicture.md P32
+ * @see docs/tds_conditions_ref.md P32
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\DeleteRecord
  */
 class DeleteRecordIntegrationTest extends MysqlTestCase

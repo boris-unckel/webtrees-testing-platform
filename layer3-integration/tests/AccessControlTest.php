@@ -17,7 +17,7 @@ use Fisharebest\Webtrees\Tree;
 /**
  * Tests fuer Zugriffskontrolle: Edit, Accept, Lock, auto_accept.
  *
- * @see docs/testing-bigpicture.md P27, P28, P29
+ * @see docs/tds_conditions_ref.md P27, P28, P29
  * @covers \Fisharebest\Webtrees\GedcomRecord::canEdit
  * @covers \Fisharebest\Webtrees\GedcomRecord::updateRecord
  */

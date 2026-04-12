@@ -6,7 +6,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
 /**
  * Systemtest: Login-Funktionalität
  *
- * @see docs/testing-bigpicture.md S23
+ * @see docs/tds_conditions_ref.md S23
  */
 
 test.describe('Login', () => {

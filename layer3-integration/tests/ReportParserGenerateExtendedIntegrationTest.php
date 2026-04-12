@@ -21,7 +21,7 @@ use Fisharebest\Webtrees\Webtrees;
  * Verwendet relative_ext_report.xml und individual_ext_report.xml,
  * die <relatives>, <facts> und <image> Elemente enthalten.
  *
- * @see docs/testing-bigpicture.md S44
+ * @see docs/tds_conditions_ref.md S44
  * @covers \Fisharebest\Webtrees\Report\ReportParserGenerate
  */
 class ReportParserGenerateExtendedIntegrationTest extends MysqlTestCase

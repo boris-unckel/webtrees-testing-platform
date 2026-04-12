@@ -16,7 +16,7 @@ use Fisharebest\Webtrees\Services\TimeoutService;
 /**
  * Komponentenintegrationstest: RenumberTreeAction.
  *
- * @see docs/testing-bigpicture.md P34
+ * @see docs/tds_conditions_ref.md P34
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\RenumberTreeAction
  */
 class RenumberTreeActionIntegrationTest extends MysqlTestCase

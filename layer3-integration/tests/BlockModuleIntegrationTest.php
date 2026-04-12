@@ -30,7 +30,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 /**
  * Komponentenintegrationstest: Block-Module getBlock() Smoke-Tests.
  *
- * @see docs/testing-bigpicture.md S46
+ * @see docs/tds_conditions_ref.md S46
  * @covers \Fisharebest\Webtrees\Module\SlideShowModule
  * @covers \Fisharebest\Webtrees\Module\YahrzeitModule
  * @covers \Fisharebest\Webtrees\Module\ReviewChangesModule

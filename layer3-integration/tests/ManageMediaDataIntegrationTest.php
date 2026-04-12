@@ -21,7 +21,7 @@ use Fisharebest\Webtrees\Services\TreeService;
  *
  * AP C-01: ManageMediaData::handle (CRAP 272), ManageMediaData::mediaObjectInfo (CRAP 110)
  *
- * @see docs/testing-bigpicture.md S49
+ * @see docs/tds_conditions_ref.md S49
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ManageMediaData
  */
 class ManageMediaDataIntegrationTest extends MysqlTestCase

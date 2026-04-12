@@ -9,7 +9,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
  *
  * Tree-gebunden → Theme-Loop (5 Themes).
  *
- * @see docs/testing-bigpicture.md S13, AP 9-4
+ * @see docs/tds_conditions_ref.md S13, AP 9-4
  */
 
 for (const theme of themes) {

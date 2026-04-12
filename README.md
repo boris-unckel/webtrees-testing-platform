@@ -118,6 +118,6 @@ podman-compose exec webtrees kill <PID>                                    # Abb
 
 ## Dokumentation
 
-- **Teststrategie**: `docs/testing-bigpicture.md`
+- **Teststrategie**: `docs/tds_conditions_ref.md`
 - **Feature-Matrizen**: Siehe in Teststrategie
 

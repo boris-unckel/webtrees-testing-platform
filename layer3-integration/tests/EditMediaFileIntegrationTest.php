@@ -20,7 +20,7 @@ use Fisharebest\Webtrees\Services\PhpService;
  *
  * AP C-06: EditMediaFileAction::handle (CRAP 182)
  *
- * @see docs/testing-bigpicture.md G28
+ * @see docs/tds_conditions_ref.md G28
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditMediaFileAction
  */
 class EditMediaFileIntegrationTest extends MysqlTestCase

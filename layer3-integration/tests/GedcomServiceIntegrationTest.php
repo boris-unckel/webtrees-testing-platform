@@ -16,7 +16,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * für einheitliche PHP-Version und Trace-Erfassung.
  *
  * @covers \Fisharebest\Webtrees\Services\GedcomService
- * @see docs/testing-bigpicture.md G05
+ * @see docs/tds_conditions_ref.md G05
  */
 class GedcomServiceIntegrationTest extends MysqlTestCase
 {

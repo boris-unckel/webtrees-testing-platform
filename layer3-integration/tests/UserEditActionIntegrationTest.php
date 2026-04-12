@@ -23,7 +23,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Self-Edit-Admin-Guard (B4), Passwort-Update (B3), Path-Length-Reset (EP12).
  * B2 (Approval-Email) ausgeklammert — E-Mail-Versand nicht testbar ohne SMTP-Mock.
  *
- * @see docs/testing-bigpicture.md P37
+ * @see docs/tds_conditions_ref.md P37
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserEditAction
  */
 class UserEditActionIntegrationTest extends MysqlTestCase

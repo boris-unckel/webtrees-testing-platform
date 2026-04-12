@@ -7,7 +7,7 @@ import { ADMIN_PASSWORD } from '../helpers/auth';
 /**
  * Systemtest: Homepage / Baumseite (TreePage)
  *
- * @see docs/testing-bigpicture.md S40, AP 5c-3a
+ * @see docs/tds_conditions_ref.md S40, AP 5c-3a
  */
 
 for (const theme of themes) {

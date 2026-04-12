@@ -17,7 +17,7 @@ use Fisharebest\Webtrees\StatisticsFormat;
  * StatisticsFormat::century — Bootstrap-only, kein DB-Zugriff.
  * StatisticsData::ageOfMarriageQuery, parentsQuery, marriageQuery — DB-abhängig.
  *
- * @see docs/testing-bigpicture.md S41
+ * @see docs/tds_conditions_ref.md S41
  * @covers \Fisharebest\Webtrees\StatisticsFormat
  * @covers \Fisharebest\Webtrees\StatisticsData
  */

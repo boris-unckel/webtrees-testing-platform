@@ -10,7 +10,7 @@ import { ADMIN_PASSWORD } from './auth';
  * via GET-Parameter. webtrees persistiert das Theme in den User-Preferences,
  * sodass nachfolgende Requests im selben Login das Theme beibehalten.
  *
- * @see docs/testing-bigpicture.md AP 5c-1
+ * @see docs/tds_conditions_ref.md AP 5c-1
  */
 
 export const themes = ['webtrees', 'clouds', 'colors', 'fab', 'xenea'] as const;

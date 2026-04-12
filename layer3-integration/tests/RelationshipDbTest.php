@@ -15,7 +15,7 @@ use Fisharebest\Webtrees\DB;
  * korrekt in der MySQL-Datenbank abgebildet sind.
  *
  * @covers \Fisharebest\Webtrees\Services\GedcomImportService
- * @see docs/testing-bigpicture.md G02
+ * @see docs/tds_conditions_ref.md G02
  */
 class RelationshipDbTest extends MysqlTestCase
 {

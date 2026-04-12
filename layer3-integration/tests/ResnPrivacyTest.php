@@ -14,7 +14,7 @@ use Fisharebest\Webtrees\Tree;
 /**
  * Tests fuer RESN-Tags (Record-Level und Fact-Level) sowie default_resn.
  *
- * @see docs/testing-bigpicture.md P16, P17, P18, P19, P20, P21
+ * @see docs/tds_conditions_ref.md P16, P17, P18, P19, P20, P21
  * @covers \Fisharebest\Webtrees\GedcomRecord::canShowRecord
  * @covers \Fisharebest\Webtrees\Fact::canShow
  */

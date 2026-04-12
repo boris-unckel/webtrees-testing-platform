@@ -16,7 +16,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  *
  * AP B-02: UserEdit::execute (CRAP 552)
  *
- * @see docs/testing-bigpicture.md P35
+ * @see docs/tds_conditions_ref.md P35
  * @covers \Fisharebest\Webtrees\Cli\Commands\UserEdit
  */
 class UserEditCommandIntegrationTest extends MysqlTestCase

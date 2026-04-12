@@ -20,7 +20,7 @@ use ReflectionMethod;
  * da sie ausschließlich im Sprachzweig 'es' (Spanisch) aufgerufen wird.
  *
  * @covers \Fisharebest\Webtrees\Services\RelationshipService
- * @see docs/testing-bigpicture.md S14, S16
+ * @see docs/tds_conditions_ref.md S14, S16
  */
 class RelationshipServiceIntegrationTest extends MysqlTestCase
 {

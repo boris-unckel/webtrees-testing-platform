@@ -26,7 +26,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * DNS-Branches (ROBOT_REV_FWD_DNS, ROBOT_REV_ONLY_DNS) bleiben ungetestet —
  * erfordern Netzwerkzugriff und sind in Unit-Tests nicht sinnvoll abbildbar.
  *
- * @see docs/testing-bigpicture.md SEC-BOT01
+ * @see docs/tds_conditions_ref.md SEC-BOT01
  * @covers \Fisharebest\Webtrees\Http\Middleware\BadBotBlocker
  */
 class BadBotBlockerIntegrationTest extends MysqlTestCase
