@@ -127,8 +127,8 @@ test-e2e-quick: ## Systemtest — 3 repraesentative Faelle mit OTel-Korrelation
 	    homepage.spec.ts individual.spec.ts search-forms.spec.ts; \
 	scripts/extract-perfschema.sh layer4 || true; \
 	scripts/trace-report.sh --run-id $$RUN_ID --layer 4 \
-	    --output-json artifacts/layer4/trace-report.json \
-	    --output-text artifacts/layer4/trace-report.txt || true
+	    --output-json artifacts/layer4/trace-report.json || true
+	    # --output-text artifacts/layer4/trace-report.txt — temporär deaktiviert (2026-04-13)
 
 test-e2e: ## Teststufe 3 — Systemtest (Playwright) mit OTel-Korrelation
 	@RUN_ID=$$(uuidgen); \
@@ -138,8 +138,8 @@ test-e2e: ## Teststufe 3 — Systemtest (Playwright) mit OTel-Korrelation
 	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright /bin/bash /tests/e2e/run.sh; \
 	scripts/extract-perfschema.sh layer4 || true; \
 	scripts/trace-report.sh --run-id $$RUN_ID --layer 4 \
-	    --output-json artifacts/layer4/trace-report.json \
-	    --output-text artifacts/layer4/trace-report.txt || true
+	    --output-json artifacts/layer4/trace-report.json || true
+	    # --output-text artifacts/layer4/trace-report.txt — temporär deaktiviert (2026-04-13)
 
 test-performance: ## Performanztest (Playwright-Metrics + Baseline-Vergleich + OTel)
 	@RUN_ID=$$(uuidgen); \
@@ -149,8 +149,8 @@ test-performance: ## Performanztest (Playwright-Metrics + Baseline-Vergleich + O
 	$(COMPOSE) exec -e TEST_RUN_ID=$$RUN_ID playwright /bin/bash /tests/performance/run.sh; \
 	scripts/extract-perfschema.sh layer5 || true; \
 	scripts/trace-report.sh --run-id $$RUN_ID --layer 5 \
-	    --output-json artifacts/layer5/trace-report.json \
-	    --output-text artifacts/layer5/trace-report.txt || true
+	    --output-json artifacts/layer5/trace-report.json || true
+	    # --output-text artifacts/layer5/trace-report.txt — temporär deaktiviert (2026-04-13)
 
 perfschema-truncate: ## PerfSchema-Daten zuruecksetzen
 	scripts/truncate-perfschema.sh

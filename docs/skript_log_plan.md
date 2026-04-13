@@ -36,7 +36,7 @@ erst beim Gesamt-Abschluss).
 | 3.1 | `phpunit-output.log` | Komplett weglassen |
 | 3.2 | Scope Phase B | Nur L2/L3 run.sh; L5 run.sh wird erst in Phase F reaktiviert |
 | 4.1 | `trace-report.py` Default | `summary` |
-| 4.2 | `trace-report.txt` | Beibehalten (designte Redundanz zur JSON) |
+| 4.2 | `trace-report.txt` | **Temporär deaktiviert (2026-04-13)** — `--output-text` im Makefile auskommentiert; Reaktivierung bei Bedarf |
 | 4.3 | `print_perfschema` | Komplett von stdout entfernen |
 | 5.1 | Dateinamen L4/L5 | Ohne UUID-Suffix (`trace-report.json` / `trace-report.txt`) |
 | 5.2 | Cruft-Cleanup | Sofort, kein Commit |
