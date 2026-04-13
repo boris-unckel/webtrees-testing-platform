@@ -46,19 +46,12 @@ test.describe('Visitor', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
   test('S13 — search-and-replace page not accessible for visitor', async ({ page }) => {
-    const response = await page.goto('/tree/demo/search-replace');
-    const status = response?.status() ?? 0;
+    await page.goto('/tree/demo/search-replace');
+    await page.waitForLoadState('networkidle');
     const url = page.url();
 
-    // webtrees leitet nicht-authentifizierte Benutzer auf die Login-Seite um
-    const isRedirectedToLogin = url.includes('login');
-    const isAccessDenied = status === 403 || status === 302;
-    const pageContent = await page.locator('body').textContent() ?? '';
-    const hasAccessDeniedMessage = pageContent.includes('sign in') ||
-      pageContent.includes('login') ||
-      pageContent.includes('not authorized') ||
-      pageContent.includes('Access denied');
-
-    expect(isRedirectedToLogin || isAccessDenied || hasAccessDeniedMessage).toBeTruthy();
+    // webtrees leitet nicht-authentifizierte Benutzer weg von der geschützten Route
+    // (typischerweise auf die Homepage /tree/demo, nicht auf /login)
+    expect(url).not.toContain('/search-replace');
   });
 });

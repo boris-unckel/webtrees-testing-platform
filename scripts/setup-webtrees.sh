@@ -24,6 +24,34 @@ done
 
 echo "=== webtrees Test-Setup ==="
 
+# 0a. Apache-Rewrite-Regel ergaenzen (FallbackResource greift nicht fuer .php-URLs,
+# da mod_php diese vor FallbackResource abfaengt und 404 liefert).
+# Die RewriteRule leitet nicht-existierende .php-URLs an index.php weiter,
+# was fuer die Legacy-URL-Redirects (S53: individual.php, family.php etc.) noetig ist.
+VHOST_CONF="/etc/apache2/sites-enabled/000-default.conf"
+if ! grep -q 'RewriteEngine On' "${VHOST_CONF}" 2>/dev/null; then
+    echo "[0a] Apache-Rewrite-Regel fuer Legacy-URLs ergaenzen..."
+    cat > "${VHOST_CONF}" << 'VHOSTEOF'
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html
+    <Directory /var/www/html>
+        AllowOverride All
+        Require all granted
+        FallbackResource /index.php
+        RewriteEngine On
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteRule ^ /index.php [L]
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+VHOSTEOF
+    apachectl graceful 2>/dev/null || true
+    echo "  Rewrite-Regel aktiv."
+fi
+
 # 0. tests/data-Volume seeden (Fixtures für Upstream-Unit-Tests)
 # Das Volume /var/www/html/tests/data überschreibt den ro-Bind-Mount. Die
 # Originaldaten werden einmalig aus /webtrees-tests-data-seed kopiert.
@@ -103,6 +131,14 @@ rewrite_urls = "1"
 CONFIGEOF
 chown www-data:www-data "${DATA_DIR}/config.ini.php"
 chmod 600 "${DATA_DIR}/config.ini.php"
+
+# 3a. data/media-Verzeichnis sicherstellen (www-data:755)
+# L3-Integrationstests erstellen Dateien unter data/media/ als root,
+# was ManageMediaPage (RecursiveDirectoryIterator) bei L4 mit 500 quittiert.
+MEDIA_DIR="${DATA_DIR}/media"
+mkdir -p "${MEDIA_DIR}"
+chown -R www-data:www-data "${MEDIA_DIR}"
+chmod -R 755 "${MEDIA_DIR}"
 
 # 3b. Privacy-Fixture generieren (Template → privacy-test.ged)
 echo "[3b/4] Privacy-Fixture generieren..."
