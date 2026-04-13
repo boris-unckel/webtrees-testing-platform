@@ -4,7 +4,7 @@
 
 **Referenz:** M16 | **Teststufe:** 3 — Systemtest (L4 Playwright)
 **Seite/Route:** Implizit — Error-Pages werden durch Exception-Handling in `HandleExceptions` generiert
-**L3-Referenztest:** `HandleExceptionsMiddlewareIntegrationTest` (noch nicht implementiert)
+**L3-Referenztest:** `HandleExceptionsMiddlewareIntegrationTest` (implementiert, 7 Tests, 22 Assertions)
 **Übergreifende Konzepte:** → [uebergreifende_konzepte_l4.md](../uebergreifende_konzepte_l4.md), [wf_test-iteration_guide.md](../../wf_test-iteration_guide.md)
 
 ---
@@ -51,8 +51,10 @@ theme-unabhängig. Ein Theme-Loop ist nicht erforderlich.
 
 ## L3-Referenz-Analyse
 
-L3-Test noch nicht implementiert. Die Szenarien werden direkt aus dem
-Upstream-Code abgeleitet (→ uebergreifende_konzepte_l4.md Abschnitt 1).
+`HandleExceptionsMiddlewareIntegrationTest` (7 Tests, 22 Assertions):
+HttpException→Statuscode, FilesystemException→500, AJAX GET→200+Layout,
+Throwable→500+Fehlermeldung, OB-Stack-Restoration. Die L3-Tests prüfen
+Response-Objekte; L4 prüft die tatsächliche DOM-Darstellung im Browser.
 
 ---
 
@@ -68,11 +70,11 @@ Upstream-Code abgeleitet (→ uebergreifende_konzepte_l4.md Abschnitt 1).
 
 | # | Szenario | Rolle | Erwartung | Theme-Loop |
 |---|---|---|---|---|
-| T1 | 404 — Nicht existierende URL aufrufen | Visitor | HTTP 404, `.alert.alert-danger` sichtbar | Nein |
-| T2 | 404 — Nicht existierende Person-XREF | Visitor | HTTP 404, Fehlermeldung im Alert | Nein |
-| T3 | 403 — Admin-Seite ohne Login | Visitor | HTTP 403 oder Redirect zu Login-Seite | Nein |
-| T4 | 410 — Nicht existierender Record via Legacy-URL | Visitor | HTTP 410, Fehlermeldung im Alert | Nein |
-| T5 | Error-Page hat Alert-Container | Visitor | `.alert.alert-danger[role="alert"]` sichtbar | Nein |
+| T1 | Nicht existierende XREF → Client-Error | Visitor | HTTP 4xx + `.alert.alert-danger` sichtbar | Nein |
+| T2 | Admin-Seite ohne Login → Redirect | Visitor | Redirect weg von `/admin/` | Nein |
+| T3 | Error-Page ARIA-Rolle | Visitor | `.alert.alert-danger[role="alert"]` sichtbar | Nein |
+| T4 | Fehlermeldungstext vorhanden | Visitor | Alert-Text nicht leer | Nein |
+| T5 | Ungültiger Tree-Name → Client-Error | Visitor | HTTP 4xx | Nein |
 
 ---
 
@@ -116,8 +118,8 @@ Status-Code als auch die DOM-Darstellung der Fehlermeldung.
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | |
+| P1: Konsistenzcheck | ✅ | Upstream-Analyse abgeschlossen |
+| P2: Soll-Design | ✅ | 5 Szenarien definiert |
+| P3: Test-Coding | ✅ | `error-handling.spec.ts` (5 Tests) |
+| P4: Ausführung + Fixing | ✅ | Alle 5 Tests grün |
+| P5: Dokumentation | ✅ | tds_coverage/conditions/ratchet/methodik aktualisiert |

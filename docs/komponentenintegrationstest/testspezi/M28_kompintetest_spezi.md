@@ -84,8 +84,8 @@
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 5 Tests, 22 Assertions, passed |
+| P5: Dokumentation | ✅ | |

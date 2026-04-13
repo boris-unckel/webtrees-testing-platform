@@ -10,8 +10,8 @@ Dieses Dokument bildet die Testabdeckung pro Feature-Matrix-ID ab. Jedes Feature
 - [Überdeckungsstrategie](tp_ratchet_spec.md)
 - [Testentwurfsverfahren](tds_methodik_spec.md)
 
-**Aktueller Stand (2026-04-12):** **175 abgedeckt** (174 spezifikationsbasiert + 1
-strukturbasiert), **33 nicht abgedeckt**, **1 SKIP** (U02 deprecated) / **209 Features
+**Aktueller Stand (2026-04-12):** **206 abgedeckt** (205 spezifikationsbasiert + 1
+strukturbasiert), **2 nicht abgedeckt**, **1 SKIP** (U02 deprecated) / **209 Features
 gesamt** (Vorgänger-Snapshot 170; Zuwachs: +28 Middleware M01–M28, +7 CLI G31/P42/A12–A16;
 Differenz zu 209 durch Korrektur historischer Zählfehler in G/SEC-Domäne).
 Historischer Snapshot (vor M-/CLI-Erweiterung):
@@ -137,7 +137,7 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 | G28 | OBJE-Metadaten bearbeiten | — | `EditMediaFileIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 2 Tests: Fact-not-found-Redirect, Happy Path DB-Postcondition change-Tabelle)* | — | OK | — |
 | G29 | GEDCOM-Bearbeitungsservice | — | `GedcomEditServiceIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 9 Tests: editLinesToGedcom EP Normal/CONT/Leer/Sub-Level, insertMissingLevels EP Expansion/Tiefe/Tags)* | — | OK | — |
 | G30 | Mediendatei-Upload (HTTP-Formular) | — | `UploadMediaActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 3 Tests: UPLOAD_ERR_NO_FILE→302, UPLOAD_ERR_PARTIAL→FileUploadException, gefährliche Extension→FlashMessage+302)* | — | OK | — |
-| G31 | GEDCOM-Import via CLI | — | — | — | — | Nicht abgedeckt; Plan-Iteration 2 (analog G25/G26 als `TreeImportCommandIntegrationTest`) |
+| G31 | GEDCOM-Import via CLI | — | `TreeImportCommandIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 4 Tests: gültiger Import→SUCCESS+DB-Count, Baum-not-found→FAILURE, Datei-not-found→FAILURE, keep-media-Option→SUCCESS)* | — | OK | — |
 
 > **Fußnote (L2-Spalte):** Der in der L2-Spalte angezeigte Testumfang entspricht dem Stand
 > des Branch [`port-layer2-test-doubles`](../webtrees-upstream/webtrees) im Upstream-Fork
@@ -205,7 +205,7 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 | S49 | Medienverwaltungsliste Admin | — | `ManageMediaDataIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 3 Tests: EP1 local + EP2 external + EP3 unused, JSON-Struktur-Assertions)* | — | OK | — |
 | S50 | Hilfetexte | — | `HelpTextIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 13 Tests: DataProvider 12 Topics + unknown-Topic)* | `help-texts.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
 | S52 | Standortdaten-Verwaltung (CRUD) | — | `MapDataCrudIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 5 Tests: MapDataSave INSERT→DB, UPDATE→DB, MapDataDelete→entfernt, MapDataExportCSV→text/csv, MapDataList GET→200)* | — | OK | — |
-| S53 | Legacy-URL-Weiterleitungen | — | — | — | — | — |
+| S53 | Legacy-URL-Weiterleitungen | — | `LegacyUrlRedirectIntegrationTest` [Batch-Smoke + EP] ✅ *(spezifikationsbasiert, 13 Tests, 49 Assertions: Individual/Family/Source/Note/Repository/GedRecord→301, invalid tree→410, invalid record→410, Calendar/ReportEngine, DEFAULT_GEDCOM fallback, Pedigree style mapping)* | `legacy-url-redirects.spec.ts` [API-Only] ✅ *(8 Tests)* | OK | — |
 
 <a id="p"></a>
 
@@ -256,7 +256,7 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 | P39 | Authentifizierung-Aktionen | — | `LoginActionIntegrationTest` [Smoke] ✅ *(spezifikationsbasiert, 1 Test: EP1 CLI-Kontext $_COOKIE=[]→doLogin wirft→handler fängt→302)* | — | OK | — |
 | P40 | Änderungsverwaltung (HTTP-Handler) | — | `PendingChangesIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: AcceptRecord ungültig→204, RejectRecord ungültig→204, PendingChanges GET→200)* | `pending-changes.spec.ts` [Spec-C] ✅ *(4 Tests)* | OK | — |
 | P41 | Datensatz-Zusammenführung (vollständig) | — | `MergeRecordsIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: Page GET valid/empty XREFs, Action POST matching INDIs→302)* | `merge-records.spec.ts` [Spec-C] ✅ *(1 Test)* | OK | — |
-| P42 | CLI Benutzer-Listing | — | — | — | — | Nicht abgedeckt; Plan-Iteration 2 (analog P35/P36 als `UserListCommandIntegrationTest`) |
+| P42 | CLI Benutzer-Listing | — | `UserListCommandIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 6 Tests, 34 Assertions)* | — | OK | — |
 
 <a id="sec"></a>
 
@@ -334,15 +334,15 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 | A05 | Modul-Konfiguration | — | `ModuleConfigIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 7 Tests: ModulesAllPage GET→200, ModulesAllAction POST→302, DataProvider Analytics/Blocks/Charts/Menus/Reports→200)* | `module-configuration.spec.ts` [Spec-C] ✅ *(6 Tests)* | OK | — |
 | A06 | Site-Präferenzen | — | `SitePreferencesIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: Page GET→200, Action POST valid→302, POST saves LANGUAGE, POST invalid directory→302)* | — | OK | — |
 | A07 | Benutzerverwaltung Admin | — | `UserAdminIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: UserListPage GET→200, mit filter, UsersCleanupPage GET→200)* | `user-admin.spec.ts` [Spec-C] ✅ *(3 Tests)* | OK | — |
-| A08 | Medienverwaltung Admin | — | — | — | — | — |
+| A08 | Medienverwaltung Admin | — | `AdminMediaManagementIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 5 Tests, 17 Assertions: ManageMediaPage render, invalid path, path traversal security, nonexistent records, FixLevel0MediaPage render)* | `media-admin.spec.ts` [Admin-Only] ✅ *(6 Tests)* | OK | — |
 | A09 | Datenpflege-Werkzeuge | — | `DataMaintenanceIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: FindDuplicateRecords GET→200, DataFixPage leer→200, DataFixPage fix-place-names→200, DataFixChoose GET→200)* | — | OK | — |
 | A10 | Protokolle & Monitoring | — | `LogsMonitoringIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: PendingChangesLogPage GET→200, SiteLogsDownload→CSV, Disposition attachment, PhpInformation→200)* | — | OK | — |
 | A11 | System & Upgrade | — | `SystemAdminIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 5 Tests: Masquerade not-found→HttpNotFoundException, self→204, other→204+Auth, BroadcastPage GET→200, EmailPreferencesPage GET→200)* | — | OK | — |
-| A12 | CLI Wartungsmodus aktivieren | — | — | — | — | Nicht abgedeckt; Plan-Iteration 2 (analog P36 als `SiteOfflineCommandIntegrationTest`) |
-| A13 | CLI Wartungsmodus deaktivieren | — | — | — | — | Nicht abgedeckt; Plan-Iteration 2 (analog P36 als `SiteOnlineCommandIntegrationTest`) |
-| A14 | CLI initialer Config-Setup | — | — | — | — | Nicht abgedeckt; Plan-Iteration 2 (`ConfigIniCommandIntegrationTest`) |
-| A15 | CLI Übersetzung kompilieren | — | — | — | — | Nicht abgedeckt; Plan-Iteration 2 (`CompilePoFilesCommandIntegrationTest`) |
-| A16 | CLI Baum-Listing | — | — | — | — | Nicht abgedeckt; Plan-Iteration 2 (`TreeListCommandIntegrationTest`) |
+| A12 | CLI Wartungsmodus aktivieren | — | `SiteOfflineCommandIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 4 Tests: ohne Message→SUCCESS+Datei, Custom-Message→gespeichert, Spezialzeichen→korrekt, Überschreiben→SUCCESS)* | — | OK | — |
+| A13 | CLI Wartungsmodus deaktivieren | — | `SiteOnlineCommandIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 3 Tests: Offline→Online+Datei-gelöscht, bereits-online→idempotent, Sequenz offline→online)* | — | OK | — |
+| A14 | CLI initialer Config-Setup | — | `ConfigIniCommandIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 5 Tests: gültige Credentials→SUCCESS+Config-Datei, leere base-url→WARNING, Trailing-Slash→getrimmt, dbverify-Flag→'1', ungültige Credentials→FAILURE)* | — | OK | — |
+| A15 | CLI Übersetzung kompilieren | — | `CompilePoFilesCommandIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 2 Tests, 6 Assertions)* | — | OK | — |
+| A16 | CLI Baum-Listing | — | `TreeListCommandIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 6 Tests, 45 Assertions)* | — | OK | — |
 
 <a id="k"></a>
 
@@ -352,8 +352,8 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
 |---|---|---|---|---|---|---|
-| K01 | Kontaktformular | — | — | `contact-form.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
-| K02 | Benutzer-Nachrichten | — | — | `user-messages.spec.ts` [Spec-C] ✅ *(3 Tests)* | OK | — |
+| K01 | Kontaktformular | — | `ContactFormIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 11 Tests, 34 Assertions)* | `contact-form.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
+| K02 | Benutzer-Nachrichten | — | `UserMessageIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 9 Tests, 31 Assertions)* | `user-messages.spec.ts` [Spec-C] ✅ *(3 Tests)* | OK | — |
 
 <a id="u"></a>
 
@@ -382,43 +382,64 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 |---|---|---|---|---|---|---|
 | M01 | Rollenbasierte Zugriffskontrolle | `AuthAdministratorTest` + `AuthEditorTest` + `AuthManagerTest` + `AuthMemberTest` + `AuthModeratorTest` [Spec-C] ✅ *(5× Substantial, je 3 Tests/5 Assertions; `AuthLoggedInTest` Stub; `AuthNotRobot` ohne L2-Test)* | `AccessControlTest` [EP] ✅ *(Querverweis zu P27–P29)* | `access-control.spec.ts` [Spec-C] ✅ *(Querverweis zu P27–P29)* | OK | Cluster (7 Klassen); Detail unter P27–P29 |
 | M02 | Bad-Bot-Blocker (UA-basiert) | `BadBotBlockerTest` [Spec-C] ✅ *(Substantial, 4 Tests/6 Assertions)* | `BadBotBlockerIntegrationTest` [EP] ✅ *(Querverweis zu SEC-BOT01)* | — | OK | Detail unter SEC-BOT01 |
-| M03 | Client-IP-Ermittlung (Proxy-Trust) | — *(`ClientIpTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
+| M03 | Client-IP-Ermittlung (Proxy-Trust) | — *(`ClientIpTest` Stub, 1 Assertion)* | `ClientIpMiddlewareIntegrationTest` [Spec-C] ✅ *(5 Tests, 16 Assertions)* | — | OK | — |
 | M04 | CSRF-Token-Validierung | `CheckCsrfTest` [Smoke] ✅ *(Stub, 3 Assertions → Smoke-Schwelle)* | — | — | OK | — |
 | M05 | Security-Headers (OWASP) | `SecurityHeadersTest` [Spec-C] ✅ *(Substantial, 3 Tests/9 Assertions)* | — | `security-headers.spec.ts` [Spec-B] ✅ *(Querverweis zu SEC-HDR01–HDR04)* | OK | Detail unter SEC-HDR01–HDR04 |
-| M06 | Session-Initialisierung | — *(`UseSessionTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M07 | Datenbank-Verbindung | — *(`UseDatabaseTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M08 | Datenbank-Schema-Migration | — *(`UpdateDatabaseSchemaTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M09 | Base-URL-Ermittlung | — *(`BaseUrlTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M10 | Routen-Laden | — *(`LoadRoutesTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M11 | URL-Routing | — *(`RouterTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M12 | Request-Handler-Dispatch | — *(`RequestHandlerTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M13 | Sprachauswahl | — *(`UseLanguageTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M14 | Theme-Auswahl | — *(`UseThemeTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M15 | PHP-Error-zu-Exception-Konvertierung | — *(kein L2-Test im Fork)* | — | — | — | Kein Test vorhanden; Plan-Iteration 2 |
-| M16 | Exception-Handling & Error-Page-Rendering | — *(`HandleExceptionsTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M17 | Debug-Logger (SQL/Perf) | — *(kein L2-Test im Fork)* | — | — | — | Kein Test vorhanden; Plan-Iteration 2 |
-| M18 | Housekeeping (Thumbnails/Logs/Temp) | — *(`DoHousekeepingTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M19 | Response-Kompression | — *(`CompressResponseTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M20 | Content-Length-Header | — *(`ContentLengthTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M21 | Config-Ini-Lesen | — *(`ReadConfigIniTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
+| M06 | Session-Initialisierung | — *(`UseSessionTest` Stub, 1 Assertion)* | `UseSessionMiddlewareIntegrationTest` [Spec-C] ✅ *(5 Tests)* | — | OK | — |
+| M07 | Datenbank-Verbindung | — *(`UseDatabaseTest` Stub, 1 Assertion)* | `UseDatabaseMiddlewareIntegrationTest` [EP] ✅ *(3 Tests)* | — | OK | — |
+| M08 | Datenbank-Schema-Migration | — *(`UpdateDatabaseSchemaTest` Stub, 1 Assertion)* | `UpdateDatabaseSchemaMiddlewareIntegrationTest` [Smoke] ✅ *(2 Tests)* | — | OK | — |
+| M09 | Base-URL-Ermittlung | — *(`BaseUrlTest` Stub, 1 Assertion)* | `BaseUrlMiddlewareIntegrationTest` [Spec-C] ✅ *(4 Tests, 24 Assertions)* | — | OK | — |
+| M10 | Routen-Laden | — *(`LoadRoutesTest` Stub, 1 Assertion)* | `LoadRoutesMiddlewareIntegrationTest` [Smoke] ✅ *(3 Tests, 10 Assertions)* | — | OK | — |
+| M11 | URL-Routing | — *(`RouterTest` Stub, 1 Assertion)* | `RouterMiddlewareIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 7 Tests: rewrite_urls→308-Redirect, Method-Not-Allowed→405+Allow-Header, Not-Acceptable→406, Fallback-Handler, Route-Match→Handler, Tree-Auflösung aus DB, rewrite_urls=false→URI-Update)* | — | OK | — |
+| M12 | Request-Handler-Dispatch | — *(`RequestHandlerTest` Stub, 1 Assertion)* | `RequestHandlerMiddlewareIntegrationTest` [Spec-C] ✅ *(2 Tests)* | — | OK | — |
+| M13 | Sprachauswahl | — *(`UseLanguageTest` Stub, 1 Assertion)* | `UseLanguageMiddlewareIntegrationTest` [EP] ✅ *(4 Tests, 15 Assertions)* | — | OK | — |
+| M14 | Theme-Auswahl | — *(`UseThemeTest` Stub, 1 Assertion)* | `UseThemeMiddlewareIntegrationTest` [EP] ✅ *(4 Tests, 17 Assertions)* | — | OK | — |
+| M15 | PHP-Error-zu-Exception-Konvertierung | — *(kein L2-Test im Fork)* | `ErrorHandlerMiddlewareIntegrationTest` [Spec-C] ✅ *(4 Tests, 16 Assertions)* | — | OK | — |
+| M16 | Exception-Handling & Error-Page-Rendering | — *(`HandleExceptionsTest` Stub, 1 Assertion)* | `HandleExceptionsMiddlewareIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 7 Tests, 22 Assertions: HttpException→status code, AJAX GET→200, FilesystemException→500, Throwable→500, error messages)* | `error-handling.spec.ts` [Spec-C] ✅ *(5 Tests)* | OK | — |
+| M17 | Debug-Logger (SQL/Perf) | — *(kein L2-Test im Fork)* | `DebugLoggerMiddlewareIntegrationTest` [EP] ✅ *(4 Tests, 19 Assertions)* | — | OK | — |
+| M18 | Housekeeping (Thumbnails/Logs/Temp) | — *(`DoHousekeepingTest` Stub, 1 Assertion)* | `DoHousekeepingMiddlewareIntegrationTest` [Spec-C] ✅ *(3 Tests, 11 Assertions)* | — | OK | — |
+| M19 | Response-Kompression | — *(`CompressResponseTest` Stub, 1 Assertion)* | `CompressResponseMiddlewareIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 9 Tests, 34 Assertions: gzip/deflate compression, zlib check, MIME type filtering, already-encoded skip, text/* rule)* | — | OK | — |
+| M20 | Content-Length-Header | — *(`ContentLengthTest` Stub, 1 Assertion)* | `ContentLengthMiddlewareIntegrationTest` [Smoke] ✅ *(4 Tests)* | — | OK | — |
+| M21 | Config-Ini-Lesen | — *(`ReadConfigIniTest` Stub, 1 Assertion)* | `ReadConfigIniMiddlewareIntegrationTest` [Spec-C] ✅ *(3 Tests)* | — | OK | — |
 | M22 | Wartungsmodus | `CheckForMaintenanceModeTest` [Smoke] ✅ *(Smoke, 2 Tests/3 Assertions)* | — | — | OK | — |
-| M23 | Update-Prüfung | — *(`CheckForNewVersionTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
+| M23 | Update-Prüfung | — *(`CheckForNewVersionTest` Stub, 1 Assertion)* | `CheckForNewVersionMiddlewareIntegrationTest` [Smoke] ✅ *(4 Tests, 15 Assertions)* | — | OK | — |
 | M24 | Public-Files-Serving | `PublicFilesTest` [Spec-C] ✅ *(Substantial, 4 Tests/4 Assertions)* | — | — | OK | — |
-| M25 | GEDCOM-Tag-Registrierung | — *(`RegisterGedcomTagsTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M26 | Modul-Bootstrap | — *(`BootModulesTest` Stub, 2 Assertions)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M27 | DB-Transaktion mit Retry | — *(`UseTransactionTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
-| M28 | Response-Emittierung | — *(`EmitResponseTest` Stub, 1 Assertion)* | — | — | — | Stub ungenügend; Plan-Iteration 2 |
+| M25 | GEDCOM-Tag-Registrierung | — *(`RegisterGedcomTagsTest` Stub, 1 Assertion)* | `RegisterGedcomTagsMiddlewareIntegrationTest` [Smoke] ✅ *(2 Tests, 10 Assertions)* | — | OK | — |
+| M26 | Modul-Bootstrap | — *(`BootModulesTest` Stub, 2 Assertions)* | `BootModulesMiddlewareIntegrationTest` [Smoke] ✅ *(2 Tests, 9 Assertions)* | — | OK | — |
+| M27 | DB-Transaktion mit Retry | — *(`UseTransactionTest` Stub, 1 Assertion)* | `UseTransactionMiddlewareIntegrationTest` [Spec-C] ✅ *(3 Tests)* | — | OK | — |
+| M28 | Response-Emittierung | — *(`EmitResponseTest` Stub, 1 Assertion)* | `EmitResponseMiddlewareIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 5 Tests, 22 Assertions: body emission, cache-control add/preserve, FastCGI check, empty body)* | — | OK | — |
 
 #### Zusammenfassung Abdeckung
 
-**Aktueller Stand (2026-04-12):** 175 abgedeckt / 33 nicht abgedeckt / 1 SKIP / 209 gesamt.
+**Aktueller Stand (2026-04-12):** 206 abgedeckt / 2 nicht abgedeckt / 1 SKIP / 209 gesamt.
 
-Nicht abgedeckte IDs: G05, G06, G31, S53, P42, A08, A12–A16, M03, M06–M21,
-M23, M25–M28 (22 M-Stubs, 7 neue CLI-IDs, 3 historische Lücken, 1 bestehende Lücke).
+Nicht abgedeckte IDs: G05, G06 (2 historische Lücken).
+
+Zuwachs durch L3-Komponentenintegrationstest-Iteration Runde 1 (2026-04-12): +7 Features
+(M06, M07, M08, M12, M20, M21, M27) erstmalig mit L3-Abdeckung; 22 Tests, 108 Assertions.
+
+Zuwachs durch L3-Komponentenintegrationstest-Iteration Runde 2 (2026-04-12): +5 Features
+(A12, A13, A14, G31, M11) erstmalig mit L3-Abdeckung; 23 Tests, 85 Assertions.
+
+Zuwachs durch L3-Komponentenintegrationstest-Iteration Runde 3 (2026-04-12): +6 Features
+(M03, M09, M13, M15, M25, M26) erstmalig mit L3-Abdeckung; 21 Tests, 90 Assertions.
+
+Zuwachs durch L3-Komponentenintegrationstest-Iteration Runde 4 (2026-04-12): +3 Features
+(P42, A15, A16) erstmalig mit L3-Abdeckung; +2 Features (K01, K02) mit zusätzlicher
+L3-Abdeckung ergänzt; 34 Tests, 150 Assertions.
+
+Zuwachs durch L3-Komponentenintegrationstest-Iteration Runde 5 (2026-04-12): +5 Features
+(M10, M14, M17, M18, M23) erstmalig mit L3-Abdeckung; 18 Tests, 72 Assertions.
+
+Zuwachs durch L3-Komponentenintegrationstest-Iteration Runde 6 (2026-04-12): +5 Features
+(M16, M19, M28, A08, S53) erstmalig mit L3-Abdeckung; 39 Tests, 144 Assertions.
 
 Zuwachs durch L4-Systemtest-Iteration (2026-04-12): +2 Features (K01, K02) erstmalig
 abgedeckt; 27 weitere Features (E01–E06, E08, S05–S08, S10, S16, S18, S41, S46, S47, S50,
 P30, P37, P38, P40, P41, A01, A04, A05, A07) mit zusätzlicher L4-Abdeckung ergänzt.
+
+Zuwachs durch L4-Systemtest-Iteration Runde 2 (2026-04-12): +3 Features
+(M16, A08, S53) mit zusätzlicher L4-Abdeckung ergänzt; 19 Tests.
 
 Der Vorgänger-Stand (165 / 5 / 170) ist als datierter Snapshot archiviert:
 [`coverage-runs/2026-04-11_abdeckung-snapshot.md`](coverage-runs/2026-04-11_abdeckung-snapshot.md).

@@ -117,8 +117,8 @@ ist erforderlich. GEDCOM-Import mit Media-Records wird als Fixture benötigt.
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 5 Tests, 17 Assertions, passed |
+| P5: Dokumentation | ✅ | |

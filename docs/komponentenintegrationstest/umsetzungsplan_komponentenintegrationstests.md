@@ -83,11 +83,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 5 Tests, 16 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -100,11 +100,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 5 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -117,11 +117,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 3 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -134,11 +134,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 2 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -151,11 +151,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 4 Tests, 24 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -168,11 +168,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 3 Tests, 10 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -185,11 +185,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 7 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -202,11 +202,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 2 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -219,11 +219,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 4 Tests, 15 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -236,11 +236,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 4 Tests, 17 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -253,11 +253,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 4 Tests, 16 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -270,11 +270,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 7 Tests, 22 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -287,11 +287,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 4 Tests, 19 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -304,11 +304,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 3 Tests, 11 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -321,11 +321,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 9 Tests, 34 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -338,11 +338,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 4 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -355,11 +355,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 3 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -372,11 +372,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 4 Tests, 15 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -389,11 +389,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 2 Tests, 10 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -406,11 +406,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 2 Tests, 9 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -423,11 +423,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 3 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -440,11 +440,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 5 Tests, 22 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -459,11 +459,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 4 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -476,11 +476,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 6 Tests, 34 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -493,11 +493,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 4 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -510,11 +510,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 3 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -527,11 +527,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 5 Tests, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -544,11 +544,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 2 Tests, 6 Assertions, passed (Nur-Lese-FS → Schreibfehler-Pfad) |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -561,11 +561,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 6 Tests, 45 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -580,11 +580,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 11 Tests, 34 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -597,11 +597,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 9 Tests, 31 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -615,11 +615,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 5 Tests, 17 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 
@@ -632,11 +632,11 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
+| P1: Konsistenzcheck | ✅ | |
+| P2: Soll-Design | ✅ | |
+| P3: Test-Coding | ✅ | |
+| P4: Ausführung + Fixing | ✅ | 13 Tests, 49 Assertions, passed |
+| P5: Dokumentation | ✅ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
 
 ---
 

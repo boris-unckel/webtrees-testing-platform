@@ -204,7 +204,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S49 | Medienverwaltungsliste Admin *(spezifikationsbasiert)* | ManageMediaData: `files`-EP-Matrix (local/external/unused) per Einzeltest, JSON-Struktur `{data, recordsTotal, recordsFiltered}` per Assertion; unused-Branch (handleCollection) gesondert abgedeckt | 3 | Mittel |
 | S50 | Hilfetexte *(spezifikationsbasiert)* | HelpText::handle → alle 12 Topic-IDs per DataProvider (200 OK), unbekannte ID → 200 + generischer Hilfetext | 2, 3 | Niedrig |
 | S52 | Standortdaten-Verwaltung (CRUD) | MapDataList: Übersicht → 200; MapDataAdd/Edit/Save: Formular + Speichern → DB-Update place_location; MapDataDelete/DeleteUnused: Einträge löschen; MapDataExportCSV → CSV-Download (ergänzt S48 Import) | 2, 3 | Niedrig |
-| S53 | Legacy-URL-Weiterleitungen | ~27 Redirect*-Handler (RedirectIndividualPhp, RedirectFanChartPhp, RedirectCalendarPhp usw.) leiten alte webtrees 1.x-URLs auf aktuelle Routen um → HTTP 301/302, kein 404 | 3 | Niedrig |
+| S53 | Legacy-URL-Weiterleitungen | ~27 Redirect*-Handler (RedirectIndividualPhp, RedirectFanChartPhp, RedirectCalendarPhp usw.) leiten alte webtrees 1.x-URLs auf aktuelle Routen um → HTTP 301/302, kein 404 | 2, 3 | Niedrig |
 
 ---
 
@@ -383,8 +383,8 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 | # | Feature | Abgeleitete Anforderung | Rollen | Teststufe | Prio |
 |---|---|---|---|---|---|
-| K01 | Kontaktformular | ContactPage: Formular → 200 (S36 Smoke); ContactAction: Nachricht abschicken → E-Mail-Versand / Fehler (kein SMTP im Test-Stack: Response-Status prüfen) | B, M | 3 | Niedrig |
-| K02 | Benutzer-Nachrichten | MessagePage: Nachrichtenformular → 200; MessageAction: Nachricht an Nutzer senden → Bestätigung / Redirect; MessageSelect: Empfänger aus Nutzerliste auswählen | M, E, V | 3 | Niedrig |
+| K01 | Kontaktformular | ContactPage: Formular → 200 (S36 Smoke); ContactAction: Nachricht abschicken → E-Mail-Versand / Fehler (kein SMTP im Test-Stack: Response-Status prüfen) | B, M | 2, 3 | Niedrig |
+| K02 | Benutzer-Nachrichten | MessagePage: Nachrichtenformular → 200; MessageAction: Nachricht an Nutzer senden → Bestätigung / Redirect; MessageSelect: Empfänger aus Nutzerliste auswählen | M, E, V | 2, 3 | Niedrig |
 
 ---
 
@@ -421,13 +421,13 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | M03 | Client-IP-Ermittlung (Proxy-Trust) | `ClientIp`: Request → Client-IP aus `X-Forwarded-For`/`Forwarded`/Remote-Addr extrahieren unter Berücksichtigung konfigurierter Proxy-Trust-Liste → Request-Attribut `client-ip`. | 2 | Mittel |
 | M04 | CSRF-Token-Validierung | `CheckCsrf`: POST-Request → Vergleich `$_POST['_csrf']` bzw. `X-CSRF-TOKEN` Header mit Session-Token → 403 auf Mismatch, GET passiert durch. | 2 | Hoch |
 | M05 | Security-Headers (OWASP) | `SecurityHeaders`: Response ergänzt `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: same-origin`, ggf. CSP. (L4 als SEC-HDR01–HDR04 getestet, `security-headers.spec.ts`.) | 2, 3 | Hoch |
-| M06 | Session-Initialisierung | `UseSession`: PHP-Session starten, Session-Cookie-Flags (`HttpOnly`, `SameSite`, `Secure`) setzen, `LAST_ACTIVE_TIMESTAMP` aktualisieren. | 2 | Hoch |
-| M07 | Datenbank-Verbindung | `UseDatabase`: Eloquent-Capsule mit Credentials aus `config.ini.php` initialisieren → globaler DB-Singleton. | 2 | Hoch |
-| M08 | Datenbank-Schema-Migration | `UpdateDatabaseSchema` (mit `MigrationService`): Schema-Version-Check + Migrations-Chain ausführen bis Ziel-Version erreicht → DB-Struktur aktuell. | 2 | Hoch |
+| M06 | Session-Initialisierung | `UseSession`: PHP-Session starten, Session-Cookie-Flags (`HttpOnly`, `SameSite`, `Secure`) setzen, `LAST_ACTIVE_TIMESTAMP` aktualisieren. | 2, 3 | Hoch |
+| M07 | Datenbank-Verbindung | `UseDatabase`: Eloquent-Capsule mit Credentials aus `config.ini.php` initialisieren → globaler DB-Singleton. | 2, 3 | Hoch |
+| M08 | Datenbank-Schema-Migration | `UpdateDatabaseSchema` (mit `MigrationService`): Schema-Version-Check + Migrations-Chain ausführen bis Ziel-Version erreicht → DB-Struktur aktuell. | 2, 3 | Hoch |
 | M09 | Base-URL-Ermittlung | `BaseUrl`: Base-URL aus `config.ini.php` `base_url` lesen oder aus Request `Host`/`Scheme`/`Port` rekonstruieren → Request-Attribut `base_url`. | 2 | Mittel |
 | M10 | Routen-Laden | `LoadRoutes` (mit `ApiRoutes`, `WebRoutes`): Core-Routing-Tabellen laden und Router im DI-Container hinterlegen. | 2 | Mittel |
 | M11 | URL-Routing | `Router` (mit `ModuleService`, `RouterContainer`, `TreeService`): Request-URL → Routing-Tabelle → RequestHandler-FQCN (ggf. mit Tree/Module-Parameter-Injection). | 2 | Hoch |
-| M12 | Request-Handler-Dispatch | `RequestHandler`: Routing-Ergebnis → FQCN aus Container instanziieren + `handle()` aufrufen → Response. | 2 | Hoch |
+| M12 | Request-Handler-Dispatch | `RequestHandler`: Routing-Ergebnis → FQCN aus Container instanziieren + `handle()` aufrufen → Response. | 2, 3 | Hoch |
 | M13 | Sprachauswahl | `UseLanguage` (mit `ModuleService`): Sprache aus Session/Cookie/`Accept-Language`-Header/Siteprefs priorisieren, I18N initialisieren (`gettext`/`I18N::init`). | 2 | Mittel |
 | M14 | Theme-Auswahl | `UseTheme` (mit `ModuleService`): Theme aus Session/Siteprefs priorisieren → Container-Binding `ModuleThemeInterface`. | 2 | Niedrig |
 | M15 | PHP-Error-zu-Exception-Konvertierung | `ErrorHandler`: `set_error_handler()`-Hook konvertiert PHP-Notices/Warnings in `ErrorException`. | 2 | Mittel |
@@ -435,14 +435,14 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | M17 | Debug-Logger (SQL/Perf) | `DebugLogger`: SQL-Query-Zählung, Response-Time, Memory-Peak → Debug-Response-Header oder Log-Datei (nur wenn Debug-Flag aktiv). | 2 | Niedrig |
 | M18 | Housekeeping (Thumbnails/Logs/Temp) | `DoHousekeeping` (mit `HousekeepingService`): zufällig 1/1000 Requests → löscht alte Thumbnail-Cache-Einträge, Temp-Dateien, Log-Rotation, Session-Cleanup. | 2 | Niedrig |
 | M19 | Response-Kompression | `CompressResponse` (mit `PhpService`, `StreamFactoryInterface`): `Accept-Encoding: gzip/deflate` → Response-Body streamt komprimiert. | 2 | Niedrig |
-| M20 | Content-Length-Header | `ContentLength`: Response-Body-Länge berechnen → `Content-Length`-Header setzen falls noch nicht vorhanden. | 2 | Niedrig |
+| M20 | Content-Length-Header | `ContentLength`: Response-Body-Länge berechnen → `Content-Length`-Header setzen falls noch nicht vorhanden. | 2, 3 | Niedrig |
 | M21 | Config-Ini-Lesen | `ReadConfigIni` (mit `SetupWizard`): `config.ini.php` parsen → Request-Attribute für DB-Creds, Base-URL, Debug-Flag etc.; wenn nicht vorhanden → Setup-Wizard-Redirect. | 2, 3 | Hoch |
 | M22 | Wartungsmodus | `CheckForMaintenanceMode` (mit `MaintenanceModeService`): Wartungs-Marker in `data/offline.txt` → HTTP 503 + Offline-Seite für Nicht-Admins. | 2, 3 | Mittel |
 | M23 | Update-Prüfung | `CheckForNewVersion` (mit `UpgradeService`): asynchron verfügbare webtrees-Versionen prüfen (nur bei GET-Requests) → Versions-Info im Container. | 2 | Niedrig |
 | M24 | Public-Files-Serving | `PublicFiles`: statische Dateien aus `/public/` direkt serven mit `Cache-Control: public, max-age=N` — umgeht RequestHandler-Chain. | 2, 3 | Mittel |
 | M25 | GEDCOM-Tag-Registrierung | `RegisterGedcomTags` (mit `Gedcom`): erweiterte/Custom-GEDCOM-Tags im `ElementFactory` registrieren (z. B. `_WT_USER`, `_FNRL`) → Element-Lookup vollständig. | 2 | Mittel |
 | M26 | Modul-Bootstrap | `BootModules` (mit `ModuleService`, `ModuleThemeInterface`): aktive Module aus DB laden, jede `boot()`-Methode aufrufen, pro Modul Theme-Hook ausführen. | 2 | Mittel |
-| M27 | DB-Transaktion mit Retry | `UseTransaction`: Request-Handler in `DB::transaction()` wrappen + Deadlock-Retry-Logik bei `SQLSTATE 40001`/`1213`. | 2 | Hoch |
+| M27 | DB-Transaktion mit Retry | `UseTransaction`: Request-Handler in `DB::transaction()` wrappen + Deadlock-Retry-Logik bei `SQLSTATE 40001`/`1213`. | 2, 3 | Hoch |
 | M28 | Response-Emittierung | `EmitResponse` (mit `PhpService`): finale Response in Chunks via `echo` an Client senden + `fastcgi_finish_request()`-Cleanup. | 2 | Niedrig |
 
 ---

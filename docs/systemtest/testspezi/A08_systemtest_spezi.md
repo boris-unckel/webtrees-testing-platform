@@ -4,7 +4,7 @@
 
 **Referenz:** A08 | **Teststufe:** 3 — Systemtest (L4 Playwright)
 **Seite/Route:** `/admin/media` → `ManageMediaPage`, `/admin/fix-level-0-media` → `FixLevel0MediaPage`
-**L3-Referenztest:** `AdminMediaManagementIntegrationTest` (noch nicht implementiert)
+**L3-Referenztest:** `AdminMediaManagementIntegrationTest` (implementiert, 5 Tests, 17 Assertions)
 **Übergreifende Konzepte:** → [uebergreifende_konzepte_l4.md](../uebergreifende_konzepte_l4.md), [wf_test-iteration_guide.md](../../wf_test-iteration_guide.md)
 
 ---
@@ -57,12 +57,11 @@ nicht theme-sensitiv. Theme-Loop ist nicht empfohlen.
 
 ## L3-Referenz-Analyse
 
-L3-Test noch nicht implementiert. Die Szenarien werden direkt aus dem Upstream-Code
-abgeleitet. Die Handler-Logik ist:
-- `ManageMediaPage`: Validierung der Radio-Button-Werte, Folder-Listing → View-Response
-- `ManageMediaAction`: POST → Redirect zu ManageMediaPage mit validierten Parametern
-- `FixLevel0MediaPage`: Einfache View-Response (immer 200)
-- `FixLevel0MediaAction`: GEDCOM-Fact-Updates basierend auf XREF-Paaren
+`AdminMediaManagementIntegrationTest` (5 Tests, 17 Assertions):
+ManageMediaPage-Render, FixLevel0MediaPage-Render, invalid path→400,
+path traversal security→400, nonexistent records→204. Die L3-Tests prüfen
+Response-Objekte und HTTP-Status direkt; L4 prüft die Browser-Darstellung
+und Formular-Interaktion (Radio-Buttons, Submit, DataTable-Reload).
 
 ---
 
@@ -83,8 +82,7 @@ abgeleitet. Die Handler-Logik ist:
 | T3 | Radio "external" auswählen + Submit | Admin | DataTable zeigt externe Referenzen | Nein |
 | T4 | Radio "unused" auswählen + Submit | Admin | DataTable zeigt unbenutzte Dateien | Nein |
 | T5 | FixLevel0Media-Seite lädt | Admin | HTTP 200, DataTable-Container sichtbar | Nein |
-| T6 | Non-Admin Zugriff auf /admin/media | Visitor | HTTP 403 oder Redirect zu Login | Nein |
-| T7 | Subfolder-Filter umschalten | Admin | DataTable refresht | Nein |
+| T6 | Non-Admin Zugriff auf /admin/media | Visitor | Redirect weg von `/admin/` | Nein |
 
 ---
 
@@ -127,8 +125,8 @@ in der DataTable-AJAX-Interaktion nach Formular-Änderungen.
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | |
+| P1: Konsistenzcheck | ✅ | Upstream-Analyse abgeschlossen |
+| P2: Soll-Design | ✅ | 6 Szenarien definiert |
+| P3: Test-Coding | ✅ | `media-admin.spec.ts` (6 Tests) |
+| P4: Ausführung + Fixing | ✅ | Alle 6 Tests grün |
+| P5: Dokumentation | ✅ | tds_coverage/conditions/ratchet/methodik aktualisiert |

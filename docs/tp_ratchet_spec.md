@@ -20,8 +20,8 @@ Verwandte Dokumente:
 |---|---|
 | Statischer Test | PHPStan Level 8: 0 Errors; PHPCS PSR-12: 0 Violations; Trivy: informell (keine Abbruch-Schwelle, Ergebnisse in `artifacts/layer1/`) |
 | Teststufe 1 — Komponententest | Alle Feature-Matrix-Komponententests grün (G05, G06, G11, G17–G19, G22, G23, S04); Anweisungsüberdeckung ≥ vorheriger Wert (Ratchet) |
-| Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, G24–G26, G28–G29, S01–S03, S05–S08, S10–S12, S19 (inkl. Nachnamen-Collation via handle()), S21, S22, S41–S50, P01–P24, P27–P37, SEC-BOT01); strukturbasierte CRAP-Analyse-Tests grün (G27, S45) |
-| Teststufe 3 — Systemtest | Alle Systemtestfälle grün über alle 5 Standard-Themes (G20, G21, S05–S08, S09, S10, S13–S18, S20, S23–S24, S26–S41, S46, S47, S50, E01–E06, E08, K01); S32–S34 theme-unabhängig grün; Admin-Only-Systemtests grün (E03, E06, A01, A04, A05, A07, P37, P38, K02); Privacy-Systemtests grün (P01–P03, P14–P19, P22, P24–P29, P30, P40, P41) |
+| Teststufe 2 — Komponentenintegrationstest | Alle Feature-Matrix-Integrationstests grün (G01–G04, G07–G10, G12–G16, G24–G26, G28–G31, S01–S03, S05–S08, S10–S12, S19 (inkl. Nachnamen-Collation via handle()), S21, S22, S41–S50, S53, P01–P24, P27–P37, P42, M03, M06–M19, M20, M21, M23, M25–M28, A08, A12–A16, K01, K02, SEC-BOT01); strukturbasierte CRAP-Analyse-Tests grün (G27, S45) |
+| Teststufe 3 — Systemtest | Alle Systemtestfälle grün über alle 5 Standard-Themes (G20, G21, S05–S08, S09, S10, S13–S18, S20, S23–S24, S26–S41, S46, S47, S50, E01–E06, E08, K01, M16); S32–S34 theme-unabhängig grün; Admin-Only-Systemtests grün (E03, E06, A01, A04, A05, A07, A08, P37, P38, K02); API-Only-Systemtests grün (S53); Privacy-Systemtests grün (P01–P03, P14–P19, P22, P24–P29, P30, P40, P41) |
 | Performanztest | Kein Szenario >20% über Baseline; kein Szenario mit >+2 DB-Queries gegenüber Baseline |
 | Sicherheitstest | Alle MUSS-Prüfpunkte (SEC-H01–H06, SEC-C01–C03, SEC-W01, SEC-WZ01–WZ04) grün; SOLL-Prüfpunkte grün oder als Upstream-Befund dokumentiert; KANN-Prüfpunkte (SEC-HDR01–HDR04) dokumentiert |
 

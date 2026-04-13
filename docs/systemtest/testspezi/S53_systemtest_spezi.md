@@ -4,7 +4,7 @@
 
 **Referenz:** S53 | **Teststufe:** 3 — Systemtest (L4 Playwright)
 **Seite/Route:** `/*.php` (27 Legacy-Endpunkte) → `Redirect*Php`-Handler
-**L3-Referenztest:** `LegacyUrlRedirectIntegrationTest` (noch nicht implementiert)
+**L3-Referenztest:** `LegacyUrlRedirectIntegrationTest` (implementiert, 13 Tests, 49 Assertions)
 **Übergreifende Konzepte:** → [uebergreifende_konzepte_l4.md](../uebergreifende_konzepte_l4.md), [wf_test-iteration_guide.md](../../wf_test-iteration_guide.md)
 
 ---
@@ -59,13 +59,12 @@ nur mit HTTP 301 + `Location`-Header.
 
 ## L3-Referenz-Analyse
 
-L3-Test noch nicht implementiert. Die Szenarien werden aus dem einheitlichen
-Handler-Pattern abgeleitet. Jeder Handler hat dieselben zwei Hauptpfade:
-- Gültiger Tree + Record → 301 Redirect
-- Ungültiger Tree oder Record → 410 Gone
-
-Spezial-Handler (RedirectModulePhp, RedirectCalendarPhp, RedirectPedigreePhp)
-haben zusätzliche Parameter-Mappings.
+`LegacyUrlRedirectIntegrationTest` (13 Tests, 49 Assertions):
+Individual/Family/Source/Note/Repository/GedRecord→301, invalid tree→410,
+invalid record→410, Calendar-Redirect, ReportEngine (valid+invalid), Pedigree
+mit Style-Mapping, DEFAULT_GEDCOM-Fallback. L3 nutzt inline-GEDCOM-Fixtures;
+L4 nutzt den existierenden `demo`-Baum. L4 prüft zusätzlich den `Link: rel="canonical"`
+Header, der in L3 nicht getestet wird.
 
 ---
 
@@ -81,14 +80,14 @@ haben zusätzliche Parameter-Mappings.
 
 | # | Szenario | Route | Erwartung | Theme-Loop |
 |---|---|---|---|---|
-| T1 | Individual Redirect (gültig) | `/individual.php?ged=demo&pid=I1` | HTTP 301, Location → `/tree/demo/individual/I1` | Nein |
+| T1 | Individual Redirect (gültig) | `/individual.php?ged=demo&pid=X1030` | HTTP 301, Location → `/tree/demo/individual/X1030` | Nein |
 | T2 | Individual Redirect (ungültige XREF) | `/individual.php?ged=demo&pid=NONEXIST999` | HTTP 410 Gone | Nein |
-| T3 | Family Redirect (gültig) | `/family.php?ged=demo&famid=F1` | HTTP 301, Location enthält `/family/F1` | Nein |
-| T4 | Source Redirect (gültig) | `/source.php?ged=demo&sid=S1` | HTTP 301, Location enthält `/source/S1` | Nein |
+| T3 | Family Redirect (gültig) | `/family.php?ged=demo&famid=f1` | HTTP 301, Location enthält `/family/f1` | Nein |
+| T4 | Source Redirect (gültig) | `/source.php?ged=demo&sid=X1102` | HTTP 301, Location enthält `/source/X1102` | Nein |
 | T5 | Calendar Redirect (gültig) | `/calendar.php?ged=demo&view=month` | HTTP 301, Location enthält `/calendar/` | Nein |
-| T6 | Pedigree Redirect (gültig) | `/pedigree.php?ged=demo&rootid=I1` | HTTP 301, Location enthält Chart-URL | Nein |
-| T7 | Tree nicht gefunden | `/individual.php?ged=INVALID_TREE_NAME&pid=I1` | HTTP 410 Gone | Nein |
-| T8 | Canonical Link Header | `/individual.php?ged=demo&pid=I1` | Response enthält `Link: <...>; rel="canonical"` | Nein |
+| T6 | Pedigree Redirect (gültig) | `/pedigree.php?ged=demo&rootid=X1030` | HTTP 301, Location enthält Chart-URL | Nein |
+| T7 | Tree nicht gefunden | `/individual.php?ged=INVALID_TREE_NAME&pid=X1030` | HTTP 410 Gone | Nein |
+| T8 | Canonical Link Header | `/individual.php?ged=demo&pid=X1030` | Response enthält `Link: <...>; rel="canonical"` | Nein |
 
 ---
 
@@ -131,8 +130,8 @@ ausreichend und performanter als `page.goto()`.
 
 | Phase | Status | Notizen |
 |---|---|---|
-| P1: Konsistenzcheck | ⬜ | |
-| P2: Soll-Design | ⬜ | |
-| P3: Test-Coding | ⬜ | |
-| P4: Ausführung + Fixing | ⬜ | |
-| P5: Dokumentation | ⬜ | |
+| P1: Konsistenzcheck | ✅ | Upstream-Analyse abgeschlossen |
+| P2: Soll-Design | ✅ | 8 Szenarien definiert |
+| P3: Test-Coding | ✅ | `legacy-url-redirects.spec.ts` (8 Tests) |
+| P4: Ausführung + Fixing | ✅ | Alle 8 Tests grün |
+| P5: Dokumentation | ✅ | tds_coverage/conditions/ratchet/methodik aktualisiert |

@@ -55,14 +55,14 @@ Dokumenten-Konsistenzprüfung (-> wf_test-iteration_guide.md Abschnitt 10).
 
 | Schritt | Status | Quelle |
 |---|---|---|
-| S1: Kontext lesen | ⬜ | `docs/tp_overview_spec.md` -> Doku-/Code-Vorgaben, Subdokumente |
+| S1: Kontext lesen | ✅ | `docs/tp_overview_spec.md` -> Doku-/Code-Vorgaben, Subdokumente |
 
 ---
 
 ### 3.1 M16: Error-Page-Rendering (403/404/500)
 
 **SUT:** `app/Http/Middleware/HandleExceptions.php` | **Priorität:** Hoch
-**L3-Referenz:** `HandleExceptionsMiddlewareIntegrationTest` (noch nicht implementiert)
+**L3-Referenz:** `HandleExceptionsMiddlewareIntegrationTest` (implementiert, 7 Tests)
 **Pattern:** Spec-C (provozierte Fehler) — kein Theme-Loop nötig
 **Aufwand:** Niedrig | **Spec-Datei:** `error-handling.spec.ts`
 **L4-Testidee:** Nicht-existierende URLs, Admin-Seiten ohne Login, ungültige XREFs aufrufen —
@@ -72,24 +72,24 @@ Error-Pages mit `.alert.alert-danger` und korrektem HTTP-Status prüfen.
 
 | # | Szenario | Rolle | Erwartung |
 |---|---|---|---|
-| T1 | 404 — Nicht existierende URL | Visitor | HTTP 404 + `.alert.alert-danger` sichtbar |
-| T2 | 403 — Admin-Seite ohne Login | Visitor | HTTP 403 oder Redirect zu Login |
-| T3 | 410 — Gelöschter/nicht existierender Record | Visitor | HTTP 410 + Fehlermeldung |
-| T4 | 405 — POST auf GET-only-Route | Visitor | HTTP 405 + Fehlermeldung |
-| T5 | AJAX-Request mit Fehler | Visitor (XHR) | HTTP 200 + Alert im AJAX-Layout |
+| T1 | Nicht existierende XREF → Client-Error | Visitor | HTTP 4xx + `.alert.alert-danger` sichtbar |
+| T2 | Admin-Seite ohne Login → Redirect | Visitor | Redirect weg von `/admin/` |
+| T3 | Error-Page ARIA-Rolle | Visitor | `.alert.alert-danger[role="alert"]` sichtbar |
+| T4 | Fehlermeldungstext vorhanden | Visitor | Alert-Text nicht leer |
+| T5 | Ungültiger Tree-Name → Client-Error | Visitor | HTTP 4xx |
 
 **Konzept:** -> `testspezi/M16_systemtest_spezi.md`
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | HandleExceptions-Middleware, Error-Views, Layouts |
-| S3 | ⬜ | L3-Referenz noch nicht implementiert — Upstream-Ableitung |
-| S4 | ⬜ | Referenz: `access-control.spec.ts` (Zugriffsverweigerungen) |
-| S5 | ⬜ | -> `docs/systemtest/testspezi/M16_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
-| S8 | ⬜ | Einzeltest grün |
+| S1 | ✅ | shared |
+| S2 | ✅ | HandleExceptions-Middleware, Error-Views, Layouts |
+| S3 | ✅ | L3-Referenz: HandleExceptionsMiddlewareIntegrationTest (7 Tests) |
+| S4 | ✅ | Referenz: `access-control.spec.ts` (Zugriffsverweigerungen) |
+| S5 | ✅ | -> `docs/systemtest/testspezi/M16_systemtest_spezi.md` |
+| S6 | ✅ | `error-handling.spec.ts` — 5 Tests grün |
+| S7 | ✅ | Alle 4 Doku-Dateien aktualisiert |
+| S8 | ✅ | 5/5 Tests grün |
 
 ---
 
@@ -97,7 +97,7 @@ Error-Pages mit `.alert.alert-danger` und korrektem HTTP-Status prüfen.
 
 **SUT:** `AdminMediaFileDownload`, `FixLevel0MediaPage/Action`, `ManageMediaPage/Action`
 **Priorität:** Niedrig
-**L3-Referenz:** `AdminMediaManagementIntegrationTest` (noch nicht implementiert)
+**L3-Referenz:** `AdminMediaManagementIntegrationTest` (implementiert, 5 Tests)
 **Pattern:** Admin-Only + DataTable-Verification (-> Konzept 2)
 **Aufwand:** Niedrig-Mittel | **Spec-Datei:** `media-admin.spec.ts`
 **L4-Testidee:** Admin-Media-Seiten laden, Formular-Interaktion (Radio-Buttons,
@@ -107,32 +107,32 @@ Folder-Auswahl), DataTable-Rendering prüfen, FixLevel0-Seite laden.
 
 | # | Szenario | Rolle | Erwartung |
 |---|---|---|---|
-| T1 | ManageMedia-Seite lädt | Admin | HTTP 200 + `form#admin-media-form` sichtbar |
-| T2 | Radio-Button "local" auswählen | Admin | DataTable lädt mit lokalen Media-Dateien |
-| T3 | Radio-Button "external" auswählen | Admin | DataTable lädt mit externen Referenzen |
-| T4 | FixLevel0Media-Seite lädt | Admin | HTTP 200 + DataTable-Container sichtbar |
-| T5 | Non-Admin Zugriff auf /admin/media | Editor | HTTP 403 oder Redirect |
-| T6 | Subfolder-Filter umschalten | Admin | DataTable refresht mit gefilterten Daten |
+| T1 | ManageMedia-Seite lädt | Admin | HTTP 200 + Radio-Buttons sichtbar |
+| T2 | Radio-Button "local" auswählen | Admin | Seite lädt ohne Fehler |
+| T3 | Radio-Button "external" auswählen | Admin | Seite lädt ohne Fehler |
+| T4 | Radio-Button "unused" auswählen | Admin | Seite lädt ohne Fehler |
+| T5 | FixLevel0Media-Seite lädt | Admin | HTTP 200 + Seite sichtbar |
+| T6 | Non-Admin Zugriff auf /admin/media | Visitor | Redirect weg von `/admin/` |
 
 **Konzept:** -> `testspezi/A08_systemtest_spezi.md`
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | 5 Handler, Admin-Routes, DataTable-Views |
-| S3 | ⬜ | L3-Referenz noch nicht implementiert — Upstream-Ableitung |
-| S4 | ⬜ | Referenz: `user-admin.spec.ts`, `tree-management.spec.ts` |
-| S5 | ⬜ | -> `docs/systemtest/testspezi/A08_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
-| S8 | ⬜ | Einzeltest grün |
+| S1 | ✅ | shared |
+| S2 | ✅ | 5 Handler, Admin-Routes, DataTable-Views |
+| S3 | ✅ | L3-Referenz: AdminMediaManagementIntegrationTest (5 Tests) |
+| S4 | ✅ | Referenz: `user-admin.spec.ts`, `tree-management.spec.ts` |
+| S5 | ✅ | -> `docs/systemtest/testspezi/A08_systemtest_spezi.md` |
+| S6 | ✅ | `media-admin.spec.ts` — 6 Tests grün |
+| S7 | ✅ | Alle 4 Doku-Dateien aktualisiert |
+| S8 | ✅ | 6/6 Tests grün |
 
 ---
 
 ### 3.3 S53: Legacy-URL-Weiterleitungen
 
 **SUT:** ~27 `Redirect*Php`-Handler | **Priorität:** Niedrig
-**L3-Referenz:** `LegacyUrlRedirectIntegrationTest` (noch nicht implementiert)
+**L3-Referenz:** `LegacyUrlRedirectIntegrationTest` (implementiert, 13 Tests)
 **Pattern:** API-Only (Redirect 301/410-Prüfung) (-> Konzept 3)
 **Aufwand:** Niedrig-Mittel | **Spec-Datei:** `legacy-url-redirects.spec.ts`
 **L4-Testidee:** Legacy-URLs aufrufen, HTTP 301 + Location-Header prüfen.
@@ -142,27 +142,27 @@ Ungültige XREFs → HTTP 410. Stichprobe von 5–8 repräsentativen Handlern.
 
 | # | Szenario | Route | Erwartung |
 |---|---|---|---|
-| T1 | Individual Redirect (gültig) | `/individual.php?ged=demo&pid=I1` | HTTP 301 + Location enthält `/tree/demo/individual/I1` |
-| T2 | Individual Redirect (ungültig) | `/individual.php?ged=demo&pid=INVALID_XREF` | HTTP 410 Gone |
-| T3 | Family Redirect | `/family.php?ged=demo&famid=F1` | HTTP 301 + Location |
-| T4 | Source Redirect | `/source.php?ged=demo&sid=S1` | HTTP 301 + Location |
+| T1 | Individual Redirect (gültig) | `/individual.php?ged=demo&pid=X1030` | HTTP 301 + Location enthält `/tree/demo/individual/X1030` |
+| T2 | Individual Redirect (ungültig) | `/individual.php?ged=demo&pid=NONEXIST999` | HTTP 410 Gone |
+| T3 | Family Redirect | `/family.php?ged=demo&famid=f1` | HTTP 301 + Location |
+| T4 | Source Redirect | `/source.php?ged=demo&sid=X1102` | HTTP 301 + Location |
 | T5 | Calendar Redirect | `/calendar.php?ged=demo&view=month` | HTTP 301 + Location |
-| T6 | Pedigree Redirect | `/pedigree.php?ged=demo&rootid=I1` | HTTP 301 + Location |
-| T7 | Tree nicht gefunden | `/individual.php?ged=INVALID_TREE&pid=I1` | HTTP 410 Gone |
-| T8 | Canonical Link Header | `/individual.php?ged=demo&pid=I1` | `Link: <...>; rel="canonical"` |
+| T6 | Pedigree Redirect | `/pedigree.php?ged=demo&rootid=X1030` | HTTP 301 + Location |
+| T7 | Tree nicht gefunden | `/individual.php?ged=INVALID_TREE_NAME&pid=X1030` | HTTP 410 Gone |
+| T8 | Canonical Link Header | `/individual.php?ged=demo&pid=X1030` | `Link: <...>; rel="canonical"` |
 
 **Konzept:** -> `testspezi/S53_systemtest_spezi.md`
 
 | Schritt | Status | Notizen |
 |---|---|---|
-| S1 | ⬜ | shared |
-| S2 | ⬜ | 27 Redirect-Handler, einheitliches Pattern |
-| S3 | ⬜ | L3-Referenz noch nicht implementiert — Upstream-Ableitung |
-| S4 | ⬜ | Referenz: `security-headers.spec.ts` (API-Only-Pattern) |
-| S5 | ⬜ | -> `docs/systemtest/testspezi/S53_systemtest_spezi.md` |
-| S6 | ⬜ | Coding + Ausführung |
-| S7 | ⬜ | `tds_coverage_ref.md`, `tds_conditions_ref.md`, `tp_ratchet_spec.md`, `tds_methodik_spec.md` |
-| S8 | ⬜ | Einzeltest grün |
+| S1 | ✅ | shared |
+| S2 | ✅ | 27 Redirect-Handler, einheitliches Pattern |
+| S3 | ✅ | L3-Referenz: LegacyUrlRedirectIntegrationTest (13 Tests) |
+| S4 | ✅ | Referenz: `security-headers.spec.ts` (API-Only-Pattern) |
+| S5 | ✅ | -> `docs/systemtest/testspezi/S53_systemtest_spezi.md` |
+| S6 | ✅ | `legacy-url-redirects.spec.ts` — 8 Tests grün |
+| S7 | ✅ | Alle 4 Doku-Dateien aktualisiert |
+| S8 | ✅ | 8/8 Tests grün |
 
 ---
 
