@@ -591,3 +591,40 @@ für die geänderten Dateien). Prüfpunkte:
 **Verifikation:** Existenz-Check 0 Restdateien, Querverweis-Scan 0 tote Verweise (exkl. Commit-Zitate und Phase-3-Dateien). ✅
 
 **Offene-Punkte-Scan:** `skript_log_plan.md` (8 Phase-B-Items) und `systemtest_perf_improve_plan.md` (2 Items) enthielten offene Checkboxen — als bewusst nicht weiter verfolgte Restpunkte eingestuft und gelöscht.
+
+### Phase 2 — Security-Audit-Integration (2026-04-15)
+
+**Ergebnis:** Einstiegsdatei umbenannt, 7 Querverweise in 6 Dateien aktualisiert, neue Sektion in `tp_overview_spec.md` ergänzt.
+
+| Aktion | Details |
+|---|---|
+| Umbenennung | `webtrees_security_audit_prompt.md` → `tp_security-audit_spec.md` (via `git mv`) |
+| Querverweise | `01_scope_and_tracks.md`, `02_threat_model.md`, `03_infrastructure_usage.md`, `04_triage_pipeline.md` (2×), `05_security_trace_middleware.md`, `06_agentic_loop_driver.md` |
+| Neue Sektion | `tp_overview_spec.md` — „Security-Audit (tp_security-audit)" mit Tabelle und Kurzbeschreibung |
+
+**Verifikation:** Alter Name repo-weit 0 Treffer (exkl. Selbstreferenz in `prompt_doku_bereinigung.md`), neue Datei existiert, `tp_overview_spec.md` enthält Sektion. ✅
+
+### Phase 3 — Übergreifende Konzepte integriert (2026-04-15)
+
+**Ergebnis:** Generische Patterns aus 2 Quelldateien in 3 Zieldokumente integriert, Quelldateien und 2 leere Verzeichnisse gelöscht.
+
+**Quelle L3** (`uebergreifende_konzepte_l3.md`, 321 Zeilen):
+
+| Integriert in | Neue Abschnitte |
+|---|---|
+| `wf_test-iteration_guide.md` §3 | f.5 Mocking externer Services, f.6 Globale PHP-Funktionen |
+| `wf_test-iteration_guide.md` §4 | Homogene Handler-Gruppen (Uniform-Interface-Pattern) |
+| `wf_test-iteration_guide.md` §5 | i.4 Middleware-Pipeline-Testing, i.5 CLI-Command-Testing, i.6 Path-Security-Testing |
+| `tp_conventions_spec.md` | Testklassen-Organisation (Namensschema, Batch-Ausnahme) |
+
+**Quelle L4** (`uebergreifende_konzepte_l4.md`, 168 Zeilen):
+
+| Integriert in | Neue Abschnitte |
+|---|---|
+| `wf_code-to-systemtest_guide.md` §4 | 4.9 Error-Page-Verification, 4.10 DataTable-Wait-Pattern, 4.11 API-basierte Redirect-Verification |
+
+**Verworfen (feature-spezifisch):** L3 §1.4, §3.3, §5.1, §6.2–6.3 (bereits in i.1/i.3), §7 Feature-Tabelle. L4 §1.3, §2.2–2.3, §3.2–3.4, §4.
+
+**Aufräumung:** Quelldateien gelöscht, Verzeichnisse `docs/komponentenintegrationstest/` und `docs/systemtest/` entfernt (leer nach Phase-1- und Phase-3-Löschungen).
+
+**Verifikation:** `uebergreifende_konzepte` repo-weit 0 Treffer (exkl. Selbstreferenz). Neue Abschnitte frei von Feature-IDs (Regex-Scan bestätigt). ✅

@@ -222,6 +222,44 @@ $blocker = new BadBotBlocker($networkService);
 
 Funktioniert **ohne** SUT-Anderung, weil der Service per Konstruktor injiziert wird.
 
+### f.5 Mocking externer Services (E-Mail, Messaging)
+
+**Problem:** Handler nutzen externe Services (E-Mail-Versand, Benachrichtigungsdienste), die im Test-Container nicht verfügbar sind (kein SMTP, kein externer Server).
+
+**Testansatz in vier Stufen:**
+
+1. **Formular-Rendering (GET):** Seite laden, Formularfelder prüfen — kein externer Service nötig.
+2. **Validierung (POST):** Fehlende Pflichtfelder, ungültige Eingaben → Redirect mit Fehlermeldung. Kein Service-Aufruf nötig.
+3. **Erfolgsfall (POST):** Service-Methode gemockt, gibt Erfolg zurück → Handler redirectet mit Erfolgsmeldung.
+4. **Fehlerfall (POST):** Service-Mock gibt Fehler zurück → Handler zeigt Fehlermeldung.
+
+```php
+$service = $this->createMock(MessageServiceInterface::class);
+$service->method('deliver')->willReturn(true);
+// Handler mit gemocktem Service instantiieren
+```
+
+**Einschränkung:** Der tatsächliche externe Aufruf (SMTP, HTTP) wird nicht getestet. Die Integrations-Assertion beschränkt sich auf die Handler-Logik (Validierung, Redirect-Verhalten, Flash-Messages).
+
+### f.6 Nicht-mockbare globale PHP-Funktionen
+
+**Problem:** Manche Klassen nutzen globale PHP-Funktionen (`set_error_handler`, `headers_sent`, `ob_get_level`, `gzencode`), die in PHPUnit-Tests nicht direkt mockbar sind.
+
+**Lösungsansatz 1 — PhpService-Kapselung:** Falls das SUT einen `PhpService` per DI empfängt, der globale Funktionen kapselt, kann dieser Service gemockt werden.
+
+**Lösungsansatz 2 — try/finally:** Der Test löst absichtlich eine PHP-Bedingung aus und prüft die erwartete Reaktion. In einem `try/finally`-Block wird der Originalzustand wiederhergestellt:
+
+```php
+try {
+    // SUT aufrufen, das z.B. set_error_handler() nutzt
+    $response = $middleware->process($request, $handler);
+    // Assertions auf erwartete Reaktion
+} finally {
+    // Originalzustand wiederherstellen (Handler, Buffer-Level etc.)
+    restore_error_handler();
+}
+```
+
 ---
 
 ## 4 Batch-Tests und DataProvider
@@ -288,6 +326,42 @@ Entscheidungsregel: Wann reicht ein Smoke-Test, wann ist ein vollstandiger EP-Te
 - **Viele Handler (~14+):** DataProvider-Smoke (GET → 200 / POST → 302) fur alle Handler in einer Klasse. Fur die 2--3 mit der komplexesten Logik oder Guard-Branches: volle EP-Matrix.
 - **AJAX-Endpoints:** Smoke-Test: GET → 200, JSON-Ausgabe. EP fur den "XREF direkt" vs. "Namenssuche"-Branch.
 - **Modul-Konfigurations-Handler (~46):** Ein DataProvider mit allen Konfigurationsseiten-URLs, ein einzelner `test_module_config_page_returns_200($url)`. Fur die zentrale Action (Aktivieren/Deaktivieren) zusatzlich EP.
+
+### Homogene Handler-Gruppen (Uniform-Interface-Pattern)
+
+Wenn eine Gruppe von Handlern ein identisches Interface implementiert (gleiche Signatur, gleiches Antwort-Pattern), kann ein einzelner DataProvider-Test die gesamte Gruppe abdecken, indem er über Handler-**Klassen** iteriert:
+
+```php
+#[\PHPUnit\Framework\Attributes\DataProvider('uniformHandlerProvider')]
+public function test_handler_returns_expected_response(
+    string $handlerClass,
+    array $queryParams,
+    int $expectedStatus
+): void {
+    $handler = Registry::container()->get($handlerClass);
+    $request = $this->createRequest(query: $queryParams, attributes: ['tree' => $this->tree]);
+    $response = $handler->handle($request);
+    self::assertSame($expectedStatus, $response->getStatusCode());
+}
+```
+
+**Exception-Pfade** werden als separater DataProvider-Test abgebildet:
+
+```php
+#[\PHPUnit\Framework\Attributes\DataProvider('invalidParamsProvider')]
+public function test_handler_throws_for_invalid_params(
+    string $handlerClass,
+    array $queryParams,
+    string $exceptionClass
+): void {
+    $this->expectException($exceptionClass);
+    $handler = Registry::container()->get($handlerClass);
+    $request = $this->createRequest(query: $queryParams, attributes: ['tree' => $this->tree]);
+    $handler->handle($request);
+}
+```
+
+**Abgrenzung:** Für die 2–3 komplexesten Handler der Gruppe (mit zusätzlicher Logik oder Guard-Branches) werden separate, vollständige EP-Tests erstellt. Die DataProvider-Batch-Tests dienen als Basis-Abdeckung.
 
 ---
 
@@ -401,6 +475,93 @@ Diese Pfade werden alle aufgerufen, bevor `Auth::login()` erreicht wird, und sin
 Guards:
 - User-ID nicht gefunden → `HttpNotFoundException`
 - Gleiche User-ID wie current user → kein `Auth::login()` Aufruf (Kurzschluss)
+
+### i.4 Middleware-Pipeline-Testing (PSR-15)
+
+Middleware-Klassen implementieren `MiddlewareInterface::process()`. Der Test ruft die Middleware isoliert mit einem Mock-Handler auf:
+
+```php
+use Psr\Http\Server\RequestHandlerInterface;
+
+$handler = $this->createMock(RequestHandlerInterface::class);
+$handler->method('handle')->willReturn(new Response(200, [], 'OK'));
+
+$middleware = new SomeMiddleware(/* gemockte Dependencies */);
+$response = $middleware->process($request, $handler);
+self::assertSame(200, $response->getStatusCode());
+```
+
+**Request-Attribut-Verifikation:** Middleware reichert oft den Request mit Attributen an. Da der Handler ein Mock ist, wird der modifizierte Request über einen Callback geprüft:
+
+```php
+$handler->expects($this->once())
+    ->method('handle')
+    ->with($this->callback(function (ServerRequestInterface $request) {
+        return $request->getAttribute('some_attribute') === 'expected_value';
+    }))
+    ->willReturn(new Response(200));
+```
+
+**Handler-Nicht-Aufgerufen-Assertion:** Wenn die Middleware unter bestimmten Bedingungen den Handler nicht aufruft (z. B. Redirect auf Alternativ-Seite, Fehler-Response):
+
+```php
+$handler->expects($this->never())->method('handle');
+$response = $middleware->process($request, $handler);
+// Middleware antwortet selbst, ohne den nachgelagerten Handler zu rufen
+```
+
+### i.5 CLI-Command-Testing (Symfony Console)
+
+**Grundmuster — CommandTester:**
+
+```php
+use Symfony\Component\Console\Tester\CommandTester;
+
+$command = new SomeCommand(/* Dependencies */);
+$tester = new CommandTester($command);
+$tester->execute(['--option' => 'value']);
+
+self::assertSame(Command::SUCCESS, $tester->getStatusCode());
+self::assertStringContainsString('erwartete ausgabe', $tester->getDisplay());
+```
+
+**Commands ohne Constructor-DI:** Einige Commands haben keine Konstruktor-Injection und nutzen statische Klassen oder globale Konfiguration direkt. Diese müssen als Integration-Tests im Container ausgeführt werden, da Mocking nicht möglich ist.
+
+**Format-Output-Verification** für Commands mit `--format`-Option:
+
+```php
+// Table-Format
+$tester->execute(['--format' => 'table']);
+self::assertStringContainsString('| ID |', $tester->getDisplay());
+
+// JSON-Format
+$tester->execute(['--format' => 'json']);
+$data = json_decode($tester->getDisplay(), true, 512, JSON_THROW_ON_ERROR);
+self::assertIsArray($data);
+
+// CSV-Format
+$tester->execute(['--format' => 'csv']);
+$lines = explode("\n", trim($tester->getDisplay()));
+self::assertStringContainsString(',', $lines[0]);
+```
+
+**Datei-I/O:** Commands, die Dateien schreiben, benötigen Aufräumlogik in `tearDown()`, um Seiteneffekte auf andere Tests zu vermeiden.
+
+### i.6 Path-Security-Testing (Directory-Traversal-Schutz)
+
+Handler, die Dateipfade aus User-Input verarbeiten, müssen gegen Directory-Traversal geschützt sein. Der Test prüft, dass Pfade außerhalb des erlaubten Verzeichnisses eine Exception auslösen:
+
+```php
+// Pfad innerhalb des erlaubten Verzeichnisses → OK
+$request = $this->createRequest(query: ['path' => 'subdir/file.txt'], ...);
+$response = $handler->handle($request);
+self::assertSame(200, $response->getStatusCode());
+
+// Pfad mit Directory-Traversal → Exception
+$this->expectException(HttpBadRequestException::class);
+$request = $this->createRequest(query: ['path' => '../../../etc/passwd'], ...);
+$handler->handle($request);
+```
 
 ---
 

@@ -2,7 +2,7 @@
 
 # Scope und Tracks — Whitebox Security Audit
 
-**Teil von:** [webtrees_security_audit_prompt.md](../webtrees_security_audit_prompt.md) — Whitebox Security Audit für webtrees Upstream
+**Teil von:** [tp_security-audit_spec.md](../tp_security-audit_spec.md) — Whitebox Security Audit für webtrees Upstream
 
 ---
 

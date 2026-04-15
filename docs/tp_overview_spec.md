@@ -58,6 +58,14 @@ Aktueller Stand: siehe [Testbedingungen](tds_conditions_ref.md) und [Abdeckungsm
 
 ---
 
+## Security-Audit (tp_security-audit)
+
+| Dokument | Inhalt |
+|---|---|
+| [Security-Audit-Framework](tp_security-audit_spec.md) | Whitebox-Security-Audit-Framework: Multi-Signal-Triage-Pipeline (mechanisch + LLM-Overlay), Bedrohungsmodell mit 7 Angriffsdomänen (D-AUTH…D-INFRA) und 12 vertikalen Hypothesen, SecurityTraceMiddleware (OTel-integriert), Agentic Loop Driver (Sweep/Deep-Dive), Fork-Repo-Kopplung. 11 Subdokumente unter `security-audit/`, 5 Prompt-Templates, statusbasierte Task-Persistenz. |
+
+---
+
 ## Schnelleinstieg
 
 ```bash

@@ -2,7 +2,7 @@
 
 # Triage-Pipeline — Vier-stufige Priorisierung
 
-**Teil von:** [webtrees_security_audit_prompt.md](../webtrees_security_audit_prompt.md)
+**Teil von:** [tp_security-audit_spec.md](../tp_security-audit_spec.md)
 **Vorangehend:** [03_infrastructure_usage.md](03_infrastructure_usage.md)
 
 ---
@@ -175,7 +175,7 @@ Ergebnis: `artifacts/security-audit/<run-id>/t0_signals.json`.
 ]
 ```
 
-**Implementierungshinweis:** T0 ist ein Shell-/PHP-Skript, das keine LLM-Aufrufe macht. Die Implementierung selbst kommt in einer späteren Runde (siehe [`webtrees_security_audit_prompt.md`](../webtrees_security_audit_prompt.md) §Meta). Dieses Dokument spezifiziert nur das Format und die Regeln.
+**Implementierungshinweis:** T0 ist ein Shell-/PHP-Skript, das keine LLM-Aufrufe macht. Die Implementierung selbst kommt in einer späteren Runde (siehe [`tp_security-audit_spec.md`](../tp_security-audit_spec.md) §Meta). Dieses Dokument spezifiziert nur das Format und die Regeln.
 
 ---
 

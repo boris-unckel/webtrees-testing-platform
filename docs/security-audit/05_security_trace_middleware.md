@@ -2,7 +2,7 @@
 
 # SecurityTraceMiddleware — Spezifikation
 
-**Teil von:** [webtrees_security_audit_prompt.md](../webtrees_security_audit_prompt.md)
+**Teil von:** [tp_security-audit_spec.md](../tp_security-audit_spec.md)
 **Vorangehend:** [04_triage_pipeline.md](04_triage_pipeline.md)
 
 ---

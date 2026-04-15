@@ -53,6 +53,24 @@ test_conc_wrapping_at_253_chars_splits_correctly
 - Snake_case (PHP-Konvention für Testmethoden)
 - Kein `testXyz`-CamelCase (schlechter lesbar bei langen Namen)
 
+## Testklassen-Organisation
+
+**Regel:** Jedes Feature erhält eine eigene Testklasse.
+
+**Ausnahme — Homogene Handler-Gruppen:** Wenn viele Handler ein identisches Interface-Pattern
+implementieren (gleiche Signatur, gleiches Antwortmuster), werden sie in einer einzelnen
+Testklasse mit DataProvider zusammengefasst. Für die wenigen Handler mit komplexerer Logik
+innerhalb der Gruppe können zusätzlich separate Detail-Tests erstellt werden.
+
+**Namensschema Testklassen:**
+
+| Typ | Pattern |
+|---|---|
+| Handler-Test | `{HandlerKlasse}IntegrationTest` |
+| Middleware-Test | `{MiddlewareKlasse}IntegrationTest` |
+| Command-Test | `{CommandName}CommandIntegrationTest` |
+| Batch-Test (DataProvider) | `{Gruppenname}IntegrationTest` |
+
 ## Data Provider
 
 **Pflicht bei ≥3 Äquivalenzklassen.** Verhindert Codeduplizierung und macht Testfälle erweiterbar.

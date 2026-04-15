@@ -2,7 +2,7 @@
 
 # Bedrohungsmodell — OWASP × Webtrees-Domänen
 
-**Teil von:** [webtrees_security_audit_prompt.md](../webtrees_security_audit_prompt.md)
+**Teil von:** [tp_security-audit_spec.md](../tp_security-audit_spec.md)
 **Vorangehend:** [01_scope_and_tracks.md](01_scope_and_tracks.md)
 
 ---

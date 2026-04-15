@@ -2,7 +2,7 @@
 
 # Infrastruktur-Nutzung — Feedback-Kanäle für den Audit
 
-**Teil von:** [webtrees_security_audit_prompt.md](../webtrees_security_audit_prompt.md)
+**Teil von:** [tp_security-audit_spec.md](../tp_security-audit_spec.md)
 **Vorangehend:** [02_threat_model.md](02_threat_model.md)
 
 ---

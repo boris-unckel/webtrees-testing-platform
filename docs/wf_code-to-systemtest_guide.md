@@ -315,6 +315,69 @@ test('<ID>: <beschreibung>', async ({ request }) => {
 | `browser` | Chromium (headless) | `playwright.config.ts` |
 | `testIgnore` | `**/security/**` | Security-Tests haben eigene Config |
 
+### 4.9 Error-Page-Verification (Provozierte Fehler)
+
+Pattern für das gezielte Testen von Fehlerseiten — im Gegensatz zur üblichen
+Schutzklausel `expect(status).toBeLessThan(500)` werden hier absichtlich Fehler provoziert:
+
+| Fehlercode | Provokation |
+|---|---|
+| 404 Not Found | Nicht existierende URL aufrufen |
+| 403 Forbidden | Geschützte Seite ohne Login aufrufen |
+| 410 Gone | Gelöschten Record aufrufen |
+| 405 Method Not Allowed | POST auf GET-only-Route |
+
+```typescript
+const response = await page.goto('/tree/demo/individual/NONEXISTENT_XREF');
+expect(response?.status()).toBe(404);
+await expect(page.locator('.alert.alert-danger')).toBeVisible();
+```
+
+Error-Pages nutzen Bootstrap-Klassen (`.alert.alert-danger`) und sind nicht theme-spezifisch —
+ein Theme-Loop ist in der Regel nicht nötig.
+
+### 4.10 DataTable-Wait-Pattern (AJAX-Reload)
+
+Für Seiten mit jQuery DataTables und asynchronem Nachladen nach Formular-Interaktion:
+
+```typescript
+// Formular-Änderung → AJAX-Reload abwarten
+await page.check('input[name="filter"][value="option"]');
+await page.waitForLoadState('networkidle');
+
+// DataTable-Container prüfen
+await expect(page.locator('table.datatable-selector')).toBeVisible();
+```
+
+Für AJAX-Endpoints mit Button-basierten Aktionen zusätzlich `waitForResponse` nutzen:
+
+```typescript
+const [response] = await Promise.all([
+    page.waitForResponse(resp => resp.url().includes('/api/endpoint')),
+    page.click('button[data-action="reload"]'),
+]);
+```
+
+### 4.11 API-basierte Redirect-Verification
+
+Für Handler, die mit HTTP-Redirects (301/302) antworten und keine HTML-Seite rendern —
+klassische DOM-Assertions greifen nicht.
+
+**Redirect-Follow-Kontrolle:** Playwright folgt Redirects standardmäßig. Für Status-Code-Prüfungen
+`maxRedirects: 0` setzen:
+
+```typescript
+const response = await request.get('/legacy-route?param=value', {
+    maxRedirects: 0,
+});
+expect(response.status()).toBe(301);
+expect(response.headers()['location']).toMatch(/\/expected\/target/);
+```
+
+**Stichproben-Ansatz:** Wenn viele Handler dem gleichen Redirect-Pattern folgen, werden
+stichprobenartig 5–8 repräsentative Handler getestet. Die Auswahl deckt verschiedene
+Parameter-Varianten ab (einfache IDs, zusammengesetzte Parameter, Sonderfälle).
+
 ---
 
 ## 5 Vorlage: Systemtest-Spezifikation

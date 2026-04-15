@@ -2,7 +2,7 @@
 
 # Agentic Loop Driver — Spezifikation
 
-**Teil von:** [webtrees_security_audit_prompt.md](../webtrees_security_audit_prompt.md)
+**Teil von:** [tp_security-audit_spec.md](../tp_security-audit_spec.md)
 **Vorangehend:** [05_security_trace_middleware.md](05_security_trace_middleware.md)
 
 ---
