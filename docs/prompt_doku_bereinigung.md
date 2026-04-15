@@ -628,3 +628,45 @@ für die geänderten Dateien). Prüfpunkte:
 **Aufräumung:** Quelldateien gelöscht, Verzeichnisse `docs/komponentenintegrationstest/` und `docs/systemtest/` entfernt (leer nach Phase-1- und Phase-3-Löschungen).
 
 **Verifikation:** `uebergreifende_konzepte` repo-weit 0 Treffer (exkl. Selbstreferenz). Neue Abschnitte frei von Feature-IDs (Regex-Scan bestätigt). ✅
+
+### Phase 4 — Bedienungsleitfaden-Review (2026-04-15)
+
+**Ergebnis:** CLAUDE.md restrukturiert — 192 → 205 Zeilen. Target-Katalog (59 Zeilen) durch Discovery-Pointer + Lifecycle-Regeln (~28 Zeilen) ersetzt, Lizenz-Header kondensiert (30 → 10 Zeilen), 4 Redundanzen aufgelöst, 2 Inkonsistenzen bereinigt.
+
+**Designentscheidung — Discovery-Pointer statt Katalog:**
+Target-Beschreibungen liefert `make help`. CLAUDE.md dokumentiert stattdessen das operative Wissen, das `make help` *nicht* zeigt: Lifecycle-Abhängigkeiten (`clean` → `up` + `setup` nötig), Diagnose-Guidance (`make status`/`make logs` als erste Anlaufstelle), versteckte Pattern-Targets (`test-integration-security-<NNN>`), Auto-UUID-Generierung. Beobachteter Fehler: Agent nutzte `make status` nicht und wusste nicht, dass nach `make clean` ein `make setup` nötig ist — beides jetzt explizit in Lifecycle-Sektion.
+
+**Neue / ersetzte Sektionen:**
+
+| Sektion | Inhalt |
+|---|---|
+| Make-Targets | Discovery-Pointer `make help` + 4 Subsektionen: Lifecycle/Abhängigkeiten, Diagnose, Parametrisierte/versteckte Targets, Automatisierung |
+| Konfigurationsvariablen | 7 Variablen mit Standardwert und Beschreibung |
+
+**Behobene Inkonsistenzen:**
+
+| Stelle | Vorher | Nachher |
+|---|---|---|
+| Kanonischer Testaufruf + Layer-Tabelle | „Upstream-Tests" / „Upstream-Unit-Tests" | „Komponententest — PHPUnit (SQLite in-memory)" |
+| Timeout-Regeln | `test-security` und `test-performance` fehlten | Beide in `run_in_background`-Liste ergänzt |
+
+**Aufgelöste Redundanzen:**
+
+| Redundanz | Auflösung |
+|---|---|
+| Status-Diagnose wiederholte `make status`/`make logs` | In Make-Targets → Diagnose konsolidiert; Sektion zu „Einzeltest-Ausführung" umbenannt |
+| OTel-Stack wiederholte Auto-PerfSchema-Info | In Make-Targets → Automatisierung konsolidiert |
+| Coverage-Iteration wiederholte `crap-report`-Beispiel | Auf Einzeiler mit Workflow-Verweis + Target-Referenz reduziert |
+| Lizenz-Header: 2 Dateityp-Tabellen (7+3 Zeilen) | Durch 4 kompakte Regeln ersetzt (Syntax, Platzierung, Fork-Ausnahme) |
+
+**Sonstige Änderungen:**
+- Modul-Mounting: Klarstellung, dass Mount für alle Container-Targets gilt
+- Veralteter Hinweis „Phase B des Log-Plans" entfernt
+- `test-e2e-quick` und `test-integration-quick`: Zahlenwerte (30 Tests) durch stabile Beschreibung ersetzt
+
+**Verifikation (Schritt F):**
+1. Makefile-Gegenprüfung: 31 öffentliche Targets — 8 kanonisch, 3 parametrisiert/versteckt, 3 Diagnose, restliche via `make help` abrufbar ✅
+2. Variablen-Gegenprüfung: 7/7 Variablen existieren im Makefile/compose.yaml ✅
+3. Lifecycle-Abdeckung: `make clean` → `make setup`-Abhängigkeit explizit dokumentiert ✅
+4. `tp_overview_spec.md`: Schnelleinstieg verweist auf CLAUDE.md (Zeile 79), keine Duplikation ✅
+5. `tp_infrastructure_spec.md`: Stichprobe PerfSchema/OTel — kein Widerspruch ✅
