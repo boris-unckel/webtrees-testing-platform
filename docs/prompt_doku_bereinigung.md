@@ -684,3 +684,30 @@ Target-Beschreibungen liefert `make help`. CLAUDE.md dokumentiert stattdessen da
 | `security-audit/04_triage_pipeline.md` | `../php_security_audit_suggestion.md` | Gelöschte Datei | Link entfernt, Text zu „ursprüngliche Audit-Vorlage" angepasst |
 
 **Verifikation:** Linkchecker über alle `docs/*.md` + `CLAUDE.md` — 0 tote Links. ✅
+
+### Phase 6 — Abschluss-Review und Validierung (2026-04-15)
+
+**Ergebnis:** Vollständiges Diff-Review (119 Dateien, 16.245 gelöschte / 478 eingefügte Zeilen) und Post-Commit-Verifikation bestanden. Keine Befunde.
+
+**6.1 Diff-Review:**
+
+| Prüfpunkt | Ergebnis |
+|---|---|
+| Keine versehentlichen Löschungen | 101 gelöschte Dateien = 101 geplante Löschungen, 1 Rename, 3 leere Verzeichnisse entfernt ✅ |
+| Keine inhaltlichen Regressionen | 17 modifizierte Dateien vollständig geprüft — kein Sachinhalt verloren ✅ |
+| Keine Feature-ID-Reste | 0 Treffer im spezifizierten Pattern (`[A-Z][0-9]{2}_`); erweiterter Scan nur in stabilen Referenzdokumenten (tds_methodik_spec, tp_infrastructure_spec, wf_coverage-to-test_guide, tp_conventions_spec) ✅ |
+| Konsistente Sprache (de_DE) | Alle neuen/geänderten Abschnitte in de_DE ✅ |
+
+**6.2 Commit-Status:**
+
+Bereinigung in 4 Commits (Phase 1, 2+3, 4, 5) eingecheckt. Commit-Messages in de_DE, inhaltlich korrekt. Granulare Commits bieten bessere Nachvollziehbarkeit als ein Einzelcommit.
+
+**6.3 Post-Commit-Verifikation:**
+
+| Prüfpunkt | Ergebnis |
+|---|---|
+| `tp_overview_spec.md` Navigation | 17/17 Links auflösbar ✅ |
+| `CLAUDE.md` Vollständigkeit | 17/17 geplante Sektionen vorhanden, 2/2 Pfadreferenzen gültig ✅ |
+| Linkchecker (Phase-5-Rerun) | 0 tote Links in allen `docs/*.md` ✅ |
+
+**Verifikation:** Alle 3 Teilprüfungen bestanden. Dokumentationsbereinigung abgeschlossen. ✅
