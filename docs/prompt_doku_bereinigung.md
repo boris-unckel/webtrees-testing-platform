@@ -559,3 +559,35 @@ für die geänderten Dateien). Prüfpunkte:
 | `wf_code-to-systemtest_guide.md` | Generische Patterns aus L4-Konzepten integriert |
 | `tp_conventions_spec.md` | Test-Datei-Benennungskonventionen ergänzt |
 | 6 × `security-audit/*.md` | Rückverweis auf umbenannten Einstieg aktualisiert |
+
+---
+
+## Änderungsprotokoll — Ausführung
+
+> Jede abgeschlossene Phase wird hier mit Datum, Ergebnis und Verifikationsstatus dokumentiert.
+
+### Phase 1 — Löschung volatiler Dokumente (2026-04-15)
+
+**Ergebnis:** ~97 Dateien und 3 Verzeichnisbäume gelöscht, 4 verbleibende Dokumente bereinigt.
+
+| Kategorie | Gelöscht | Details |
+|---|---|---|
+| Portierung | 20 | `port_analysis_start.md`, `port_analysis_strategy.md`, `port-implementation/` (18 Dateien) |
+| Testspezifikationen | 65 | `komponentenintegrationstest/testspezi/` (33), `systemtest/testspezi/` (32) |
+| Umsetzungspläne | 2 | `umsetzungsplan_komponentenintegrationstests.md`, `umsetzungsplan_systemtests.md` |
+| Delta-Analysen / Improvement | 4 | `testcov_*_delta.md` (2), `coverage_doc_improvement_*.md` (2) |
+| Performance / Infra / Log | 5 | `skript_log_*.md` (2), `phase_a_bench_*.md`, `systemtest_perf_improve_*.md` (2) |
+| DB-Plattform-Analysen | 3 | `change_to_{mariadb,mysql,postgresql}_latest_stable_analysis.md` |
+
+**Querverweis-Bereinigung:**
+
+| Datei | Änderung |
+|---|---|
+| `tp_upstream_spec.md` | Portierungs-Plan-Link, Analyse-Referenz, Ausschluss-Liste und Cross-Referenzen-Sektion entfernt |
+| `tds_coverage_ref.md` | 8 Detailkonzept-Blockquotes entfernt (G, S, P, SEC, E, A, K, U) |
+| `coverage-runs/2026-04-11_abdeckung-snapshot.md` | Plan-Bezug auf archiviert umformuliert |
+| `coverage-runs/2026-04-11_gap-analyse-fork.md` | 2 Analyse-/Plan-Verweise auf archiviert umformuliert |
+
+**Verifikation:** Existenz-Check 0 Restdateien, Querverweis-Scan 0 tote Verweise (exkl. Commit-Zitate und Phase-3-Dateien). ✅
+
+**Offene-Punkte-Scan:** `skript_log_plan.md` (8 Phase-B-Items) und `systemtest_perf_improve_plan.md` (2 Items) enthielten offene Checkboxen — als bewusst nicht weiter verfolgte Restpunkte eingestuft und gelöscht.

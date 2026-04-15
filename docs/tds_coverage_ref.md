@@ -101,8 +101,6 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 #### GEDCOM Import/Export (G01–G31)
 
-> **Detailkonzept:** [`port-implementation/03_batches/batch_G_gedcom.md`](../port-implementation/03_batches/batch_G_gedcom.md) — 9 portierbare Handler-Tests + 2 Service-Tests, 18 L2-ausgeschlossene Features (DB-Import/Export).
->
 > **Befund (Phase 6.2.1):** `GedcomImportServiceTest.php` ist im Fork (`port-layer2-test-doubles` @ `841616f4b5`) nur als **Stub** vorhanden (1 Methode, 1 Assertion — `assertTrue(class_exists(...))`). Die ehemals mit `[Spec-B]` gekennzeichneten L2-Zellen für G01–G12 wurden deshalb in der Migration auf `—` zurückgesetzt; die substanzielle Abdeckung erfolgt ausschließlich über `GedcomImportTest` (L3, 28 Methoden). Konsequenz: L2-Coverage für G-Domäne sinkt; Gesamt-Features ändern sich nicht (nur Spalten-Inhalt).
 
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
@@ -149,8 +147,6 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 #### Suche und Navigation (S01–S53)
 
-> **Detailkonzept:** [`port-implementation/03_batches/batch_S_search_navigation.md`](../port-implementation/03_batches/batch_S_search_navigation.md)
->
 > **Befund (Phase 6.2.2):** Drei L2-Stub-Korrekturen: (1) `SearchServiceTest` ist im Fork nur ein Stub (1 Methode/7 Assertions) — von `[Spec-C]` auf `[Smoke]` herabgestuft (S01–S04, S10, S12). (2) `GedcomImportServiceTest` ist Stub (1 Methode/1 Assertion) — L2-Zellen S07/S08 auf `—` zurückgesetzt (L3 deckt weiterhin ab). (3) `RelationshipServiceTest` ist Stub (1 Methode/1 Assertion) — L2-Zelle S16 auf `—` zurückgesetzt (L3 deckt weiterhin ab).
 
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
@@ -211,8 +207,6 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 #### Datenschutz & Zugriffskontrolle (P01–P42)
 
-> **Detailkonzept:** [`port-implementation/03_batches/batch_P_privacy_access.md`](../port-implementation/03_batches/batch_P_privacy_access.md)
-
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
 |---|---|---|---|---|---|---|
 | P01 | Stammbaum-Sichtbarkeit | — | `PrivacyVisibilityTest` [Spec-C] ✅ *(22 Tests)* | `privacy-visibility.spec.ts` [Spec-C] ✅ *(5 Tests)* | OK | — |
@@ -262,8 +256,6 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 #### Sicherheit (SEC-H01–SEC-UTL01)
 
-> **Detailkonzept:** [`port-implementation/03_batches/batch_SEC_security.md`](../port-implementation/03_batches/batch_SEC_security.md)
->
 > **Hinweis (Phase 3.5):** Shell-Assertions (`security-filesystem-checks.sh`) sind keine
 > eigene Teststufe. Sie laufen im Rahmen der Systemtests gegen die installierte
 > Webtrees-Instanz und werden deshalb in der L4-Spalte geführt. Wo Shell-Skript und
@@ -306,8 +298,6 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 #### Datenpflege / Erfassung (E01–E08)
 
-> **Detailkonzept:** [`port-implementation/03_batches/batch_E_data_entry.md`](../port-implementation/03_batches/batch_E_data_entry.md)
-
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
 |---|---|---|---|---|---|---|
 | E01 | Person/Familie anlegen & verknüpfen | — | `AddRelationIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 6 Tests: AddChildToIndividualPage GET→200, Action POST→302, DataProvider AddParent/AddSpouseToIndi/AddChild/AddSpouseToFam→200)* | `person-family-create.spec.ts` [Spec-C] ✅ *(4 Tests × 5 Themes)* | OK | — |
@@ -322,8 +312,6 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 <a id="a"></a>
 
 #### Administration (A01–A16)
-
-> **Detailkonzept:** [`port-implementation/03_batches/batch_A_admin.md`](../port-implementation/03_batches/batch_A_admin.md)
 
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
 |---|---|---|---|---|---|---|
@@ -348,8 +336,6 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 
 #### Kommunikation (K01–K02)
 
-> **Detailkonzept:** [`port-implementation/03_batches/batch_K_communication.md`](../port-implementation/03_batches/batch_K_communication.md)
-
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
 |---|---|---|---|---|---|---|
 | K01 | Kontaktformular | — | `ContactFormIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 11 Tests, 34 Assertions)* | `contact-form.spec.ts` [Spec-C] ✅ *(3 Tests × 5 Themes)* | OK | — |
@@ -358,8 +344,6 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 <a id="u"></a>
 
 #### Querschnitts-Utilities (U01–U02)
-
-> **Detailkonzept:** [`port-implementation/03_batches/batch_U_utilities.md`](../port-implementation/03_batches/batch_U_utilities.md)
 
 | # | Feature | L2 — Komponententest (Upstream-Fork) | L3 — KIT (MySQL) | L4 — Systemtest (Playwright) | Abdeckung | Befund |
 |---|---|---|---|---|---|---|

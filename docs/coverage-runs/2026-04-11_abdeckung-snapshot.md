@@ -13,8 +13,7 @@
 > historischen Zahlen-Ständen und hält den laufenden Stand neben der frozen Referenz lesbar
 > parallel.
 >
-> **Plan-Bezug:** Plan-Phase 2.2, entstanden im Rahmen von
-> [`../coverage_doc_improvement_plan.md`](../coverage_doc_improvement_plan.md).
+> **Plan-Bezug:** Plan-Phase 2.2 des Coverage-Doc-Improvement-Plans (abgeschlossen, Plandokument archiviert).
 
 ---
 

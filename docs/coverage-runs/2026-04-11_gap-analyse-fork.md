@@ -2,10 +2,8 @@
 
 # Gap-Analyse-Snapshot — Fork-Stand 2026-04-11
 
-> **Scope:** Neuerhebung der Teststand-Gesamtsicht nach der Methodik aus
-> [`coverage_doc_improvement_analysis.md`](../coverage_doc_improvement_analysis.md) §4.3.
-> Erzeugt im Rahmen von Phase 1 des Umsetzungsplans
-> [`coverage_doc_improvement_plan.md`](../coverage_doc_improvement_plan.md).
+> **Scope:** Neuerhebung der Teststand-Gesamtsicht (Methodik: §4.3 der Coverage-Doc-Improvement-Analyse).
+> Erzeugt im Rahmen von Phase 1 des Coverage-Doc-Improvement-Plans (abgeschlossen, Plandokumente archiviert).
 >
 > **Charakter:** Frozen Snapshot. Dieses Dokument wird **nicht** fortgeschrieben — spätere
 > Neuerhebungen werden als neuer, datierter Snapshot angelegt und in der Coverage-Runs-Navigation
@@ -22,7 +20,7 @@
 
 ## 2 Methodik
 
-Kurzform — Langfassung siehe [`coverage_doc_improvement_analysis.md`](../coverage_doc_improvement_analysis.md) §4.3.
+Kurzform — Langfassung war in der Coverage-Doc-Improvement-Analyse §4.3 (archiviert).
 
 **Erhebungs-Schritt 1 — Inventar pro Test-Schicht.** Liste aller Testdateien pro Layer via
 `find -name "*.php"` bzw. `-name "*.spec.ts"`. L2-Scope ist `tests/app/` + `tests/feature/` —

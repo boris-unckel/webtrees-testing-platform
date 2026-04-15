@@ -4,7 +4,7 @@
 > **Separates Vorhaben**, unabhängig von diesem Repo.
 > Ziel: PR an `fisharebest/webtrees` — Testabdeckung im Core verbessern.
 
-Referenzen: [Feature-Matrizen](tds_conditions_ref.md) | [Abdeckungsmatrix](tds_coverage_ref.md) | [Portierungs-Plan](port-implementation/00_plan.md)
+Referenzen: [Feature-Matrizen](tds_conditions_ref.md) | [Abdeckungsmatrix](tds_coverage_ref.md)
 
 ## Abgrenzung
 
@@ -43,7 +43,7 @@ Referenzen: [Feature-Matrizen](tds_conditions_ref.md) | [Abdeckungsmatrix](tds_c
 
 ## Test-Double-Konventionen
 
-Die Tests folgen dem Maintainer-Anforderungsprofil (R1–R11 aus `port_analysis_strategy.md`):
+Die Tests folgen dem Maintainer-Anforderungsprofil (R1–R11):
 
 ### Mock vs. Stub
 
@@ -90,8 +90,6 @@ Die Tests folgen dem Maintainer-Anforderungsprofil (R1–R11 aus `port_analysis_
 | Session/Auth-Zustandswechsel | E-Mail-Versand (MessageService Integration) |
 | Registry-Factory-Injection | `importTree()` + Record-Manipulation |
 
-Vollständige Ausschluss-Liste: `docs/port-implementation/04_exclusions.md`
-
 ## Bestandsverbesserungen (P2)
 
 | Testdatei | Verbesserung | Status |
@@ -122,12 +120,3 @@ der webtrees-eigenen Test-Infrastruktur lauffähig (kein Container nötig).
 Alle 8 Batches abgeschlossen, 0 Pending-Stubs verbleiben. 10 Tests als Skipped markiert
 (8× Testdatei fehlt im Upstream, 2× L3-only: SetupWizard, GedcomLoad).
 
-## Cross-Referenzen
-
-| Dokument | Zweck |
-|---|---|
-| `docs/port-implementation/00_plan.md` | Master-Plan (Phasen P0–P4) |
-| `docs/port-implementation/tasks/INDEX.md` | Tracking-Index mit Batch-Status |
-| `docs/port-implementation/04_exclusions.md` | Layer-3-Ausschlüsse mit Begründung |
-| `docs/port-implementation/02_prompts/` | 4 Prompt-Templates (T1–T4) |
-| `docs/port_analysis_strategy.md` | Analyse-Ergebnis (Taxonomie, Patterns, Matrix) |
