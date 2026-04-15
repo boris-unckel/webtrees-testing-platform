@@ -670,3 +670,17 @@ Target-Beschreibungen liefert `make help`. CLAUDE.md dokumentiert stattdessen da
 3. Lifecycle-Abdeckung: `make clean` → `make setup`-Abhängigkeit explizit dokumentiert ✅
 4. `tp_overview_spec.md`: Schnelleinstieg verweist auf CLAUDE.md (Zeile 79), keine Duplikation ✅
 5. `tp_infrastructure_spec.md`: Stichprobe PerfSchema/OTel — kein Widerspruch ✅
+
+### Phase 5 — Querverweise-Validierung (2026-04-15)
+
+**Ergebnis:** 6 tote Links in 5 Dateien gefunden und korrigiert. Re-Scan: 0 tote Links.
+
+| Datei | Toter Link | Ursache | Fix |
+|---|---|---|---|
+| `coverage-runs/historical/2026-03-26_gap-analyse.md` | `../../../webtrees-upstream/webtrees` | Externer Pfad auf Fork-Repo | Link-Wrapper entfernt, Backtick-Branchname behalten |
+| `wf_code-to-systemtest_guide.md` (2×) | `../wf_test-iteration_guide.md` | Falscher Pfad (`../` statt selbes Verzeichnis) | Pfad zu `wf_test-iteration_guide.md` korrigiert |
+| `tds_coverage_ref.md` | `../webtrees-upstream/webtrees` | Externer Pfad auf Fork-Repo | Link-Wrapper entfernt, Backtick-Branchname behalten |
+| `security-audit/03_infrastructure_usage.md` | `../php_security_audit_suggestion.md` | Gelöschte Datei | Link entfernt, Text zu „ursprüngliche Audit-Vorlage" angepasst |
+| `security-audit/04_triage_pipeline.md` | `../php_security_audit_suggestion.md` | Gelöschte Datei | Link entfernt, Text zu „ursprüngliche Audit-Vorlage" angepasst |
+
+**Verifikation:** Linkchecker über alle `docs/*.md` + `CLAUDE.md` — 0 tote Links. ✅

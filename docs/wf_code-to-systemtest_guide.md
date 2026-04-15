@@ -395,7 +395,7 @@ Ablage: `docs/systemtest/testspezi/<FEATURE_ID>_systemtest_spezi.md`
 **Referenz:** <REF> | **Teststufe:** 3 — Systemtest (L4 Playwright)
 **Seite/Route:** `<URL-Pfad>` → `<RequestHandler-Klasse>`
 **L3-Referenztest:** <L3-Testklassenname falls vorhanden, sonst „keiner">
-**Übergreifende Konzepte:** → [wf_test-iteration_guide.md](../wf_test-iteration_guide.md)
+**Übergreifende Konzepte:** → [wf_test-iteration_guide.md](wf_test-iteration_guide.md)
 
 ---
 
@@ -495,7 +495,7 @@ Was davon ist als Black-Box im Browser nachweisbar?]
 # Systemtest-Spezifikation — <REF>: <Feature-Name>
 
 **Referenz:** <REF> | **Status:** EXCLUDED — Teststufe 3 nicht anwendbar
-**Übergreifende Konzepte:** → [wf_test-iteration_guide.md](../wf_test-iteration_guide.md)
+**Übergreifende Konzepte:** → [wf_test-iteration_guide.md](wf_test-iteration_guide.md)
 
 ## Ausschlussgrund
 

@@ -9,7 +9,7 @@
 
 ## 1 Zweck
 
-Die Vorlage [`docs/php_security_audit_suggestion.md`](../php_security_audit_suggestion.md) macht Priorisierung in einem einzelnen LLM-Schritt (Phase 1 Triage, Skala 1–5). Das ist kostenbillig, aber:
+Die ursprüngliche Audit-Vorlage macht Priorisierung in einem einzelnen LLM-Schritt (Phase 1 Triage, Skala 1–5). Das ist kostenbillig, aber:
 - Blind gegenüber objektiven Signalen (CRAP-Score, Input-Sink-Dichte, Auth-Gap)
 - Bindet Token-Budget an Dateien, die schon per Statik aussortiert werden könnten
 - Reproduziert nicht zwischen Läufen (LLM-Temperatur)

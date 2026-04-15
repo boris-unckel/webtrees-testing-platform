@@ -4,7 +4,7 @@
 
 > **Archiv-Notiz:** Dieser Befund ist mit Stand 2026-03-26 gegen das damalige
 > Upstream-`main` erhoben. Er ist durch den Fork-Branch
-> [`port-layer2-test-doubles`](../../../webtrees-upstream/webtrees) in Teilen überholt —
+> `port-layer2-test-doubles` in Teilen überholt —
 > dort wurden 278 Testdateien von reinen Stubs auf substanzielle Komponententests
 > aufgewertet (Commit `841616f4b5`, 2026-04-11). Der aktuelle Stand liegt im Snapshot
 > [`../2026-04-11_gap-analyse-fork.md`](../2026-04-11_gap-analyse-fork.md).

@@ -9,7 +9,7 @@
 
 ## 1 Zielbild
 
-Der Audit ist **whitebox** — der Agent sieht Source, Tests und Laufzeit-Zustand. Das Alleinstellungsmerkmal gegenüber der Vorlage [`docs/php_security_audit_suggestion.md`](../php_security_audit_suggestion.md) ist, dass jeder Exploit-Versuch durch **mehrere parallele Rückkanäle** aus dem laufenden Fachtest-Container instrumentiert wird. Dieses Dokument listet die Kanäle auf und nennt pro Kanal: Datenquelle, Zugriff, Pre-Probe-Setup, Extraktion nach dem Probe, Integration in den Agentic-Loop.
+Der Audit ist **whitebox** — der Agent sieht Source, Tests und Laufzeit-Zustand. Das Alleinstellungsmerkmal gegenüber der ursprünglichen Audit-Vorlage ist, dass jeder Exploit-Versuch durch **mehrere parallele Rückkanäle** aus dem laufenden Fachtest-Container instrumentiert wird. Dieses Dokument listet die Kanäle auf und nennt pro Kanal: Datenquelle, Zugriff, Pre-Probe-Setup, Extraktion nach dem Probe, Integration in den Agentic-Loop.
 
 | # | Kanal | Antwortet auf die Frage |
 |---|---|---|
