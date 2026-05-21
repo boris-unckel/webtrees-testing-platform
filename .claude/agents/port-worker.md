@@ -1,6 +1,7 @@
 ---
 name: port-worker
 description: Portiert genau eine Quell-Testdatei aus dem Fork-Branch `port-layer2-test-doubles` in den L3-Bestand des Testing-Platform-Repos. Liest die Quell-Datei (read-only), entscheidet anreichern vs. neue Datei, schreibt L3, validiert per phpunit im Container, liefert strukturiertes JSON zurück. Wird vom Orchestrator pro Manifest-Eintrag einmal aufgerufen.
+model: opus
 tools: Read, Edit, Write, Bash, Grep, Glob
 ---
 
