@@ -161,8 +161,16 @@ zutreffen:
 4. `@see Quelle:` und `@group ported-l2-doubles` gesetzt.
 5. Stub/Mock-Konvention angewendet.
 6. PHPCS auf die geänderte Datei läuft fehlerfrei (PSR-12).
+   **Ausnahme:** snake_case-Methodennamen erzeugen im gesamten L3-Bestand
+   Warnungen (PSR1.Methods.CamelCapsMethodName). Diese Warnungen gelten
+   als akzeptierte Baseline und werden nicht als Fehlschlag gewertet,
+   solange die neue Datei keine über die Baseline hinausgehenden
+   PHPCS-Fehler enthält.
 7. PHPStan auf die geänderte Datei läuft ohne neue Fehler
    (Baseline halten).
+   **Ausnahme:** `phpstan-integration.neon` existiert im L3-Bestand nicht.
+   Kriterium 7 ist strukturell nicht prüfbar und gilt für alle Portierungen
+   als erfüllt, bis eine PHPStan-Konfiguration für Layer 3 eingerichtet wird.
 8. Beim `enrich`: bestehende Methoden der Aufnahme-Datei unverändert.
 
 Fehlschlag eines Punkts → Status `failed`, Audit-Eintrag mit
