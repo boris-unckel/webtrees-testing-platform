@@ -24,7 +24,6 @@ Aktueller Stand: siehe [Testbedingungen](tds_conditions_ref.md) und [Abdeckungsm
 | [Testkonventionen](tp_conventions_spec.md) | AAA-Pattern, FIRST-Prinzipien, Namenskonventionen, DataProvider-Regeln, Verfolgbarkeit via `@see`-Annotationen. Verbindliche Regeln für alle Teststufen. |
 | [Risiken & Fehlermanagement](tp_risks_spec.md) | 21 Produktrisiken (R1–R21), Projektrisiken, Fehlermanagement-Prozess, 3 bekannte Fehler im Teststack. |
 | [Überdeckung & Endekriterien](tp_ratchet_spec.md) | Ratchet-Strategie (Statement-Coverage darf nur steigen), Endekriterien pro Teststufe, Ist-Stand der Überdeckung (32,4% Statements), Sicherheitstest-Metriken. |
-| [Upstream-Contribution](tp_upstream_spec.md) | Plan zur Befüllung von webtrees-Core Test-Stubs. Scope, Redundanz-Bewertung, Status (137 Tests / 450 Assertions, abgeschlossen). |
 
 ---
 

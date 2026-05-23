@@ -16,7 +16,6 @@ des Gesamtstacks. Die ISTQB-Terminologie (Glossar de_DE v4.7.1) ist durchgängig
 - [Überdeckungsstrategie](tp_ratchet_spec.md) — Ratchet, Endekriterien pro Teststufe
 - [Testentwurfsverfahren](tds_methodik_spec.md) — Testorakel, Testfall-Verteilung, Prioritätsverteilung
 - [Abdeckungsmatrix](tds_coverage_ref.md) — Teststatus und Rückverfolgbarkeit
-- [Upstream-Contribution](tp_upstream_spec.md) — Stubs, Scope, Redundanz, Status
 - [ISTQB-Glossar](ref_istqb-glossar_ref.md) — 589 Begriffe, de_DE (CC BY 4.0)
 - [Webtrees-Glossar](ref_webtrees-glossar_ref.md) — Domänenspezifische Begriffe
 
