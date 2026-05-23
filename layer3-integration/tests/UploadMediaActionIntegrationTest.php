@@ -104,4 +104,52 @@ class UploadMediaActionIntegrationTest extends MysqlTestCase
 
         self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
     }
+
+    /**
+     * Dateinamen mit Doppelpunkt werden vom Handler über den
+     * `preg_match('/([:])/')`-Zweig zurückgewiesen. Schleifen-`continue` führt
+     * weiterhin zum 302-Redirect, keine Exception.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UploadMediaActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_upload_filename_with_colon_is_rejected_and_redirects(): void
+    {
+        $handler = $this->makeHandler();
+
+        $request = $this->createRequest(
+            params: [
+                'folder0'   => 'media/',
+                'filename0' => 'file:name.jpg',
+            ],
+        )->withUploadedFiles(['fileField0' => $this->makeUploadedFile(UPLOAD_ERR_OK, 'file:name.jpg')]);
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+    }
+
+    /**
+     * Ein nicht in `allMediaFolders()` enthaltener Ordner führt zum
+     * `break`-Zweig des Handlers — die Verarbeitung stoppt vor dem Schreiben
+     * und liefert weiterhin den 302-Redirect.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UploadMediaActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_upload_invalid_folder_breaks_and_redirects(): void
+    {
+        $handler = $this->makeHandler();
+
+        $request = $this->createRequest(
+            params: [
+                'folder0'   => 'nonexistent-folder-' . bin2hex(random_bytes(4)) . '/',
+                'filename0' => 'photo.jpg',
+            ],
+        )->withUploadedFiles(['fileField0' => $this->makeUploadedFile(UPLOAD_ERR_OK, 'photo.jpg')]);
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+    }
 }

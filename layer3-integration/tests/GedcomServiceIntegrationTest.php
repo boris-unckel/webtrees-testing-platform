@@ -87,4 +87,72 @@ class GedcomServiceIntegrationTest extends MysqlTestCase
     {
         $this->assertEqualsWithDelta(0.0, $this->gedcom_service->readLatitude('invalid'), 0.001);
     }
+
+    /**
+     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomServiceTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_canonical_tag_converts_birth_death_marriage_individual(): void
+    {
+        // Arrange — service from setUp.
+
+        // Act + Assert — long-form GEDCOM tag names are mapped to canonical abbreviations.
+        $this->assertSame('BIRT', $this->gedcom_service->canonicalTag('BIRTH'));
+        $this->assertSame('DEAT', $this->gedcom_service->canonicalTag('DEATH'));
+        $this->assertSame('MARR', $this->gedcom_service->canonicalTag('MARRIAGE'));
+        $this->assertSame('INDI', $this->gedcom_service->canonicalTag('INDIVIDUAL'));
+        // Case-insensitivity also for long-form input.
+        $this->assertSame('BIRT', $this->gedcom_service->canonicalTag('birth'));
+    }
+
+    /**
+     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomServiceTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_canonical_tag_handles_pgv_synonyms(): void
+    {
+        // Arrange — service from setUp.
+
+        // Act + Assert — legacy PhpGedView tags map to webtrees tags via TAG_SYNONYMS.
+        $this->assertSame('_WT_USER', $this->gedcom_service->canonicalTag('_PGVU'));
+        $this->assertSame('_WT_OBJE_SORT', $this->gedcom_service->canonicalTag('_PGV_OBJS'));
+    }
+
+    /**
+     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomServiceTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_canonical_tag_passes_through_already_canonical_and_lowercase_custom(): void
+    {
+        // Arrange — service from setUp.
+
+        // Act + Assert — canonical tags pass through; unknown tags are upper-cased only.
+        $this->assertSame('BIRT', $this->gedcom_service->canonicalTag('BIRT'));
+        $this->assertSame('CUSTOM', $this->gedcom_service->canonicalTag('custom'));
+    }
+
+    /**
+     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomServiceTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_read_latitude_returns_null_for_invalid_and_empty(): void
+    {
+        // Arrange — service from setUp.
+
+        // Act + Assert — non-numeric and empty input yields null (no silent default).
+        $this->assertNull($this->gedcom_service->readLatitude('invalid'));
+        $this->assertNull($this->gedcom_service->readLatitude(''));
+    }
+
+    /**
+     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomServiceTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_read_longitude_returns_null_for_invalid(): void
+    {
+        // Arrange — service from setUp.
+
+        // Act + Assert — non-numeric longitude input yields null.
+        $this->assertNull($this->gedcom_service->readLongitude('invalid'));
+    }
 }

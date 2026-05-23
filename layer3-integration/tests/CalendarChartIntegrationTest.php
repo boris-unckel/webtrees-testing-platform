@@ -6,8 +6,11 @@ declare(strict_types=1);
 
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
+use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\Http\RequestHandlers\CalendarAction;
 use Fisharebest\Webtrees\Http\RequestHandlers\CalendarEvents;
+use Fisharebest\Webtrees\Http\RequestHandlers\CalendarPage;
 use Fisharebest\Webtrees\Module\RelationshipsChartModule;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\CalendarService;
@@ -27,6 +30,8 @@ use Fisharebest\Webtrees\Services\TreeService;
  * @covers \Fisharebest\Webtrees\Services\CalendarService
  * @covers \Fisharebest\Webtrees\Module\RelationshipsChartModule
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CalendarEvents
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CalendarAction
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CalendarPage
  */
 class CalendarChartIntegrationTest extends MysqlTestCase
 {
@@ -155,6 +160,167 @@ class CalendarChartIntegrationTest extends MysqlTestCase
 
         $response = $this->relationships_module->chart($individual1, $individual2, 1, 1);
 
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * CalendarAction-Klasse ist ladbar.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_calendar_action_class_exists(): void
+    {
+        // Arrange + Act + Assert: Klassenexistenz prueft Autoloading des Handlers.
+        $this->assertTrue(class_exists(CalendarAction::class));
+    }
+
+    /**
+     * CalendarAction::handle leitet POST mit Datumsparametern auf CalendarPage um.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_calendar_action_handle_redirects_to_calendar_page(): void
+    {
+        // Arrange.
+        $tree_service = Registry::container()->get(TreeService::class);
+        $tree         = $tree_service->create('cal-action', 'Calendar Action');
+        $this->createAndLoginAdmin();
+
+        $handler = new CalendarAction();
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_POST,
+            params:     [
+                'cal'      => '@#DGREGORIAN@',
+                'day'      => 15,
+                'month'    => 'JUN',
+                'year'     => 2026,
+                'filterev' => 'BIRT',
+                'filterof' => 'all',
+                'filtersx' => 'M',
+            ],
+            attributes: ['tree' => $tree, 'view' => 'day'],
+        );
+
+        // Act.
+        $response = $handler->handle($request);
+
+        // Assert.
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        $this->assertStringContainsString('calendar%2Fday', $response->getHeaderLine('location'));
+        $this->assertStringContainsString('JUN', $response->getHeaderLine('location'));
+    }
+
+    /**
+     * CalendarPage-Klasse ist ladbar.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_calendar_page_class_exists(): void
+    {
+        // Arrange + Act + Assert: Klassenexistenz prueft Autoloading des Handlers.
+        $this->assertTrue(class_exists(CalendarPage::class));
+    }
+
+    /**
+     * CalendarPage::handle mit view=day rendert mit STATUS_OK.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_calendar_page_handle_day_view_returns_ok(): void
+    {
+        // Arrange.
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('cal-page-day', 'Calendar Page Day');
+
+        $handler = new CalendarPage($this->calendar_service);
+        $request = $this->createRequest(
+            query:      ['cal' => '@#DGREGORIAN@', 'day' => '1', 'month' => 'JAN', 'year' => '2000'],
+            attributes: ['tree' => $this->tree, 'view' => 'day'],
+        );
+
+        // Act.
+        $response = $handler->handle($request);
+
+        // Assert.
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $this->assertNotEmpty((string) $response->getBody());
+    }
+
+    /**
+     * CalendarPage::handle mit view=month rendert mit STATUS_OK.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_calendar_page_handle_month_view_returns_ok(): void
+    {
+        // Arrange.
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('cal-page-month', 'Calendar Page Month');
+
+        $handler = new CalendarPage($this->calendar_service);
+        $request = $this->createRequest(
+            query:      ['cal' => '@#DGREGORIAN@', 'month' => 'JAN', 'year' => '2000'],
+            attributes: ['tree' => $this->tree, 'view' => 'month'],
+        );
+
+        // Act.
+        $response = $handler->handle($request);
+
+        // Assert.
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * CalendarPage::handle mit view=year rendert mit STATUS_OK.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_calendar_page_handle_year_view_returns_ok(): void
+    {
+        // Arrange.
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('cal-page-year', 'Calendar Page Year');
+
+        $handler = new CalendarPage($this->calendar_service);
+        $request = $this->createRequest(
+            query:      ['cal' => '@#DGREGORIAN@', 'year' => '2000'],
+            attributes: ['tree' => $this->tree, 'view' => 'year'],
+        );
+
+        // Act.
+        $response = $handler->handle($request);
+
+        // Assert.
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * CalendarPage::handle ohne Datumsparameter waehlt Defaults und rendert mit STATUS_OK.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_calendar_page_handle_default_date_returns_ok(): void
+    {
+        // Arrange.
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('cal-page-default', 'Calendar Page Default');
+
+        $handler = new CalendarPage($this->calendar_service);
+        $request = $this->createRequest(
+            attributes: ['tree' => $this->tree, 'view' => 'day'],
+        );
+
+        // Act.
+        $response = $handler->handle($request);
+
+        // Assert.
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
 }

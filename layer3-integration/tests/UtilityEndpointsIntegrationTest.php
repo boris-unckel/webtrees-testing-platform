@@ -15,10 +15,13 @@ use Fisharebest\Webtrees\Http\RequestHandlers\FaviconIco;
 use Fisharebest\Webtrees\Http\RequestHandlers\Ping;
 use Fisharebest\Webtrees\Http\RequestHandlers\RobotsTxt;
 use Fisharebest\Webtrees\Http\RequestHandlers\WebmanifestJson;
+use Fisharebest\Webtrees\Module\SiteMapModule;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\ModuleService;
 use Fisharebest\Webtrees\Services\ServerCheckService;
 use Fisharebest\Webtrees\Services\TreeService;
+use Fisharebest\Webtrees\Tree;
+use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -137,5 +140,192 @@ class UtilityEndpointsIntegrationTest extends MysqlTestCase
         $response = $handler->handle($request);
 
         self::assertContains((string) $response->getBody(), ['OK', 'WARNING', 'ERROR']);
+    }
+
+    /**
+     * EP11: AppAdsTxt-Body enthält den "#No pesky ads here"-Marker.
+     *
+     * Status und Content-Type werden bereits durch den utilityHandlerProvider abgedeckt;
+     * diese Methode ergänzt den Body-Inhalt-Check aus der portierten Quelle.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AppAdsTxtTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_app_ads_txt_body_contains_no_pesky_ads_marker(): void
+    {
+        $handler  = new AppAdsTxt();
+        $request  = $this->createRequest();
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertSame('text/plain', $response->getHeaderLine('content-type'));
+
+        $body = (string) $response->getBody();
+        self::assertStringContainsString('#No pesky ads here', $body);
+    }
+
+    /**
+     * EP12: AppleTouchIconPng setzt langfristigen Cache-Control-Header und liefert nicht-leeren PNG-Body.
+     *
+     * Status und Content-Type werden bereits durch den utilityHandlerProvider abgedeckt;
+     * diese Methode ergänzt Cache-Control- und Body-Checks aus der portierten Quelle.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AppleTouchIconPngTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_apple_touch_icon_png_cache_control_and_body(): void
+    {
+        $handler  = new AppleTouchIconPng();
+        $request  = $this->createRequest();
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertSame('image/png', $response->getHeaderLine('content-type'));
+        self::assertSame('public,max-age=31536000', $response->getHeaderLine('cache-control'));
+
+        $body = (string) $response->getBody();
+        self::assertNotEmpty($body);
+    }
+
+    /**
+     * EP13: BrowserconfigXml setzt langfristigen Cache-Control-Header und liefert nicht-leeren XML-Body.
+     *
+     * Status und Content-Type werden bereits durch den utilityHandlerProvider abgedeckt;
+     * diese Methode ergänzt Cache-Control- und Body-Checks aus der portierten Quelle.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/BrowserconfigXmlTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_browserconfig_xml_cache_control_and_body(): void
+    {
+        $handler  = new BrowserconfigXml();
+        $request  = $this->createRequest();
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertSame('application/xml', $response->getHeaderLine('content-type'));
+        self::assertSame('public,max-age=31536000', $response->getHeaderLine('cache-control'));
+
+        $body = (string) $response->getBody();
+        self::assertNotEmpty($body);
+    }
+
+    /**
+     * EP14: FaviconIco setzt langfristigen Cache-Control-Header und liefert nicht-leeren Icon-Body.
+     *
+     * Status und Content-Type werden bereits durch den utilityHandlerProvider abgedeckt;
+     * diese Methode ergänzt Cache-Control- und Body-Checks aus der portierten Quelle.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/FaviconIcoTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_favicon_ico_cache_control_and_body(): void
+    {
+        $handler  = new FaviconIco();
+        $request  = $this->createRequest();
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertSame('image/x-icon', $response->getHeaderLine('content-type'));
+        self::assertSame('public,max-age=31536000', $response->getHeaderLine('cache-control'));
+
+        $body = (string) $response->getBody();
+        self::assertNotEmpty($body);
+    }
+
+    /**
+     * EP15: RobotsTxt liefert auch ohne registrierte Trees einen 200-Response.
+     *
+     * Sicherstellung, dass leere Tree-Listen nicht zu Fehlern führen
+     * (Edge-Case-Abdeckung aus der portierten Quelle).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RobotsTxtTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_robots_txt_handles_empty_tree_list(): void
+    {
+        // Arrange.
+        $tree_service = $this->createMock(TreeService::class);
+        $tree_service->expects(self::once())
+            ->method('all')
+            ->willReturn(new Collection());
+
+        $module_service = $this->createMock(ModuleService::class);
+        $module_service->expects(self::once())
+            ->method('findByInterface')
+            ->with(SiteMapModule::class)
+            ->willReturn(new Collection());
+
+        $handler = new RobotsTxt($module_service, $tree_service);
+
+        // Act.
+        $request  = $this->createRequest(attributes: ['base_url' => 'https://webtrees.test']);
+        $response = $handler->handle($request);
+
+        // Assert.
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertStringStartsWith('text/plain', $response->getHeaderLine('content-type'));
+    }
+
+    /**
+     * EP16: RobotsTxt liefert bei mehreren Trees einen 200-Response mit text/plain.
+     *
+     * Sicherstellung, dass mehrere Tree-Einträge iteriert werden, ohne Fehler auszulösen
+     * (Mehrfach-Tree-Abdeckung aus der portierten Quelle).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RobotsTxtTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_robots_txt_handles_multiple_trees(): void
+    {
+        // Arrange.
+        $tree1 = self::createStub(Tree::class);
+        $tree1->method('name')->willReturn('tree1');
+        $tree2 = self::createStub(Tree::class);
+        $tree2->method('name')->willReturn('tree2');
+
+        $tree_service = $this->createMock(TreeService::class);
+        $tree_service->expects(self::once())
+            ->method('all')
+            ->willReturn(new Collection([$tree1, $tree2]));
+
+        $module_service = $this->createMock(ModuleService::class);
+        $module_service->expects(self::once())
+            ->method('findByInterface')
+            ->with(SiteMapModule::class)
+            ->willReturn(new Collection());
+
+        $handler = new RobotsTxt($module_service, $tree_service);
+
+        // Act.
+        $request  = $this->createRequest(attributes: ['base_url' => 'https://webtrees.test']);
+        $response = $handler->handle($request);
+
+        // Assert.
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertStringStartsWith('text/plain', $response->getHeaderLine('content-type'));
+    }
+
+    /**
+     * EP17: WebmanifestJson setzt langfristigen Cache-Control-Header und liefert nicht-leeren JSON-Body.
+     *
+     * Status und Content-Type werden bereits durch den utilityHandlerProvider abgedeckt;
+     * diese Methode ergänzt Cache-Control- und Body-Checks aus der portierten Quelle.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/WebmanifestJsonTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_webmanifest_json_cache_control_and_body(): void
+    {
+        $handler  = new WebmanifestJson();
+        $request  = $this->createRequest();
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertSame('application/json', $response->getHeaderLine('content-type'));
+        self::assertSame('public,max-age=31536000', $response->getHeaderLine('cache-control'));
+
+        $body = (string) $response->getBody();
+        self::assertNotEmpty($body);
     }
 }

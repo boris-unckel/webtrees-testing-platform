@@ -76,4 +76,40 @@ class RomanNumeralsIntegrationTest extends MysqlTestCase
     {
         $this->assertSame('0', $this->service->numberToRomanNumerals(0));
     }
+
+    /**
+     * Negative Zahlen werden unverändert als String zurückgegeben (keine römische Notation für negative Werte).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Services/RomanNumeralsServiceTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_number_to_roman_numerals_returns_string_for_negative_number(): void
+    {
+        // Arrange
+        $negative = -1;
+
+        // Act
+        $result = $this->service->numberToRomanNumerals($negative);
+
+        // Assert
+        self::assertSame('-1', $result);
+    }
+
+    /**
+     * Leere Eingabe wird als 0 interpretiert.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Services/RomanNumeralsServiceTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_roman_numerals_to_number_returns_zero_for_empty_string(): void
+    {
+        // Arrange
+        $empty = '';
+
+        // Act
+        $result = $this->service->romanNumeralsToNumber($empty);
+
+        // Assert
+        self::assertSame(0, $result);
+    }
 }

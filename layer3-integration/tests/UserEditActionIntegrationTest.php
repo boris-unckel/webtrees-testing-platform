@@ -24,6 +24,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * B2 (Approval-Email) ausgeklammert — E-Mail-Versand nicht testbar ohne SMTP-Mock.
  *
  * @see docs/tds_conditions_ref.md P37
+ * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserEditActionTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserEditAction
  */
 class UserEditActionIntegrationTest extends MysqlTestCase
@@ -46,7 +47,14 @@ class UserEditActionIntegrationTest extends MysqlTestCase
 
     protected function tearDown(): void
     {
-        foreach (['p37-second-user', 'p37-other-user'] as $uname) {
+        $cleanup = [
+            'p37-second-user',
+            'p37-other-user',
+            'p37-target-user',
+            'p37-renamed-user',
+            'p37-keep-pass',
+        ];
+        foreach ($cleanup as $uname) {
             $u = $this->userService->findByUserName($uname);
             if ($u !== null) {
                 $this->userService->delete($u);
@@ -174,5 +182,93 @@ class UserEditActionIntegrationTest extends MysqlTestCase
             ->where('setting_name', '=', UserInterface::PREF_TREE_PATH_LENGTH)
             ->value('setting_value');
         $this->assertSame('0', (string) ($pathLength ?? ''));
+    }
+
+    /**
+     * Admin-Edit eines anderen Users mit vollem Profilsatz aktualisiert
+     * username/real_name/email/Sprache/Timezone/verified/approved und liefert
+     * Redirect (Status 302) zurück (B3/EP10, EP3 Username-Rename).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserEditActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_user_edit_updates_user_attributes_when_admin_edits_other_user(): void
+    {
+        $target = $this->userService->create(
+            'p37-target-user',
+            'Target User',
+            'target@p37.local',
+            'TestPass1!',
+        );
+
+        $response = $this->handler->handle($this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            attributes: ['user' => $this->admin, 'base_url' => 'https://webtrees.test/'],
+            params: [
+                'user_id'        => (string) $target->id(),
+                'username'       => 'p37-renamed-user',
+                'real_name'      => 'Renamed User',
+                'email'          => 'renamed@p37.local',
+                'password'       => 'NewSecret1!',
+                'theme'          => '',
+                'language'       => 'en-US',
+                'timezone'       => 'UTC',
+                'comment'        => 'Updated by admin',
+                'contact-method' => 'mailto',
+                'auto_accept'    => '',
+                'canadmin'       => '',
+                'visible-online' => '',
+                'verified'       => '1',
+                'approved'       => '1',
+            ],
+        ));
+
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        $refreshed = $this->userService->find($target->id());
+        $this->assertNotNull($refreshed);
+        $this->assertSame('p37-renamed-user', $refreshed->userName());
+        $this->assertSame('Renamed User', $refreshed->realName());
+        $this->assertSame('renamed@p37.local', $refreshed->email());
+    }
+
+    /**
+     * Leeres Passwort-Feld lässt vorhandenes Passwort unverändert —
+     * Authentifizierung mit altem Passwort gelingt nach Edit (B3/EP9).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserEditActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_user_edit_preserves_password_when_password_field_empty(): void
+    {
+        $oldPassword = 'OldSecret1!';
+        $target      = $this->userService->create(
+            'p37-keep-pass',
+            'Keep Pass User',
+            'keep-pass@p37.local',
+            $oldPassword,
+        );
+
+        $response = $this->handler->handle($this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            attributes: ['user' => $this->admin, 'base_url' => 'https://webtrees.test/'],
+            params: [
+                'user_id'        => (string) $target->id(),
+                'username'       => 'p37-keep-pass',
+                'real_name'      => 'Keep Pass User',
+                'email'          => 'keep-pass@p37.local',
+                'password'       => '',
+                'theme'          => '',
+                'language'       => 'en-US',
+                'timezone'       => 'UTC',
+                'comment'        => '',
+                'contact-method' => 'none',
+            ],
+        ));
+
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+
+        $refreshed = $this->userService->findByIdentifier('p37-keep-pass');
+        $this->assertNotNull($refreshed);
+        $this->assertTrue($refreshed->checkPassword($oldPassword));
     }
 }

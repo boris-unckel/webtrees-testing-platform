@@ -72,4 +72,70 @@ class MediaFileServiceUploadIntegrationTest extends MysqlTestCase
 
         $this->assertIsString($result);
     }
+
+    /**
+     * createMediaFileGedcom() mit lokaler Datei liefert FILE/FORM/TYPE/TITL-Zeilen.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Services/MediaFileServiceTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_create_media_file_gedcom_with_local_file(): void
+    {
+        // Arrange
+        $service = new MediaFileService(new PhpService());
+
+        // Act
+        $gedcom = $service->createMediaFileGedcom('photo.jpg', 'photo', 'My Photo', '');
+
+        // Assert
+        self::assertStringContainsString('1 FILE photo.jpg', $gedcom);
+        self::assertStringContainsString('2 FORM JPG', $gedcom);
+        self::assertStringContainsString('3 TYPE photo', $gedcom);
+        self::assertStringContainsString('2 TITL My Photo', $gedcom);
+        self::assertStringNotContainsString('1 NOTE', $gedcom);
+    }
+
+    /**
+     * createMediaFileGedcom() mit URL-Quelle ohne FORM/TYPE/TITL.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Services/MediaFileServiceTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_create_media_file_gedcom_with_url(): void
+    {
+        // Arrange
+        $service = new MediaFileService(new PhpService());
+
+        // Act
+        $gedcom = $service->createMediaFileGedcom('https://example.com/photo.jpg', '', '', '');
+
+        // Assert
+        self::assertStringStartsWith('1 FILE https://example.com/photo.jpg', $gedcom);
+        self::assertStringNotContainsString('2 FORM', $gedcom);
+        self::assertStringNotContainsString('3 TYPE', $gedcom);
+        self::assertStringNotContainsString('2 TITL', $gedcom);
+        self::assertStringNotContainsString('1 NOTE', $gedcom);
+    }
+
+    /**
+     * createMediaFileGedcom() mit Note hängt NOTE-Zeile an.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Services/MediaFileServiceTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_create_media_file_gedcom_with_note(): void
+    {
+        // Arrange
+        $service = new MediaFileService(new PhpService());
+
+        // Act
+        $gedcom = $service->createMediaFileGedcom('doc.pdf', '', '', 'Some note');
+
+        // Assert
+        self::assertStringContainsString('1 FILE doc.pdf', $gedcom);
+        self::assertStringContainsString('2 FORM PDF', $gedcom);
+        self::assertStringNotContainsString('3 TYPE', $gedcom);
+        self::assertStringNotContainsString('2 TITL', $gedcom);
+        self::assertStringContainsString('1 NOTE Some note', $gedcom);
+    }
 }

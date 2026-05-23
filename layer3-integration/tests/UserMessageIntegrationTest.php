@@ -208,6 +208,21 @@ class UserMessageIntegrationTest extends MysqlTestCase
         $handler->handle($this->createMessagePostRequest());
     }
 
+    /**
+     * EP10/B10: Empfänger existiert nicht → HttpAccessDeniedException.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MessageActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_message_action_throws_for_nonexistent_recipient(): void
+    {
+        $messageService = $this->createStub(MessageService::class);
+        $handler        = new MessageAction($messageService, $this->userService);
+
+        $this->expectException(HttpAccessDeniedException::class);
+        $handler->handle($this->createMessagePostRequest(['to' => 'nonexistent_recipient_xyz']));
+    }
+
     // ── MessageSelect (POST→GET) ───────────────────────────────────────
 
     /**
@@ -233,5 +248,25 @@ class UserMessageIntegrationTest extends MysqlTestCase
         $this->assertSame(302, $response->getStatusCode());
         $location = $response->getHeaderLine('Location');
         $this->assertStringContainsString('to=message-target', $location);
+    }
+
+    /**
+     * MessageSelect leitet auch ohne POST-Felder per Default-Werten auf MessagePage weiter.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MessageSelectTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_message_select_redirects_with_default_values(): void
+    {
+        $handler = new MessageSelect();
+
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $handler->handle($request);
+
+        $this->assertSame(302, $response->getStatusCode());
     }
 }

@@ -6,8 +6,10 @@ declare(strict_types=1);
 
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
+use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\DB;
+use Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException;
 use Fisharebest\Webtrees\Http\RequestHandlers\DeleteRecord;
 use Fisharebest\Webtrees\Services\LinkedRecordService;
 
@@ -72,6 +74,33 @@ class DeleteRecordIntegrationTest extends MysqlTestCase
             $this->hasDeletionChange('F1'),
             'change-Tabelle muss Kaskaden-Löscheintrag für F1 enthalten'
         );
+    }
+
+    /**
+     * Unbekannte XREF: Auth::checkRecordAccess(null) wirft HttpNotFoundException —
+     * der LinkedRecordService darf in diesem Fall nicht angefragt werden.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/DeleteRecordTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_handle_throws_not_found_for_missing_record(): void
+    {
+        // Arrange
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('p32-missing', 'P32 Missing');
+
+        $linked_record_service = $this->createMock(LinkedRecordService::class);
+        $linked_record_service->expects(self::never())->method('allLinkedRecords');
+
+        $handler = new DeleteRecord($linked_record_service);
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            attributes: ['tree' => $this->tree, 'xref' => 'X_NONEXISTENT'],
+        );
+
+        // Act + Assert
+        $this->expectException(HttpNotFoundException::class);
+        $handler->handle($request);
     }
 
     /**

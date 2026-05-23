@@ -11,6 +11,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Http\Exceptions\HttpBadRequestException;
 use Fisharebest\Webtrees\Http\RequestHandlers\TreePrivacyAction;
+use Fisharebest\Webtrees\Http\RequestHandlers\TreePrivacyPage;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -22,7 +23,9 @@ use Psr\Http\Message\ServerRequestInterface;
  * Assertion: default_resn-Tabelle + tree->getPreference().
  *
  * @see docs/tds_conditions_ref.md P33
+ * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePrivacyPageTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePrivacyAction
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePrivacyPage
  */
 class TreePrivacyActionIntegrationTest extends MysqlTestCase
 {
@@ -176,5 +179,25 @@ class TreePrivacyActionIntegrationTest extends MysqlTestCase
 
         $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
         $this->assertSame('1', $this->tree->getPreference('HIDE_LIVE_PEOPLE'));
+    }
+
+    /**
+     * TreePrivacyPage GET-Handler → 200 OK mit gerendertem Privacy-Admin-View.
+     * Validiert, dass der Page-Handler Tree-Attribut korrekt extrahiert und die
+     * Privacy-Konfigurationsseite ohne Fehler ausliefert.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePrivacyPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_tree_privacy_page_returns_ok_response(): void
+    {
+        $page_handler = new TreePrivacyPage($this->treeService);
+        $request      = $this->createRequest(
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $page_handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
 }

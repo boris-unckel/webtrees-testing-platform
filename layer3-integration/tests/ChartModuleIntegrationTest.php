@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException;
 use Fisharebest\Webtrees\Module\AncestorsChartModule;
 use Fisharebest\Webtrees\Module\CompactTreeChartModule;
 use Fisharebest\Webtrees\Module\DescendancyChartModule;
@@ -111,6 +112,54 @@ class ChartModuleIntegrationTest extends MysqlTestCase
         $this->assertNotEmpty($title);
     }
 
+    /**
+     * AncestorsChartModule::title() liefert eine nicht-leere Bezeichnung
+     * unabhaengig vom Datenbestand (statisches Modul-Label).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/AncestorsChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_ancestors_chart_module_title_is_not_empty(): void
+    {
+        // Arrange
+        $chart_service = self::createStub(ChartService::class);
+        $module        = new AncestorsChartModule($chart_service);
+
+        // Act
+        $title = $module->title();
+
+        // Assert
+        self::assertNotEmpty($title);
+    }
+
+    /**
+     * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
+     * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/AncestorsChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_ancestors_chart_handle_throws_when_individual_not_found(): void
+    {
+        // Arrange
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $module  = new AncestorsChartModule(new ChartService());
+        $request = $this->createRequest(attributes: [
+            'tree'        => $this->tree,
+            'xref'        => 'X_DOES_NOT_EXIST',
+            'style'       => AncestorsChartModule::CHART_STYLE_TREE,
+            'generations' => 4,
+        ]);
+
+        // Assert
+        $this->expectException(HttpNotFoundException::class);
+
+        // Act
+        $module->handle($request);
+    }
+
     // --- CompactTreeChartModule ---
 
     public function test_compact_tree_chart_returns_page(): void
@@ -146,6 +195,52 @@ class ChartModuleIntegrationTest extends MysqlTestCase
         $this->assertNotEmpty($response->getBody()->getContents());
     }
 
+    /**
+     * CompactTreeChartModule::title() liefert eine nicht-leere Bezeichnung
+     * unabhaengig vom Datenbestand (statisches Modul-Label).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/CompactTreeChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_compact_tree_chart_module_title_is_not_empty(): void
+    {
+        // Arrange
+        $chart_service = self::createStub(ChartService::class);
+        $module        = new CompactTreeChartModule($chart_service);
+
+        // Act
+        $title = $module->title();
+
+        // Assert
+        self::assertNotEmpty($title);
+    }
+
+    /**
+     * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
+     * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/CompactTreeChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_compact_tree_chart_handle_throws_when_individual_not_found(): void
+    {
+        // Arrange
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $module  = new CompactTreeChartModule(new ChartService());
+        $request = $this->createRequest(attributes: [
+            'tree' => $this->tree,
+            'xref' => 'X_DOES_NOT_EXIST',
+        ]);
+
+        // Assert
+        $this->expectException(HttpNotFoundException::class);
+
+        // Act
+        $module->handle($request);
+    }
+
     // --- DescendancyChartModule ---
 
     /**
@@ -177,6 +272,54 @@ class ChartModuleIntegrationTest extends MysqlTestCase
         $response = $module->handle($request);
 
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * DescendancyChartModule::title() liefert eine nicht-leere Bezeichnung
+     * unabhaengig vom Datenbestand (statisches Modul-Label).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/DescendancyChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_descendancy_chart_module_title_is_not_empty(): void
+    {
+        // Arrange
+        $chart_service = self::createStub(ChartService::class);
+        $module        = new DescendancyChartModule($chart_service);
+
+        // Act
+        $title = $module->title();
+
+        // Assert
+        self::assertNotEmpty($title);
+    }
+
+    /**
+     * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
+     * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/DescendancyChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_descendancy_chart_handle_throws_when_individual_not_found(): void
+    {
+        // Arrange
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $module  = new DescendancyChartModule(new ChartService());
+        $request = $this->createRequest(attributes: [
+            'tree'        => $this->tree,
+            'xref'        => 'X_DOES_NOT_EXIST',
+            'style'       => DescendancyChartModule::CHART_STYLE_TREE,
+            'generations' => 3,
+        ]);
+
+        // Assert
+        $this->expectException(HttpNotFoundException::class);
+
+        // Act
+        $module->handle($request);
     }
 
     // --- FanChartModule ---
@@ -227,6 +370,55 @@ class ChartModuleIntegrationTest extends MysqlTestCase
         $this->assertNotEmpty($response->getBody()->getContents());
     }
 
+    /**
+     * FanChartModule::title() liefert eine nicht-leere Bezeichnung
+     * unabhaengig vom Datenbestand (statisches Modul-Label).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/FanChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_fan_chart_module_title_is_not_empty(): void
+    {
+        // Arrange
+        $chart_service = self::createStub(ChartService::class);
+        $module        = new FanChartModule($chart_service);
+
+        // Act
+        $title = $module->title();
+
+        // Assert
+        self::assertNotEmpty($title);
+    }
+
+    /**
+     * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
+     * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/FanChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_fan_chart_handle_throws_when_individual_not_found(): void
+    {
+        // Arrange
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $module  = new FanChartModule(new ChartService());
+        $request = $this->createRequest(attributes: [
+            'tree'        => $this->tree,
+            'xref'        => 'X_DOES_NOT_EXIST',
+            'style'       => 4,
+            'generations' => 4,
+            'width'       => 210,
+        ]);
+
+        // Assert
+        $this->expectException(HttpNotFoundException::class);
+
+        // Act
+        $module->handle($request);
+    }
+
     // --- HourglassChartModule ---
 
     public function test_hourglass_chart_returns_page(): void
@@ -244,6 +436,52 @@ class ChartModuleIntegrationTest extends MysqlTestCase
         $response = $module->handle($request);
 
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * HourglassChartModule::title() liefert eine nicht-leere Bezeichnung
+     * unabhaengig vom Datenbestand (statisches Modul-Label).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/HourglassChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_hourglass_chart_module_title_is_not_empty(): void
+    {
+        // Arrange
+        $module = new HourglassChartModule();
+
+        // Act
+        $title = $module->title();
+
+        // Assert
+        self::assertNotEmpty($title);
+    }
+
+    /**
+     * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
+     * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/HourglassChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_hourglass_chart_handle_throws_when_individual_not_found(): void
+    {
+        // Arrange
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $module  = new HourglassChartModule();
+        $request = $this->createRequest(attributes: [
+            'tree'        => $this->tree,
+            'xref'        => 'X_DOES_NOT_EXIST',
+            'generations' => 3,
+        ]);
+
+        // Assert
+        $this->expectException(HttpNotFoundException::class);
+
+        // Act
+        $module->handle($request);
     }
 
     // --- PedigreeChartModule ---
@@ -278,6 +516,54 @@ class ChartModuleIntegrationTest extends MysqlTestCase
         $response = $module->handle($request);
 
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * title() liefert eine nicht-leere Bezeichnung — gilt
+     * unabhaengig vom Datenbestand (statisches Modul-Label).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/PedigreeChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_pedigree_chart_module_title_is_not_empty(): void
+    {
+        // Arrange
+        $chart_service = self::createStub(ChartService::class);
+        $module        = new PedigreeChartModule($chart_service);
+
+        // Act
+        $title = $module->title();
+
+        // Assert
+        self::assertNotEmpty($title);
+    }
+
+    /**
+     * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
+     * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/PedigreeChartModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_pedigree_chart_handle_throws_when_individual_not_found(): void
+    {
+        // Arrange
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $module  = new PedigreeChartModule(new ChartService());
+        $request = $this->createRequest(attributes: [
+            'tree'        => $this->tree,
+            'xref'        => 'X_DOES_NOT_EXIST',
+            'style'       => PedigreeChartModule::STYLE_RIGHT,
+            'generations' => 4,
+        ]);
+
+        // Assert
+        $this->expectException(HttpNotFoundException::class);
+
+        // Act
+        $module->handle($request);
     }
 
     // --- AP 8-6: Fehlende Chart-Smoke-Tests (S18) ---

@@ -7,8 +7,10 @@ declare(strict_types=1);
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\RequestMethodInterface;
+use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Http\RequestHandlers\RenumberTreeAction;
+use Fisharebest\Webtrees\Http\RequestHandlers\RenumberTreePage;
 use Fisharebest\Webtrees\Services\AdminService;
 use Fisharebest\Webtrees\Services\PhpService;
 use Fisharebest\Webtrees\Services\TimeoutService;
@@ -17,7 +19,9 @@ use Fisharebest\Webtrees\Services\TimeoutService;
  * Komponentenintegrationstest: RenumberTreeAction.
  *
  * @see docs/tds_conditions_ref.md P34
+ * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RenumberTreePageTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\RenumberTreeAction
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\RenumberTreePage
  */
 class RenumberTreeActionIntegrationTest extends MysqlTestCase
 {
@@ -160,5 +164,43 @@ class RenumberTreeActionIntegrationTest extends MysqlTestCase
             DB::table('individuals')->where('i_file', '=', $tree1Id)->where('i_id', '=', 'DUPXREF2')->count(),
             'DUPXREF2 darf NICHT umbenannt worden sein (Guard hat gefeuert).'
         );
+    }
+
+    /**
+     * RenumberTreePage-Klasse existiert (Bootstrap-Smoke).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RenumberTreePageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_renumber_tree_page_class_exists(): void
+    {
+        // Arrange / Act / Assert
+        $this->assertTrue(class_exists(RenumberTreePage::class));
+    }
+
+    /**
+     * RenumberTreePage::handle() liefert 200 OK für einen leeren Baum (GET-Render).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RenumberTreePageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_renumber_tree_page_handle_returns_ok_for_empty_tree(): void
+    {
+        // Arrange
+        $emptyTree = $this->treeService->create(
+            'renum-page-' . uniqid(),
+            'Renumber Page'
+        );
+        $pageHandler = new RenumberTreePage(new AdminService());
+        $request     = $this->createRequest(
+            method: RequestMethodInterface::METHOD_GET,
+            attributes: ['tree' => $emptyTree]
+        );
+
+        // Act
+        $response = $pageHandler->handle($request);
+
+        // Assert
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
 }

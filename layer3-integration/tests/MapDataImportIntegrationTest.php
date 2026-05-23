@@ -8,6 +8,7 @@ namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Http\RequestHandlers\MapDataImportAction;
+use Fisharebest\Webtrees\Http\RequestHandlers\MapDataImportPage;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\UploadedFile;
 use Fig\Http\Message\RequestMethodInterface;
@@ -19,7 +20,9 @@ use Fig\Http\Message\StatusCodeInterface;
  * AP B-04: MapDataImportAction::handle (CRAP 420)
  *
  * @see docs/tds_conditions_ref.md S48
+ * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataImportPageTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MapDataImportAction
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MapDataImportPage
  */
 class MapDataImportIntegrationTest extends MysqlTestCase
 {
@@ -180,5 +183,87 @@ class MapDataImportIntegrationTest extends MysqlTestCase
             ->exists();
 
         $this->assertFalse($exists, 'Null-Island-Ort TestOrt99 darf nicht in place_location sein');
+    }
+
+    /**
+     * Client-Upload mit gültigem CSV liefert HTTP 302 (Redirect zur Importseite).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataImportActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_handle_client_upload_imports_csv_and_redirects(): void
+    {
+        // Arrange
+        $csv = implode("\n", [
+            '"Level";"Country";"State";"Longitude";"Latitude";"Zoom level";"Icon";',
+            '0;TestRedirect99;;;E013.4050;N52.5200;10;',
+        ]);
+
+        $factory      = new Psr17Factory();
+        $stream       = $factory->createStream($csv);
+        $uploadedFile = new UploadedFile(
+            streamOrFile: $stream,
+            size:         strlen($csv),
+            errorStatus:  UPLOAD_ERR_OK,
+            clientFilename: 'places.csv',
+            clientMediaType: 'text/csv',
+        );
+
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_POST,
+            params:     ['source' => 'client', 'options' => 'add'],
+            attributes: ['user' => $this->createAndLoginAdmin()],
+        )->withUploadedFiles(['client_file' => $uploadedFile]);
+
+        // Act
+        $response = $this->handler->handle($request);
+
+        // Assert
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+    }
+
+    /**
+     * Client-Upload ohne Datei liefert ebenfalls HTTP 302 (Redirect zur Importseite).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataImportActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_handle_client_upload_with_no_file_redirects(): void
+    {
+        // Arrange
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_POST,
+            params:     ['source' => 'client', 'options' => 'add'],
+            attributes: ['user' => $this->createAndLoginAdmin()],
+        );
+
+        // Act
+        $response = $this->handler->handle($request);
+
+        // Assert: ohne Datei wird ebenfalls zur Importseite umgeleitet
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+    }
+
+    /**
+     * MapDataImportPage GET → 200 OK mit text/html-Content-Type.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataImportPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_map_data_import_page_returns_ok_response(): void
+    {
+        // Arrange
+        $page    = new MapDataImportPage();
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_GET,
+            attributes: ['user' => $this->createAndLoginAdmin()],
+        );
+
+        // Act
+        $response = $page->handle($request);
+
+        // Assert
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('content-type'));
     }
 }

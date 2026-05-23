@@ -11,6 +11,8 @@ use Fisharebest\Webtrees\Http\RequestHandlers\DeleteRecord;
 use Fisharebest\Webtrees\Http\RequestHandlers\GedcomRecordPage;
 use Fisharebest\Webtrees\Http\RequestHandlers\HelpText;
 use Fisharebest\Webtrees\Http\RequestHandlers\TreePrivacyAction;
+use Fisharebest\Webtrees\Http\RequestHandlers\UnconnectedAction;
+use Fisharebest\Webtrees\Http\RequestHandlers\UnconnectedPage;
 use Fisharebest\Webtrees\Services\ClipboardService;
 use Fisharebest\Webtrees\Services\LinkedRecordService;
 
@@ -25,6 +27,8 @@ use Fisharebest\Webtrees\Services\LinkedRecordService;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\GedcomRecordPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\DeleteRecord
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePrivacyAction
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UnconnectedAction
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UnconnectedPage
  */
 class RequestHandlerBatchAIntegrationTest extends MysqlTestCase
 {
@@ -169,5 +173,78 @@ class RequestHandlerBatchAIntegrationTest extends MysqlTestCase
 
         // DeleteRecord gibt 204 No Content zurück (leere JSON-Antwort)
         $this->assertSame(StatusCodeInterface::STATUS_NO_CONTENT, $response->getStatusCode());
+    }
+
+    // --- UnconnectedAction (POST → Redirect zur UnconnectedPage) ---
+
+    /**
+     * UnconnectedAction leitet POST auf die UnconnectedPage um (302 Found).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UnconnectedActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_unconnected_action_post_redirects_to_unconnected_page(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $handler  = new UnconnectedAction();
+        $request  = $this->createRequest(
+            method: 'POST',
+            params: [
+                'aliases'    => '0',
+                'associates' => '0',
+            ],
+            attributes: ['tree' => $this->tree],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+    }
+
+    // --- UnconnectedPage (GET, tree-bezogen) ---
+
+    /**
+     * UnconnectedPage liefert 200 OK für einen importierten Baum ohne Query-Parameter.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UnconnectedPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_unconnected_page_returns_ok_for_tree(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $handler  = new UnconnectedPage();
+        $request  = $this->createRequest(
+            attributes: ['tree' => $this->tree, 'user' => $admin],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * UnconnectedPage liefert 200 OK mit aktivierten aliases- und associates-Optionen.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UnconnectedPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_unconnected_page_returns_ok_with_aliases_and_associates(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $handler  = new UnconnectedPage();
+        $request  = $this->createRequest(
+            query: [
+                'aliases'    => '1',
+                'associates' => '1',
+            ],
+            attributes: ['tree' => $this->tree, 'user' => $admin],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
 }

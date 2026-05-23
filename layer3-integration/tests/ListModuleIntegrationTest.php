@@ -7,11 +7,15 @@ declare(strict_types=1);
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\DB;
+use Fisharebest\Webtrees\Http\Exceptions\HttpAccessDeniedException;
 use Fisharebest\Webtrees\Module\BranchesListModule;
 use Fisharebest\Webtrees\Module\FamilyListModule;
 use Fisharebest\Webtrees\Module\IndividualListModule;
 use Fisharebest\Webtrees\Module\LocationListModule;
 use Fisharebest\Webtrees\Module\MediaListModule;
+use Fisharebest\Webtrees\Module\ModuleListInterface;
 use Fisharebest\Webtrees\Module\NoteListModule;
 use Fisharebest\Webtrees\Module\PlaceHierarchyListModule;
 use Fisharebest\Webtrees\Module\RepositoryListModule;
@@ -135,6 +139,71 @@ class ListModuleIntegrationTest extends MysqlTestCase
         $this->assertFalse($module->listIsEmpty($this->tree));
     }
 
+    /**
+     * SourceListModule::title() liefert eine nicht-leere Beschriftung.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SourceListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_source_list_title_is_not_empty(): void
+    {
+        $module = new SourceListModule();
+
+        $title = $module->title();
+
+        self::assertNotEmpty($title);
+    }
+
+    /**
+     * SourceListModule::handle() liefert 200 OK, wenn die Modul-Privacy
+     * für den Tree auf PRIV_PRIVATE (für Gäste sichtbar) gesetzt ist.
+     *
+     * Variante zum bestehenden Admin-Login-Test: prüft explizit den
+     * Privacy-DB-Pfad über `module_privacy` statt über Auth-Ebene.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SourceListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_source_list_handle_returns_page_when_public_access_granted(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $module = new SourceListModule();
+        $module->setName('source_list');
+
+        DB::table('module_privacy')->insert([
+            'module_name'  => 'source_list',
+            'gedcom_id'    => $this->tree->id(),
+            'interface'    => ModuleListInterface::class,
+            'access_level' => Auth::PRIV_PRIVATE,
+        ]);
+
+        $request = $this->createRequest(attributes: ['tree' => $this->tree]);
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * SourceListModule::handle() verweigert dem Gast den Zugriff,
+     * wenn keine Public-Privacy gesetzt ist (Default = PRIV_USER).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SourceListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_source_list_handle_denies_access_to_guest(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $module = new SourceListModule();
+        $module->setName('source_list');
+
+        $request = $this->createRequest(attributes: ['tree' => $this->tree]);
+
+        $this->expectException(HttpAccessDeniedException::class);
+
+        $module->handle($request);
+    }
+
     // --- RepositoryListModule ---
 
     public function test_repository_list_handle_returns_page(): void
@@ -162,6 +231,71 @@ class ListModuleIntegrationTest extends MysqlTestCase
         $this->assertFalse($module->listIsEmpty($this->tree));
     }
 
+    /**
+     * RepositoryListModule::title() liefert eine nicht-leere Beschriftung.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/RepositoryListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_repository_list_title_is_not_empty(): void
+    {
+        $module = new RepositoryListModule();
+
+        $title = $module->title();
+
+        self::assertNotEmpty($title);
+    }
+
+    /**
+     * RepositoryListModule::handle() liefert 200 OK, wenn die Modul-Privacy
+     * für den Tree auf PRIV_PRIVATE (für Gäste sichtbar) gesetzt ist.
+     *
+     * Variante zum bestehenden Admin-Login-Test: prüft explizit den
+     * Privacy-DB-Pfad über `module_privacy` statt über Auth-Ebene.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/RepositoryListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_repository_list_handle_returns_page_when_public_access_granted(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $module = new RepositoryListModule();
+        $module->setName('repository_list');
+
+        DB::table('module_privacy')->insert([
+            'module_name'  => 'repository_list',
+            'gedcom_id'    => $this->tree->id(),
+            'interface'    => ModuleListInterface::class,
+            'access_level' => Auth::PRIV_PRIVATE,
+        ]);
+
+        $request = $this->createRequest(attributes: ['tree' => $this->tree]);
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * RepositoryListModule::handle() verweigert dem Gast den Zugriff,
+     * wenn keine Public-Privacy gesetzt ist (Default = PRIV_USER).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/RepositoryListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_repository_list_handle_denies_access_to_guest(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $module = new RepositoryListModule();
+        $module->setName('repository_list');
+
+        $request = $this->createRequest(attributes: ['tree' => $this->tree]);
+
+        $this->expectException(HttpAccessDeniedException::class);
+
+        $module->handle($request);
+    }
+
     // --- NoteListModule ---
 
     public function test_note_list_handle_returns_page(): void
@@ -175,6 +309,21 @@ class ListModuleIntegrationTest extends MysqlTestCase
         $response = $module->handle($request);
 
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * NoteListModule::title() liefert eine nicht-leere Beschriftung.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/NoteListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_note_list_title_is_not_empty(): void
+    {
+        $module = new NoteListModule();
+
+        $title = $module->title();
+
+        self::assertNotEmpty($title);
     }
 
     // --- MediaListModule ---
@@ -204,6 +353,22 @@ class ListModuleIntegrationTest extends MysqlTestCase
         $this->assertFalse($module->listIsEmpty($this->tree));
     }
 
+    /**
+     * MediaListModule::title() liefert eine nicht-leere Beschriftung.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/MediaListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_media_list_title_is_not_empty(): void
+    {
+        $linked_record_service = self::createStub(LinkedRecordService::class);
+        $module                = new MediaListModule($linked_record_service);
+
+        $title = $module->title();
+
+        self::assertNotEmpty($title);
+    }
+
     // --- SubmitterListModule ---
 
     public function test_submitter_list_handle_returns_page(): void
@@ -220,6 +385,71 @@ class ListModuleIntegrationTest extends MysqlTestCase
         $response = $module->handle($request);
 
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * SubmitterListModule::title() liefert eine nicht-leere Beschriftung.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SubmitterListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_submitter_list_title_is_not_empty(): void
+    {
+        $module = new SubmitterListModule();
+
+        $title = $module->title();
+
+        self::assertNotEmpty($title);
+    }
+
+    /**
+     * SubmitterListModule::handle() liefert 200 OK, wenn die Modul-Privacy
+     * für den Tree auf PRIV_PRIVATE (für Gäste sichtbar) gesetzt ist.
+     *
+     * Variante zum bestehenden Admin-Login-Test: prüft explizit den
+     * Privacy-DB-Pfad über `module_privacy` statt über Auth-Ebene.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SubmitterListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_submitter_list_handle_returns_page_when_public_access_granted(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $module = new SubmitterListModule();
+        $module->setName('submitter_list');
+
+        DB::table('module_privacy')->insert([
+            'module_name'  => 'submitter_list',
+            'gedcom_id'    => $this->tree->id(),
+            'interface'    => ModuleListInterface::class,
+            'access_level' => Auth::PRIV_PRIVATE,
+        ]);
+
+        $request = $this->createRequest(attributes: ['tree' => $this->tree]);
+
+        $response = $module->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * SubmitterListModule::handle() verweigert dem Gast den Zugriff,
+     * wenn keine Public-Privacy gesetzt ist (Default = PRIV_USER).
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SubmitterListModuleTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_submitter_list_handle_denies_access_to_guest(): void
+    {
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $module = new SubmitterListModule();
+        $module->setName('submitter_list');
+
+        $request = $this->createRequest(attributes: ['tree' => $this->tree]);
+
+        $this->expectException(HttpAccessDeniedException::class);
+
+        $module->handle($request);
     }
 
     // --- AP: S19-Collation (Nachnamen-Initial-Filter) ---

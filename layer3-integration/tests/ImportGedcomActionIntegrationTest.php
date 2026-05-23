@@ -13,11 +13,13 @@ use Fisharebest\Webtrees\Http\RequestHandlers\ImportGedcomAction;
 use Fisharebest\Webtrees\Http\RequestHandlers\ImportGedcomPage;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\AdminService;
+use Fisharebest\Webtrees\Services\TreeService;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 use const UPLOAD_ERR_NO_FILE;
+use const UPLOAD_ERR_OK;
 use const UPLOAD_ERR_PARTIAL;
 
 /**
@@ -147,6 +149,78 @@ class ImportGedcomActionIntegrationTest extends MysqlTestCase
 
         $response = $handler->handle($request);
 
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+    }
+
+    /**
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ImportGedcomActionTest.php
+     * @group ported-l2-doubles
+     *
+     * source=client mit gueltigem Upload → TreeService::importGedcomFile wird genau einmal aufgerufen.
+     */
+    public function test_import_action_with_valid_upload_invokes_tree_service(): void
+    {
+        // Arrange
+        $factory       = new Psr17Factory();
+        $stream        = $factory->createStream("0 HEAD\n1 SOUR test\n0 TRLR\n");
+        $uploaded_file = $factory->createUploadedFile($stream, 0, UPLOAD_ERR_OK, 'test.ged', 'text/plain');
+
+        $tree_service_mock = $this->createMock(TreeService::class);
+        $tree_service_mock
+            ->expects(self::once())
+            ->method('importGedcomFile');
+
+        $handler = new ImportGedcomAction(
+            Registry::container()->get(StreamFactoryInterface::class),
+            $tree_service_mock,
+        );
+
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            attributes: ['tree' => $this->tree],
+            params: [
+                'keep_media'         => '0',
+                'WORD_WRAPPED_NOTES' => '0',
+                'GEDCOM_MEDIA_PATH'  => '',
+                'encoding'           => '',
+                'source'             => 'client',
+            ],
+        )->withUploadedFiles(['client_file' => $uploaded_file]);
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+    }
+
+    /**
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ImportGedcomActionTest.php
+     * @group ported-l2-doubles
+     *
+     * source=client ohne client_file im Request → 302 (kein Upload-Eintrag).
+     */
+    public function test_import_action_without_client_file_redirects(): void
+    {
+        // Arrange
+        $handler = $this->makeImportAction();
+
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            attributes: ['tree' => $this->tree],
+            params: [
+                'keep_media'         => '0',
+                'WORD_WRAPPED_NOTES' => '0',
+                'GEDCOM_MEDIA_PATH'  => '',
+                'encoding'           => '',
+                'source'             => 'client',
+            ],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert
         self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
     }
 }

@@ -8,13 +8,21 @@ namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Http\RequestHandlers\ReportGenerate;
+use Fisharebest\Webtrees\Http\RequestHandlers\ReportListAction;
+use Fisharebest\Webtrees\Http\RequestHandlers\ReportListPage;
+use Fisharebest\Webtrees\Http\RequestHandlers\ReportSetupAction;
 use Fisharebest\Webtrees\Http\RequestHandlers\ReportSetupPage;
+use Fisharebest\Webtrees\Module\ModuleReportInterface;
 use Fisharebest\Webtrees\Report\HtmlRenderer;
 use Fisharebest\Webtrees\Report\PdfRenderer;
 use Fisharebest\Webtrees\Report\ReportParserGenerate;
 use Fisharebest\Webtrees\Services\ModuleService;
+use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Webtrees;
+use Illuminate\Support\Collection;
 
 /**
  * Komponentenintegrationstest: Report-System.
@@ -22,12 +30,20 @@ use Fisharebest\Webtrees\Webtrees;
  * ReportSetupPage::handle   — Setup-Formular (CRAP 272)
  * ReportGenerate::handle    — triggert new ReportParserGenerate (CRAP > 4.000 SAX-Kette)
  * ReportParserGenerate direkt — steuert alle SAX-Handler an
+ * ReportListAction::handle  — Redirect-Logik abhängig von ModuleService-Treffer
  *
  * Verwendet birth_report (kleinstes XML, keine Pflicht-Eingaben).
  *
  * @see docs/tds_conditions_ref.md S43
+ * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListActionTest.php
+ * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListPageTest.php
+ * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportSetupActionTest.php
+ * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportSetupPageTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportSetupPage
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportSetupAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportGenerate
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportListAction
+ * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportListPage
  * @covers \Fisharebest\Webtrees\Report\ReportParserGenerate
  * @covers \Fisharebest\Webtrees\Report\HtmlRenderer
  */
@@ -68,6 +84,36 @@ class ReportIntegrationTest extends MysqlTestCase
         // 200 OK (Formular) oder 3xx (Modul nicht gefunden → Redirect)
         $this->assertGreaterThanOrEqual(200, $response->getStatusCode());
         $this->assertLessThan(400, $response->getStatusCode());
+    }
+
+    /**
+     * ReportSetupPage::handle leitet weiter (302 Found), wenn das Modul nicht gefunden wird.
+     * Stub-basierter Negativpfad: ModuleService::findByName liefert null.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportSetupPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_report_setup_page_redirects_when_module_not_found(): void
+    {
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('test');
+
+        $user = self::createStub(UserInterface::class);
+
+        $module_service = $this->createMock(ModuleService::class);
+        $module_service->method('findByName')->willReturn(null);
+
+        $handler  = new ReportSetupPage($module_service);
+        $request  = $this->createRequest(
+            attributes: [
+                'tree'   => $tree,
+                'user'   => $user,
+                'report' => 'nonexistent',
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
     }
 
     // --- ReportGenerate via handle() (triggert SAX-Kette) ---
@@ -286,5 +332,230 @@ class ReportIntegrationTest extends MysqlTestCase
 
         $this->assertGreaterThanOrEqual(300, $response->getStatusCode());
         $this->assertLessThan(400, $response->getStatusCode());
+    }
+
+    // --- ReportListAction (Redirect je nach ModuleService-Treffer) ---
+
+    /**
+     * ReportListAction::handle leitet zur Setup-Seite weiter, wenn das Modul gefunden wird.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_report_list_action_redirects_to_setup_page_when_module_found(): void
+    {
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('test');
+
+        $user = self::createStub(UserInterface::class);
+
+        $report = self::createStub(ModuleReportInterface::class);
+        $report->method('name')->willReturn('test-report');
+        // PRIV_PRIVATE allows guests — avoids HttpAccessDeniedException.
+        $report->method('accessLevel')->willReturn(Auth::PRIV_PRIVATE);
+
+        $module_service = $this->createMock(ModuleService::class);
+        $module_service->method('findByName')->willReturn($report);
+
+        $handler  = new ReportListAction($module_service);
+        $request  = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            params: ['report' => 'test-report'],
+            attributes: [
+                'tree' => $tree,
+                'user' => $user,
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        $this->assertStringContainsString('test-report', $response->getHeaderLine('location'));
+    }
+
+    /**
+     * ReportListAction::handle leitet zur Listenseite zurück, wenn kein Modul gefunden wird.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_report_list_action_redirects_to_list_page_when_module_not_found(): void
+    {
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('test');
+
+        $user = self::createStub(UserInterface::class);
+
+        $module_service = $this->createMock(ModuleService::class);
+        $module_service->method('findByName')->willReturn(null);
+
+        $handler  = new ReportListAction($module_service);
+        $request  = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            params: ['report' => 'nonexistent'],
+            attributes: [
+                'tree' => $tree,
+                'user' => $user,
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+    }
+
+    // --- ReportSetupAction (Redirect zum Generate-Handler) ---
+
+    /**
+     * ReportSetupAction::handle leitet zum Generate-Handler weiter, wenn das Modul gefunden wird.
+     * Der Location-Header muss den Report-Namen enthalten.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportSetupActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_report_setup_action_redirects_to_generate_when_module_found(): void
+    {
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('test');
+
+        $user = self::createStub(UserInterface::class);
+
+        $report = self::createStub(ModuleReportInterface::class);
+        $report->method('name')->willReturn('test-report');
+        // PRIV_PRIVATE allows guests — avoids HttpAccessDeniedException.
+        $report->method('accessLevel')->willReturn(Auth::PRIV_PRIVATE);
+
+        $module_service = $this->createMock(ModuleService::class);
+        $module_service->method('findByName')->willReturn($report);
+
+        $handler  = new ReportSetupAction($module_service);
+        $request  = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            params: [
+                'destination' => 'view',
+                'format'      => 'HTML',
+                'varnames'    => [],
+                'vars'        => [],
+            ],
+            attributes: [
+                'tree'   => $tree,
+                'user'   => $user,
+                'report' => 'test-report',
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        $this->assertStringContainsString('test-report', $response->getHeaderLine('location'));
+    }
+
+    /**
+     * ReportSetupAction::handle leitet zur Listenseite zurück, wenn kein Modul gefunden wird.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportSetupActionTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_report_setup_action_redirects_to_list_page_when_module_not_found(): void
+    {
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('test');
+
+        $user = self::createStub(UserInterface::class);
+
+        $module_service = $this->createMock(ModuleService::class);
+        $module_service->method('findByName')->willReturn(null);
+
+        $handler  = new ReportSetupAction($module_service);
+        $request  = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            params: [
+                'destination' => 'view',
+                'format'      => 'HTML',
+                'varnames'    => [],
+                'vars'        => [],
+            ],
+            attributes: [
+                'tree'   => $tree,
+                'user'   => $user,
+                'report' => 'nonexistent',
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+    }
+
+    // --- ReportListPage (Auswahl-Übersicht — Render via ViewResponseTrait) ---
+
+    /**
+     * ReportListPage existiert als ladbare Klasse.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_report_list_page_class_exists(): void
+    {
+        $this->assertTrue(class_exists(ReportListPage::class));
+    }
+
+    /**
+     * ReportListPage::handle gibt 200 OK zurück, wenn keine Reports zur Verfügung stehen.
+     * ModuleService::findByComponent wird genau einmal mit (ModuleReportInterface, tree, user) aufgerufen.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_report_list_page_handle_returns_ok_response_when_no_reports(): void
+    {
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('test');
+
+        $user = self::createStub(UserInterface::class);
+
+        $module_service = $this->createMock(ModuleService::class);
+        $module_service->expects(self::once())
+            ->method('findByComponent')
+            ->with(ModuleReportInterface::class, $tree, $user)
+            ->willReturn(new Collection());
+
+        $handler  = new ReportListPage($module_service);
+        $request  = $this->createRequest(
+            attributes: [
+                'tree' => $tree,
+                'user' => $user,
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * ReportListPage::handle gibt 200 OK zurück, wenn Reports verfügbar sind.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListPageTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_report_list_page_handle_returns_ok_response_when_reports_available(): void
+    {
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('test');
+
+        $user = self::createStub(UserInterface::class);
+
+        $report = self::createStub(ModuleReportInterface::class);
+        $report->method('name')->willReturn('test-report');
+
+        $module_service = self::createStub(ModuleService::class);
+        $module_service->method('findByComponent')->willReturn(new Collection([$report]));
+
+        $handler  = new ReportListPage($module_service);
+        $request  = $this->createRequest(
+            attributes: [
+                'tree' => $tree,
+                'user' => $user,
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
 }

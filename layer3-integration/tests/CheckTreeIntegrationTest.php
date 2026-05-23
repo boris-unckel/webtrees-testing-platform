@@ -11,6 +11,7 @@ use Fisharebest\Webtrees\Gedcom;
 use Fisharebest\Webtrees\Http\RequestHandlers\CheckTree;
 use Fisharebest\Webtrees\Services\PhpService;
 use Fisharebest\Webtrees\Services\TimeoutService;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Komponentenintegrationstest: CheckTree RequestHandler mit MySQL.
@@ -64,5 +65,93 @@ class CheckTreeIntegrationTest extends MysqlTestCase
         $response = $this->handler->handle($request);
 
         $this->assertNotEmpty((string) $response->getBody());
+    }
+
+    /**
+     * CheckTree auf leerem (frisch erstelltem) Baum liefert 200 OK.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CheckTreeTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_check_tree_returns_ok_for_empty_tree(): void
+    {
+        // Arrange
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('check-empty', 'Check Empty');
+
+        $timeout_service = $this->createTimeoutServiceMock(false);
+        $handler         = new CheckTree(new Gedcom(), $timeout_service);
+
+        // Act
+        $request  = $this->createRequest(attributes: ['tree' => $this->tree]);
+        $response = $handler->handle($request);
+
+        // Assert
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * CheckTree mit skip_to-Query-Parameter (Pagination-Resume) liefert 200 OK
+     * auch wenn der angegebene XREF nicht existiert.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CheckTreeTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_check_tree_returns_ok_with_skip_to_parameter(): void
+    {
+        // Arrange
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('check-skip', 'Check Skip');
+
+        $timeout_service = $this->createTimeoutServiceMock(false);
+        $handler         = new CheckTree(new Gedcom(), $timeout_service);
+
+        // Act — skip_to verweist auf nicht existierenden XREF
+        $request  = $this->createRequest(
+            query: ['skip_to' => 'X999'],
+            attributes: ['tree' => $this->tree],
+        );
+        $response = $handler->handle($request);
+
+        // Assert
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * CheckTree liefert 200 OK, wenn TimeoutService einen Timeout signalisiert
+     * und der Handler in Pagination-Mode wechselt.
+     *
+     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CheckTreeTest.php
+     * @group ported-l2-doubles
+     */
+    public function test_check_tree_returns_ok_when_timeout_triggers_pagination(): void
+    {
+        // Arrange
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('check-timeout', 'Check Timeout');
+
+        $timeout_service = $this->createTimeoutServiceMock(true);
+        $handler         = new CheckTree(new Gedcom(), $timeout_service);
+
+        // Act
+        $request  = $this->createRequest(attributes: ['tree' => $this->tree]);
+        $response = $handler->handle($request);
+
+        // Assert
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * Helper: liefert einen TimeoutService-Mock mit konfiguriertem
+     * isTimeNearlyUp()-Rückgabewert (Service → Mock per Stub/Mock-Konvention).
+     *
+     * @return TimeoutService&MockObject
+     */
+    private function createTimeoutServiceMock(bool $is_time_nearly_up): TimeoutService
+    {
+        $timeout_service = $this->createMock(TimeoutService::class);
+        $timeout_service->method('isTimeNearlyUp')->willReturn($is_time_nearly_up);
+
+        return $timeout_service;
     }
 }
