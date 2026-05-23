@@ -39,12 +39,17 @@ use const UPLOAD_ERR_OK;
  *   Ausführung verhindert. Asserts auf die Sicherheits-Eigenschaft, nicht auf
  *   konkrete Symbol-Namen (Header-Bezeichner, Methodennamen).
  *
+ * SEC-AUDIT-003 Regressionsabdeckung (verhaltens-definitiv):
+ *   Auch Replacement-Image-Responses (Not-Found-/Forbidden-Placeholder) müssen
+ *   einen CSP-Header tragen, der Skriptausführung verhindert.
+ *
  * @covers \Fisharebest\Webtrees\Factories\ImageFactory
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MediaFileDownload
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MediaFileThumbnail
  * @covers \Fisharebest\Webtrees\Services\MediaFileService
  * @see docs/testquality_improve_E07.md
  * @see docs/security-audit/tasks/SEC-AUDIT-001_svg_xss_media_upload.md
+ * @see docs/security-audit/tasks/SEC-AUDIT-003_replacement_image_response_csp.md
  */
 class MediaFileDeliveryIntegrationTest extends MysqlTestCase
 {
@@ -212,6 +217,45 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
 
         // Assert — replacementImageResponse() liefert HTTP 200 (Statuscode steckt im Bild, nicht im Header)
         self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    // =========================================================================
+    // SEC-AUDIT-003 — CSP auf Replacement-Image-Response (verhaltens-definitiv)
+    // =========================================================================
+
+    /**
+     * SEC-AUDIT-003 — replacementImageResponse() muss einen CSP-Header tragen,
+     * der Skriptausführung verhindert. Ausgelöst über MediaFileThumbnail mit
+     * unbekannter XREF, was den Placeholder-Pfad ansteuert.
+     */
+    public function test_sec_audit_003_replacement_image_carries_csp(): void
+    {
+        $this->createTreeWithGedcom('sec003-csp', 'SEC AUDIT 003', self::DEMO_GED);
+        $handler = new MediaFileThumbnail();
+        $request = $this->createRequest(
+            query:      [
+                'xref'        => 'DOESNOTEXIST',
+                'fact_id'     => '',
+                'disposition' => 'inline',
+                's'           => 'invalid',
+                'w'           => '100',
+                'h'           => '100',
+                'fit'         => 'contain',
+            ],
+            attributes: ['tree' => $this->tree, 'user' => $this->createAndLoginAdmin()],
+        );
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertSame('image/svg+xml', $response->getHeaderLine('content-type'));
+
+        $csp = $response->getHeaderLine('content-security-policy');
+        self::assertStringContainsString(
+            'script-src none',
+            $csp,
+            'Replacement-Image-Response must carry CSP that prevents script execution',
+        );
     }
 
     // =========================================================================
