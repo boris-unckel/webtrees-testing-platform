@@ -33,5 +33,19 @@ if [ "${EXIT_CODE}" -ne 0 ]; then
     cp /var/log/php_errors.log "${ARTIFACTS}/php-errors.log" 2>/dev/null || true
 fi
 
+# Spuernasen-Sweep: Tests, die unabhaengig vom Verhalten gruen melden oder
+# skippen (Java-@Ignore-Aequivalent + tautologische Smoke-Tests + Kein-Exception-
+# Erfolg + Phantom-Assertions). Laeuft immer, auch bei rotem PHPUnit-Lauf.
+echo
+echo "=== Spuernasen-Sweep: stille Tests (Skip / Tautologie / No-Throw / Phantom) ==="
+SWEEP_FILE="${ARTIFACTS}/silent-tests-sweep.txt"
+grep -rnE \
+    "markTestSkipped|markTestIncomplete|assertTrue\(class_exists|assertTrue\(method_exists|assertTrue\(interface_exists|assertTrue\(trait_exists|assertTrue\(true|addToAssertionCount" \
+    /tests/layer3-integration/tests/ --include='*.php' \
+    > "${SWEEP_FILE}" || true
+cat "${SWEEP_FILE}"
+SWEEP_COUNT=$(wc -l < "${SWEEP_FILE}")
+echo "--- ${SWEEP_COUNT} Treffer (Report: artifacts/layer3/silent-tests-sweep.txt) ---"
+
 echo "=== Komponentenintegrationstest abgeschlossen (Exit: ${EXIT_CODE}) ==="
 exit "${EXIT_CODE}"
