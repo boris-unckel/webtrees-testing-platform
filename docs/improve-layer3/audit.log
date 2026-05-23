@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# improve-layer3 audit — append-only.
+# Format: <ISO-8601-Timestamp> <TASK-ID> <ACTION> <RESULT>
+# Keine Repo-Zustands-Snapshots, keine Akkumulation, keine Nacheditierung bestehender Zeilen.
+# Aktionen-Vokabular (Worker-Konvention):
+#   start                            — Worker beginnt Bearbeitung
+#   plan_read                        — Tabellenzeile gefunden, Felder extrahiert
+#   sut_read <pfad>                  — SUT zur Konstruktor-Verifikation gelesen
+#   strategy_chosen <code>           — Strategie endgültig (Bestätigung oder Abweichung vom plan.md-Hinweis)
+#   test_filter <result> [details]   — PHPUnit-Filter-Lauf — passed (N tests, M assertions) | failed <kurz>
+#   plan_updated <feld>=<wert>       — Statuszelle in plan.md geändert
+#   done                             — Task abgeschlossen (kein Commit; bleibt unstaged für End-Review)
+#   accept_verified <begruendung>    — by-design bestätigt (kein Codechange)
+#   false_positive_verified          — kein Code-Treffer (Doc-Kommentar etc.)
+#   follow_up <kurzbeschreibung>     — Bestand-Problem ohne Bezug zum Task notiert (Orchestrator legt neuen Plan-Eintrag an)
+#   blocked <phase> <kurzgrund>      — Worker bricht ab, Status auf blockiert
+# Hinweis: Es gibt KEINE commit-Aktion. Der User reviewt am Ende und committet manuell.
