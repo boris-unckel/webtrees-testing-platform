@@ -9,12 +9,15 @@ namespace DombrinksBlagen\WebtreesTests\Integration;
 use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\Contracts\UserInterface;
+use Fisharebest\Webtrees\Http\Exceptions\HttpTooManyRequestsException;
 use Fisharebest\Webtrees\Http\RequestHandlers\LoginAction;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\RateLimitService;
 use Fisharebest\Webtrees\Services\UpgradeService;
 use Fisharebest\Webtrees\Session;
 use Fisharebest\Webtrees\Site;
+use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 /**
  * Komponentenintegrationstest: LoginAction (Anmeldungs-Aktion) — P39.
@@ -27,8 +30,17 @@ use Fisharebest\Webtrees\Site;
  * - Nicht verifizierte E-Mail → 302, keine Session-Anmeldung
  * - Nicht freigegebenes Konto → 302, keine Session-Anmeldung
  *
+ * SEC-AUDIT-008 Regressionsabdeckung (verhaltens-definitiv):
+ *   Nach Erreichen einer Versuchs-Schwelle muss der Login-Endpoint
+ *   einen Rate-Limit-Block auslösen. Akzeptierte Signale: HTTP-Status 429
+ *   ODER HttpTooManyRequestsException. Der Handler wird über den DI-
+ *   Container geholt, damit die Tests nicht an die konkrete Konstruktor-
+ *   Signatur gebunden sind — egal ob die Implementierung als
+ *   konstruktor-injiziertes Service, als Middleware oder anders erfolgt.
+ *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\LoginAction
  * @see docs/testquality_improve_P39.md
+ * @see docs/security-audit/tasks/SEC-AUDIT-008_login_brute_force_no_rate_limit.md
  * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginActionTest.php
  */
 class LoginActionIntegrationTest extends MysqlTestCase
@@ -37,12 +49,24 @@ class LoginActionIntegrationTest extends MysqlTestCase
     {
         parent::setUp();
         $this->createAndLoginAdmin();
+
+        // IP-basierter Rate-Limit-Zähler (SEC-AUDIT-008) wird in Site-
+        // Preferences persistiert — beim Testklassen-Start zurücksetzen,
+        // damit kein Reststand früherer Läufe den ersten Test in 429 zwingt.
+        Site::$preferences = [];
+        Site::setPreference('rate-limit-login-127.0.0.1', '');
     }
 
     protected function tearDown(): void
     {
         // Cookie-Superglobal zwischen Tests bereinigen
         $_COOKIE = [];
+
+        // IP-basierter Rate-Limit-Zähler (SEC-AUDIT-008) wird in Site-
+        // Preferences persistiert — Cross-Test-Contamination verhindern,
+        // damit nachfolgende Tests nicht ungewollt 429 statt 302 sehen.
+        Site::$preferences = [];
+        Site::setPreference('rate-limit-login-127.0.0.1', '');
 
         parent::tearDown();
     }
@@ -92,7 +116,7 @@ class LoginActionIntegrationTest extends MysqlTestCase
         $user->setPreference(UserInterface::PREF_IS_EMAIL_VERIFIED, '1');
         $user->setPreference(UserInterface::PREF_IS_ACCOUNT_APPROVED, '1');
 
-        $upgrade_service = $this->createMock(UpgradeService::class);
+        $upgrade_service = self::createStub(UpgradeService::class);
         $upgrade_service->method('isUpgradeAvailable')->willReturn(false);
 
         $handler  = new LoginAction($upgrade_service, new RateLimitService(), $this->userService);
@@ -254,6 +278,103 @@ class LoginActionIntegrationTest extends MysqlTestCase
         // Assert: Redirect, der Proband ist nicht in der Session angemeldet.
         self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
         self::assertNotSame($user->id(), Session::get('wt_user'));
+    }
+
+    // =========================================================================
+    // SEC-AUDIT-008 — Login Rate-Limit (verhaltens-definitiv)
+    // =========================================================================
+
+    /**
+     * Pre-fix: alle Versuche → 302 (keine Drosselung).
+     * Post-fix (egal in welcher Form): nach 10 Fehlversuchen → 429 / Throw.
+     */
+    public function test_sec_audit_008_per_user_rate_limit_fires_after_threshold(): void
+    {
+        $this->prepareLoginAttempt();
+
+        $user = $this->ensureUser(
+            'sec008probe',
+            'SEC-AUDIT-008 Probe',
+            'sec008probe@test.local',
+            'irrelevant-probe-pw',
+        );
+        $user->setPreference(UserInterface::PREF_IS_EMAIL_VERIFIED, '1');
+        $user->setPreference(UserInterface::PREF_IS_ACCOUNT_APPROVED, '1');
+        $user->setPreference('rate-limit-login', '');
+
+        $handler = Registry::container()->get(LoginAction::class);
+
+        for ($i = 0; $i < 10; $i++) {
+            $response = $handler->handle($this->makeLoginRequest('sec008probe', 'bad-' . $i));
+            self::assertSame(
+                StatusCodeInterface::STATUS_FOUND,
+                $response->getStatusCode(),
+                sprintf('Attempt %d: expected 302 (under threshold), got %d', $i + 1, $response->getStatusCode()),
+            );
+        }
+
+        $this->assertRateLimitBlocks(
+            fn (): mixed => $handler->handle($this->makeLoginRequest('sec008probe', 'bad-trigger')),
+        );
+    }
+
+    /**
+     * Pre-fix: alle Versuche → 302 (kein Site-Wide-Limit).
+     * Post-fix: nach 20 Versuchen auf nicht existierende User → 429 / Throw,
+     * unabhängig von der Existenz des Accounts (Schutz vor User-Enumeration).
+     */
+    public function test_sec_audit_008_site_wide_rate_limit_fires_for_unknown_users(): void
+    {
+        $this->prepareLoginAttempt();
+
+        $handler = Registry::container()->get(LoginAction::class);
+
+        for ($i = 0; $i < 20; $i++) {
+            $response = $handler->handle($this->makeLoginRequest('no-such-sec008', 'bad-' . $i));
+            self::assertSame(
+                StatusCodeInterface::STATUS_FOUND,
+                $response->getStatusCode(),
+                sprintf('Attempt %d: expected 302 (under site-wide threshold), got %d', $i + 1, $response->getStatusCode()),
+            );
+        }
+
+        $this->assertRateLimitBlocks(
+            fn (): mixed => $handler->handle($this->makeLoginRequest('no-such-sec008', 'bad-trigger')),
+        );
+    }
+
+    private function assertRateLimitBlocks(callable $invoke): void
+    {
+        try {
+            $response = $invoke();
+        } catch (HttpTooManyRequestsException) {
+            self::assertTrue(true, 'Rate limit fired via HttpTooManyRequestsException');
+            return;
+        } catch (Throwable $e) {
+            self::fail(sprintf(
+                'Unexpected exception %s instead of rate-limit signal: %s',
+                $e::class,
+                $e->getMessage(),
+            ));
+        }
+
+        self::assertSame(
+            429,
+            $response->getStatusCode(),
+            'Rate limit must fire via HTTP 429 or HttpTooManyRequestsException',
+        );
+    }
+
+    private function makeLoginRequest(string $username, string $password): ServerRequestInterface
+    {
+        return $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            params: [
+                'username' => $username,
+                'password' => $password,
+                'url'      => '',
+            ],
+        );
     }
 
     /**
