@@ -6,13 +6,24 @@ declare(strict_types=1);
 
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
+use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\Contracts\MediaFactoryInterface;
+use Fisharebest\Webtrees\Factories\ImageFactory;
 use Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException;
 use Fisharebest\Webtrees\Http\RequestHandlers\MediaFileDownload;
 use Fisharebest\Webtrees\Http\RequestHandlers\MediaFileThumbnail;
 use Fisharebest\Webtrees\Media;
 use Fisharebest\Webtrees\Registry;
+use Fisharebest\Webtrees\Services\MediaFileService;
+use Fisharebest\Webtrees\Services\PhpService;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
+use Psr\Http\Message\UploadedFileInterface;
+use RuntimeException;
+
+use const UPLOAD_ERR_OK;
 
 /**
  * Komponentenintegrationstest: MediaFileDownload & MediaFileThumbnail — E07.
@@ -22,9 +33,18 @@ use Fisharebest\Webtrees\Registry;
  * - MediaFileDownload: XREF nicht gefunden → HttpNotFoundException via Auth::checkMediaAccess
  * - MediaFileThumbnail: XREF gefunden, canShow=true, kein fact_id match → replacementImageResponse
  *
+ * SEC-AUDIT-001 Regressionsabdeckung (verhaltens-definitiv):
+ *   Hochgeladene SVGs mit Skript-Inhalt dürfen den Browser nicht erreichen, ohne
+ *   dass entweder der ausführbare Inhalt entfernt wurde ODER ein CSP-Header die
+ *   Ausführung verhindert. Asserts auf die Sicherheits-Eigenschaft, nicht auf
+ *   konkrete Symbol-Namen (Header-Bezeichner, Methodennamen).
+ *
+ * @covers \Fisharebest\Webtrees\Factories\ImageFactory
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MediaFileDownload
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MediaFileThumbnail
+ * @covers \Fisharebest\Webtrees\Services\MediaFileService
  * @see docs/testquality_improve_E07.md
+ * @see docs/security-audit/tasks/SEC-AUDIT-001_svg_xss_media_upload.md
  */
 class MediaFileDeliveryIntegrationTest extends MysqlTestCase
 {
@@ -192,5 +212,210 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
 
         // Assert — replacementImageResponse() liefert HTTP 200 (Statuscode steckt im Bild, nicht im Header)
         self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    // =========================================================================
+    // SEC-AUDIT-001 — SVG XSS Regression (verhaltens-definitiv)
+    // =========================================================================
+    //
+    // Asserts the security property a user actually observes: a malicious SVG
+    // that reaches the browser must either have its executable payload removed
+    // OR be delivered with a CSP that prevents script execution. The fix may
+    // take any form (DOM-based filter, replacement-image fallback, CSP-only
+    // hardening) — these tests do not depend on a specific implementation.
+
+    /**
+     * H1 — case-bypass `<SCRIPT>` payload must not reach the browser executable.
+     */
+    public function test_sec_audit_001_h1_case_bypass_script_is_browser_safe(): void
+    {
+        $response = $this->uploadAndFetchSvg('H1', 0, 'sec001-h1');
+        $this->assertSvgBrowserSafe($response, ['<SCRIPT', '<script', 'cookie']);
+    }
+
+    /**
+     * H2 — `onload=` event handler payload must not reach the browser executable.
+     */
+    public function test_sec_audit_001_h2_onload_handler_is_browser_safe(): void
+    {
+        $response = $this->uploadAndFetchSvg('H2', 0, 'sec001-h2');
+        $this->assertSvgBrowserSafe($response, ['onload=', 'cookie']);
+    }
+
+    /**
+     * H3 — `javascript:` URL in xlink:href must not reach the browser executable.
+     */
+    public function test_sec_audit_001_h3_javascript_url_is_browser_safe(): void
+    {
+        $response = $this->uploadAndFetchSvg('H3', 0, 'sec001-h3');
+        $this->assertSvgBrowserSafe($response, ['javascript:', 'cookie']);
+    }
+
+    /**
+     * H4 — legitimate SVG (no active content) must round-trip with CSP protection.
+     */
+    public function test_sec_audit_001_h4_legitimate_svg_passes_with_csp(): void
+    {
+        $response = $this->uploadAndFetchSvg('H4', 0, 'sec001-h4');
+
+        self::assertNotNull($response, 'Legitimate SVG must not be rejected at upload');
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertSame('image/svg+xml', $response->getHeaderLine('content-type'));
+
+        $csp = $response->getHeaderLine('content-security-policy');
+        self::assertStringContainsString(
+            'script-src none',
+            $csp,
+            'Legitimate SVG must be delivered with CSP script-src none',
+        );
+
+        $body = (string) $response->getBody();
+        self::assertStringContainsString('<rect', $body, 'Legitimate SVG content must round-trip');
+        self::assertStringContainsString('orange', $body);
+    }
+
+    /**
+     * H5 — lowercase `<script>` baseline must not reach the browser executable.
+     */
+    public function test_sec_audit_001_h5_lowercase_script_is_browser_safe(): void
+    {
+        $response = $this->uploadAndFetchSvg('H5', 0, 'sec001-h5');
+        $this->assertSvgBrowserSafe($response, ['<script', 'cookie']);
+    }
+
+    /**
+     * Upload an SVG fixture payload and fetch it back through ImageFactory.
+     *
+     * Returns null when the upload pipeline rejected the file outright — that
+     * is the strongest mitigation (defense at L0) and is treated as safe.
+     */
+    private function uploadAndFetchSvg(string $hypothesisId, int $payloadIndex, string $treeName): ?ResponseInterface
+    {
+        $this->createTreeWithGedcom($treeName, 'SEC AUDIT 001 ' . $hypothesisId, self::DEMO_GED);
+        $this->createAndLoginAdmin();
+
+        $fixture = $this->loadSecAudit001Fixture();
+        self::assertArrayHasKey($hypothesisId, $fixture);
+        $payloads = $fixture[$hypothesisId];
+        self::assertIsArray($payloads);
+        self::assertArrayHasKey($payloadIndex, $payloads);
+
+        /** @var array<string,mixed> $entry */
+        $entry = $payloads[$payloadIndex];
+        /** @var string $filename */
+        $filename = $entry['filename'];
+        /** @var string $contentType */
+        $contentType = $entry['content_type'];
+        /** @var string $payloadText */
+        $payloadText = $entry['payload'];
+
+        $uploaded = $this->buildUploadedFile($payloadText, $filename, $contentType);
+
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_POST,
+            params:     [
+                'file_location' => 'upload',
+                'folder'        => '',
+                'auto'          => '0',
+                'new_file'      => $filename,
+            ],
+            attributes: ['tree' => $this->tree],
+        )->withUploadedFiles(['file' => $uploaded]);
+
+        $mediaFileService = new MediaFileService(new PhpService());
+        $stored           = $mediaFileService->uploadFile($request);
+
+        if ($stored === '') {
+            return null;
+        }
+
+        $filesystem = $this->tree->mediaFilesystem();
+        self::assertTrue($filesystem->fileExists($stored), "Stored file should exist: {$stored}");
+
+        $imageFactory = new ImageFactory(new PhpService());
+
+        return $imageFactory->fileResponse($filesystem, $stored, false);
+    }
+
+    /**
+     * Behavior-only assertion: the served SVG cannot execute scripts in a
+     * conformant browser. Two independent paths are accepted:
+     *
+     *   (a) The executable signature is absent from the body (L1 — content sanitized).
+     *   (b) The response carries `content-security-policy: …script-src none…`
+     *       (L2 — browser blocks execution regardless of body content).
+     *
+     * Either suffices. A null response (upload rejected) is the strongest form.
+     *
+     * @param list<string> $forbiddenSignatures Strings that must not appear in the body
+     *                                          unless L2 (CSP) is in place.
+     */
+    private function assertSvgBrowserSafe(?ResponseInterface $response, array $forbiddenSignatures): void
+    {
+        if ($response === null) {
+            self::assertTrue(true, 'Upload rejected — strongest mitigation (L0)');
+            return;
+        }
+
+        self::assertSame(
+            StatusCodeInterface::STATUS_OK,
+            $response->getStatusCode(),
+            'Image responses use HTTP 200 even for blocked/placeholder content',
+        );
+
+        $csp = $response->getHeaderLine('content-security-policy');
+        if (str_contains($csp, 'script-src none')) {
+            return;
+        }
+
+        $body = (string) $response->getBody();
+        foreach ($forbiddenSignatures as $signature) {
+            self::assertStringNotContainsString(
+                $signature,
+                $body,
+                sprintf(
+                    'Without CSP script-src none, body must not contain executable signature %s',
+                    var_export($signature, true),
+                ),
+            );
+        }
+    }
+
+    private function buildUploadedFile(string $content, string $clientName, string $mimeType): UploadedFileInterface
+    {
+        /** @var StreamFactoryInterface $streamFactory */
+        $streamFactory = Registry::container()->get(StreamFactoryInterface::class);
+        /** @var UploadedFileFactoryInterface $uploadedFileFactory */
+        $uploadedFileFactory = Registry::container()->get(UploadedFileFactoryInterface::class);
+
+        $stream = $streamFactory->createStream($content);
+
+        return $uploadedFileFactory->createUploadedFile(
+            $stream,
+            strlen($content),
+            UPLOAD_ERR_OK,
+            $clientName,
+            $mimeType,
+        );
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function loadSecAudit001Fixture(): array
+    {
+        $path = '/fixtures/security/payloads/sec_audit_001.json';
+        if (!is_file($path)) {
+            throw new RuntimeException("Fixture not found: {$path}");
+        }
+        $json = file_get_contents($path);
+        if ($json === false) {
+            throw new RuntimeException("Fixture not readable: {$path}");
+        }
+        $data = json_decode($json, true);
+        if (!is_array($data)) {
+            throw new RuntimeException("Fixture invalid JSON: {$path}");
+        }
+        return $data;
     }
 }
