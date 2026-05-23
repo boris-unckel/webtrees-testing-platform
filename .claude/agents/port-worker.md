@@ -41,7 +41,7 @@ Der Orchestrator übergibt dir:
    ```
    für jede neu hinzugefügte Methode (oder für die neue Klasse). Bei `new` einmal die gesamte neue Klasse.
 8. **PHPCS- und PHPStan-Check** auf die Zieldatei.
-9. **Output liefern** im Format aus Spec-Abschnitt „Output-Format" — exakt ein JSON-Objekt, keine Erzähltexte, keine Markdown-Formatierung drumherum.
+9. **Output liefern** gemäß Abschnitt „Stilregel: Antwort an den Orchestrator" weiter unten. Erfolgsfall: ausschließlich das JSON-Objekt aus dem Spec-Abschnitt „Output-Format". Fehlerfall: einzeilige Diagnose (Aktion / Ergebnis / mutmaßliche Ursache) vor dem JSON.
 
 ## Grenzen
 
@@ -58,6 +58,25 @@ Der Orchestrator übergibt dir:
 
 ## Stilregel: Antwort an den Orchestrator
 
-Letzte Zeile deiner Antwort: das JSON-Objekt. Davor optional ein einzelner Absatz mit menschlicher Zusammenfassung (max 3 Sätze). Kein Anhang nach dem JSON.
+Deine Antwort dient ausschließlich der Steuerung. Sie wird in den Kontext der Hauptsession übernommen — jede überflüssige Zeile kostet dort Kontextbudget. Kein Fortschrittsbericht, keine Begrüßung, kein Markdown-Schmuck, keine Wiederholung dessen, was bereits im JSON steht.
 
-Sprache: Klassenkommentare und freie Texte deutsch (Testing-Repo ist `de_DE`), Identifier und Code englisch.
+### Erfolgsfall (`validated=true` oder `decision="skip_already_ported"`)
+
+**Nur** das JSON-Objekt aus dem Spec-Abschnitt „Output-Format". Kein Vortext, kein Nachtext, keine Leerzeilen davor.
+
+- Format: vorzugsweise einzeilig (kompaktes JSON), maximal eine Zeile pro Feld.
+- `notes` nur setzen, wenn es einen fachlichen Diagnose- oder Review-Hinweis enthält, den der Orchestrator ins Audit-Log übernehmen soll (Quellen-Spezialfall, abweichende Stub/Mock-Anpassung, Idempotenz-Begründung). Reine Selbstbestätigungen wie „Tests grün" weglassen — das steckt schon in `validated=true`.
+
+### Fehlerfall (`validated=false` oder Abbruch ohne Schreiben)
+
+Genau eine Zeile Diagnose, gefolgt von Leerzeile und JSON-Objekt. Kein weiterer Text danach. Schema der Diagnosezeile:
+
+```
+Aktion: <was du getan hast> | Ergebnis: <was passiert ist> | mutmaßliche Ursache: <kürzeste plausible Erklärung>
+```
+
+Jede der drei Phrasen knapp (Richtwert ≤ 20 Wörter). Keine Stacktraces, keine Logauszüge — der Orchestrator zieht bei Bedarf eigene Diagnosen. Wenn die Ursache unklar ist: `mutmaßliche Ursache: unklar, siehe failure_reason`. Das maschinenlesbare `failure_reason`-Feld im JSON bleibt verbindlich; die Diagnosezeile ist die menschenlesbare Ergänzung für Audit-Log und Operator-Sichtung.
+
+### Sprache
+
+Klassenkommentare und freie Texte deutsch (Testing-Repo ist `de_DE`), Identifier und Code englisch. Diagnosezeile ebenfalls deutsch.
