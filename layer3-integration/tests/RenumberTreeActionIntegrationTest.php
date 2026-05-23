@@ -18,8 +18,15 @@ use Fisharebest\Webtrees\Services\TimeoutService;
 /**
  * Komponentenintegrationstest: RenumberTreeAction.
  *
+ * SEC-AUDIT-006 Regressionsabdeckung (verhaltens-definitiv):
+ *   Malformed xrefs (Verstoß gegen Gedcom::REGEX_XREF = [A-Za-z0-9:_.-]{1,20})
+ *   dürfen nicht in die rohen REPLACE()-Expressions des Renumber-Pfads
+ *   gelangen — Defense-in-depth gegen Data-Corruption-Szenarien. Der Handler
+ *   muss solche xrefs überspringen, ohne zu crashen und ohne sie umzubenennen.
+ *
  * @see docs/tds_conditions_ref.md P34
  * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RenumberTreePageTest.php
+ * @see docs/security-audit/tasks/SEC-AUDIT-006_renumber_tree_raw_expression.md
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\RenumberTreeAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\RenumberTreePage
  */
@@ -164,6 +171,60 @@ class RenumberTreeActionIntegrationTest extends MysqlTestCase
             DB::table('individuals')->where('i_file', '=', $tree1Id)->where('i_id', '=', 'DUPXREF2')->count(),
             'DUPXREF2 darf NICHT umbenannt worden sein (Guard hat gefeuert).'
         );
+    }
+
+    /**
+     * SEC-AUDIT-006 — Malformed xref (z. B. mit Whitespace oder Quote) muss
+     * vom Renumber-Loop übersprungen werden: kein SQL-Crash, kein Rename.
+     *
+     * Setup: zwei Bäume mit identischer Malformed-XREF → duplicateXrefs()
+     * liefert sie als Cross-Tree-Kollision → der xref-Format-Guard im Loop
+     * muss greifen.
+     */
+    public function test_sec_audit_006_malformed_xref_is_skipped_not_renamed(): void
+    {
+        $tree1Id = $this->tree->id();
+        $tree2   = $this->treeService->create('rn-sec006-' . uniqid(), 'SEC AUDIT 006 Tree 2');
+        $tree2Id = $tree2->id();
+
+        // Beide Verletzen REGEX_XREF: [A-Za-z0-9:_.-]{1,20}
+        $malformedXrefs = [
+            'BAD XREF',   // Whitespace ist nicht erlaubt
+            "X'INJECT",   // Single-Quote (klassische SQL-Injection-Signatur)
+        ];
+
+        foreach ($malformedXrefs as $bad) {
+            DB::table('individuals')->insert([
+                'i_file'   => $tree1Id,
+                'i_id'     => $bad,
+                'i_rin'    => '',
+                'i_sex'    => 'U',
+                'i_gedcom' => '0 INDI',
+            ]);
+            DB::table('individuals')->insert([
+                'i_file'   => $tree2Id,
+                'i_id'     => $bad,
+                'i_rin'    => '',
+                'i_sex'    => 'U',
+                'i_gedcom' => '0 INDI',
+            ]);
+        }
+
+        // Property 1: Handler darf nicht crashen — definierte 302-Antwort.
+        $response = $this->handler->handle(
+            $this->createRequest(method: RequestMethodInterface::METHOD_POST, attributes: ['tree' => $this->tree])
+        );
+        $this->assertSame(302, $response->getStatusCode(), 'Handler must not crash on malformed xref');
+
+        // Property 2: Malformed xrefs müssen in tree1 unverändert vorliegen
+        // (Guard hat sie übersprungen, kein Rename, kein SQL ausgeführt).
+        foreach ($malformedXrefs as $bad) {
+            $this->assertSame(
+                1,
+                DB::table('individuals')->where('i_file', '=', $tree1Id)->where('i_id', '=', $bad)->count(),
+                sprintf('Malformed xref [%s] must remain untouched (guard must skip).', $bad),
+            );
+        }
     }
 
     /**
