@@ -3,6 +3,14 @@
 # webtrees Test-Stack — Makefile
 # Alle Targets verwenden podman-compose
 
+# Strikte Shell-Semantik fuer alle Recipes: jeder Pipeline-Fehler propagiert
+# (Ende der tee-Pipeline-Maskierung), unset-Variablen brechen sofort ab,
+# Fehler in nicht-konditionalen Befehlen brechen sofort ab. Bewusster
+# Breaking Change: bestehende Recipes muessen mit '|| true' bzw. '-' robust
+# bleiben, statt sich auf nachsichtige Default-Shell-Semantik zu verlassen.
+SHELL := /bin/bash
+.SHELLFLAGS := -euo pipefail -c
+
 -include .env
 export
 
@@ -14,25 +22,28 @@ WEBTREES_SOURCE ?= ./upstream/webtrees
 TRIVY_VERSION   ?= 0.69.3
 TRIVY_IMAGE      = ghcr.io/aquasecurity/trivy:$(TRIVY_VERSION)
 
-.PHONY: help clone-upstream generate-passwords up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-integration-security test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report crap-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status
+.PHONY: help clone-upstream normalize-source-perms generate-passwords up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-integration-security test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report crap-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
 	@grep -hE '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-clone-upstream: ## webtrees-Source klonen (falls nicht vorhanden)
+clone-upstream: ## webtrees-Source klonen (falls nicht vorhanden), git core.sharedRepository=all setzen
 	scripts/clone-upstream.sh
+
+normalize-source-perms: clone-upstream ## webtrees-Source world-readable machen (idempotent)
+	scripts/normalize-source-perms.sh
 
 generate-passwords: ## Passwoerter in .env generieren (falls leer)
 	scripts/generate-passwords.sh
 
-up: clone-upstream generate-passwords ## Stack starten (alle Container)
+up: normalize-source-perms generate-passwords ## Stack starten (alle Container)
 	@$(MAKE) --no-print-directory _compose-up
 
 _compose-up:
 	$(COMPOSE) up -d --build
 	@echo "Stack gestartet. webtrees: http://localhost:8080 | Jaeger: http://localhost:16686"
 
-up-debug: clone-upstream generate-passwords ## Stack starten inkl. Adminer (Debug-Profil)
+up-debug: normalize-source-perms generate-passwords ## Stack starten inkl. Adminer (Debug-Profil)
 	@$(MAKE) --no-print-directory _compose-up-debug
 
 _compose-up-debug:
