@@ -195,6 +195,13 @@ Jede neue Sourcecode-Datei muss einen SPDX-Header erhalten:
 
 Perl darf in diesem Projekt nicht verwendet werden — auch nicht als Einzeiler in Shell-Skripten. Textersetzungen und Templating in Bash mit nativen Mitteln (`BASH_REMATCH`, Parameter-Expansion, `sed`) lösen.
 
+## Code-Style für neue Skripte
+
+**Verbindlich** für neu erstellte Skripte. Bestehende Old-World-Skripte werden bei fachlichen Anpassungen refactored.
+
+- **Bash** (`*.sh`): Google Shell Style Guide — https://google.github.io/styleguide/shellguide.html.
+  Pflicht-Marker: `#!/usr/bin/env bash`, `set -euo pipefail`, `lower_snake_case`-Funktionen, doppelte Quotes um `"$variable"` außer in `$(...)`-Inneren, `[[ ]]` statt `[ ]`, Zwei-Space-Indent, `main "$@"` als Entry-Point, `readonly` für Konstanten in `UPPER_SNAKE_CASE`. Lokal-Verify: `shellcheck <skript>` (Paket `ShellCheck` aus `dnf`, Stand 2026-05-08: 0.11.0 installiert).
+
 ## Git
 
 Commits müssen GPG-signiert sein (`commit.gpgsign=true` global gesetzt).
