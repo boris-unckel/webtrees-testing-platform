@@ -76,12 +76,14 @@ Abdeckungs-Check (`✅`). Die vollständige Zellen-Syntax (inkl. Testmethoden-Za
 Detailkonzept-Link) wird in Plan-Phase 6 durchgängig hergestellt. Bis dahin steht das
 Siegel unmittelbar hinter dem Klassennamen, z. B. `GedcomImportServiceTest [EP] ✅`.
 
-**Einstufungs-Quelle:** Die Hybrid-Heuristik V2 aus
-[`coverage-runs/2026-04-11_gap-analyse-fork.md`](coverage-runs/2026-04-11_gap-analyse-fork.md)
-ist die Referenz für die Einstufung — die darin erhobenen Stub/Smoke/Substantial/EP-Zahlen
-werden pro Feature-ID auf die obigen Siegel abgebildet (`Stub → Smoke` nur wenn 3+
-Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial → Spec-C`;
-`EP-complete → EP`; externe Spec vorhanden → `Spec-B`).
+**Einstufungs-Quelle:** Die Hybrid-Heuristik V2 ist erstmals dokumentiert in
+[`coverage-runs/historical/2026-04-11_gap-analyse-fork.md`](coverage-runs/historical/2026-04-11_gap-analyse-fork.md) §2
+und kommt in der aktuellen Erhebung
+[`coverage-runs/2026-05-24_gap-analyse.md`](coverage-runs/2026-05-24_gap-analyse.md) §1.3
+in unveränderter Form zum Einsatz. Sie ist die Referenz für die Einstufung — die darin
+erhobenen Stub/Smoke/Substantial/EP-Zahlen werden pro Feature-ID auf die obigen Siegel
+abgebildet (`Stub → Smoke` nur wenn 3+ Assertions, sonst wird das Feature als nicht
+abgedeckt notiert; `Substantial → Spec-C`; `EP-complete → EP`; externe Spec vorhanden → `Spec-B`).
 
 ---
 
@@ -136,9 +138,11 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 > **Fußnote (L2-Spalte):** Der in der L2-Spalte angezeigte Testumfang entspricht dem Stand
 > Upstream-`main` (Commit `6966db16a6`, gemessen 2026-05-24).
 > Einzelne Zellen können noch auf historische Stände referenzieren, die per
-> Spuernasen-Sweep nachgezogen werden — der Snapshot
-> [`coverage-runs/2026-04-11_gap-analyse-fork.md`](coverage-runs/2026-04-11_gap-analyse-fork.md)
-> ist als historischer Vergleichspunkt eines anderen Branches archiviert.
+> Spuernasen-Sweep nachgezogen werden. Aktueller Inventar-Snapshot:
+> [`coverage-runs/2026-05-24_gap-analyse.md`](coverage-runs/2026-05-24_gap-analyse.md).
+> Der historische Snapshot
+> [`coverage-runs/historical/2026-04-11_gap-analyse-fork.md`](coverage-runs/historical/2026-04-11_gap-analyse-fork.md)
+> ist als Vergleichspunkt eines damals untersuchten Branches archiviert.
 
 <a id="s"></a>
 
@@ -241,17 +245,17 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 | P31 | Familienmitglieder bearbeiten | — | `ChangeFamilyMembersActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 5 Tests: EP1 replace-husband, EP2 remove-wife, EP3 add-child, EP4 remove-child, EP5 no-change)* + `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | — |
 | P32 | Record-Ansicht und -Löschung | — | `DeleteRecordIntegrationTest` + `GedcomRecordPageIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 2+5 Tests: EP1 SOUR-Löschung, EP5 Familie-Kaskade; DataProvider INDI/FAM/SOUR/REPO→Redirect, EP2 _CUST→200+Link)* + `RequestHandlerBatchAIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | — |
 | P33 | Stammbaum-Privacy-Einstellungen | — | `TreePrivacyActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 6 Tests: EP3/EP4 mismatched-arrays, EP5 tag+xref, EP6 tag-only, EP7 xref-only, EP8 beide-leer count-gleich, EP9 HIDE_LIVE_PEOPLE)* + `RequestHandlerBatchAIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | — |
-| P34 | Stammbaum-Umnummerierung | — | `RenumberTreeActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 3 Tests: B2/EP1 keine-Duplikate, B3/EP2 INDI-Rename-Postcondition, B1/EP4 Pending-Edits-Guard)* + `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | — |
+| P34 | Stammbaum-Umnummerierung | — | `RenumberTreeActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 6 Tests: B2/EP1 keine-Duplikate, B3/EP2 INDI-Rename-Postcondition, B1/EP4 Pending-Edits-Guard, Page GET → 200 / leerer Baum → 200, sowie `malformed_xref_is_skipped_not_renamed` als FAILURE_PIN nach `wf_test-iteration_guide.md` §i.7: Upstream-`main` filtert ungültige XREF-Formate nicht, der Test bleibt rot bis Upstream-Fix)* + `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke)* | — | OK | Upstream-Bug (xref-Format-Guard) |
 | P35 | CLI Benutzer-Verwaltung | — | `UserEditCommandIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 16 Tests: B1–B11 Guards, DataProvider B3/B4/B5, B13–B15 Edit-Felder)* | — | OK | — |
 | P36 | CLI Einstellungs-Verwaltung | — | `CliSettingsBatchIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 17 Tests: --list/--delete-Konflikte, Delete nonexistent, Get nonexistent, same-value Warn, Update, EP11 Tree/User/UserTree not found)* | — | OK | — |
 | P37 | HTTP Benutzer-Bearbeitung | — | `UserEditActionIntegrationTest` [EP] ✅ *(spezifikationsbasiert, 7 Tests: B1 not-found, B5/B6 Duplikat-Email, B7/B8 Duplikat-Username, B4 Self-Edit-Admin, B3 Passwort, EP12 Path-Reset); `RequestHandlerBatchBIntegrationTest` ✅ *(CRAP-Smoke, 1 Test)* | `user-edit-admin.spec.ts` [Spec-C] ✅ *(4 Tests)* | OK | — |
 | P38 | Account-Selbstverwaltung | — | `AccountSelfManagementIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: Edit GET 200, Update POST E-Mail, Delete admin-Guard, Delete non-admin gelöscht)* | `account-self-management.spec.ts` [Spec-C] ✅ *(3 Tests)* | OK | — |
-| P39 | Authentifizierung-Aktionen | — | `LoginActionIntegrationTest` [Smoke] ✅ *(spezifikationsbasiert, 1 Test: EP1 CLI-Kontext $_COOKIE=[]→doLogin wirft→handler fängt→302)* | — | OK | — |
-| P40 | Änderungsverwaltung (HTTP-Handler) | — | `PendingChangesIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: AcceptRecord ungültig→204, RejectRecord ungültig→204, PendingChanges GET→200)* | `pending-changes.spec.ts` [Spec-C] ✅ *(4 Tests)* | OK | — |
+| P39 | Authentifizierung-Aktionen | — | `LoginActionIntegrationTest` [Spec-C] ✅ *(6 Tests gegen Handler aus DI-Container: CLI-Kontext $_COOKIE=[]→302, gültige Credentials→Auth gesetzt, falsches Passwort, unbekannter User, unverifizierte E-Mail, nicht-freigegebener Account — jeweils erwarteter Status- und Flash-Pfad)* | — | OK | — |
+| P40 | Änderungsverwaltung (HTTP-Handler) | — | `PendingChangesIntegrationTest` [Spec-C] ✅ *(25 Tests / 143 Assertions: AcceptRecord/RejectRecord Smoke-Routen, PendingChanges-Page GET, Accept/Reject-Delegationen an `PendingChangesService` mit aktualisierter 3-Arg-Signatur sowie zwei **DB-Postcondition-Tests** gegen Upstream-Regression `f24e5c62fe`: fully-pending INDI → nach Accept `wt_change.status='accepted'` + Reihe in `wt_individuals` vorhanden, nach Reject `wt_change.status='rejected'` ohne Kanonisierung. Hinzu Log-Handler: List/Page/Data/Delete/Download inkl. CSV-Escaping)* | `pending-changes.spec.ts` [Spec-C] ✅ *(6 Tests: 5 Rollen-/Smoke-Pfade + P40-Klickpfad „Moderator akzeptiert fully-pending Add-Child Change → Reload-Verschwund" als L4-Regression-Pin auf `f24e5c62fe`)* | OK | — |
 | P41 | Datensatz-Zusammenführung (vollständig) | — | `MergeRecordsIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: Page GET valid/empty XREFs, Action POST matching INDIs→302)* | `merge-records.spec.ts` [Spec-C] ✅ *(1 Test)* | OK | — |
 | P42 | CLI Benutzer-Listing | — | `UserListCommandIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 6 Tests, 34 Assertions)* | — | OK | — |
 | P43 | Logout-Flow | — | `LogoutIntegrationTest` [Spec-C] ✅ *(3 Tests: angemeldeter Benutzer → 302 + Auth::id() null, Gast → 302 idempotent, Ajax → 204 + Auth::id() null)* | — | OK | — |
-| P44 | Login Rate-Limiting | — | `LoginActionIntegrationTest` [Spec-C] ✅ *(Rate-Limit-Branch: zu viele fehlgeschlagene Versuche → HttpTooManyRequestsException → HTTP 429)* | — | OK | — |
+| P44 | Login Rate-Limiting | — | `LoginActionIntegrationTest` [Spec-C] ✅ *(2 Tests, FAILURE_PIN nach `wf_test-iteration_guide.md` §i.7: `per_user_rate_limit_fires_after_threshold` — 10 Fehlversuche pro Account → `HttpTooManyRequestsException` / HTTP 429; `site_wide_rate_limit_fires_for_unknown_users` — 20 Fehlversuche gegen unbekannte User → 429 (Schutz gegen User-Enumeration). Beide Tests bleiben rot, weil Upstream-`main` keine `RateLimitService`-Implementierung enthält — Soll-Verhalten verhalts-definitiv gepinnt)* | — | OK | Upstream-Bug |
 
 <a id="sec"></a>
 
@@ -310,7 +314,7 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 | E06 | Sortierung (Reorder) | — | `ReorderIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 4 Tests: ReorderChildren/Names/Families GET→200, unknown FAM→404)* | `reorder.spec.ts` [Spec-C] ✅ *(3 Tests)* | OK | — |
 | E07 | Mediendatei-Download & Thumbnail | — | `MediaFileDeliveryIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 3 Tests: Thumbnail unknown XREF→200, Thumbnail known XREF no fact_id→200, Download unknown XREF→HttpNotFoundException)* | — | OK | — |
 | E08 | TomSelect & AutoComplete | — | `TomSelectIntegrationTest` [Spec-C] ✅ *(spezifikationsbasiert, 5 Tests: TomSelectIndividual leer/XREF/Name, TomSelectSource leer, AutoCompleteFolder)* | `tomselect-autocomplete.spec.ts` [Spec-C] ✅ *(4 Tests × 5 Themes)* | OK | — |
-| E09 | Sichere Auslieferung gefährlicher Mime-Types | — | `MediaFileDeliveryIntegrationTest` [Spec-C] ✅ *(SVG-XSS Härtung: SVG→non-SVG Content-Type-Override bzw. Replacement-Image-Response; Replacement-Image setzt restriktive Content-Security-Policy)* | — | OK | — |
+| E09 | Sichere Auslieferung gefährlicher Mime-Types | — | `MediaFileDeliveryIntegrationTest` [Spec-C] ✅ *(SVG-XSS Härtung: SVG→non-SVG Content-Type-Override bzw. Replacement-Image-Response; Replacement-Image setzt restriktive Content-Security-Policy. CSP wird **semantisch** geprüft (script-src bzw. default-src-Fallback nach CSP-Spec via `cspBlocksScriptExecution`-Helper) statt per String-Match auf Literalwerte; deckt H1–H5 Bypass-Vektoren ab (Mixed-Case `<Script>`, `onload`-Handler, `javascript:`-URLs, lowercase `<script>`, legitime SVGs))* | — | OK | — |
 
 <a id="a"></a>
 
@@ -361,8 +365,11 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 #### Middleware (M01–M29)
 
 > **Hinweis:** Die M-Domäne wurde in Plan-Phase 5.1 neu angelegt. Die L2-Zellen spiegeln den
-> Stand Upstream-`main`. Der historische Vergleichs-Snapshot eines anderen Branches liegt unter
-> [`coverage-runs/2026-04-11_gap-analyse-fork_l2.csv`](coverage-runs/2026-04-11_gap-analyse-fork_l2.csv)
+> Stand Upstream-`main`. Aktuelles L2-Inventar als CSV:
+> [`coverage-runs/2026-05-24_gap-analyse_l2.csv`](coverage-runs/2026-05-24_gap-analyse_l2.csv)
+> (Einträge unter `Http/Middleware/`). Der historische Vergleichs-Snapshot eines anderen
+> Branches liegt unter
+> [`coverage-runs/historical/2026-04-11_gap-analyse-fork_l2.csv`](coverage-runs/historical/2026-04-11_gap-analyse-fork_l2.csv)
 > (Einträge `app/Http/Middleware/*`). L3/L4-Zellen sind überwiegend leer, weil die vorhandenen
 > Integrationstests (z. B. `BadBotBlockerIntegrationTest` unter SEC-BOT01,
 > `security-headers.spec.ts` unter SEC-HDR01–HDR04, `AccessControlTest` / `access-control.spec.ts` unter P27–P29) primär unter anderen
@@ -409,6 +416,14 @@ Assertions, sonst wird das Feature als nicht abgedeckt notiert; `Substantial →
 Nicht abgedeckte IDs: G05 (Date-Parsing direkt — `GedcomServiceIntegrationTest` deckt nur Utility-CRAP ab), G06 (Name-Extraktion). SKIP: U02 (deprecated, Entfernung in webtrees 2.3).
 
 Coverage-Kennzahlen siehe [`tp_ratchet_spec.md`](tp_ratchet_spec.md#ist-stand-stand-2026-05-24).
+
+**Test-Inhalts-Updates 2026-05-24 (Cluster-A/B nach Upstream-Refresh):**
+- **P39** `LoginActionIntegrationTest`: 1 Smoke-Test → 6 Spec-C-Tests (DI-Container-Auflösung, Credentials-Pfade, Verifizierungs-/Freigabe-Pfade).
+- **P40** `PendingChangesIntegrationTest`: 3 → 25 Tests (143 Assertions); zwei neue DB-Postcondition-Tests pinnen Upstream-Regression `f24e5c62fe` (fully-pending INDI Accept/Reject).
+- **P40** `pending-changes.spec.ts`: 4 → 6 Tests; neuer L4-Klick-Pfad Editor → Moderator Accept → Reload-Verschwund pinnt denselben Regressions-Fall im UI.
+- **P44** `LoginActionIntegrationTest` Rate-Limit-Block: alleinstehender Test → 2 verhalts-definitive FAILURE_PINs (per-user + site-wide gegen User-Enumeration), bleiben rot bis Upstream-Implementierung.
+- **P34** `RenumberTreeActionIntegrationTest`: malformed-XREF-Guard von Error → FAILURE_PIN nach `wf_test-iteration_guide.md` §i.7.
+- **E09** `MediaFileDeliveryIntegrationTest`: CSP-Check von String-Literal-Match auf semantische Parsing-Helfer (`cspBlocksScriptExecution`, script-src/default-src nach CSP-Spec); Methodennamen ohne SEC-AUDIT-Präfix.
 
 Zuwachs durch Feature-Matrix-Konsolidierung (2026-05-24): +10 neue Feature-IDs
 (S25 HEAD-Record-Page, S51 Sprachauswahl-Handler, P43 Logout-Flow, P44 Login Rate-Limiting,

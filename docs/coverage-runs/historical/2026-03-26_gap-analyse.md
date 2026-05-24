@@ -7,7 +7,7 @@
 > `port-layer2-test-doubles` in Teilen überholt —
 > dort wurden 278 Testdateien von reinen Stubs auf substanzielle Komponententests
 > aufgewertet (Commit `841616f4b5`, 2026-04-11). Der aktuelle Stand liegt im Snapshot
-> [`../2026-04-11_gap-analyse-fork.md`](../2026-04-11_gap-analyse-fork.md).
+> [`2026-04-11_gap-analyse-fork.md`](2026-04-11_gap-analyse-fork.md).
 >
 > **Zweck der Archivierung:** Historische Referenz für Veröffentlichungs- und
 > Nachvollziehbarkeits-Zwecke. Wortlaut gegenüber dem Ursprung in

@@ -86,11 +86,12 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 > **Aktueller Stand (2026-05-24):** Mess-Basis ist Upstream-`main` (Commit `6966db16a6`)
 > — siehe [`tp_ratchet_spec.md`](tp_ratchet_spec.md#layer-2--upstream-unit-tests-teststufe-1-make-test-unit).
+> Aktuelle Mess-Basis: [`coverage-runs/2026-05-24_gap-analyse.md`](coverage-runs/2026-05-24_gap-analyse.md).
 > Die ursprüngliche Gap-Analyse vom 2026-03-26 (~95 % Stub-Tests) ist als historischer
 > Vergleichspunkt archiviert unter
 > [`coverage-runs/historical/2026-03-26_gap-analyse.md`](coverage-runs/historical/2026-03-26_gap-analyse.md);
 > der Snapshot vom 2026-04-11
-> ([`coverage-runs/2026-04-11_gap-analyse-fork.md`](coverage-runs/2026-04-11_gap-analyse-fork.md))
+> ([`coverage-runs/historical/2026-04-11_gap-analyse-fork.md`](coverage-runs/historical/2026-04-11_gap-analyse-fork.md))
 > bezieht sich auf einen damals untersuchten Branch mit zusätzlichen Test-Doubles und ist
 > nicht mehr Mess-Basis.
 
@@ -263,11 +264,11 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | P37 | HTTP Benutzer-Bearbeitung *(spezifikationsbasiert)* | UserEditAction: user-not-found → HttpNotFoundException (B1); Duplikat-Email + Duplikat-Username → Redirect zurück zu UserEditPage (B5/B6, B7/B8); Self-Edit-Admin-Guard → admin-Status bleibt (B4); Passwort-Update/Kein-Update (B3); Path-Length-Reset bei leerem gedcomid (EP12) | V | 2, 3 | Mittel |
 | P38 | Account-Selbstverwaltung | AccountEdit: eigenes Profil-Formular → 200; AccountUpdate: Name/E-Mail/Passwort/Theme/Sprache speichern → Redirect; AccountDelete: eigenes Konto löschen → Session beendet, Redirect zu Login | M, E, V | 2, 3 | Mittel |
 | P39 | Authentifizierung-Aktionen | LoginAction: korrekte/falsche Credentials → Redirect zu Baum / Fehler; Logout → Session ungültig + Redirect; RegisterAction: neues Konto anlegen → Bestätigungs-E-Mail / Redirect; PasswordRequestAction/ResetAction → Token erzeugt / Passwort gesetzt; VerifyEmail → Account aktiviert (ergänzt S32–S34 Seiten-Smoke) | B, M | 2, 3 | Hoch |
-| P40 | Änderungsverwaltung (HTTP-Handler) | PendingChanges: Liste offener Änderungen → 200 + Einträge; PendingChangesAcceptChange/AcceptRecord → DB-Status 'accepted'; PendingChangesRejectChange/RejectRecord → DB-Status 'rejected' oder gelöscht (ergänzt P28 Playwright-Systemtest auf Handler-Ebene) | Mo, V | 2, 3 | Hoch |
+| P40 | Änderungsverwaltung (HTTP-Handler) | PendingChanges: Liste offener Änderungen → 200 + Einträge; PendingChangesAcceptChange/AcceptRecord → `wt_change.status='accepted'` + kanonische Reihe in `wt_individuals` (DB-Postcondition); PendingChangesRejectChange/RejectRecord → `wt_change.status='rejected'` ohne Kanonisierung. Insbesondere für **fully-pending Records** (neuer XREF existiert nur in `wt_change`, noch nicht in `wt_individuals`) muss Accept/Reject ohne Verschlucken funktionieren — Regression-Pin gegen Upstream-Commit `f24e5c62fe`. Ergänzt P28 (Pending-Akzeptanz im Privacy-Kontext) auf Handler- und Klick-Pfad-Ebene. | Mo, V | 2, 3 | Hoch |
 | P41 | Datensatz-Zusammenführung (vollständig) | MergeRecordsPage: Vergleichs-Formular zweier Records → 200; MergeRecordsAction: Records zusammenführen → ein Record per change-Tabelle gelöscht, einer aktualisiert (verschieden von P30 Fakten-Merge) | E, V | 2, 3 | Mittel |
 | P42 | CLI Benutzer-Listing | `UserList` CLI-Command (`user-list`): gibt alle registrierten Benutzer zeilenweise auf STDOUT aus — Spalten `user_id`, `user_name`, `real_name`, `email`, sowie aggregierte `user_setting`-Werte (Admin/Verified/Approved). Primär nicht-destruktiv, Lesezugriff. Unterscheidet sich von A07 `UserListPage` (HTTP-Admin-Seite) und P35 `UserEdit` (CLI-Bearbeitung). | V | 2 | Niedrig |
 | P43 | Logout-Flow | `Logout`-Handler: angemeldeter Benutzer → 302 Redirect zu HomePage + `Auth::id()` ist null (Session-Logout); Gast → 302 Redirect zu HomePage (idempotent, kein Logout-Effekt); Ajax-Request (`X-Requested-With: XMLHttpRequest`) → 204 No Content + Auth::id() ist null. Eigenständiger Flow neben P39 (LoginAction/RegisterAction/PasswordReset). | M, E, V | 2 | Mittel |
-| P44 | Login Rate-Limiting | `LoginAction` Rate-Limit-Schutz: zu viele fehlgeschlagene Anmeldeversuche innerhalb eines Zeitfensters → `HttpTooManyRequestsException` (HTTP 429). Verhalts-Definitiv: Rate-Limit-Zähler greift pro IP/User unabhängig vom Erfolg/Misserfolg der Credentials. Eigenständiges Schutzverhalten neben P39 (Auth-Aktionen). | B | 2 | Hoch |
+| P44 | Login Rate-Limiting | `LoginAction` Rate-Limit-Schutz: zu viele fehlgeschlagene Anmeldeversuche innerhalb eines Zeitfensters → `HttpTooManyRequestsException` (HTTP 429). Zwei Varianten verhalts-definitiv: **per-user** (≥10 Fehlversuche gegen denselben Account → drosseln) und **site-wide** (≥20 Fehlversuche gegen *unbekannte* User → drosseln, gegen User-Enumeration). Eigenständiges Schutzverhalten neben P39 (Auth-Aktionen). Upstream-`main` enthält keine Rate-Limit-Implementierung — Tests bleiben als FAILURE_PIN (`wf_test-iteration_guide.md` §i.7) rot. | B | 2 | Hoch |
 
 > **Querschnittsanforderung Theme-Abdeckung (Phase 5c):** Jeder Systemtest-Testfall (Teststufe 3) für tree-gebundene Seiten
 > MUSS alle 5 Standard-Themes abdecken: `webtrees`, `clouds`, `colors`, `fab`, `xenea`. Theme-Abdeckung ist eine strukturelle
@@ -278,8 +279,10 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 > **E2E-Gap-Analyse (archiviert):** Die ursprüngliche 2026-03-27-Analyse (8 von ~47
 > Nicht-Admin-Routen in Specs abgedeckt, S26–S39 als Lückenschluss) ist wörtlich archiviert
 > unter [`coverage-runs/historical/2026-03-27_e2e-gap.md`](coverage-runs/historical/2026-03-27_e2e-gap.md).
-> Aktuelle L4-Kennzahlen (Stand 2026-04-11: 26 Specs, `Stub 0 / Smoke 11 / Substantial 15`):
-> [`coverage-runs/2026-04-11_gap-analyse-fork.md`](coverage-runs/2026-04-11_gap-analyse-fork.md) §3.1 und §3.6.
+> Aktuelle L4-Kennzahlen (Stand 2026-05-24: 55 Specs, `Stub 0 / Smoke 22 / Substantial 33`):
+> [`coverage-runs/2026-05-24_gap-analyse.md`](coverage-runs/2026-05-24_gap-analyse.md) §2.1/§2.2.
+> Der April-2026-04-11-Stand (26 Specs, `Stub 0 / Smoke 11 / Substantial 15`) ist archiviert
+> unter [`coverage-runs/historical/2026-04-11_gap-analyse-fork.md`](coverage-runs/historical/2026-04-11_gap-analyse-fork.md) §3.1 und §3.6.
 
 ---
 
