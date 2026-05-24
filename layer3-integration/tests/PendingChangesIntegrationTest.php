@@ -9,7 +9,8 @@ namespace DombrinksBlagen\WebtreesTests\Integration;
 use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Algorithm\MyersDiff;
-use Fisharebest\Webtrees\Contracts\GedcomRecordFactoryInterface;
+use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Factories\GedcomRecordFactory;
 use Fisharebest\Webtrees\GedcomRecord;
 use Fisharebest\Webtrees\Http\RequestHandlers\PendingChanges;
@@ -175,32 +176,24 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * AcceptChange: existierender Record → Service::acceptChange() einmal aufgerufen.
+     * AcceptChange: Handler delegiert (Tree, xref, change) an
+     * PendingChangesService::acceptChange. Signatur seit Upstream-Commit
+     * f24e5c62fe: 3 Argumente (Tree, string xref, string change), vorher
+     * 2 (GedcomRecord, string). Der Handler holt den Record nicht mehr per
+     * GedcomRecordFactory; der Service ueberninnt den Lookup selbst.
      *
      * @group ported-l2-doubles
      */
-    public function test_accept_change_existing_record_accepts_change(): void
+    public function test_accept_change_delegates_to_service(): void
     {
         // Arrange
         $tree = self::createStub(Tree::class);
         $tree->method('id')->willReturn(1);
 
-        $record = self::createStub(GedcomRecord::class);
-        $record->method('xref')->willReturn('I1');
-        $record->method('canShow')->willReturn(true);
-
-        $record_factory = $this->createMock(GedcomRecordFactoryInterface::class);
-        $record_factory->expects(self::once())
-            ->method('make')
-            ->with('I1', $tree)
-            ->willReturn($record);
-
-        Registry::gedcomRecordFactory($record_factory);
-
         $pending_changes_service = $this->createMock(PendingChangesService::class);
         $pending_changes_service->expects(self::once())
             ->method('acceptChange')
-            ->with($record, '42');
+            ->with($tree, 'I1', '42');
 
         $handler = new PendingChangesAcceptChange($pending_changes_service);
         $request = $this->createRequest(
@@ -219,27 +212,26 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * AcceptChange: nicht-existierender Record → Service::acceptChange() niemals aufgerufen.
+     * Regressionspin Upstream-Commit f24e5c62fe ("Fix: cannot accept/reject
+     * individual changes for record where all changes are still pending"):
+     * Fuer einen XREF, fuer den `GedcomRecordFactory::make()` keinen
+     * kanonischen Record liefert (alle Aenderungen noch in wt_change pending),
+     * MUSS der Handler den Service trotzdem aufrufen. Pre-Fix hat der Handler
+     * via `if ($record instanceof GedcomRecord)` den Aufruf uebersprungen
+     * — das ist das Bug-Verhalten, das hier verhindert wird.
      *
      * @group ported-l2-doubles
      */
-    public function test_accept_change_skips_when_record_not_found(): void
+    public function test_accept_change_delegates_to_service_for_unknown_xref(): void
     {
         // Arrange
         $tree = self::createStub(Tree::class);
         $tree->method('id')->willReturn(1);
 
-        $record_factory = $this->createMock(GedcomRecordFactoryInterface::class);
-        $record_factory->expects(self::once())
-            ->method('make')
-            ->with('X999', $tree)
-            ->willReturn(null);
-
-        Registry::gedcomRecordFactory($record_factory);
-
         $pending_changes_service = $this->createMock(PendingChangesService::class);
-        $pending_changes_service->expects(self::never())
-            ->method('acceptChange');
+        $pending_changes_service->expects(self::once())
+            ->method('acceptChange')
+            ->with($tree, 'X999', '42');
 
         $handler = new PendingChangesAcceptChange($pending_changes_service);
         $request = $this->createRequest(
@@ -255,6 +247,133 @@ class PendingChangesIntegrationTest extends MysqlTestCase
 
         // Assert
         self::assertSame(StatusCodeInterface::STATUS_NO_CONTENT, $response->getStatusCode());
+    }
+
+    /**
+     * Verhaltens-definitiver Integrationstest fuer AcceptChange ueber den DB-Zustand
+     * statt ueber Mock-Aufrufe. Pinnt die User-beobachtbare Wirkung:
+     *
+     *   - Eingangsbedingung: eine Pending-Change-Row in `wt_change` mit Status
+     *     'pending' fuer einen XREF, fuer den noch keine kanonische Reihe in
+     *     `wt_individuals` existiert (= fully-pending Record, der Bug-Fall aus
+     *     Upstream-Commit f24e5c62fe).
+     *   - Erwartete Wirkung: die `wt_change`-Row hat Status 'accepted' und die
+     *     kanonische Reihe in `wt_individuals` ist angelegt.
+     *
+     * Dieser Test schlaegt fehl, wenn jemand den Upstream-Bug reanimiert (Handler
+     * holt wieder per `Registry::gedcomRecordFactory()->make()` und springt bei
+     * `null` ueber den Service-Aufruf hinweg) — dann bliebe die Row 'pending' und
+     * die kanonische Reihe entstuende nicht.
+     *
+     * Ergaenzung zum signatur-orientierten Mock-Test
+     * test_accept_change_delegates_to_service_for_unknown_xref: jener faengt nur
+     * den Wechsel der Mock-Erwartung, dieser hier faengt jede Aenderung am
+     * tatsaechlich am DB-Zustand sichtbaren Outcome.
+     */
+    public function test_accept_change_applies_pending_record_to_canonical_table(): void
+    {
+        // Arrange: pending Change fuer einen neuen, noch nicht freigegebenen XREF.
+        $xref      = 'I_REGR_F24E5C_A';
+        $newGedcom = "0 @{$xref}@ INDI\n1 NAME Regression /Subject f24e5c62fe Accept/\n1 SEX U\n";
+
+        $changeId = (int) DB::table('change')->insertGetId([
+            'gedcom_id'  => $this->tree->id(),
+            'xref'       => $xref,
+            'status'     => 'pending',
+            'old_gedcom' => '',
+            'new_gedcom' => $newGedcom,
+            'user_id'    => Auth::id() ?? 0,
+        ]);
+
+        // Sanity-Vorbedingung: kein kanonischer Record und genau eine pending Change.
+        self::assertSame(
+            0,
+            DB::table('individuals')->where('i_file', $this->tree->id())->where('i_id', $xref)->count(),
+            'Vorbedingung: kein kanonischer Record fuer den XREF',
+        );
+        self::assertSame(
+            'pending',
+            (string) DB::table('change')->where('change_id', $changeId)->value('status'),
+            'Vorbedingung: Change-Row steht auf pending',
+        );
+
+        $handler = Registry::container()->get(PendingChangesAcceptChange::class);
+        $request = $this->createRequest(
+            attributes: [
+                'tree'   => $this->tree,
+                'xref'   => $xref,
+                'change' => (string) $changeId,
+            ],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: Response 204 + DB-Zustand wie spezifiziert.
+        self::assertSame(StatusCodeInterface::STATUS_NO_CONTENT, $response->getStatusCode());
+
+        self::assertSame(
+            'accepted',
+            (string) DB::table('change')->where('change_id', $changeId)->value('status'),
+            'Akzeptierte Change-Row muss Status accepted tragen.',
+        );
+        self::assertSame(
+            1,
+            DB::table('individuals')->where('i_file', $this->tree->id())->where('i_id', $xref)->count(),
+            'Akzeptierter fully-pending Record muss in wt_individuals erscheinen — Regressionspin gegen Upstream-Commit f24e5c62fe.',
+        );
+    }
+
+    /**
+     * Verhaltens-definitiver Integrationstest fuer RejectChange ueber den DB-Zustand.
+     *
+     * Symmetrisch zu test_accept_change_applies_pending_record_to_canonical_table,
+     * mit umgekehrter Wirkungs-Erwartung:
+     *
+     *   - Eingangsbedingung: pending Change-Row, kein kanonischer Record.
+     *   - Erwartete Wirkung: Change-Row hat Status 'rejected', kanonische Reihe
+     *     entsteht *nicht* (Reject wendet den GEDCOM-Patch nicht an).
+     */
+    public function test_reject_change_marks_row_rejected_without_applying_to_canonical_table(): void
+    {
+        // Arrange
+        $xref      = 'I_REGR_F24E5C_R';
+        $newGedcom = "0 @{$xref}@ INDI\n1 NAME Regression /Subject f24e5c62fe Reject/\n1 SEX U\n";
+
+        $changeId = (int) DB::table('change')->insertGetId([
+            'gedcom_id'  => $this->tree->id(),
+            'xref'       => $xref,
+            'status'     => 'pending',
+            'old_gedcom' => '',
+            'new_gedcom' => $newGedcom,
+            'user_id'    => Auth::id() ?? 0,
+        ]);
+
+        $handler = Registry::container()->get(PendingChangesRejectChange::class);
+        $request = $this->createRequest(
+            attributes: [
+                'tree'   => $this->tree,
+                'xref'   => $xref,
+                'change' => (string) $changeId,
+            ],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert
+        self::assertSame(StatusCodeInterface::STATUS_NO_CONTENT, $response->getStatusCode());
+
+        self::assertSame(
+            'rejected',
+            (string) DB::table('change')->where('change_id', $changeId)->value('status'),
+            'Abgelehnte Change-Row muss Status rejected tragen.',
+        );
+        self::assertSame(
+            0,
+            DB::table('individuals')->where('i_file', $this->tree->id())->where('i_id', $xref)->count(),
+            'Abgelehnter Record darf nicht in wt_individuals erscheinen.',
+        );
     }
 
     /**
@@ -704,32 +823,23 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * RejectChange: existierender Record → Service::rejectChange() einmal aufgerufen.
+     * RejectChange: Handler delegiert (Tree, xref, change) an
+     * PendingChangesService::rejectChange. Signatur seit Upstream-Commit
+     * f24e5c62fe: 3 Argumente (Tree, string xref, string change), vorher
+     * 2 (GedcomRecord, string). Symmetrisch zum AcceptChange-Pfad.
      *
      * @group ported-l2-doubles
      */
-    public function test_reject_change_existing_record_rejects_change(): void
+    public function test_reject_change_delegates_to_service(): void
     {
         // Arrange
         $tree = self::createStub(Tree::class);
         $tree->method('id')->willReturn(1);
 
-        $record = self::createStub(GedcomRecord::class);
-        $record->method('xref')->willReturn('I1');
-        $record->method('canShow')->willReturn(true);
-
-        $record_factory = $this->createMock(GedcomRecordFactoryInterface::class);
-        $record_factory->expects(self::once())
-            ->method('make')
-            ->with('I1', $tree)
-            ->willReturn($record);
-
-        Registry::gedcomRecordFactory($record_factory);
-
         $pending_changes_service = $this->createMock(PendingChangesService::class);
         $pending_changes_service->expects(self::once())
             ->method('rejectChange')
-            ->with($record, '42');
+            ->with($tree, 'I1', '42');
 
         $handler = new PendingChangesRejectChange($pending_changes_service);
         $request = $this->createRequest(
@@ -748,27 +858,24 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * RejectChange: nicht-existierender Record → Service::rejectChange() niemals aufgerufen.
+     * Regressionspin Upstream-Commit f24e5c62fe: symmetrisch zu
+     * test_accept_change_delegates_to_service_for_unknown_xref. Auch fuer
+     * einen XREF ohne kanonischen Record muss der Handler RejectChange
+     * an den Service durchreichen — vor dem Upstream-Fix wurde der Aufruf
+     * vom `if ($record instanceof GedcomRecord)`-Guard verschluckt.
      *
      * @group ported-l2-doubles
      */
-    public function test_reject_change_skips_when_record_not_found(): void
+    public function test_reject_change_delegates_to_service_for_unknown_xref(): void
     {
         // Arrange
         $tree = self::createStub(Tree::class);
         $tree->method('id')->willReturn(1);
 
-        $record_factory = $this->createMock(GedcomRecordFactoryInterface::class);
-        $record_factory->expects(self::once())
-            ->method('make')
-            ->with('X999', $tree)
-            ->willReturn(null);
-
-        Registry::gedcomRecordFactory($record_factory);
-
         $pending_changes_service = $this->createMock(PendingChangesService::class);
-        $pending_changes_service->expects(self::never())
-            ->method('rejectChange');
+        $pending_changes_service->expects(self::once())
+            ->method('rejectChange')
+            ->with($tree, 'X999', '42');
 
         $handler = new PendingChangesRejectChange($pending_changes_service);
         $request = $this->createRequest(
