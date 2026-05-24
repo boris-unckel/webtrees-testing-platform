@@ -23,6 +23,7 @@ use Fisharebest\Webtrees\Site;
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SitePreferencesPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SitePreferencesAction
+ * @see docs/tds_conditions_ref.md A06
  * @see docs/testquality_improve_A06.md
  */
 class SitePreferencesIntegrationTest extends MysqlTestCase
@@ -115,7 +116,6 @@ class SitePreferencesIntegrationTest extends MysqlTestCase
     /**
      * Persistenz: alle übergebenen Schlüssel werden gespeichert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SitePreferencesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_saves_preferences_and_redirects(): void
@@ -152,7 +152,6 @@ class SitePreferencesIntegrationTest extends MysqlTestCase
      * wird vom Action-Handler nicht garantiert (siehe Source). Hier wird die
      * stabile Persistenz-Aussage übernommen, nicht die irreführende Bezeichnung.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SitePreferencesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_persists_empty_allow_change_gedcom_as_empty_string(): void
@@ -184,7 +183,6 @@ class SitePreferencesIntegrationTest extends MysqlTestCase
     /**
      * Schutz: nicht existierendes INDEX_DIRECTORY überschreibt den bisherigen Wert nicht.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SitePreferencesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_keeps_existing_index_directory_when_new_path_missing(): void

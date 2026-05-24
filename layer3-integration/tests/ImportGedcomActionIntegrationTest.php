@@ -33,6 +33,7 @@ use const UPLOAD_ERR_PARTIAL;
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ImportGedcomPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ImportGedcomAction
+ * @see docs/tds_conditions_ref.md A02
  * @see docs/testquality_improve_A02.md
  */
 class ImportGedcomActionIntegrationTest extends MysqlTestCase
@@ -153,7 +154,6 @@ class ImportGedcomActionIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ImportGedcomActionTest.php
      * @group ported-l2-doubles
      *
      * source=client mit gueltigem Upload → TreeService::importGedcomFile wird genau einmal aufgerufen.
@@ -195,7 +195,6 @@ class ImportGedcomActionIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ImportGedcomActionTest.php
      * @group ported-l2-doubles
      *
      * source=client ohne client_file im Request → 302 (kein Upload-Eintrag).

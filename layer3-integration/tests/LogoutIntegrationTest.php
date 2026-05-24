@@ -21,7 +21,7 @@ use Fisharebest\Webtrees\Http\RequestHandlers\Logout;
  * - Ajax-Request (x-requested-with: XMLHttpRequest) → 204 (No Content), Auth::id() === null.
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\Logout
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LogoutTest.php
+ * @see docs/tds_conditions_ref.md P43
  */
 class LogoutIntegrationTest extends MysqlTestCase
 {
@@ -30,7 +30,6 @@ class LogoutIntegrationTest extends MysqlTestCase
      * Logout, ruft Auth::logout() auf, setzt eine Flash-Message und leitet
      * zur HomePage weiter (302). Auth::id() ist danach null.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LogoutTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_logs_out_authenticated_user(): void
@@ -59,7 +58,6 @@ class LogoutIntegrationTest extends MysqlTestCase
      * fachlich nichts (kein Log, kein Auth::logout), liefert aber den
      * gleichen Redirect (302) zur HomePage zurück.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LogoutTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_guest_user_without_logout(): void
@@ -80,7 +78,6 @@ class LogoutIntegrationTest extends MysqlTestCase
      * XMLHttpRequest`, antwortet der Handler statt mit 302 mit 204 (No
      * Content). Auth::id() ist danach null.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LogoutTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_no_content_for_ajax_logout(): void

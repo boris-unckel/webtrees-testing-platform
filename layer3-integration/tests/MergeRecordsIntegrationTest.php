@@ -26,9 +26,8 @@ use Fisharebest\Webtrees\Registry;
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MergeRecordsPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MergeRecordsAction
+ * @see docs/tds_conditions_ref.md P41
  * @see docs/testquality_improve_P41.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeRecordsActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeRecordsPageTest.php
  */
 class MergeRecordsIntegrationTest extends MysqlTestCase
 {
@@ -104,7 +103,6 @@ class MergeRecordsIntegrationTest extends MysqlTestCase
     /**
      * Record-Factory liefert für beide XREFs null → Guard-Redirect (302) zurück zu MergeRecordsPage.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeRecordsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_records_action_redirects_back_when_record1_is_null(): void
@@ -135,7 +133,6 @@ class MergeRecordsIntegrationTest extends MysqlTestCase
     /**
      * Beide Records existieren, aber unterschiedliche tag (INDI vs FAM) → Guard-Redirect (302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeRecordsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_records_action_redirects_back_when_tags_differ(): void
@@ -184,7 +181,6 @@ class MergeRecordsIntegrationTest extends MysqlTestCase
     /**
      * Record1 ist pending deletion → Guard-Redirect (302) zurück zu MergeRecordsPage.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeRecordsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_records_action_redirects_back_when_record_is_pending_deletion(): void
@@ -236,7 +232,6 @@ class MergeRecordsIntegrationTest extends MysqlTestCase
      * Isolations-Variante zur bestehenden DB-basierten Variante: hier wird die
      * Record-Factory durch einen Mock ersetzt, der für beide XREFs null zurückgibt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeRecordsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_records_page_returns_200_with_factory_mock_no_records(): void
@@ -270,7 +265,6 @@ class MergeRecordsIntegrationTest extends MysqlTestCase
      * dem geladenen GEDCOM zu kommen. Verifiziert, dass der Handler korrekt
      * auf zwei via Factory bereitgestellte Domain-Objekte reagiert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeRecordsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_records_page_returns_200_with_factory_mock_individual_stubs(): void

@@ -24,6 +24,7 @@ use Fisharebest\Webtrees\Services\ModuleService;
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePreferencesPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePreferencesAction
+ * @see docs/tds_conditions_ref.md A04
  * @see docs/testquality_improve_A04.md
  */
 class TreePreferencesIntegrationTest extends MysqlTestCase
@@ -196,7 +197,6 @@ class TreePreferencesIntegrationTest extends MysqlTestCase
      * Ported from L2 doubles: prüft EXPAND_NOTES, HIDE_GEDCOM_ERRORS, SURNAME_LIST_STYLE='style2',
      * SURNAME_TRADITION='paternal' nach dem POST über die Tree-API (statt direktem DB-Read).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePreferencesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_saves_preferences_and_returns_via_get_preference(): void
@@ -266,7 +266,6 @@ class TreePreferencesIntegrationTest extends MysqlTestCase
      * Ported from L2 doubles: leere Strings werden als Boolean-False persistiert, und die beiden
      * CALENDAR_FORMAT*-Felder werden zu 'gregorian_and_jewish' kombiniert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePreferencesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_boolean_false_values_and_combined_calendar_format(): void

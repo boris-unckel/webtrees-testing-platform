@@ -29,8 +29,7 @@ use Illuminate\Support\Collection;
  * Erweitert um EmptyClipboard-Handler (gleicher Clipboard-Service-Kontext):
  * - emptyClipboard() wird aufgerufen und Handler leitet weiter (302).
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CopyFactTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EmptyClipboardTest.php
+ * @see docs/tds_conditions_ref.md E02
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CopyFact
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EmptyClipboard
  */
@@ -114,7 +113,6 @@ class CopyFactIntegrationTest extends MysqlTestCase
      * ClipboardService::copyFact() genau einmal mit diesem Fact auf und
      * liefert 204 No Content.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CopyFactTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_copies_matching_fact(): void
@@ -164,7 +162,6 @@ class CopyFactIntegrationTest extends MysqlTestCase
      * ClipboardService::copyFact() nicht aufgerufen; Handler liefert dennoch
      * 204 No Content (keine Fehlermeldung).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CopyFactTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_no_matching_fact(): void
@@ -212,7 +209,6 @@ class CopyFactIntegrationTest extends MysqlTestCase
      * Auth::checkRecordAccess() eine HttpNotFoundException — der Handler
      * darf die Exception nicht maskieren.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CopyFactTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_unknown_record_throws_not_found_exception(): void
@@ -279,7 +275,6 @@ class CopyFactIntegrationTest extends MysqlTestCase
      * EmptyClipboard ruft ClipboardService::emptyClipboard() genau einmal auf
      * und leitet danach auf die im Body übergebene lokale URL um (HTTP 302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EmptyClipboardTest.php
      * @group ported-l2-doubles
      */
     public function test_empty_clipboard_handle_empties_and_redirects(): void

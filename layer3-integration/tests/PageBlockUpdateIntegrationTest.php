@@ -23,8 +23,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Pendant zu PageBlockEditIntegrationTest (Edit-Phase, GET); Update-Phase
  * speichert die Block-Konfiguration und liefert einen Redirect.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageBlockUpdateTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageBlockUpdateTest.php
+ * @see docs/tds_conditions_ref.md S46
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePageBlockUpdate
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserPageBlockUpdate
  */
@@ -34,7 +33,6 @@ class PageBlockUpdateIntegrationTest extends MysqlTestCase
      * TreePageBlockUpdate::handle leitet nach dem Speichern (HTTP 302)
      * weiter und delegiert das Persistieren an den Block selbst.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageBlockUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_tree_page_block_update_redirects_after_save(): void
@@ -77,7 +75,6 @@ class PageBlockUpdateIntegrationTest extends MysqlTestCase
      * Damit ist sichergestellt, dass weder block_id noch Tree-Bezug stillschweigend
      * verloren gehen koennen, ohne dass dieser Test rot wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageBlockUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_tree_page_block_update_propagates_block_id_and_redirects_to_tree_page(): void
@@ -116,7 +113,6 @@ class PageBlockUpdateIntegrationTest extends MysqlTestCase
      * UserPageBlockUpdate::handle leitet nach dem Speichern (HTTP 302) weiter
      * und delegiert das Persistieren der Block-Konfiguration an den Block.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageBlockUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_block_update_redirects_after_save(): void
@@ -163,7 +159,6 @@ class PageBlockUpdateIntegrationTest extends MysqlTestCase
      * Damit ist sichergestellt, dass weder block_id noch Tree-Bezug stillschweigend
      * verloren gehen koennen, ohne dass dieser Test rot wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageBlockUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_block_update_propagates_block_id_and_redirects_to_user_page(): void

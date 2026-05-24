@@ -37,10 +37,8 @@ use Illuminate\Support\Collection;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\DeleteFact
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AddNewFact
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SelectNewFact
+ * @see docs/tds_conditions_ref.md E02
  * @see docs/testquality_improve_E02.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/DeleteFactTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditFactPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SelectNewFactTest.php
  */
 class EditFactIntegrationTest extends MysqlTestCase
 {
@@ -126,7 +124,6 @@ class EditFactIntegrationTest extends MysqlTestCase
      * Registry-Override; hier wird stattdessen der echte „Record fehlt"-Pfad gegen
      * MySQL geprüft.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddNewFactTest.php
      * @group ported-l2-doubles
      */
     public function test_add_new_fact_throws_not_found_for_unknown_xref(): void
@@ -156,7 +153,6 @@ class EditFactIntegrationTest extends MysqlTestCase
      * eine hidden_url im View-Modell gesetzt wird. In L3 wird derselbe
      * Hidden-Pfad real über den include_hidden=true Query-Parameter aktiviert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddNewFactTest.php
      * @group ported-l2-doubles
      */
     public function test_add_new_fact_page_with_include_hidden_returns_200(): void
@@ -184,7 +180,6 @@ class EditFactIntegrationTest extends MysqlTestCase
      * editierbar → record->deleteFact() wird genau einmal mit dieser fact_id
      * (und update_change_log=true) aufgerufen; Handler liefert 204.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/DeleteFactTest.php
      * @group ported-l2-doubles
      */
     public function test_delete_fact_handle_deletes_matching_editable_fact(): void
@@ -232,7 +227,6 @@ class EditFactIntegrationTest extends MysqlTestCase
      * editierbar (canEdit()=false) → record->deleteFact() wird NICHT
      * aufgerufen; Handler liefert dennoch 204.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/DeleteFactTest.php
      * @group ported-l2-doubles
      */
     public function test_delete_fact_handle_skips_non_editable_fact(): void
@@ -279,7 +273,6 @@ class EditFactIntegrationTest extends MysqlTestCase
      * Auth::checkRecordAccess() wirft HttpNotFoundException — der Handler
      * darf die Exception nicht maskieren.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/DeleteFactTest.php
      * @group ported-l2-doubles
      */
     public function test_delete_fact_handle_throws_not_found_for_unknown_record(): void
@@ -319,7 +312,6 @@ class EditFactIntegrationTest extends MysqlTestCase
      * XREF im realen Tree.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditFactAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditFactActionTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_fact_action_handle_throws_not_found_for_unknown_record(): void
@@ -357,7 +349,6 @@ class EditFactIntegrationTest extends MysqlTestCase
      * happy path real über einen aus dem importierten demo.ged stammenden Record
      * (X1030) abgebildet — die erste vorhandene Fact-ID wird zur Laufzeit ermittelt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditFactPageTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_fact_page_returns_200_for_valid_fact_id(): void
@@ -396,7 +387,6 @@ class EditFactIntegrationTest extends MysqlTestCase
      * Registry-Override; hier wird stattdessen der echte „Record fehlt"-Pfad
      * gegen MySQL geprüft.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditFactPageTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_fact_page_throws_not_found_for_unknown_record(): void
@@ -429,7 +419,6 @@ class EditFactIntegrationTest extends MysqlTestCase
      * zusätzlich wird der Location-Header inhaltlich auf die AddNewFact-Route
      * verifiziert (tree-Name, XREF, Fact-Tag).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SelectNewFactTest.php
      * @group ported-l2-doubles
      */
     public function test_select_new_fact_redirects_to_add_new_fact(): void

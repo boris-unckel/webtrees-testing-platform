@@ -16,7 +16,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * Referrer-Policy, X-Content-Type-Options, X-Frame-Options, X-XSS-Protection)
  * sowie das HSTS-Verhalten in Abhängigkeit von HTTPS-Base-URL.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/Middleware/SecurityHeadersTest.php
+ * @see docs/tds_conditions_ref.md M05
  * @covers \Fisharebest\Webtrees\Http\Middleware\SecurityHeaders
  */
 class SecurityHeadersMiddlewareIntegrationTest extends MysqlTestCase
@@ -24,7 +24,6 @@ class SecurityHeadersMiddlewareIntegrationTest extends MysqlTestCase
     /**
      * Verifiziert, dass alle Standard-Security-Header gesetzt werden — inkl. HSTS bei HTTPS-Base-URL.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/Middleware/SecurityHeadersTest.php
      * @group ported-l2-doubles
      */
     public function test_security_headers_are_added(): void
@@ -47,7 +46,6 @@ class SecurityHeadersMiddlewareIntegrationTest extends MysqlTestCase
     /**
      * Verifiziert, dass die Middleware bereits vorhandene Header (z. B. X-Frame-Options: DENY) nicht überschreibt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/Middleware/SecurityHeadersTest.php
      * @group ported-l2-doubles
      */
     public function test_existing_headers_are_not_overwritten(): void
@@ -69,7 +67,6 @@ class SecurityHeadersMiddlewareIntegrationTest extends MysqlTestCase
      * Verifiziert, dass Strict-Transport-Security nur bei HTTPS-Base-URL gesetzt wird,
      * während die übrigen Security-Header weiterhin appliziert werden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/Middleware/SecurityHeadersTest.php
      * @group ported-l2-doubles
      */
     public function test_hsts_only_for_https(): void

@@ -25,8 +25,7 @@ use Fisharebest\Webtrees\Services\PhpService;
  * Media-Objekt. Das fachliche Szenario (Upload-Fehler → Redirect zur
  * Media-URL) bleibt erhalten.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddMediaFileActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddMediaFileModalTest.php
+ * @see docs/tds_conditions_ref.md G30
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AddMediaFileAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AddMediaFileModal
  */
@@ -52,7 +51,6 @@ class AddMediaFileActionIntegrationTest extends MysqlTestCase
      * Upload-Fehler-Pfad: Request ohne hochgeladene Datei → MediaFileService::uploadFile
      * liefert '' → Handler redirected zur Media-URL (302 Found).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddMediaFileActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_when_upload_fails(): void
@@ -92,7 +90,6 @@ class AddMediaFileActionIntegrationTest extends MysqlTestCase
      * das echte Media via Registry::mediaFactory()->make() aus der DB aufgelöst,
      * derselbe Erfolgs-Branch wird ausgeführt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddMediaFileModalTest.php
      * @group ported-l2-doubles
      */
     public function test_modal_handle_returns_ok_for_valid_media(): void
@@ -124,7 +121,6 @@ class AddMediaFileActionIntegrationTest extends MysqlTestCase
      * error-Modal-View (HTTP 200, kein 4xx). Identische fachliche Wirkung
      * wie der L2-Quelltest, der MediaFactory->make() auf null gemockt hat.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddMediaFileModalTest.php
      * @group ported-l2-doubles
      */
     public function test_modal_handle_returns_error_view_when_media_not_found(): void

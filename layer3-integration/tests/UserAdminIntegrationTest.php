@@ -41,13 +41,8 @@ use Fisharebest\Webtrees\Services\ModuleService;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserAddPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserEditPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserListData
+ * @see docs/tds_conditions_ref.md A07
  * @see docs/testquality_improve_A07.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserAddActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserAddPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserEditPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserListDataTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserListTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UsersCleanupActionTest.php
  */
 class UserAdminIntegrationTest extends MysqlTestCase
 {
@@ -124,7 +119,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserAddAction POST mit validen Daten legt User an und redirected (302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserAddActionTest.php
      * @group ported-l2-doubles
      */
     public function test_user_add_action_creates_new_user(): void
@@ -153,7 +147,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserAddAction POST mit existierendem Username → Redirect zurück zum Formular mit username-Parameter.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserAddActionTest.php
      * @group ported-l2-doubles
      */
     public function test_user_add_action_redirects_on_duplicate_username(): void
@@ -180,7 +173,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserAddAction POST mit existierender Email → Redirect zurück zum Formular mit email-Parameter.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserAddActionTest.php
      * @group ported-l2-doubles
      */
     public function test_user_add_action_redirects_on_duplicate_email(): void
@@ -207,7 +199,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserAddAction POST mit doppeltem Username und Email → Redirect (302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserAddActionTest.php
      * @group ported-l2-doubles
      */
     public function test_user_add_action_redirects_on_both_duplicate_username_and_email(): void
@@ -233,7 +224,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserAddPage GET ohne Query-Parameter → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserAddPageTest.php
      * @group ported-l2-doubles
      */
     public function test_user_add_page_returns_200(): void
@@ -248,7 +238,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserAddPage GET mit Prefill-Query-Parametern (email, real_name, username) → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserAddPageTest.php
      * @group ported-l2-doubles
      */
     public function test_user_add_page_with_prefill_query_params_returns_200(): void
@@ -270,7 +259,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserAddPage GET mit leeren Query-Parametern → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserAddPageTest.php
      * @group ported-l2-doubles
      */
     public function test_user_add_page_with_empty_query_params_returns_200(): void
@@ -292,7 +280,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserEditPage GET mit user_id eines existierenden Users → 200 (Edit-Formular).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserEditPageTest.php
      * @group ported-l2-doubles
      */
     public function test_user_edit_page_returns_200_for_existing_user(): void
@@ -328,7 +315,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserEditPage GET mit nicht existierender user_id → HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserEditPageTest.php
      * @group ported-l2-doubles
      */
     public function test_user_edit_page_throws_not_found_for_non_existing_user(): void
@@ -358,7 +344,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserListData GET mit Datatables-Parametern → 200 und valides Datatables-JSON.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserListDataTest.php
      * @group ported-l2-doubles
      */
     public function test_user_list_data_returns_datatable_json(): void
@@ -396,7 +381,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserListData GET mit Datatables-Suchwert → 200 und gefiltertes JSON enthält den Admin.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserListDataTest.php
      * @group ported-l2-doubles
      */
     public function test_user_list_data_returns_filtered_datatable_json(): void
@@ -433,7 +417,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserListPage GET mit dem aktuellen Auth::user() als Request-Attribut → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserListTest.php
      * @group ported-l2-doubles
      */
     public function test_user_list_page_with_auth_user_attribute_returns_200(): void
@@ -454,7 +437,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UserListPage GET mit einem frisch angelegten registrierten User als Request-Attribut → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserListTest.php
      * @group ported-l2-doubles
      */
     public function test_user_list_page_with_registered_user_attribute_returns_200(): void
@@ -476,7 +458,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UsersCleanupAction POST mit leerer delete-Liste → Redirect (302), kein User wird gelöscht.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UsersCleanupActionTest.php
      * @group ported-l2-doubles
      */
     public function test_users_cleanup_action_with_no_deletes_redirects(): void
@@ -508,7 +489,6 @@ class UserAdminIntegrationTest extends MysqlTestCase
     /**
      * UsersCleanupAction POST mit einer User-ID → Redirect (302), der User wird aus der Datenbank entfernt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UsersCleanupActionTest.php
      * @group ported-l2-doubles
      */
     public function test_users_cleanup_action_deletes_user_and_redirects(): void

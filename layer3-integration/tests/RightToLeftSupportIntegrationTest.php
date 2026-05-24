@@ -15,6 +15,7 @@ use Fisharebest\Webtrees\Report\RightToLeftSupport;
  * finishCurrentSpan() ist private static (CRAP 10.100) und wird intern von
  * spanLtrRtl() aufgerufen — beide Methoden werden durch RTL-Input abgedeckt.
  *
+ * @see docs/tds_conditions_ref.md S44
  * @covers \Fisharebest\Webtrees\Report\RightToLeftSupport
  */
 class RightToLeftSupportIntegrationTest extends MysqlTestCase

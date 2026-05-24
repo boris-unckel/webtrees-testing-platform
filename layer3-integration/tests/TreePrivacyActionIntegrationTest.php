@@ -23,7 +23,6 @@ use Psr\Http\Message\ServerRequestInterface;
  * Assertion: default_resn-Tabelle + tree->getPreference().
  *
  * @see docs/tds_conditions_ref.md P33
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePrivacyPageTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePrivacyAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePrivacyPage
  */
@@ -186,7 +185,6 @@ class TreePrivacyActionIntegrationTest extends MysqlTestCase
      * Validiert, dass der Page-Handler Tree-Attribut korrekt extrahiert und die
      * Privacy-Konfigurationsseite ohne Fehler ausliefert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePrivacyPageTest.php
      * @group ported-l2-doubles
      */
     public function test_tree_privacy_page_returns_ok_response(): void

@@ -85,6 +85,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesChartsPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesMenusPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesReportsPage
+ * @see docs/tds_conditions_ref.md A05
  * @see docs/testquality_improve_A05.md
  */
 class ModuleConfigIntegrationTest extends MysqlTestCase
@@ -175,7 +176,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * sicher, dass `all(true)` mit dem „include disabled" Flag genau einmal
      * aufgerufen wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesAllActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_all_action_returns_302_with_empty_module_collection(): void
@@ -202,7 +202,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * dass `all(true)` mit dem „include disabled" Flag und `deletedModules()`
      * jeweils genau einmal aufgerufen werden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesAllPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_all_page_returns_200_with_empty_module_list(): void
@@ -234,7 +233,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * und damit lediglich den ModuleService).
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesAnalyticsAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesAnalyticsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_analytics_action_returns_302_with_empty_module_collection(): void
@@ -265,7 +263,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * (true, true) genau einmal aufgerufen, componentsWithAccess() und
      * componentsWithOrder() jeweils genau einmal, TreeService::all() genau einmal.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesAnalyticsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_analytics_page_returns_200_with_empty_collections(): void
@@ -306,7 +303,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * aufgerufen, TreeService::all() (von updateAccessLevel benötigt) genau
      * einmal.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesBlocksActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_blocks_action_returns_302_with_empty_collections(): void
@@ -340,7 +336,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * (true, true) genau einmal aufgerufen, componentsWithAccess() und
      * componentsWithOrder() jeweils genau einmal, TreeService::all() genau einmal.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesBlocksPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_blocks_page_returns_200_with_empty_collections(): void
@@ -382,7 +377,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * einmal.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesChartsAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesChartsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_charts_action_returns_302_with_empty_collections(): void
@@ -414,7 +408,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich. Verifiziert die Mock-Interaktion über die
      * geerbte listComponents()-Pipeline.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesChartsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_charts_page_returns_200_with_empty_collections(): void
@@ -454,7 +447,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * (updateOrder benötigt keinen Baum-Kontext).
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesFootersAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesFootersActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_footers_action_returns_302_with_empty_collection(): void
@@ -484,7 +476,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich. Verifiziert die Mock-Interaktion.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesFootersPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesFootersPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_footers_page_returns_200_with_empty_collections(): void
@@ -524,7 +515,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * unberührt.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesHistoricEventsAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesHistoricEventsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_historic_events_action_returns_302_with_empty_collection(): void
@@ -554,7 +544,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * AbstractModuleComponentPage die Übersichtsseite trotzdem erfolgreich.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesHistoricEventsPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesHistoricEventsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_historic_events_page_returns_200_with_empty_collections(): void
@@ -594,7 +583,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * unberührt.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesLanguagesAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesLanguagesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_languages_action_returns_302_with_empty_collection(): void
@@ -624,7 +612,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesLanguagesPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesLanguagesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_languages_page_returns_200_with_empty_collections(): void
@@ -665,7 +652,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * aufgerufen, TreeService::all() genau einmal.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesListsAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesListsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_lists_action_returns_302_with_empty_collections(): void
@@ -697,7 +683,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesListsPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesListsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_lists_page_returns_200_with_empty_collections(): void
@@ -737,7 +722,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * unberührt.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesDataFixesAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesDataFixesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_data_fixes_action_returns_302_with_empty_collection(): void
@@ -770,7 +754,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * componentsWithOrder() jeweils genau einmal, TreeService::all() genau einmal.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesDataFixesPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesDataFixesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_data_fixes_page_returns_200_with_empty_collections(): void
@@ -810,7 +793,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * unberührt.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesMapAutocompleteAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesMapAutocompleteActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_map_autocomplete_action_returns_302_with_empty_collection(): void
@@ -840,7 +822,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesMapAutocompletePage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesMapAutocompletePageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_map_autocomplete_page_returns_200_with_empty_collections(): void
@@ -880,7 +861,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * unberührt.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesMapGeoLocationsAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesMapGeoLocationsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_map_geo_locations_action_returns_302_with_empty_collection(): void
@@ -910,7 +890,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesMapGeoLocationsPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesMapGeoLocationsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_map_geo_locations_page_returns_200_with_empty_collections(): void
@@ -950,7 +929,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * unberührt.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesMapLinksAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesMapLinksActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_map_links_action_returns_302_with_empty_collection(): void
@@ -980,7 +958,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesMapLinksPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesMapLinksPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_map_links_page_returns_200_with_empty_collections(): void
@@ -1020,7 +997,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * unberührt.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesMapProvidersAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesMapProvidersActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_map_providers_action_returns_302_with_empty_collection(): void
@@ -1050,7 +1026,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesMapProvidersPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesMapProvidersPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_map_providers_page_returns_200_with_empty_collections(): void
@@ -1090,7 +1065,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * TreeService::all() (von updateAccessLevel benötigt) genau einmal.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesMenusAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesMenusActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_menus_action_returns_302_with_empty_collection(): void
@@ -1121,7 +1095,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * TreeService::all() ebenfalls leer ist, rendert AbstractModuleComponentPage die
      * Übersichtsseite trotzdem erfolgreich.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesMenusPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_menus_page_returns_200_with_empty_collections(): void
@@ -1163,7 +1136,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * einmal.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesReportsAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesReportsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_reports_action_returns_302_with_empty_collection(): void
@@ -1194,7 +1166,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * TreeService::all() ebenfalls leer ist, rendert AbstractModuleComponentPage die
      * Übersichtsseite trotzdem erfolgreich.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesReportsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_reports_page_returns_200_with_empty_collections(): void
@@ -1234,7 +1205,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * unberührt.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesSharesAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesSharesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_shares_action_returns_302_with_empty_collection(): void
@@ -1267,7 +1237,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * componentsWithOrder() jeweils genau einmal, TreeService::all() genau einmal.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesSharesPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesSharesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_shares_page_returns_200_with_empty_collections(): void
@@ -1307,7 +1276,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * TreeService::all() (von updateAccessLevel benötigt) genau einmal.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesSidebarsAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesSidebarsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_sidebars_action_returns_302_with_empty_collection(): void
@@ -1339,7 +1307,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesSidebarsPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesSidebarsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_sidebars_page_returns_200_with_empty_collections(): void
@@ -1379,7 +1346,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * TreeService::all() (von updateAccessLevel benötigt) genau einmal.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesTabsAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesTabsActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_tabs_action_returns_302_with_empty_collection(): void
@@ -1411,7 +1377,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesTabsPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesTabsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_tabs_page_returns_200_with_empty_collections(): void
@@ -1451,7 +1416,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * unberührt.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesThemesAction
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesThemesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_themes_action_returns_302_with_empty_collection(): void
@@ -1481,7 +1445,6 @@ class ModuleConfigIntegrationTest extends MysqlTestCase
      * Übersichtsseite trotzdem erfolgreich.
      *
      * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModulesThemesPage
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ModulesThemesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_modules_themes_page_returns_200_with_empty_collections(): void

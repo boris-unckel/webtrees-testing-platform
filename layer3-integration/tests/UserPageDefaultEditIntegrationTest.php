@@ -21,7 +21,7 @@ use Illuminate\Support\Collection;
  * pruegft die Existenz der Default-Bloecke und liefert die verfuegbaren
  * User-Bloecke an das Edit-Formular.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageDefaultEditTest.php
+ * @see docs/tds_conditions_ref.md A18
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserPageDefaultEdit
  */
 class UserPageDefaultEditIntegrationTest extends MysqlTestCase
@@ -36,7 +36,6 @@ class UserPageDefaultEditIntegrationTest extends MysqlTestCase
      * Aufruf von checkDefaultUserBlocksExist() existieren in der block-Tabelle
      * Default-Block-Zeilen mit user_id = -1.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageDefaultEditTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_default_edit_handles_request_via_container(): void
@@ -67,7 +66,6 @@ class UserPageDefaultEditIntegrationTest extends MysqlTestCase
      * HomePageService fuer Default-Block-Pruefung, User-Bloecke und die
      * verfuegbaren User-Bloecke.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageDefaultEditTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_response(): void

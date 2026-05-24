@@ -47,16 +47,8 @@ use Illuminate\Support\Collection;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CreateLocationModal
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MapDataAdd
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MapDataEdit
+ * @see docs/tds_conditions_ref.md S52
  * @see docs/testquality_improve_S52.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateLocationModalTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataAddTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataDeleteTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataDeleteUnusedTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataEditTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataExportCSVTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataExportGeoJsonTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataListTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataSaveTest.php
  */
 class MapDataCrudIntegrationTest extends MysqlTestCase
 {
@@ -197,7 +189,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * und content-type geprüft — hier werden CSV-Body-Property und
      * content-disposition-Header gepinnt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataExportCSVTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_export_csv_pins_header_and_default_filename(): void
@@ -276,7 +267,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * der Statuscode 200 geprüft — hier werden Form-Action-Route und CSRF-Hidden-Field
      * im Body gepinnt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateLocationModalTest.php
      * @group ported-l2-doubles
      */
     public function test_create_location_modal_pins_form_action_and_csrf(): void
@@ -311,7 +301,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
     /**
      * CreateLocationModal GET → 200 (Modal-Dialog mit gültigem Tree-Attribut).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateLocationModalTest.php
      * @group ported-l2-doubles
      */
     public function test_create_location_modal_handle_returns_ok(): void
@@ -349,7 +338,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * korrekt gewähltes location-edit-Template) und leeres parent_id-Hidden-Input
      * (Beleg für den null-parent-Pfad in handle()) gepinnt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataAddTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_add_pins_form_action_and_empty_parent_id(): void
@@ -382,7 +370,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
     /**
      * MapDataAdd GET ohne parent_id-Attribut → 200 (Welt-Wurzelknoten als Default-Parent).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataAddTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_add_handle_with_no_parent_returns_ok(): void
@@ -420,7 +407,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * rot, wenn der Handler stattdessen die location_id aus dem Request für die
      * Redirect-Ziel-Route nutzen würde).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataDeleteTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_delete_redirects_to_parent_in_list(): void
@@ -471,7 +457,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * Stub/Mock-Konvention: PlaceLocation = Domain-Objekt → createStub;
      * MapDataService = Service → createMock mit Verhaltens-Assertion.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataDeleteTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_delete_handle_with_mock_service_returns_found(): void
@@ -521,7 +506,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * rot, wenn der Handler stattdessen eine parent_id in die Redirect-Ziel-Route
      * einbauen würde, etwa route(MapDataList::class, ['parent_id' => ...])).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataDeleteUnusedTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_delete_unused_redirects_to_list_without_parent_id(): void
@@ -560,7 +544,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      *
      * Stub/Mock-Konvention: MapDataService = Service → createMock mit Verhaltens-Assertion.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataDeleteUnusedTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_delete_unused_handle_deletes_and_redirects(): void
@@ -601,7 +584,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * sowie ihren place-Namen in das Form propagiert (geht rot, falls der Handler bei
      * existierender Location stattdessen umleitet oder ein anderes Template wählt).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataEditTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_edit_handle_existing_location_renders_form(): void
@@ -668,7 +650,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * (Handler bricht beim null-id-Pfad vor dem Render ab) → createStub statt createMock,
      * um eine PHPUnit-Notice wegen "no expectations on mock" zu vermeiden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataEditTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_edit_handle_non_existent_location_redirects(): void
@@ -713,7 +694,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * hier wird der content-disposition-Header mit dem Default-Dateinamen
      * "Global.geojson" gepinnt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataExportGeoJsonTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_export_geojson_pins_default_filename(): void
@@ -742,7 +722,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
     /**
      * MapDataExportGeoJson GET → 200 + content-type application/vnd.geo+json.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataExportGeoJsonTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_export_geojson_returns_geojson(): void
@@ -770,7 +749,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * Stub/Mock-Konvention: MapDataService, ModuleService, TreeService sind Services
      * (Verhaltens-Verifikation) → createMock mit expects(self::once()).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataListTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_list_handle_with_no_parent_id_invokes_collaborators(): void
@@ -824,7 +802,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * der in keinem anderen Test abgedeckt ist. Der Test geht rot, falls der Handler
      * den Duplicate-Check entfernt und doppelte Zeilen erlaubt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataSaveTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_save_does_not_insert_duplicate_on_existing_name(): void
@@ -887,7 +864,6 @@ class MapDataCrudIntegrationTest extends MysqlTestCase
      * MapDataSave POST mit leeren Koordinaten → 302-Redirect + DB-Eintrag mit
      * NULL-Latitude/Longitude (Edge Case: Standort ohne Geokoordinaten).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataSaveTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_save_with_empty_coordinates_creates_location(): void

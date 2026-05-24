@@ -43,6 +43,7 @@ use const UPLOAD_ERR_OK;
  *   Auch Replacement-Image-Responses (Not-Found-/Forbidden-Placeholder) müssen
  *   einen CSP-Header tragen, der Skriptausführung verhindert.
  *
+ * @see docs/tds_conditions_ref.md E07, E09
  * @covers \Fisharebest\Webtrees\Factories\ImageFactory
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MediaFileDownload
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MediaFileThumbnail
@@ -136,7 +137,6 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
      * Wenn der Viewer das Media-Objekt nicht sehen darf, liefert der Handler ein „forbidden"-
      * Ersatzbild (HTTP 200) statt eine Exception zu werfen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MediaFileThumbnailTest.php
      * @group ported-l2-doubles
      */
     public function test_thumbnail_media_not_visible_returns_replacement_image(): void
@@ -182,7 +182,6 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
      * Bei leerer mediaFiles()-Collection bzw. nicht passender fact_id fällt der Handler auf
      * das Ersatzbild (HTTP 200) zurück, ohne zu werfen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MediaFileDownloadTest.php
      * @group ported-l2-doubles
      */
     public function test_download_valid_media_no_matching_fact_id_returns_replacement_image(): void

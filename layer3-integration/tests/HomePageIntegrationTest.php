@@ -17,7 +17,7 @@ use Illuminate\Support\Collection;
  * Wenn keine Stammbaeume existieren und der Benutzer ein Gast ist, leitet der
  * Handler auf die Login-Seite weiter (HTTP 302).
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/HomePageTest.php
+ * @see docs/tds_conditions_ref.md S40
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\HomePage
  */
 class HomePageIntegrationTest extends MysqlTestCase
@@ -25,7 +25,6 @@ class HomePageIntegrationTest extends MysqlTestCase
     /**
      * Keine Baeume vorhanden, Aufrufer ist Gast: Redirect zur Login-Seite.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/HomePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_no_trees_guest_redirects_to_login(): void

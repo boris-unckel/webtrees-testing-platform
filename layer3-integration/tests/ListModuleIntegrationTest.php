@@ -142,7 +142,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
     /**
      * SourceListModule::title() liefert eine nicht-leere Beschriftung.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SourceListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_source_list_title_is_not_empty(): void
@@ -161,7 +160,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
      * Variante zum bestehenden Admin-Login-Test: prüft explizit den
      * Privacy-DB-Pfad über `module_privacy` statt über Auth-Ebene.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SourceListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_source_list_handle_returns_page_when_public_access_granted(): void
@@ -188,7 +186,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
      * SourceListModule::handle() verweigert dem Gast den Zugriff,
      * wenn keine Public-Privacy gesetzt ist (Default = PRIV_USER).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SourceListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_source_list_handle_denies_access_to_guest(): void
@@ -234,7 +231,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
     /**
      * RepositoryListModule::title() liefert eine nicht-leere Beschriftung.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/RepositoryListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_repository_list_title_is_not_empty(): void
@@ -253,7 +249,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
      * Variante zum bestehenden Admin-Login-Test: prüft explizit den
      * Privacy-DB-Pfad über `module_privacy` statt über Auth-Ebene.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/RepositoryListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_repository_list_handle_returns_page_when_public_access_granted(): void
@@ -280,7 +275,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
      * RepositoryListModule::handle() verweigert dem Gast den Zugriff,
      * wenn keine Public-Privacy gesetzt ist (Default = PRIV_USER).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/RepositoryListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_repository_list_handle_denies_access_to_guest(): void
@@ -314,7 +308,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
     /**
      * NoteListModule::title() liefert eine nicht-leere Beschriftung.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/NoteListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_note_list_title_is_not_empty(): void
@@ -356,7 +349,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
     /**
      * MediaListModule::title() liefert eine nicht-leere Beschriftung.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/MediaListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_media_list_title_is_not_empty(): void
@@ -390,7 +382,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
     /**
      * SubmitterListModule::title() liefert eine nicht-leere Beschriftung.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SubmitterListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_submitter_list_title_is_not_empty(): void
@@ -409,7 +400,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
      * Variante zum bestehenden Admin-Login-Test: prüft explizit den
      * Privacy-DB-Pfad über `module_privacy` statt über Auth-Ebene.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SubmitterListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_submitter_list_handle_returns_page_when_public_access_granted(): void
@@ -436,7 +426,6 @@ class ListModuleIntegrationTest extends MysqlTestCase
      * SubmitterListModule::handle() verweigert dem Gast den Zugriff,
      * wenn keine Public-Privacy gesetzt ist (Default = PRIV_USER).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/SubmitterListModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_submitter_list_handle_denies_access_to_guest(): void

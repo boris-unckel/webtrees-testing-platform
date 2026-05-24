@@ -47,12 +47,8 @@ use Psr\Http\Message\StreamFactoryInterface;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MergeTreesPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SelectDefaultTree
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SynchronizeTrees
+ * @see docs/tds_conditions_ref.md A01
  * @see docs/testquality_improve_A01.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateTreePageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeTreesActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeTreesPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SelectDefaultTreeTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SynchronizeTreesTest.php
  */
 class TreeManagementIntegrationTest extends MysqlTestCase
 {
@@ -168,7 +164,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
      * durch einen vollständigen Request-Durchlauf gegen die real verdrahtete Klasse
      * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 200-OK enthalten.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateTreePageTest.php
      * @group ported-l2-doubles
      */
     public function test_create_tree_page_handles_request_via_container(): void
@@ -189,7 +184,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     /**
      * CreateTreePage: GET ohne Query-Parameter → 200, uniqueTreeName() einmal aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateTreePageTest.php
      * @group ported-l2-doubles
      */
     public function test_create_tree_page_handle_returns_ok_response(): void
@@ -213,7 +207,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     /**
      * CreateTreePage: GET mit Query-Parametern (name, title) → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateTreePageTest.php
      * @group ported-l2-doubles
      */
     public function test_create_tree_page_handle_with_custom_query_params(): void
@@ -238,7 +231,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     /**
      * CreateTreePage: Defaults werden genutzt, wenn keine Query-Parameter vorhanden sind.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateTreePageTest.php
      * @group ported-l2-doubles
      */
     public function test_create_tree_page_handle_uses_defaults_when_no_query_params(): void
@@ -266,7 +258,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
      * durch einen vollständigen Request-Durchlauf gegen die real verdrahtete Klasse
      * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 200-OK enthalten.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ManageTreesTest.php
      * @group ported-l2-doubles
      */
     public function test_manage_trees_handles_request_via_container(): void
@@ -291,7 +282,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
      * durch einen vollständigen Request-Durchlauf gegen die real verdrahtete Klasse
      * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 302-Redirect enthalten.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeTreesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_trees_action_handles_request_via_container(): void
@@ -319,7 +309,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     /**
      * MergeTreesAction: zwei leere Bäume zusammenführen → 302 Redirect.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeTreesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_trees_action_merges_empty_trees_and_redirects(): void
@@ -348,7 +337,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     /**
      * MergeTreesAction: derselbe Baum kann nicht zusammengeführt werden → 302 zurück zur Merge-Page.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeTreesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_trees_action_redirects_when_same_tree(): void
@@ -380,7 +368,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
      * durch einen vollständigen Request-Durchlauf gegen die real verdrahtete Klasse
      * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 200-OK enthalten.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeTreesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_trees_page_handles_request_via_container(): void
@@ -401,7 +388,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     /**
      * MergeTreesPage: GET ohne ausgewählte Bäume → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeTreesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_trees_page_returns_200_without_selected_trees(): void
@@ -422,7 +408,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     /**
      * MergeTreesPage: GET mit zwei ausgewählten Bäumen (Query-Parameter) → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeTreesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_merge_trees_page_returns_200_with_selected_trees(): void
@@ -456,7 +441,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
      * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 302-Redirect enthalten,
      * zusätzlich wird die Side-Effect-Postcondition (`Site::DEFAULT_GEDCOM`) geprüft.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SelectDefaultTreeTest.php
      * @group ported-l2-doubles
      */
     public function test_select_default_tree_handles_request_via_container(): void
@@ -490,7 +474,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     /**
      * SelectDefaultTree: setzt DEFAULT_GEDCOM auf den Baumnamen und leitet weiter (302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SelectDefaultTreeTest.php
      * @group ported-l2-doubles
      */
     public function test_select_default_tree_sets_default_and_redirects(): void
@@ -534,7 +517,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
      * (vgl. MysqlTestCase::setUp → Webtrees::bootstrap), deshalb leakt der Override
      * nicht in nachfolgende Tests.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SynchronizeTreesTest.php
      * @group ported-l2-doubles
      */
     public function test_synchronize_trees_handles_request_via_container(): void
@@ -566,7 +548,6 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     /**
      * SynchronizeTrees: ohne GEDCOM-Dateien wird nach ManageTrees weitergeleitet (302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SynchronizeTreesTest.php
      * @group ported-l2-doubles
      */
     public function test_synchronize_trees_redirects_when_no_gedcom_files(): void

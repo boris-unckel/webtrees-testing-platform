@@ -36,7 +36,7 @@ use Illuminate\Support\Collection;
  * gefuehrt, weil die Render-Pfade `pastableFacts`, `findByComponent` und
  * `findByInterface` aufrufen und Verhalten erwartet wird.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/IndividualPageTest.php
+ * @see docs/tds_conditions_ref.md S23
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\IndividualPage
  */
 class IndividualPageIntegrationTest extends MysqlTestCase
@@ -53,7 +53,6 @@ class IndividualPageIntegrationTest extends MysqlTestCase
      * Sichtbares Individual mit uebereinstimmendem Slug rendert die
      * individual-page mit 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/IndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_for_visible_individual(): void
@@ -122,7 +121,6 @@ class IndividualPageIntegrationTest extends MysqlTestCase
      * Bei Slug-Mismatch antwortet der Handler mit 301 Moved Permanently auf die
      * kanonische URL des Individuals.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/IndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_on_slug_mismatch(): void
@@ -170,7 +168,6 @@ class IndividualPageIntegrationTest extends MysqlTestCase
      * Unbekannte Individual-XREF (Factory liefert null) loest
      * HttpNotFoundException aus Auth::checkIndividualAccess() aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/IndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_unknown_individual_throws_not_found_exception(): void

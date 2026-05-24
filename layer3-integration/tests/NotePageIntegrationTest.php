@@ -32,7 +32,7 @@ use Illuminate\Support\Collection;
  * Erwartungs-Verifikation für die Pipeline der Linked-Record-Aufrufe.
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\NotePage
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotePageTest.php
+ * @see docs/tds_conditions_ref.md S28
  */
 class NotePageIntegrationTest extends MysqlTestCase
 {
@@ -54,7 +54,6 @@ class NotePageIntegrationTest extends MysqlTestCase
      * `rel="canonical"`-Marker auf die URL der Note gesetzt. Damit ist auch
      * dann erkennbar, wenn Upstream den Canonical-Mechanismus aenderte.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_sets_canonical_link_header_for_visible_note(): void
@@ -116,7 +115,6 @@ class NotePageIntegrationTest extends MysqlTestCase
     /**
      * Sichtbare Note mit übereinstimmendem Slug rendert die Note-Page mit 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_for_visible_note(): void
@@ -175,7 +173,6 @@ class NotePageIntegrationTest extends MysqlTestCase
      * Bei Slug-Mismatch antwortet der Handler mit 301 Moved Permanently auf die
      * kanonische URL der Note.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_on_slug_mismatch(): void
@@ -220,7 +217,6 @@ class NotePageIntegrationTest extends MysqlTestCase
      * Unbekannte Note-XREF (Factory liefert null) löst HttpNotFoundException
      * aus Auth::checkNoteAccess() aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_unknown_note_throws_not_found_exception(): void

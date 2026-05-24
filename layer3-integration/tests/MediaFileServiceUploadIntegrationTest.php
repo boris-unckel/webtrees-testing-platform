@@ -90,7 +90,6 @@ class MediaFileServiceUploadIntegrationTest extends MysqlTestCase
     /**
      * createMediaFileGedcom() mit lokaler Datei liefert FILE/FORM/TYPE/TITL-Zeilen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/MediaFileServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_create_media_file_gedcom_with_local_file(): void
@@ -112,7 +111,6 @@ class MediaFileServiceUploadIntegrationTest extends MysqlTestCase
     /**
      * createMediaFileGedcom() mit URL-Quelle ohne FORM/TYPE/TITL.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/MediaFileServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_create_media_file_gedcom_with_url(): void
@@ -134,7 +132,6 @@ class MediaFileServiceUploadIntegrationTest extends MysqlTestCase
     /**
      * createMediaFileGedcom() mit Note hängt NOTE-Zeile an.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/MediaFileServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_create_media_file_gedcom_with_note(): void

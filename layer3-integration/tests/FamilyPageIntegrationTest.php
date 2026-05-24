@@ -29,7 +29,7 @@ use Illuminate\Support\Collection;
  * werden als Stubs eingehängt, weil die Pfade vorrangig Wert-orientiert
  * sind (Slug-Vergleich, Sichtbarkeitsprüfung, Factory-Lookup).
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/FamilyPageTest.php
+ * @see docs/tds_conditions_ref.md S24
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\FamilyPage
  */
 class FamilyPageIntegrationTest extends MysqlTestCase
@@ -45,7 +45,6 @@ class FamilyPageIntegrationTest extends MysqlTestCase
     /**
      * Sichtbare Family mit übereinstimmendem Slug rendert die family-page mit 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/FamilyPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_for_visible_family(): void
@@ -92,7 +91,6 @@ class FamilyPageIntegrationTest extends MysqlTestCase
      * Bei Slug-Mismatch antwortet der Handler mit 301 Moved Permanently auf die
      * kanonische URL der Family.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/FamilyPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_on_slug_mismatch(): void
@@ -135,7 +133,6 @@ class FamilyPageIntegrationTest extends MysqlTestCase
      * Unbekannte Family-XREF (Factory liefert null) löst HttpNotFoundException
      * aus Auth::checkFamilyAccess() aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/FamilyPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_unknown_family_throws_not_found_exception(): void

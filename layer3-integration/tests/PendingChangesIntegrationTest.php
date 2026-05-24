@@ -59,6 +59,7 @@ use Psr\Http\Message\ResponseInterface;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\PendingChangesRejectChange
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\PendingChangesRejectRecord
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\PendingChangesRejectTree
+ * @see docs/tds_conditions_ref.md P40
  * @see docs/testquality_improve_P40.md
  */
 class PendingChangesIntegrationTest extends MysqlTestCase
@@ -141,7 +142,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
      * Verifiziert per Mock, dass `pendingXrefs($tree)` und `pendingChanges($tree, 50)`
      * mit den erwarteten Argumenten aufgerufen werden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesTest.php
      * @group ported-l2-doubles
      */
     public function test_pending_changes_passes_custom_limit_to_service(): void
@@ -177,7 +177,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * AcceptChange: existierender Record → Service::acceptChange() einmal aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesAcceptChangeTest.php
      * @group ported-l2-doubles
      */
     public function test_accept_change_existing_record_accepts_change(): void
@@ -222,7 +221,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * AcceptChange: nicht-existierender Record → Service::acceptChange() niemals aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesAcceptChangeTest.php
      * @group ported-l2-doubles
      */
     public function test_accept_change_skips_when_record_not_found(): void
@@ -262,7 +260,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * AcceptRecord: existierender Record (kein Pending-Delete) → Service::acceptRecord() aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesAcceptRecordTest.php
      * @group ported-l2-doubles
      */
     public function test_accept_record_existing_record_accepts(): void
@@ -308,7 +305,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * AcceptRecord: Pending-Deletion-Record → Service::acceptRecord() aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesAcceptRecordTest.php
      * @group ported-l2-doubles
      */
     public function test_accept_record_pending_deletion_accepts(): void
@@ -357,7 +353,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
      * Ergänzt das existierende test_accept_record_unknown_xref_returns_200 mit dem
      * Mock-Factory-Pfad aus der Quelle.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesAcceptRecordTest.php
      * @group ported-l2-doubles
      */
     public function test_accept_record_skips_when_record_not_found_mocked(): void
@@ -398,7 +393,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * AcceptTree: ruft Service::acceptTree() mit Tree und Count auf.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesAcceptTreeTest.php
      * @group ported-l2-doubles
      */
     public function test_accept_tree_invokes_service_with_count(): void
@@ -431,7 +425,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * LogAction: POST-Formular → Redirect auf LogPage mit übernommenen Parametern.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesLogActionTest.php
      * @group ported-l2-doubles
      */
     public function test_log_action_redirects_to_log_page(): void
@@ -465,7 +458,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * LogData: delegiert die Query an DatatablesService und gibt dessen Antwort weiter.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesLogDataTest.php
      * @group ported-l2-doubles
      */
     public function test_log_data_delegates_query_to_datatables_service(): void
@@ -504,7 +496,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * LogDelete: ruft Service::changesQuery()->delete() auf und liefert 204.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesLogDeleteTest.php
      * @group ported-l2-doubles
      */
     public function test_log_delete_deletes_changes_and_returns_no_content(): void
@@ -535,7 +526,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * LogDownload: CSV-Antwort mit Content-Type und Filename-Header.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesLogDownloadTest.php
      * @group ported-l2-doubles
      */
     public function test_log_download_returns_csv_response(): void
@@ -575,7 +565,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * LogDownload: CSV-Body enthält die Zeilen-Inhalte.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesLogDownloadTest.php
      * @group ported-l2-doubles
      */
     public function test_log_download_returns_body_content(): void
@@ -618,7 +607,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * LogDownload: Anführungszeichen in Feldern werden im CSV korrekt verdoppelt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesLogDownloadTest.php
      * @group ported-l2-doubles
      */
     public function test_log_download_escapes_double_quotes_in_csv(): void
@@ -660,7 +648,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * LogDownload: keine Änderungen vorhanden → 204 No Content.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesLogDownloadTest.php
      * @group ported-l2-doubles
      */
     public function test_log_download_with_empty_changes_returns_no_content(): void
@@ -688,7 +675,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * LogPage: Bootstrap mit TreeService/UserService → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesLogPageTest.php
      * @group ported-l2-doubles
      */
     public function test_log_page_returns_ok_response(): void
@@ -720,7 +706,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * RejectChange: existierender Record → Service::rejectChange() einmal aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesRejectChangeTest.php
      * @group ported-l2-doubles
      */
     public function test_reject_change_existing_record_rejects_change(): void
@@ -765,7 +750,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * RejectChange: nicht-existierender Record → Service::rejectChange() niemals aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesRejectChangeTest.php
      * @group ported-l2-doubles
      */
     public function test_reject_change_skips_when_record_not_found(): void
@@ -805,7 +789,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
     /**
      * RejectRecord: existierender Record → Service::rejectRecord() aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesRejectRecordTest.php
      * @group ported-l2-doubles
      */
     public function test_reject_record_existing_record_rejects(): void
@@ -853,7 +836,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
      * Ergänzt das existierende test_reject_record_unknown_xref_returns_204 mit dem
      * Mock-Factory-Pfad aus der Quelle.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesRejectRecordTest.php
      * @group ported-l2-doubles
      */
     public function test_reject_record_skips_when_record_not_found_mocked(): void
@@ -895,7 +877,6 @@ class PendingChangesIntegrationTest extends MysqlTestCase
      * RejectTree: ruft Service::rejectTree() mit dem übergebenen Tree auf
      * und liefert 204 No Content zurück.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PendingChangesRejectTreeTest.php
      * @group ported-l2-doubles
      */
     public function test_reject_tree_invokes_service_with_tree(): void

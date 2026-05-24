@@ -31,8 +31,8 @@ use League\Flysystem\WhitespacePathNormalizer;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\DataFixChoose
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CleanDataFolder
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\DeletePath
+ * @see docs/tds_conditions_ref.md A09
  * @see docs/testquality_improve_A09.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/DeletePathTest.php
  */
 class DataMaintenanceIntegrationTest extends MysqlTestCase
 {
@@ -118,7 +118,6 @@ class DataMaintenanceIntegrationTest extends MysqlTestCase
     /**
      * EP5: CleanDataFolder GET → 200 (Auflistung Daten-Ordner-Inhalt + geschützte Pfade).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CleanDataFolderTest.php
      * @group ported-l2-doubles
      */
     public function test_clean_data_folder_returns_200(): void
@@ -137,7 +136,6 @@ class DataMaintenanceIntegrationTest extends MysqlTestCase
     /**
      * EP6: DeletePath verweigert das Löschen geschützter Datei `config.ini.php` → 204.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/DeletePathTest.php
      * @group ported-l2-doubles
      */
     public function test_delete_path_refuses_to_delete_protected_config_ini(): void
@@ -156,7 +154,6 @@ class DataMaintenanceIntegrationTest extends MysqlTestCase
     /**
      * EP7: DeletePath verweigert das Löschen geschützter Datei `.htaccess` → 204.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/DeletePathTest.php
      * @group ported-l2-doubles
      */
     public function test_delete_path_refuses_to_delete_protected_htaccess(): void
@@ -175,7 +172,6 @@ class DataMaintenanceIntegrationTest extends MysqlTestCase
     /**
      * EP8: DeletePath verweigert das Löschen geschützter Datei `index.php` → 204.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/DeletePathTest.php
      * @group ported-l2-doubles
      */
     public function test_delete_path_refuses_to_delete_protected_index_php(): void

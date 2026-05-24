@@ -20,7 +20,7 @@ use Illuminate\Support\Collection;
  * HomePageService, ruft die User-Bloecke des aktuellen Benutzers und die
  * verfuegbaren User-Bloecke fuer das Edit-Formular ab.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageEditTest.php
+ * @see docs/tds_conditions_ref.md S35, S46
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserPageEdit
  */
 class UserPageEditIntegrationTest extends MysqlTestCase
@@ -50,7 +50,6 @@ class UserPageEditIntegrationTest extends MysqlTestCase
      * fuer die Block-Edit-Page beobachtet (`url_save` → UserPageUpdate-Route),
      * damit das ausgelieferte View tatsaechlich zur Edit-Action verlinkt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageEditTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_edit_handles_request_via_container(): void
@@ -83,7 +82,6 @@ class UserPageEditIntegrationTest extends MysqlTestCase
      * User-Bloecke und die verfuegbaren User-Bloecke fuer den angemeldeten
      * Benutzer ab.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageEditTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_response(): void

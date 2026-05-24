@@ -24,7 +24,7 @@ use Illuminate\Support\Collection;
  * und der Skip-Pfad (Baum mit vorhandenen Bloecken, kein erneuter
  * checkDefaultTreeBlocksExist-Aufruf, keine zusaetzlichen Block-Inserts).
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageTest.php
+ * @see docs/tds_conditions_ref.md S40, S46
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePage
  */
 class TreePageIntegrationTest extends MysqlTestCase
@@ -81,7 +81,6 @@ class TreePageIntegrationTest extends MysqlTestCase
      * tree-Bloecke fuer den Baum ab. HomePageService wird gemockt, um das
      * View-Rendering der echten Block-Module zu vermeiden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_response(): void

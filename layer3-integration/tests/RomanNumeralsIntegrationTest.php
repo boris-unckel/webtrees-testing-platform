@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  *
  * Reine Logik-Tests, laufen im Container für einheitliche PHP-Version.
  *
+ * @see docs/tds_conditions_ref.md S45
  * @covers \Fisharebest\Webtrees\Services\RomanNumeralsService
  */
 class RomanNumeralsIntegrationTest extends MysqlTestCase
@@ -80,7 +81,6 @@ class RomanNumeralsIntegrationTest extends MysqlTestCase
     /**
      * Negative Zahlen werden unverändert als String zurückgegeben (keine römische Notation für negative Werte).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/RomanNumeralsServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_number_to_roman_numerals_returns_string_for_negative_number(): void
@@ -98,7 +98,6 @@ class RomanNumeralsIntegrationTest extends MysqlTestCase
     /**
      * Leere Eingabe wird als 0 interpretiert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/RomanNumeralsServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_roman_numerals_to_number_returns_zero_for_empty_string(): void

@@ -18,7 +18,7 @@ use Fisharebest\Webtrees\Services\SearchService;
  * das Render- und Such-Verhalten gegen eine echte MySQL-DB-getragene
  * Tree-Instanz verifiziert.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchAdvancedPageTest.php
+ * @see docs/tds_conditions_ref.md S05, S38
  * @group ported-l2-doubles
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SearchAdvancedPage
@@ -29,7 +29,6 @@ class SearchAdvancedPageIntegrationTest extends MysqlTestCase
      * Default-Seite ohne ausgefuellte Suchfelder rendert mit HTTP 200 OK
      * und liefert nicht-leeren Body.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchAdvancedPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_default_page_returns_ok(): void
@@ -53,7 +52,6 @@ class SearchAdvancedPageIntegrationTest extends MysqlTestCase
      * Sind Suchfelder uebergeben, aber leer, wird keine Suche ausgefuehrt; die
      * Seite rendert dennoch mit HTTP 200 OK.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchAdvancedPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_empty_fields_returns_ok(): void
@@ -81,7 +79,6 @@ class SearchAdvancedPageIntegrationTest extends MysqlTestCase
      * Sind Suchfelder mit Werten belegt, wird eine Suche ausgefuehrt und die
      * Seite rendert mit HTTP 200 OK und nicht-leerem Body.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchAdvancedPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_search_fields_returns_ok(): void

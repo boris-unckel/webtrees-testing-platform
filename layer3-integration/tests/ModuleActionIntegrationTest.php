@@ -34,6 +34,7 @@ use Throwable;
  * gehandhabt, falls eine andere Test-Fixture die Module deaktiviert hat.
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ModuleAction
+ * @see docs/tds_conditions_ref.md A19
  * @see docs/security-audit/tasks/SEC-AUDIT-005_module_action_case_bypass.md
  */
 final class ModuleActionIntegrationTest extends MysqlTestCase

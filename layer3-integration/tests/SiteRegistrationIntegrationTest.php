@@ -25,7 +25,7 @@ use Fisharebest\Webtrees\Site;
  *   in SitePreferencesIntegrationTest.
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SiteRegistrationAction
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteRegistrationActionTest.php
+ * @see docs/tds_conditions_ref.md A06
  */
 class SiteRegistrationIntegrationTest extends MysqlTestCase
 {
@@ -38,7 +38,6 @@ class SiteRegistrationIntegrationTest extends MysqlTestCase
     /**
      * Die Handler-Klasse existiert und ist instanziierbar.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteRegistrationActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handler_class_exists(): void
@@ -57,7 +56,6 @@ class SiteRegistrationIntegrationTest extends MysqlTestCase
      * Schlüssel WELCOME_TEXT_AUTH_MODE_<langTag> (siehe SiteRegistrationAction).
      * Die Boolean-Felder werden als '1'/'' persistiert (Validator::boolean → (string)).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteRegistrationActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_saves_registration_preferences_and_redirects(): void
@@ -92,7 +90,6 @@ class SiteRegistrationIntegrationTest extends MysqlTestCase
     /**
      * Deaktivierung: leere Boolean-Werte werden als '' persistiert, Modul abgeschaltet.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteRegistrationActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_disables_registration_when_flags_are_empty(): void

@@ -18,7 +18,7 @@ use Fisharebest\Webtrees\Http\RequestHandlers\SearchAdvancedAction;
  * auf SearchAdvancedPage weiter. Hier wird das Verhalten gegen eine echte
  * MySQL-DB-getragene Tree-Instanz verifiziert.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchAdvancedActionTest.php
+ * @see docs/tds_conditions_ref.md S05, S38
  * @group ported-l2-doubles
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SearchAdvancedAction
@@ -29,7 +29,6 @@ class SearchAdvancedActionIntegrationTest extends MysqlTestCase
      * SearchAdvancedAction liefert HTTP 302 fuer einen einfachen Submit mit
      * fields/modifiers — der Handler leitet stets auf SearchAdvancedPage weiter.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchAdvancedActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects(): void
@@ -61,7 +60,6 @@ class SearchAdvancedActionIntegrationTest extends MysqlTestCase
      * Schluessel zu fields hinzu — die Folge-URL muss den (url-codierten)
      * Schluessel "BIRT:PLAC" enthalten.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchAdvancedActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_other_field(): void

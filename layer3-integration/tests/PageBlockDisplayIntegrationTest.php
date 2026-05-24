@@ -23,8 +23,7 @@ use Fisharebest\Webtrees\Tree;
  * (Edit-Handler). Initialer Import deckt TreePageBlock ab; weitere Quellen
  * werden in dieser Datei ergaenzt.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageBlockTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageBlockTest.php
+ * @see docs/tds_conditions_ref.md S46
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePageBlock
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserPageBlock
  */
@@ -37,7 +36,6 @@ class PageBlockDisplayIntegrationTest extends MysqlTestCase
      * Treffer-Zeile, dadurch wird der HomePageService mit block_id=0
      * aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageBlockTest.php
      * @group ported-l2-doubles
      */
     public function test_tree_page_block_returns_ok_response(): void
@@ -76,7 +74,6 @@ class PageBlockDisplayIntegrationTest extends MysqlTestCase
      * sichergestellt, dass die DB-Lookup-Branch nicht stillschweigend uebersprungen
      * werden kann, ohne dass dieser Test rot wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageBlockTest.php
      * @group ported-l2-doubles
      */
     public function test_tree_page_block_resolves_block_id_from_db_and_renders_content(): void
@@ -134,7 +131,6 @@ class PageBlockDisplayIntegrationTest extends MysqlTestCase
      * Treffer-Zeile, dadurch wird der HomePageService mit block_id=0
      * aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageBlockTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_block_returns_ok_response(): void
@@ -177,7 +173,6 @@ class PageBlockDisplayIntegrationTest extends MysqlTestCase
      * (Filter auf user_id, nicht gedcom_id) nicht stillschweigend uebersprungen
      * werden kann, ohne dass dieser Test rot wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageBlockTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_block_resolves_block_id_from_db_and_renders_content(): void

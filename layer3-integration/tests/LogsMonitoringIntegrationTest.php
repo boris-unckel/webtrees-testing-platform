@@ -28,10 +28,8 @@ use Fisharebest\Webtrees\Services\SiteLogsService;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SiteLogsDelete
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SiteLogsPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\PhpInformation
+ * @see docs/tds_conditions_ref.md A10
  * @see docs/testquality_improve_A10.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsDeleteTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsDownloadTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsPageTest.php
  */
 class LogsMonitoringIntegrationTest extends MysqlTestCase
 {
@@ -132,7 +130,6 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
     /**
      * EP5: PhpInformation GET → 200 mit nicht-leerem phpinfo-Body.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PhpInformationTest.php
      * @group ported-l2-doubles
      */
     public function test_php_information_body_is_not_empty(): void
@@ -156,7 +153,6 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
      * Query darf keine fremden Einträge löschen, und die Antwort ist
      * weiterhin 204 (response() mit leerem Body).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsDeleteTest.php
      * @group ported-l2-doubles
      */
     public function test_site_logs_delete_with_no_matches_returns_no_content_and_preserves_logs(): void
@@ -209,7 +205,6 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
      * Service-Instanz und MySQL-Backing-Store: SiteLogsService::logsQuery
      * baut die Delete-Query selbst, wir prüfen den Effekt am DB-State.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsDeleteTest.php
      * @group ported-l2-doubles
      */
     public function test_site_logs_delete_returns_no_content_and_removes_logs(): void
@@ -263,7 +258,6 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
      * muessen die beiden CSV-Felder den COALESCE-Defaultwert "<none>"
      * tragen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsDownloadTest.php
      * @group ported-l2-doubles
      */
     public function test_site_logs_download_renders_none_marker_for_null_user_and_tree(): void
@@ -316,7 +310,6 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
      * Log-Eintrag wird eingefügt und über den Marker im text-Filter selektiv
      * abgegriffen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsDownloadTest.php
      * @group ported-l2-doubles
      */
     public function test_site_logs_download_body_contains_log_fields(): void
@@ -364,7 +357,6 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
      * Log-Eintrag mit Anführungszeichen in log_message; der reale
      * Implementierungs-Pfad (str_replace) wird durchlaufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsDownloadTest.php
      * @group ported-l2-doubles
      */
     public function test_site_logs_download_escapes_double_quotes(): void
@@ -407,7 +399,6 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
      * 204 No Content (ResponseFactory mappt leeren Body automatisch von
      * 200 OK auf 204).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsDownloadTest.php
      * @group ported-l2-doubles
      */
     public function test_site_logs_download_with_empty_result_returns_no_content(): void
@@ -445,7 +436,6 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
      * für 'from', 'to' und 'type'. Diese Marker pinnen die Render-Property,
      * ohne EP13/EP14 (reine Statuscode-Assertions) zu duplizieren.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_site_logs_page_renders_admin_filter_form(): void
@@ -478,7 +468,6 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
      * nutzt der L3-Test die echten Services aus der MysqlTestCase-Basis; der Render-Pfad
      * geht damit gegen MySQL und liefert die Admin-View für /admin/site-logs.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_site_logs_page_returns_200(): void
@@ -504,7 +493,6 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
      * und exerziert die Validator-Pfade von action/type/text/ip/username/tree gegen
      * MySQL durch.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsPageTest.php
      * @group ported-l2-doubles
      */
     public function test_site_logs_page_with_query_filters_returns_200(): void

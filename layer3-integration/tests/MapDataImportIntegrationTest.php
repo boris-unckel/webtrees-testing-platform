@@ -20,7 +20,6 @@ use Fig\Http\Message\StatusCodeInterface;
  * AP B-04: MapDataImportAction::handle (CRAP 420)
  *
  * @see docs/tds_conditions_ref.md S48
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataImportPageTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MapDataImportAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MapDataImportPage
  */
@@ -188,7 +187,6 @@ class MapDataImportIntegrationTest extends MysqlTestCase
     /**
      * Client-Upload mit gültigem CSV liefert HTTP 302 (Redirect zur Importseite).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataImportActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_client_upload_imports_csv_and_redirects(): void
@@ -225,7 +223,6 @@ class MapDataImportIntegrationTest extends MysqlTestCase
     /**
      * Client-Upload ohne Datei liefert ebenfalls HTTP 302 (Redirect zur Importseite).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataImportActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_client_upload_with_no_file_redirects(): void
@@ -247,7 +244,6 @@ class MapDataImportIntegrationTest extends MysqlTestCase
     /**
      * MapDataImportPage GET → 200 OK mit text/html-Content-Type.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MapDataImportPageTest.php
      * @group ported-l2-doubles
      */
     public function test_map_data_import_page_returns_ok_response(): void

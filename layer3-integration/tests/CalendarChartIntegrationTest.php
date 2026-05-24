@@ -28,6 +28,7 @@ use Fisharebest\Webtrees\Services\TreeService;
  * chart() wird nicht über handle() erreicht (handle() benötigt zwei XREFs),
  * sondern direkt mit Individual-Objekten aus demo.ged aufgerufen.
  *
+ * @see docs/tds_conditions_ref.md S31
  * @covers \Fisharebest\Webtrees\Services\CalendarService
  * @covers \Fisharebest\Webtrees\Module\RelationshipsChartModule
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CalendarEvents
@@ -171,7 +172,6 @@ class CalendarChartIntegrationTest extends MysqlTestCase
      * (view in {day, month, year}) und sichert die Routen-Erzeugung fuer einen
      * zweiten erlaubten Allowlist-Wert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarActionTest.php
      * @group ported-l2-doubles
      */
     public function test_calendar_action_handle_month_view_redirects_to_calendar_page(): void
@@ -208,7 +208,6 @@ class CalendarChartIntegrationTest extends MysqlTestCase
     /**
      * CalendarAction::handle leitet POST mit Datumsparametern auf CalendarPage um.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarActionTest.php
      * @group ported-l2-doubles
      */
     public function test_calendar_action_handle_redirects_to_calendar_page(): void
@@ -248,7 +247,6 @@ class CalendarChartIntegrationTest extends MysqlTestCase
      * mappt ungueltige Werte auf null; ->string('view') wirft daraufhin HttpBadRequestException
      * ("parameter missing"). Sichert die Validator-Allowlist als Verhaltens-Property ab.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
      * @group ported-l2-doubles
      */
     public function test_calendar_page_handle_invalid_view_throws_bad_request(): void
@@ -271,7 +269,6 @@ class CalendarChartIntegrationTest extends MysqlTestCase
     /**
      * CalendarPage::handle mit view=day rendert mit STATUS_OK.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
      * @group ported-l2-doubles
      */
     public function test_calendar_page_handle_day_view_returns_ok(): void
@@ -297,7 +294,6 @@ class CalendarChartIntegrationTest extends MysqlTestCase
     /**
      * CalendarPage::handle mit view=month rendert mit STATUS_OK.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
      * @group ported-l2-doubles
      */
     public function test_calendar_page_handle_month_view_returns_ok(): void
@@ -322,7 +318,6 @@ class CalendarChartIntegrationTest extends MysqlTestCase
     /**
      * CalendarPage::handle mit view=year rendert mit STATUS_OK.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
      * @group ported-l2-doubles
      */
     public function test_calendar_page_handle_year_view_returns_ok(): void
@@ -347,7 +342,6 @@ class CalendarChartIntegrationTest extends MysqlTestCase
     /**
      * CalendarPage::handle ohne Datumsparameter waehlt Defaults und rendert mit STATUS_OK.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
      * @group ported-l2-doubles
      */
     public function test_calendar_page_handle_default_date_returns_ok(): void

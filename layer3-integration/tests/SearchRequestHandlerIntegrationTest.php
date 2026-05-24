@@ -164,7 +164,6 @@ class SearchRequestHandlerIntegrationTest extends MysqlTestCase
     /**
      * Default page (kein Query-Parameter): Handler liefert STATUS_OK und einen Body.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchGeneralPageTest.php
      * @group ported-l2-doubles
      */
     public function test_search_general_page_default_no_query_returns_ok_with_body(): void
@@ -185,7 +184,6 @@ class SearchRequestHandlerIntegrationTest extends MysqlTestCase
     /**
      * Personensuche ohne Treffer liefert STATUS_OK (kein Redirect bei 0 Treffern).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchGeneralPageTest.php
      * @group ported-l2-doubles
      */
     public function test_search_individuals_with_no_results_returns_ok(): void

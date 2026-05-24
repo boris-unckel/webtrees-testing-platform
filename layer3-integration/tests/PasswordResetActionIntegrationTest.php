@@ -26,7 +26,7 @@ use Fisharebest\Webtrees\Services\UserService;
  * DB-Record vorfindet.
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\PasswordResetAction
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PasswordResetActionTest.php
+ * @see docs/tds_conditions_ref.md S34
  */
 class PasswordResetActionIntegrationTest extends MysqlTestCase
 {
@@ -59,7 +59,6 @@ class PasswordResetActionIntegrationTest extends MysqlTestCase
      * der Basisklasse räumt ihn auf. Ersetzt eine class_exists-Tautologie aus
      * dem L2-Port (BEHAVIOR_HANDLE / L3SP-043).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PasswordResetActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_expired_token_propagates_tree_into_redirect_location(): void
@@ -94,7 +93,6 @@ class PasswordResetActionIntegrationTest extends MysqlTestCase
      * UserService::findByToken liefert einen echten User (via realem Service
      * persistiert), so dass setPassword() einen DB-Update durchführen kann.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PasswordResetActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_valid_token(): void
@@ -130,7 +128,6 @@ class PasswordResetActionIntegrationTest extends MysqlTestCase
     /**
      * Expired/invalid token → UserService::findByToken liefert null → 302-Redirect.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PasswordResetActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_expired_token(): void

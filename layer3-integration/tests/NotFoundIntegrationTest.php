@@ -21,7 +21,7 @@ use Fisharebest\Webtrees\Http\RequestHandlers\NotFound;
  * - Nicht-GET ohne Robot-Attribut wirft HttpNotFoundException.
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\NotFound
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotFoundTest.php
+ * @see docs/tds_conditions_ref.md M29
  */
 class NotFoundIntegrationTest extends MysqlTestCase
 {
@@ -62,7 +62,6 @@ class NotFoundIntegrationTest extends MysqlTestCase
      * liefert der Handler eine simple 404-Response (kein Routing, keine
      * Fehler-Page).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotFoundTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_robot_returns_not_found(): void
@@ -79,7 +78,6 @@ class NotFoundIntegrationTest extends MysqlTestCase
     /**
      * GET ohne Robot-Attribut → Redirect zur Home-Page (302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotFoundTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_get_request_redirects_to_home_page(): void
@@ -95,7 +93,6 @@ class NotFoundIntegrationTest extends MysqlTestCase
     /**
      * POST ohne Robot-Attribut → HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotFoundTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_post_request_throws_not_found_exception(): void

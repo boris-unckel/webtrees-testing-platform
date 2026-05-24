@@ -20,7 +20,7 @@ use Illuminate\Support\Collection;
  * side-Bloecke des Baums fuer den aktuellen Benutzer ab und liefert die
  * verfuegbaren Bloecke an das Edit-Formular.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageEditTest.php
+ * @see docs/tds_conditions_ref.md S46
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePageEdit
  */
 class TreePageEditIntegrationTest extends MysqlTestCase
@@ -35,7 +35,6 @@ class TreePageEditIntegrationTest extends MysqlTestCase
      * Edit-Formular zum erwarteten POST-Endpunkt (TreePageUpdate-Route) zeigt —
      * die dokumentierte Side-Effect-Postcondition des Handlers.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageEditTest.php
      * @group ported-l2-doubles
      */
     public function test_tree_page_edit_handles_request_via_container(): void
@@ -77,7 +76,6 @@ class TreePageEditIntegrationTest extends MysqlTestCase
      * TreePageEdit::handle liefert HTTP 200 und ruft am HomePageService die
      * main- und side-Bloecke sowie die verfuegbaren Bloecke fuer den Baum ab.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageEditTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_response(): void

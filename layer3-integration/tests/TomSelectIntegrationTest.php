@@ -37,16 +37,8 @@ use Fisharebest\Webtrees\Services\SearchService;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TomSelectRepository
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TomSelectSubmitter
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AutoCompleteFolder
+ * @see docs/tds_conditions_ref.md E08
  * @see docs/testquality_improve_E08.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectFamilyTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectIndividualTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectLocationTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectMediaObjectTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectNoteTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectPlaceTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectRepositoryTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectSourceTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectSubmitterTest.php
  */
 class TomSelectIntegrationTest extends MysqlTestCase
 {
@@ -184,7 +176,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      *   - jeder Treffer hat die Felder text/value
      *   - value enthaelt den XREF der gefundenen Familie
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectFamilyTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_family_xref_query_returns_family(): void
@@ -219,7 +210,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
     /**
      * EP7: TomSelectFamily mit leerem Query → leere data-Liste, nextUrl null.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectFamilyTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_family_empty_query_returns_empty_data(): void
@@ -250,7 +240,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      * läuft an MySQL und liefert eine Collection (leer). Geprüft wird, dass der
      * Handler die JSON-Struktur korrekt aufbaut.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectFamilyTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_family_name_query_returns_json_structure(): void
@@ -288,7 +277,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      *   - jeder Treffer hat die Felder text/value
      *   - value enthaelt den XREF des gefundenen Individuums
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectIndividualTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_individual_xref_query_returns_single_individual(): void
@@ -326,7 +314,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      * Ergänzt EP3 um explizite nextUrl-Strukturassertion (aus Quell-Datei
      * testHandleWithQueryReturnsJsonResponse übernommen).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectIndividualTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_individual_name_query_returns_json_structure(): void
@@ -363,7 +350,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      *   - JSON-Struktur {data: [...], nextUrl: null}
      *   - data ist leer (kein _LOC-Record in demo.ged matcht den XREF)
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectLocationTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_location_xref_query_returns_empty_data(): void
@@ -391,7 +377,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
     /**
      * EP12: TomSelectLocation mit leerem Query → leere data-Liste, nextUrl null.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectLocationTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_location_empty_query_returns_empty_data(): void
@@ -422,7 +407,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      * läuft an MySQL und liefert eine Collection (leer). Geprüft wird, dass der
      * Handler die JSON-Struktur korrekt aufbaut.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectLocationTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_location_name_query_returns_json_structure(): void
@@ -460,7 +444,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      *   - jeder Treffer hat die Felder text/value
      *   - value enthaelt den XREF des gefundenen Medienobjekts
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectMediaObjectTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_media_object_xref_query_returns_media_object(): void
@@ -495,7 +478,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
     /**
      * EP15: TomSelectMediaObject mit leerem Query → leere data-Liste, nextUrl null.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectMediaObjectTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_media_object_empty_query_returns_empty_data(): void
@@ -525,7 +507,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      * Demo-Gedcom enthält Medienobjekte — searchMedia() läuft an MySQL und liefert eine
      * Collection. Geprüft wird, dass der Handler die JSON-Struktur korrekt aufbaut.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectMediaObjectTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_media_object_name_query_returns_json_structure(): void
@@ -564,7 +545,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      *   - JSON-Struktur {data: [...], nextUrl: null}
      *   - data ist leer (kein Level-0-NOTE-Record in demo.ged matcht den XREF)
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectNoteTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_note_xref_query_returns_empty_data(): void
@@ -592,7 +572,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
     /**
      * EP18: TomSelectNote mit leerem Query → leere data-Liste, nextUrl null.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectNoteTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_note_empty_query_returns_empty_data(): void
@@ -622,7 +601,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      * searchNotes() läuft an MySQL und liefert eine Collection. Geprüft wird, dass
      * der Handler die JSON-Struktur korrekt aufbaut.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectNoteTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_note_name_query_returns_json_structure(): void
@@ -662,7 +640,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      *   - text enthaelt den Such-Term (Place::gedcomName)
      *   - value ist eine numerische String-ID (Place::id)
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectPlaceTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_place_query_returns_place_hits(): void
@@ -697,7 +674,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
     /**
      * EP21: TomSelectPlace mit leerem Query → leere data-Liste, nextUrl null.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectPlaceTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_place_empty_query_returns_empty_data(): void
@@ -727,7 +703,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      * searchPlaces() läuft an MySQL und liefert eine Collection. Geprüft wird, dass
      * der Handler die JSON-Struktur korrekt aufbaut.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectPlaceTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_place_name_query_returns_json_structure(): void
@@ -765,7 +740,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      *   - jeder Treffer hat die Felder text/value
      *   - value enthaelt den XREF des gefundenen Repositories
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectRepositoryTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_repository_xref_query_returns_repository(): void
@@ -800,7 +774,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
     /**
      * EP24: TomSelectRepository mit leerem Query → leere data-Liste, nextUrl null.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectRepositoryTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_repository_empty_query_returns_empty_data(): void
@@ -830,7 +803,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      * searchRepositories() läuft an MySQL und liefert eine Collection. Geprüft wird, dass
      * der Handler die JSON-Struktur korrekt aufbaut.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectRepositoryTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_repository_name_query_returns_json_structure(): void
@@ -868,7 +840,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      *   - jeder Treffer hat die Felder text/value
      *   - value enthaelt den XREF der gefundenen Source
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectSourceTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_source_xref_query_returns_source(): void
@@ -906,7 +877,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      * searchSourcesByName() läuft an MySQL und liefert eine Collection. Geprüft wird, dass
      * der Handler die JSON-Struktur korrekt aufbaut.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectSourceTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_source_name_query_returns_json_structure(): void
@@ -944,7 +914,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      *   - jeder Treffer hat die Felder text/value
      *   - value enthaelt den XREF des gefundenen Submitters
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectSubmitterTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_submitter_xref_query_returns_submitter(): void
@@ -979,7 +948,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
     /**
      * EP29: TomSelectSubmitter mit leerem Query → leere data-Liste, nextUrl null.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectSubmitterTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_submitter_empty_query_returns_empty_data(): void
@@ -1009,7 +977,6 @@ class TomSelectIntegrationTest extends MysqlTestCase
      * searchSubmitters() läuft an MySQL und liefert eine Collection. Geprüft wird, dass
      * der Handler die JSON-Struktur korrekt aufbaut.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectSubmitterTest.php
      * @group ported-l2-doubles
      */
     public function test_tomselect_submitter_name_query_returns_json_structure(): void

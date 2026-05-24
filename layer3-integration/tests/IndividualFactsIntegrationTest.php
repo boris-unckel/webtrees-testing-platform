@@ -22,6 +22,7 @@ use Fisharebest\Webtrees\Services\ModuleService;
  * Kein Feature-Matrix-Eintrag — technischer Risikotest analog
  * RomanNumeralsIntegrationTest.
  *
+ * @see docs/tds_conditions_ref.md P08, P09, P10, P11, P12, P13
  * @covers \Fisharebest\Webtrees\Services\IndividualFactsService
  */
 class IndividualFactsIntegrationTest extends MysqlTestCase

@@ -49,12 +49,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\LinkChildToFamilyPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\LinkSpouseToIndividualAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\LinkSpouseToIndividualPage
+ * @see docs/tds_conditions_ref.md E01
  * @see docs/testquality_improve_E01.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddChildToFamilyActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkChildToFamilyActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkChildToFamilyPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkSpouseToIndividualActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkSpouseToIndividualPageTest.php
  */
 class AddRelationIntegrationTest extends MysqlTestCase
 {
@@ -154,7 +150,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Auth::checkFamilyAccess(null) wirft HttpNotFoundException;
      * GedcomEditService::editLinesToGedcom darf nicht aufgerufen werden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddChildToFamilyActionTest.php
      * @group ported-l2-doubles
      */
     public function test_add_child_to_family_action_throws_not_found_for_missing_family(): void
@@ -186,7 +181,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Handler das sex-Attribut nicht restriktiv interpretiert und
      * GedcomEditService::newIndividualFacts mindestens einmal aufruft.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddChildToFamilyPageTest.php
      * @group ported-l2-doubles
      */
     public function test_add_child_to_family_page_returns_daughter_page(): void
@@ -210,7 +204,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * AddChildToFamilyPage GET mit nicht existierender Family-XREF →
      * Auth::checkFamilyAccess(null) wirft HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddChildToFamilyPageTest.php
      * @group ported-l2-doubles
      */
     public function test_add_child_to_family_page_throws_not_found_for_missing_family(): void
@@ -234,7 +227,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Auth::checkIndividualAccess(null) wirft HttpNotFoundException;
      * GedcomEditService::editLinesToGedcom darf nicht aufgerufen werden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddChildToIndividualActionTest.php
      * @group ported-l2-doubles
      */
     public function test_add_child_to_individual_action_throws_not_found_for_missing_individual(): void
@@ -270,7 +262,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Override; hier wird stattdessen der echte SurnameTradition-Pfad über
      * die GEDCOM-Daten der demo.ged getestet.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddChildToIndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_add_child_to_individual_page_returns_200_for_male_parent(): void
@@ -298,7 +289,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * GedcomEditService darf wegen des frühen Aussteigens nicht aufgerufen
      * werden — wird hier zur Absicherung als Mock mit ->never() übergeben.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddChildToIndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_add_child_to_individual_page_throws_not_found_for_missing_individual(): void
@@ -325,7 +315,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Auth::checkIndividualAccess(null) wirft HttpNotFoundException;
      * GedcomEditService::editLinesToGedcom darf nicht aufgerufen werden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddParentToIndividualActionTest.php
      * @group ported-l2-doubles
      */
     public function test_add_parent_to_individual_action_throws_not_found_for_missing_individual(): void
@@ -360,7 +349,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Surname-Tradition-Pfade (newParentNames für Vater vs. Mutter)
      * gegen die echten GEDCOM-Daten der demo.ged abgedeckt sind.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddParentToIndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_add_parent_to_individual_page_returns_mother_page(): void
@@ -389,7 +377,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * GedcomEditService darf wegen des frühen Aussteigens nicht aufgerufen
      * werden — wird hier zur Absicherung als Mock mit ->never() übergeben.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddParentToIndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_add_parent_to_individual_page_throws_not_found_for_missing_individual(): void
@@ -419,7 +406,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Surname-Tradition-Pfade (newSpouseNames für Mann vs. Frau)
      * gegen die echten GEDCOM-Daten der demo.ged abgedeckt sind.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddSpouseToFamilyPageTest.php
      * @group ported-l2-doubles
      */
     public function test_add_spouse_to_family_page_returns_wife_page(): void
@@ -448,7 +434,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * GedcomEditService darf wegen des frühen Aussteigens nicht aufgerufen
      * werden — wird hier zur Absicherung als Mock mit ->never() übergeben.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddSpouseToFamilyPageTest.php
      * @group ported-l2-doubles
      */
     public function test_add_spouse_to_family_page_throws_not_found_for_missing_family(): void
@@ -476,7 +461,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Auth::checkFamilyAccess(null) wirft HttpNotFoundException;
      * GedcomEditService::editLinesToGedcom darf nicht aufgerufen werden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddSpouseToFamilyActionTest.php
      * @group ported-l2-doubles
      */
     public function test_add_spouse_to_family_action_throws_not_found_for_missing_family(): void
@@ -512,7 +496,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Auth::checkIndividualAccess(null) wirft HttpNotFoundException;
      * GedcomEditService::editLinesToGedcom darf nicht aufgerufen werden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddSpouseToIndividualActionTest.php
      * @group ported-l2-doubles
      */
     public function test_add_spouse_to_individual_action_throws_not_found_for_missing_individual(): void
@@ -553,7 +536,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * (newSpouseNames für Mann vs. Frau) gegen die echten GEDCOM-Daten der
      * demo.ged abgedeckt sind.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddSpouseToIndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_add_spouse_to_individual_page_returns_wife_page(): void
@@ -581,7 +563,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * GedcomEditService darf wegen des frühen Aussteigens nicht aufgerufen
      * werden — wird hier zur Absicherung als Mock mit ->never() übergeben.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AddSpouseToIndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_add_spouse_to_individual_page_throws_not_found_for_missing_individual(): void
@@ -610,7 +591,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * GedcomEditService-Konstruktor-Parameter (im Gegensatz zu den
      * Add*Action-Handlern); deshalb keine Mock-Interaktion zu verifizieren.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkChildToFamilyActionTest.php
      * @group ported-l2-doubles
      */
     public function test_link_child_to_family_action_throws_not_found_for_missing_individual(): void
@@ -639,7 +619,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Der Handler hat keinen Konstruktor-Parameter und rendert das
      * Verknüpfungs-Formular für ein bestehendes Individuum.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkChildToFamilyPageTest.php
      * @group ported-l2-doubles
      */
     public function test_link_child_to_family_page_returns_200(): void
@@ -665,7 +644,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Auth::checkIndividualAccess(null) wirft HttpNotFoundException, bevor
      * der View gerendert wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkChildToFamilyPageTest.php
      * @group ported-l2-doubles
      */
     public function test_link_child_to_family_page_throws_not_found_for_missing_individual(): void
@@ -692,7 +670,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Arthur, SEX=M) wird mit X1032 (Princess Mary, SEX=F) verknüpft — dies
      * deckt den Code-Pfad sex='M' → HUSB-zuerst ab.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkSpouseToIndividualActionTest.php
      * @group ported-l2-doubles
      */
     public function test_link_spouse_to_individual_action_redirects(): void
@@ -733,7 +710,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * andere Geschlechter → "Add a wife"-Label. Diese Methode deckt den
      * weiblichen Eingangsfall gegen die echten GEDCOM-Daten der demo.ged ab.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkSpouseToIndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_link_spouse_to_individual_page_returns_200_for_female_individual(): void
@@ -761,7 +737,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Ergänzt den symmetrischen Geschlechts-Fall zum weiblichen Eingangsfall
      * und deckt den else-Zweig im Handler ab (label = "Wife").
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkSpouseToIndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_link_spouse_to_individual_page_returns_200_for_male_individual(): void
@@ -790,7 +765,6 @@ class AddRelationIntegrationTest extends MysqlTestCase
      * Aussteigens nicht aufgerufen werden — wird hier zur Absicherung als
      * Mock mit ->never() übergeben.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkSpouseToIndividualPageTest.php
      * @group ported-l2-doubles
      */
     public function test_link_spouse_to_individual_page_throws_not_found_for_missing_individual(): void

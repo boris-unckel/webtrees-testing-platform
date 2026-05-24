@@ -33,9 +33,7 @@ use Fisharebest\Webtrees\Site;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\RegisterAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\RegisterPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\VerifyEmail
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RegisterActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RegisterPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/VerifyEmailTest.php
+ * @see docs/tds_conditions_ref.md S33
  */
 class UserRegistrationIntegrationTest extends MysqlTestCase
 {
@@ -44,7 +42,6 @@ class UserRegistrationIntegrationTest extends MysqlTestCase
      * (USE_REGISTRATION_MODULE !== '1'), wirft handle() eine
      * HttpNotFoundException — unabhängig vom Inhalt des POST-Bodys.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RegisterActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_throws_not_found_when_registration_disabled(): void
@@ -89,7 +86,6 @@ class UserRegistrationIntegrationTest extends MysqlTestCase
      * (USE_REGISTRATION_MODULE === '1'), rendert RegisterPage::handle() das
      * Formular mit STATUS_OK und liefert einen nicht-leeren Body.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RegisterPageTest.php
      * @group ported-l2-doubles
      */
     public function test_register_page_renders_form_when_registration_enabled(): void
@@ -115,7 +111,6 @@ class UserRegistrationIntegrationTest extends MysqlTestCase
      * wirft RegisterPage::handle() eine HttpNotFoundException — analog zum
      * Pre-Condition-Gate der RegisterAction.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RegisterPageTest.php
      * @group ported-l2-doubles
      */
     public function test_register_page_throws_not_found_when_registration_disabled(): void
@@ -140,7 +135,6 @@ class UserRegistrationIntegrationTest extends MysqlTestCase
      * weiterhin mit STATUS_OK (der Caution-Block wird in das Template
      * eingebunden, aber der Status-Code bleibt OK).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RegisterPageTest.php
      * @group ported-l2-doubles
      */
     public function test_register_page_renders_with_caution_when_enabled(): void
@@ -167,7 +161,6 @@ class UserRegistrationIntegrationTest extends MysqlTestCase
      * Pfad nicht aufgerufen — Domain-Stub reicht; UserService wird gemockt, um
      * den Lookup-Aufruf zu verifizieren.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/VerifyEmailTest.php
      * @group ported-l2-doubles
      */
     public function test_verify_email_renders_failure_page_for_unknown_user(): void
@@ -201,7 +194,6 @@ class UserRegistrationIntegrationTest extends MysqlTestCase
      * Verification-Token passt. Der EmailService wird in diesem Pfad nicht
      * aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/VerifyEmailTest.php
      * @group ported-l2-doubles
      */
     public function test_verify_email_renders_failure_page_for_invalid_token(): void

@@ -36,13 +36,8 @@ use Fisharebest\Webtrees\Services\PendingChangesService;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CreateMediaObjectAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CreateMediaObjectFromFile
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\LinkMediaToSourceModal
+ * @see docs/tds_conditions_ref.md E05
  * @see docs/testquality_improve_E05.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateMediaObjectActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateMediaObjectFromFileTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkMediaToFamilyModalTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkMediaToIndividualModalTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkMediaToRecordActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkMediaToSourceModalTest.php
  */
 class MediaObjectIntegrationTest extends MysqlTestCase
 {
@@ -124,7 +119,6 @@ class MediaObjectIntegrationTest extends MysqlTestCase
      * keine Datei hochgeladen wurde. Der Handler antwortet dann mit
      * StatusCodeInterface::STATUS_NOT_ACCEPTABLE.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateMediaObjectActionTest.php
      * @group ported-l2-doubles
      */
     public function test_create_media_object_action_returns_406_when_upload_empty(): void
@@ -162,7 +156,6 @@ class MediaObjectIntegrationTest extends MysqlTestCase
      * PendingChangesService::acceptRecord() auf und antwortet mit einem 302-Redirect
      * auf die URL des neuen Records.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateMediaObjectFromFileTest.php
      * @group ported-l2-doubles
      */
     public function test_create_media_object_from_file_creates_record_and_redirects(): void
@@ -199,7 +192,6 @@ class MediaObjectIntegrationTest extends MysqlTestCase
      * Family-Modal-Pendant nutzt der Test einen nicht existierenden XREF
      * gegen die MySQL-Instanz statt eines MediaFactoryInterface-Mocks.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkMediaToIndividualModalTest.php
      * @group ported-l2-doubles
      */
     public function test_link_media_to_individual_modal_throws_not_found_when_media_missing(): void
@@ -227,7 +219,6 @@ class MediaObjectIntegrationTest extends MysqlTestCase
      * Verknüpfungs-Modal aus, sobald ein sichtbares Media-Objekt
      * über den XREF auflösbar ist.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkMediaToFamilyModalTest.php
      * @group ported-l2-doubles
      */
     public function test_link_media_to_family_modal_returns_200_for_visible_media(): void
@@ -255,7 +246,6 @@ class MediaObjectIntegrationTest extends MysqlTestCase
      * Auth::checkMediaAccess(null) wirft eine HttpNotFoundException, wenn
      * MediaFactory::make() für den XREF kein Record liefert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkMediaToFamilyModalTest.php
      * @group ported-l2-doubles
      */
     public function test_link_media_to_family_modal_throws_not_found_when_media_missing(): void
@@ -283,7 +273,6 @@ class MediaObjectIntegrationTest extends MysqlTestCase
      * der Handler das Verknüpfungs-Modal aus, sobald ein sichtbares
      * Media-Objekt über den XREF auflösbar ist.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkMediaToSourceModalTest.php
      * @group ported-l2-doubles
      */
     public function test_link_media_to_source_modal_returns_200_for_visible_media(): void
@@ -313,7 +302,6 @@ class MediaObjectIntegrationTest extends MysqlTestCase
      * Family-Modal-Pendant nutzt der Test einen nicht existierenden XREF
      * gegen die MySQL-Instanz statt eines MediaFactoryInterface-Mocks.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LinkMediaToSourceModalTest.php
      * @group ported-l2-doubles
      */
     public function test_link_media_to_source_modal_throws_not_found_when_media_missing(): void

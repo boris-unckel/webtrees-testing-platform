@@ -116,7 +116,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * AncestorsChartModule::title() liefert eine nicht-leere Bezeichnung
      * unabhaengig vom Datenbestand (statisches Modul-Label).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/AncestorsChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_ancestors_chart_module_title_is_not_empty(): void
@@ -136,7 +135,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
      * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/AncestorsChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_ancestors_chart_handle_throws_when_individual_not_found(): void
@@ -199,7 +197,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * CompactTreeChartModule::title() liefert eine nicht-leere Bezeichnung
      * unabhaengig vom Datenbestand (statisches Modul-Label).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/CompactTreeChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_compact_tree_chart_module_title_is_not_empty(): void
@@ -219,7 +216,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
      * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/CompactTreeChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_compact_tree_chart_handle_throws_when_individual_not_found(): void
@@ -278,7 +274,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * DescendancyChartModule::title() liefert eine nicht-leere Bezeichnung
      * unabhaengig vom Datenbestand (statisches Modul-Label).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/DescendancyChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_descendancy_chart_module_title_is_not_empty(): void
@@ -298,7 +293,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
      * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/DescendancyChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_descendancy_chart_handle_throws_when_individual_not_found(): void
@@ -374,7 +368,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * FanChartModule::title() liefert eine nicht-leere Bezeichnung
      * unabhaengig vom Datenbestand (statisches Modul-Label).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/FanChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_fan_chart_module_title_is_not_empty(): void
@@ -394,7 +387,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
      * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/FanChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_fan_chart_handle_throws_when_individual_not_found(): void
@@ -442,7 +434,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * HourglassChartModule::title() liefert eine nicht-leere Bezeichnung
      * unabhaengig vom Datenbestand (statisches Modul-Label).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/HourglassChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_hourglass_chart_module_title_is_not_empty(): void
@@ -461,7 +452,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
      * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/HourglassChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_hourglass_chart_handle_throws_when_individual_not_found(): void
@@ -522,7 +512,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * title() liefert eine nicht-leere Bezeichnung — gilt
      * unabhaengig vom Datenbestand (statisches Modul-Label).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/PedigreeChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_pedigree_chart_module_title_is_not_empty(): void
@@ -542,7 +531,6 @@ class ChartModuleIntegrationTest extends MysqlTestCase
      * handle() wirft HttpNotFoundException, wenn die xref im Tree nicht
      * existiert — Auth::checkIndividualAccess() loest die Pruefung aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Module/PedigreeChartModuleTest.php
      * @group ported-l2-doubles
      */
     public function test_pedigree_chart_handle_throws_when_individual_not_found(): void

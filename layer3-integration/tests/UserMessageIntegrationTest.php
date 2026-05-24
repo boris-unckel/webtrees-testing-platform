@@ -211,7 +211,6 @@ class UserMessageIntegrationTest extends MysqlTestCase
     /**
      * EP10/B10: Empfänger existiert nicht → HttpAccessDeniedException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MessageActionTest.php
      * @group ported-l2-doubles
      */
     public function test_message_action_throws_for_nonexistent_recipient(): void
@@ -253,7 +252,6 @@ class UserMessageIntegrationTest extends MysqlTestCase
     /**
      * MessageSelect leitet auch ohne POST-Felder per Default-Werten auf MessagePage weiter.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MessageSelectTest.php
      * @group ported-l2-doubles
      */
     public function test_message_select_redirects_with_default_values(): void

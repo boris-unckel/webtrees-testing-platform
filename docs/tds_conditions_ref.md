@@ -18,7 +18,7 @@ Dieses Projekt verwendet zwei Bezugssysteme, die sich gegenseitig ergänzen:
 | ISTQB-Teststufe               | Layer (Makefile/Verzeichnis)         | Pfad                    |
 |-------------------------------|--------------------------------------|-------------------------|
 | —                             | L1 — Statische Analyse               | `layer1-static/`        |
-| Teststufe 1 — Komponententest | L2 — `make test-unit`                | `layer2-unit/` (Upstream-Fork-Testbasis) |
+| Teststufe 1 — Komponententest | L2 — `make test-unit`                | `layer2-unit/` (Upstream-`main`-Testbasis) |
 | Teststufe 2 — KIT             | L3 — `make test-integration`         | `layer3-integration/`   |
 | Teststufe 3 — Systemtest      | L4 — `make test-e2e`                 | `layer4-e2e/`           |
 | — (Querschnitt)               | L5 — `make test-performance`         | `layer5-performance/`   |
@@ -84,15 +84,15 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 
 ## Befund: Gap-Analyse der existierenden webtrees-Tests
 
-> **Historisch (Stand 2026-03-26):** Die ursprüngliche Gap-Analyse gegen Upstream-`main`
-> (~95 % Stub-Tests, Schwerpunkt GEDCOM-Import/Export und Suche/Navigation) ist durch den
-> Fork-Branch `port-layer2-test-doubles` in Teilen überholt. Wortlaut archiviert unter
-> [`coverage-runs/historical/2026-03-26_gap-analyse.md`](coverage-runs/historical/2026-03-26_gap-analyse.md).
->
-> **Aktueller Stand (2026-04-11):** Neuerhebung gegen Fork-Branch `port-layer2-test-doubles` —
-> Stub-Quote L2 reduziert auf 55.1 %, 271 Testdateien als `Substantial`/`EP-complete`
-> klassifiziert. Vollständiger Snapshot (inkl. L2/L3/L4-Quartile, Domänen-Aggregate und
-> Top/Tail-Listen): [`coverage-runs/2026-04-11_gap-analyse-fork.md`](coverage-runs/2026-04-11_gap-analyse-fork.md).
+> **Aktueller Stand (2026-05-24):** Mess-Basis ist Upstream-`main` (Commit `6966db16a6`)
+> — siehe [`tp_ratchet_spec.md`](tp_ratchet_spec.md#layer-2--upstream-unit-tests-teststufe-1-make-test-unit).
+> Die ursprüngliche Gap-Analyse vom 2026-03-26 (~95 % Stub-Tests) ist als historischer
+> Vergleichspunkt archiviert unter
+> [`coverage-runs/historical/2026-03-26_gap-analyse.md`](coverage-runs/historical/2026-03-26_gap-analyse.md);
+> der Snapshot vom 2026-04-11
+> ([`coverage-runs/2026-04-11_gap-analyse-fork.md`](coverage-runs/2026-04-11_gap-analyse-fork.md))
+> bezieht sich auf einen damals untersuchten Branch mit zusätzlichen Test-Doubles und ist
+> nicht mehr Mess-Basis.
 
 ---
 
@@ -134,7 +134,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | G24 | Referenzintegrität (CheckTree) | GEDCOM-Datenbank auf verwaiste XREFs und fehlende Verknüpfungen prüfen → Report-Handler antwortet 200 OK, keine Fehler bei valider demo.ged | 2 | Mittel |
 | G25 | GedcomLoad CLI-Import *(spezifikationsbasiert)* | GedcomLoad::handle — keep_media-EP (0 löscht Media, 1 behält), BOM-Strip EP3, fehlendes 0-HEAD EP4 → Fail-View, fehlender Trailer EP5 → Fail-View, Complete-View EP6 | 8 | Mittel |
 | G26 | GEDCOM-Export via CLI *(spezifikationsbasiert)* | CLI-Command exportiert Baum — alle 4 Formate (gedcom/gedzip/zip/zipmedia), alle 4 Privacy-Level (none/manager/member/visitor), Fehler bei ungültigem Format/Privacy und unbekanntem Tree → FAILURE | 2 | Mittel |
-| G27 | Mediendatei-Upload URL *(strukturbasiert)* | URL-basierter Upload via MediaFileService → Datei lokal vorhanden und DB-Eintrag erzeugt | 2 | Mittel |
+| G27 | Mediendatei-Upload URL *(strukturbasiert)* | URL-basierter Upload via MediaFileService → Datei lokal vorhanden und DB-Eintrag erzeugt. Zusätzlich: Extension-Blocklist (`.php`, `.phtml`, `.htaccess` etc.) → Upload wird mit Exception abgewiesen *(L0-strongest-mitigation)*. | 2 | Mittel |
 | G28 | OBJE-Metadaten bearbeiten *(spezifikationsbasiert)* | EditMediaFileAction::handle — Happy Path: gültige fact_id + title+type → change-Tabelle enthält pending GEDCOM mit neuem Titel (DB-Postcondition); Fact-not-found-Guard (fact_id='') → Redirect zu TreePage | 2 | Niedrig |
 | G29 | GEDCOM-Bearbeitungsservice *(spezifikationsbasiert)* | GedcomEditService: editLinesToGedcom — Mehrzeilenwerte (CONT), Sub-Level-Struktur, Leerstring-Handling; insertMissingLevels — Subtag-Expansion, Level-1/2-Pfade | 2 | Niedrig |
 | G30 | Mediendatei-Upload (HTTP-Formular) | UploadMediaPage/UploadMediaAction: Datei-Upload via Web-Formular → Datei gespeichert, OBJE-Record in DB erzeugt (verschieden von G27: URL-basierter Upload via MediaFileService) | 2, 3 | Mittel |
@@ -178,6 +178,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S22 | AutoComplete (Orte) | Ort eintippen → Ortsvorschläge korrekt | 2 | Mittel |
 | S23 | Navigation: Personenseite | XREF aufrufen → Fakten, Familien, Events korrekt dargestellt | 3 | Hoch |
 | S24 | Navigation: Familienseite | Familien-XREF → Ehepartner, Kinder, Events korrekt | 3 | Hoch |
+| S25 | Navigation: HEAD-Record-Seite | `HeaderPage`-Handler: HEAD-Record-XREF → sichtbarer Header mit korrektem Slug → 200; abweichender Slug → 301-Redirect; unbekannte XREF → `HttpNotFoundException`. | 2 | Niedrig |
 | S26 | Navigation: Quellenseite | Quellen-XREF aufrufen → Titel, Zitate, verknüpfte Records dargestellt | 3 | Hoch |
 | S27 | Navigation: Medienseite | Medien-XREF aufrufen → Bild/Datei-Info, verknüpfte Records dargestellt | 3 | Mittel |
 | S28 | Navigation: Notizseite | Notiz-XREF aufrufen → Notiztext dargestellt | 3 | Mittel |
@@ -203,6 +204,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | S48 | Standortdaten-Import Admin *(spezifikationsbasiert)* | MapDataImportAction: EP1+EP5 option=add korrektes CSV (`;`-Trenner, Level-Format)→DB-Postcondition lat/lng via assertEqualsWithDelta; EP6 Null-Island (0,0) multi-level Ort→gefiltert, place_location leer; 2 Smoke-Tests für malformed CSV (Fehlerresilienz) | 4 | Mittel |
 | S49 | Medienverwaltungsliste Admin *(spezifikationsbasiert)* | ManageMediaData: `files`-EP-Matrix (local/external/unused) per Einzeltest, JSON-Struktur `{data, recordsTotal, recordsFiltered}` per Assertion; unused-Branch (handleCollection) gesondert abgedeckt | 3 | Mittel |
 | S50 | Hilfetexte *(spezifikationsbasiert)* | HelpText::handle → alle 12 Topic-IDs per DataProvider (200 OK), unbekannte ID → 200 + generischer Hilfetext | 2, 3 | Niedrig |
+| S51 | Sprachauswahl-Handler | `SelectLanguage`-Handler: User-facing Sprachwechsel. Sprache-Code aus POST/Query → in Session persistiert (`Session::put('language', …)`) und an der User-Preference des Anfragenden gesetzt; antwortet mit 204 (No Content). Ergänzt M13 (`UseLanguage`-Middleware = Sprachauswahl-Auswertung). | 2 | Mittel |
 | S52 | Standortdaten-Verwaltung (CRUD) | MapDataList: Übersicht → 200; MapDataAdd/Edit/Save: Formular + Speichern → DB-Update place_location; MapDataDelete/DeleteUnused: Einträge löschen; MapDataExportCSV → CSV-Download (ergänzt S48 Import) | 2, 3 | Niedrig |
 | S53 | Legacy-URL-Weiterleitungen | ~27 Redirect*-Handler (RedirectIndividualPhp, RedirectFanChartPhp, RedirectCalendarPhp usw.) leiten alte webtrees 1.x-URLs auf aktuelle Routen um → HTTP 301/302, kein 404 | 2, 3 | Niedrig |
 
@@ -255,7 +257,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | P31 | Familienmitglieder bearbeiten *(spezifikationsbasiert)* | ChangeFamilyMembersAction: Vater-Austausch (B1+B5/EP1), Mutter-Entfernung (B2/EP2), Kind-Hinzufügen (B4/EP3), Kind-Entfernen (B3/EP4) → change-Einträge in DB; kein-Änderung (EP5) → change-count=0 | E, V | 2 | Mittel |
 | P32 | Record-Ansicht und -Löschung *(spezifikationsbasiert)* | DeleteRecord: SOUR-Löschung → change-Tabellen-Assert new_gedcom='' (EP1); Familie-Kaskade: 1 Mitglied + keine Fakten → Familie mitgelöscht (EP5). GedcomRecordPage: INDI/FAM/SOUR/REPO → 302-Redirect (EP1×4 DataProvider); Non-Standard-Record → 200+Link-Header (EP2) | E, V | 2 | Mittel |
 | P33 | Stammbaum-Privacy-Einstellungen *(spezifikationsbasiert)* | TreePrivacyAction: Mismatched-Arrays → HttpBadRequestException (EP3/EP4); Rule-Typ-Matrix (tag+xref EP5, tag-only EP6, xref-only EP7, beide-leer EP8) → default_resn-Tabellen-Assert; HIDE_LIVE_PEOPLE gespeichert (EP9) | V | 2 | Mittel |
-| P34 | Stammbaum-Umnummerierung *(spezifikationsbasiert)* | RenumberTreeAction: keine Cross-Tree-Duplikate → Redirect, kein Umbenennen (B2/EP1); Cross-Tree-INDI-Duplikat → XREF in individuals umbenannt (B3/EP2, DB-Postcondition); Pending-Edits-Guard (B1/EP4) → Redirect, XREF bleibt erhalten | V | 2 | Niedrig |
+| P34 | Stammbaum-Umnummerierung *(spezifikationsbasiert)* | RenumberTreeAction: keine Cross-Tree-Duplikate → Redirect, kein Umbenennen (B2/EP1); Cross-Tree-INDI-Duplikat → XREF in individuals umbenannt (B3/EP2, DB-Postcondition); Pending-Edits-Guard (B1/EP4) → Redirect, XREF bleibt erhalten. Zusätzlich: xref-Format-Guard — eingehende ungültige XREF-Formate werden abgewiesen, bevor Umbenennungen erfolgen *(verhindert SQL-Injection oder Schema-Korruption über manipulierte XREFs)*. | V | 2 | Niedrig |
 | P35 | CLI Benutzer-Verwaltung *(spezifikationsbasiert)* | UserEdit CLI: alle 15 Guard-Branches — Konflikt-Flags (B1–B5), Create-Validierung (B6–B9 inkl. Random-PW), Edit-Validierung (B10–B11), Edit-Felder (B13–B15), Delete → Rückkürcode SUCCESS/FAILURE/INVALID | V | 2 | Mittel |
 | P36 | CLI Einstellungs-Verwaltung *(spezifikationsbasiert)* | Settings-Commands (SiteSetting, TreeSetting, UserSetting, UserTreeSetting): --list/--delete-Konflikte (B1/B2), Delete-Branches (B4–B7), Get-Branches (B9–B11), Set-Branches (B12–B14), Entity-not-found (EP11) | V | 2 | Mittel |
 | P37 | HTTP Benutzer-Bearbeitung *(spezifikationsbasiert)* | UserEditAction: user-not-found → HttpNotFoundException (B1); Duplikat-Email + Duplikat-Username → Redirect zurück zu UserEditPage (B5/B6, B7/B8); Self-Edit-Admin-Guard → admin-Status bleibt (B4); Passwort-Update/Kein-Update (B3); Path-Length-Reset bei leerem gedcomid (EP12) | V | 2, 3 | Mittel |
@@ -264,11 +266,14 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | P40 | Änderungsverwaltung (HTTP-Handler) | PendingChanges: Liste offener Änderungen → 200 + Einträge; PendingChangesAcceptChange/AcceptRecord → DB-Status 'accepted'; PendingChangesRejectChange/RejectRecord → DB-Status 'rejected' oder gelöscht (ergänzt P28 Playwright-Systemtest auf Handler-Ebene) | Mo, V | 2, 3 | Hoch |
 | P41 | Datensatz-Zusammenführung (vollständig) | MergeRecordsPage: Vergleichs-Formular zweier Records → 200; MergeRecordsAction: Records zusammenführen → ein Record per change-Tabelle gelöscht, einer aktualisiert (verschieden von P30 Fakten-Merge) | E, V | 2, 3 | Mittel |
 | P42 | CLI Benutzer-Listing | `UserList` CLI-Command (`user-list`): gibt alle registrierten Benutzer zeilenweise auf STDOUT aus — Spalten `user_id`, `user_name`, `real_name`, `email`, sowie aggregierte `user_setting`-Werte (Admin/Verified/Approved). Primär nicht-destruktiv, Lesezugriff. Unterscheidet sich von A07 `UserListPage` (HTTP-Admin-Seite) und P35 `UserEdit` (CLI-Bearbeitung). | V | 2 | Niedrig |
+| P43 | Logout-Flow | `Logout`-Handler: angemeldeter Benutzer → 302 Redirect zu HomePage + `Auth::id()` ist null (Session-Logout); Gast → 302 Redirect zu HomePage (idempotent, kein Logout-Effekt); Ajax-Request (`X-Requested-With: XMLHttpRequest`) → 204 No Content + Auth::id() ist null. Eigenständiger Flow neben P39 (LoginAction/RegisterAction/PasswordReset). | M, E, V | 2 | Mittel |
+| P44 | Login Rate-Limiting | `LoginAction` Rate-Limit-Schutz: zu viele fehlgeschlagene Anmeldeversuche innerhalb eines Zeitfensters → `HttpTooManyRequestsException` (HTTP 429). Verhalts-Definitiv: Rate-Limit-Zähler greift pro IP/User unabhängig vom Erfolg/Misserfolg der Credentials. Eigenständiges Schutzverhalten neben P39 (Auth-Aktionen). | B | 2 | Hoch |
 
 > **Querschnittsanforderung Theme-Abdeckung (Phase 5c):** Jeder Systemtest-Testfall (Teststufe 3) für tree-gebundene Seiten
-> MUSS alle 5 Standard-Themes abdecken: `webtrees`, `clouds`, `colors`, `fab`, `xenea`. Theme-Abdeckung ist keine eigene
-> Testbedingung mehr (S25 aufgelöst), sondern eine strukturelle Eigenschaft jedes Testfalls. Ausnahmen: `auth.spec.ts` (S33, S34)
-> und `login.spec.ts` (S32) — nicht tree-gebunden, kein Theme-Loop.
+> MUSS alle 5 Standard-Themes abdecken: `webtrees`, `clouds`, `colors`, `fab`, `xenea`. Theme-Abdeckung ist eine strukturelle
+> Eigenschaft jedes Testfalls — keine eigene Testbedingung. Ausnahmen: `auth.spec.ts` (S33, S34) und `login.spec.ts` (S32) —
+> nicht tree-gebunden, kein Theme-Loop. *(Hinweis: Die ID `S25` wurde 2026-05-24 für `HeaderPage` neu vergeben, die historisch
+> für die Theme-Abdeckungs-Anforderung benutzte und seit Phase 5c aufgelöste Belegung ist damit überschrieben.)*
 
 > **E2E-Gap-Analyse (archiviert):** Die ursprüngliche 2026-03-27-Analyse (8 von ~47
 > Nicht-Admin-Routen in Specs abgedeckt, S26–S39 als Lückenschluss) ist wörtlich archiviert
@@ -312,6 +317,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | SEC-WZ02 | Wizard prüft Schreibrechte | Schritt 2: data/ beschreibbar | Hoch | Grün |
 | SEC-WZ03 | Wizard erzeugt `config.ini.php` | Datei existiert nach Wizard-Abschluss | Hoch | Grün |
 | SEC-WZ04 | Wizard sperrt sich selbst | Kein erneuter Setup nach Abschluss | Hoch | Grün |
+| SEC-WZ05 | Wizard Reinstall-Pfad validiert `wtpass` | `SetupWizard::createConfigFile()` Reinstall-Branch: `$_POST['wtpass']` darf nicht direkt verwendet werden; stattdessen muss der per `Validator` geprüfte Wert (`$data['wtpass']`) verwendet werden, sonst kann ein nicht-validierter Klartext (z. B. mit Zeilenumbrüchen) den Admin-Account beim Reinstall korrumpieren. | Hoch | Grün |
 | SEC-HDR01 | `X-Content-Type-Options` | Header = `nosniff` | Niedrig | Grün |
 | SEC-HDR02 | `X-Frame-Options` | Header = `SAMEORIGIN` oder `DENY` | Niedrig | Grün |
 | SEC-HDR03 | `Referrer-Policy` | Header gesetzt (nicht leer) | Niedrig | Grün |
@@ -341,6 +347,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | E06 | Sortierung (Reorder) | ReorderChildrenPage: Kindreihenfolge → change; ReorderNamesPage: Namenreihenfolge → change; ReorderFamiliesPage: Familienreihenfolge → change; ReorderMediaPage/Action, ReorderMediaFilesPage/Action: Medien/Mediendatei-Reihenfolge | E, V | 2, 3 | Niedrig |
 | E07 | Mediendatei-Download & Thumbnail | MediaFileDownload: Datei abrufen → 200 + korrekter Content-Type; MediaFileThumbnail: Thumbnail generieren → 200 + image/* | M, E, V | 2, 3 | Mittel |
 | E08 | TomSelect & AutoComplete (Edit-Hilfs-APIs) | TomSelectIndividual/MediaObject/Source/Repository/Note/SharedNote: AJAX-Dropdown → JSON mit passenden Records; AutoCompleteCitation: Zitations-Vorschläge → JSON; AutoCompleteFolder: Ordner-Vorschläge für Medienpfad → JSON | E, V | 2, 3 | Niedrig |
+| E09 | Sichere Auslieferung gefährlicher Mime-Types | `MediaFileDelivery`-Handler: Härtung der Mediendatei-Auslieferung gegen XSS und ungewollte Script-Ausführung. SVG-Dateien müssen mit Content-Type-Override (z. B. `image/svg+xml; charset=…` mit `Content-Disposition: inline`) ausgeliefert oder durch eine Replacement-Image-Response ersetzt werden; die Replacement-Image-Response muss zusätzlich eine restriktive `Content-Security-Policy` setzen (default-src 'none'). Verschieden von E07 (regulärer Download/Thumbnail). | M, E, V | 2 | Hoch |
 
 ---
 
@@ -371,6 +378,9 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | A14 | CLI initialer Config-Setup | `ConfigIni` CLI-Command (`config-ini`): schreibt `data/config.ini.php` mit DB-Parametern (host, port, user, password, database, tblpfx) aus Command-Optionen; prüft DB-Verbindbarkeit via `PDO` → Early-Exit mit FAILURE bei Verbindungsfehler. Einmalig vor `make setup` genutzt; produktiv riskant, weil falsche Werte die gesamte Plattform unerreichbar machen. | 2 | Hoch |
 | A15 | CLI Übersetzung kompilieren | `CompilePoFiles` CLI-Command (`compile-po-files`): liest `.po`-Dateien aus `resources/lang/<locale>/`, konvertiert sie in PHP-Arrays, speichert als `.php` im selben Verzeichnis → Runtime-Translation-Lookup nutzt anschließend die kompilierten `.php`-Dateien. Keine DB-Änderungen; Fail-Silent bei fehlender `.po`-Datei. | 2 | Niedrig |
 | A16 | CLI Baum-Listing | `TreeList` CLI-Command (`tree-list`): gibt alle konfigurierten Stammbäume zeilenweise auf STDOUT aus — Spalten `gedcom_id`, `tree_name`, `tree_title`, `imported` (bool). Reines Lesewerkzeug; Unterscheidet sich von A01 `ManageTrees` (HTTP-Admin-Seite). | 2 | Niedrig |
+| A17 | Default-Block-Konfiguration TreePage | `TreePageDefaultEdit`/`TreePageDefaultUpdate`-Handler: Admin-Verwaltung der globalen Standard-Block-Konfiguration für TreePage (Hauptseiten neuer Bäume). Edit zeigt main/side-Bloecke des Default-Templates an, Update persistiert via `HomePageService::updateTreeBlocks` mit `tree_id = -1` → Redirect zu Control-Panel. Verschieden von A04 (tree-spezifische Prefs) und S46 (Block-Module-Konfiguration). | 2 | Niedrig |
+| A18 | Default-Block-Konfiguration UserPage | `UserPageDefaultEdit`/`UserPageDefaultUpdate`-Handler: Admin-Verwaltung der globalen Standard-Block-Konfiguration für UserPage (persönliches Dashboard neuer Benutzer). Update persistiert via `HomePageService::updateUserBlocks` mit `user_id = -1` → Redirect zu Control-Panel. Komplement zu A17 für User-Seite. | 2 | Niedrig |
+| A19 | Modul-Action Runtime-Dispatch | `ModuleAction`-Handler: Runtime-Dispatch für `/module/<name>/<action>`-Routen. Admin-Gate-Enforcement gegen Case-Bypass: Gast/nicht-Admin auf eine nur-Admin-Methode wird per `HttpAccessDeniedException` (geworfen) oder HTTP 403 abgewiesen, auch wenn die `<action>` in beliebiger Casing-Variante angeliefert wird. Verschieden von A05 (Modul-Konfigurationsseite). | 2 | Hoch |
 
 ---
 
@@ -444,6 +454,7 @@ Code-Stelle → abgeleitete Anforderung → Testart → Priorität → Teststufe
 | M26 | Modul-Bootstrap | `BootModules` (mit `ModuleService`, `ModuleThemeInterface`): aktive Module aus DB laden, jede `boot()`-Methode aufrufen, pro Modul Theme-Hook ausführen. | 2 | Mittel |
 | M27 | DB-Transaktion mit Retry | `UseTransaction`: Request-Handler in `DB::transaction()` wrappen + Deadlock-Retry-Logik bei `SQLSTATE 40001`/`1213`. | 2, 3 | Hoch |
 | M28 | Response-Emittierung | `EmitResponse` (mit `PhpService`): finale Response in Chunks via `echo` an Client senden + `fastcgi_finish_request()`-Cleanup. | 2 | Niedrig |
+| M29 | 404-Handler | `NotFound`-RequestHandler: Default-Fallback der Routing-Kette für nicht aufgelöste URLs. Robot-Request → schlichte 404-Antwort; GET ohne Robot-Attribut → 302 Redirect zur HomePage; nicht-GET ohne Robot-Attribut → `HttpNotFoundException`. | 2 | Mittel |
 
 ---
 

@@ -60,16 +60,8 @@ use Illuminate\Support\Collection;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReorderMediaFilesAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReorderMediaFilesPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReorderMediaPage
+ * @see docs/tds_conditions_ref.md E06
  * @see docs/testquality_improve_E06.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderChildrenActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderFamiliesActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderFamiliesPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaFilesActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaFilesPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderNamesActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderNamesPageTest.php
  */
 class ReorderIntegrationTest extends MysqlTestCase
 {
@@ -140,7 +132,6 @@ class ReorderIntegrationTest extends MysqlTestCase
      * IndividualFactory liefert null → Auth::checkIndividualAccess wirft
      * HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderNamesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_names_page_with_unknown_individual_throws_not_found(): void
@@ -189,7 +180,6 @@ class ReorderIntegrationTest extends MysqlTestCase
     /**
      * EP4b: ReorderFamiliesPage GET mit unbekannter INDI-XREF → HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderFamiliesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_families_page_with_unknown_individual_throws_not_found(): void
@@ -209,7 +199,6 @@ class ReorderIntegrationTest extends MysqlTestCase
     /**
      * EP5: ReorderChildrenAction POST mit unbekannter FAM-XREF → HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderChildrenActionTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_children_action_with_unknown_family_throws_not_found(): void
@@ -231,7 +220,6 @@ class ReorderIntegrationTest extends MysqlTestCase
     /**
      * EP6: ReorderFamiliesAction POST mit unbekannter INDI-XREF → HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderFamiliesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_families_action_with_unknown_individual_throws_not_found(): void
@@ -253,7 +241,6 @@ class ReorderIntegrationTest extends MysqlTestCase
     /**
      * EP7: ReorderMediaAction POST mit unbekannter INDI-XREF → HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaActionTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_media_action_with_unknown_individual_throws_not_found(): void
@@ -277,7 +264,6 @@ class ReorderIntegrationTest extends MysqlTestCase
      * übergebener Order-Liste, ruft `updateRecord` auf dem Media-Mock auf
      * und liefert eine HTTP-302-Weiterleitung auf die Media-URL.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaFilesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_media_files_action_reorders_files_and_redirects(): void
@@ -340,7 +326,6 @@ class ReorderIntegrationTest extends MysqlTestCase
      * MediaFactory liefert null → Auth::checkMediaAccess wirft
      * HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaFilesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_media_files_action_with_unknown_media_throws_not_found(): void
@@ -374,7 +359,6 @@ class ReorderIntegrationTest extends MysqlTestCase
      * EP10: ReorderMediaFilesPage GET für ein Medium mit mehreren Dateien
      * rendert die Sortier-Seite mit HTTP 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaFilesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_media_files_page_with_multi_file_media_returns_200(): void
@@ -421,7 +405,6 @@ class ReorderIntegrationTest extends MysqlTestCase
      * EP11: ReorderMediaFilesPage GET für ein Medium mit nur einer Datei
      * leitet auf die MediaPage weiter (HTTP 302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaFilesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_media_files_page_with_single_file_media_redirects(): void
@@ -468,7 +451,6 @@ class ReorderIntegrationTest extends MysqlTestCase
      * MediaFactory liefert null → Auth::checkMediaAccess wirft
      * HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaFilesPageTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_media_files_page_with_unknown_media_throws_not_found(): void
@@ -500,7 +482,6 @@ class ReorderIntegrationTest extends MysqlTestCase
     /**
      * EP13: ReorderMediaPage GET mit gültiger INDI-XREF → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaPageTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_media_page_with_valid_individual_returns_200(): void
@@ -523,7 +504,6 @@ class ReorderIntegrationTest extends MysqlTestCase
      * IndividualFactory liefert null → Auth::checkIndividualAccess wirft
      * HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderMediaPageTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_media_page_with_unknown_individual_throws_not_found(): void
@@ -545,7 +525,6 @@ class ReorderIntegrationTest extends MysqlTestCase
      * übergebener Order-Liste, ruft `updateRecord` auf dem Individual-Mock
      * auf und liefert eine HTTP-302-Weiterleitung auf die Individual-URL.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderNamesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_names_action_reorders_names_and_redirects(): void
@@ -608,7 +587,6 @@ class ReorderIntegrationTest extends MysqlTestCase
      * IndividualFactory liefert null → Auth::checkIndividualAccess wirft
      * HttpNotFoundException.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReorderNamesActionTest.php
      * @group ported-l2-doubles
      */
     public function test_reorder_names_action_with_unknown_individual_throws_not_found(): void

@@ -22,7 +22,7 @@ use Fisharebest\Webtrees\Services\HomePageService;
  * liefert nach erfolgreichem Speichern einen Redirect (HTTP 302). Der Handler
  * delegiert die Persistenz an den HomePageService::updateTreeBlocks.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageUpdateTest.php
+ * @see docs/tds_conditions_ref.md S46
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePageUpdate
  */
 class TreePageUpdateIntegrationTest extends MysqlTestCase
@@ -40,7 +40,6 @@ class TreePageUpdateIntegrationTest extends MysqlTestCase
      * werden mangels Input nicht angelegt) und das Location-Header zeigt auf
      * die TreePage-Route des Baums.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_tree_page_update_handles_request_via_container(): void
@@ -105,7 +104,6 @@ class TreePageUpdateIntegrationTest extends MysqlTestCase
      * HomePageService (mit konkretem Baum) und leitet nach dem Speichern
      * per HTTP 302 weiter.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_explicit_blocks_redirects(): void

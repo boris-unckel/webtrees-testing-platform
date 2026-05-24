@@ -22,7 +22,7 @@ use Fisharebest\Webtrees\Registry;
  * Aufloesung des Records wird gegen einen gemockten GedcomRecordFactory
  * gefuehrt, der Baum selbst stammt aus einer echten MySQL-DB-Tree-Instanz.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchQuickActionTest.php
+ * @see docs/tds_conditions_ref.md S09
  * @group ported-l2-doubles
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SearchQuickAction
@@ -34,7 +34,6 @@ class SearchQuickActionIntegrationTest extends MysqlTestCase
      * sichtbaren Record liefert (canShow=true). Die Antwort traegt HTTP 302
      * und den Location-Header mit der Record-URL.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchQuickActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_to_record_when_found(): void
@@ -76,7 +75,6 @@ class SearchQuickActionIntegrationTest extends MysqlTestCase
      * Handler auf die allgemeine Suchseite weiter und reicht Baum-Name sowie
      * Suchanfrage in die Folge-URL durch.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchQuickActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_to_search_page_when_not_found(): void

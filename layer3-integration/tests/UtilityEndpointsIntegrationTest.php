@@ -38,6 +38,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AdsTxt
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AppAdsTxt
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\Ping
+ * @see docs/tds_conditions_ref.md SEC-UTL01
  * @see docs/testquality_improve_SEC-UTL01.md
  */
 class UtilityEndpointsIntegrationTest extends MysqlTestCase
@@ -148,7 +149,6 @@ class UtilityEndpointsIntegrationTest extends MysqlTestCase
      * Status und Content-Type werden bereits durch den utilityHandlerProvider abgedeckt;
      * diese Methode ergänzt den Body-Inhalt-Check aus der portierten Quelle.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AppAdsTxtTest.php
      * @group ported-l2-doubles
      */
     public function test_app_ads_txt_body_contains_no_pesky_ads_marker(): void
@@ -170,7 +170,6 @@ class UtilityEndpointsIntegrationTest extends MysqlTestCase
      * Status und Content-Type werden bereits durch den utilityHandlerProvider abgedeckt;
      * diese Methode ergänzt Cache-Control- und Body-Checks aus der portierten Quelle.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AppleTouchIconPngTest.php
      * @group ported-l2-doubles
      */
     public function test_apple_touch_icon_png_cache_control_and_body(): void
@@ -193,7 +192,6 @@ class UtilityEndpointsIntegrationTest extends MysqlTestCase
      * Status und Content-Type werden bereits durch den utilityHandlerProvider abgedeckt;
      * diese Methode ergänzt Cache-Control- und Body-Checks aus der portierten Quelle.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/BrowserconfigXmlTest.php
      * @group ported-l2-doubles
      */
     public function test_browserconfig_xml_cache_control_and_body(): void
@@ -216,7 +214,6 @@ class UtilityEndpointsIntegrationTest extends MysqlTestCase
      * Status und Content-Type werden bereits durch den utilityHandlerProvider abgedeckt;
      * diese Methode ergänzt Cache-Control- und Body-Checks aus der portierten Quelle.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/FaviconIcoTest.php
      * @group ported-l2-doubles
      */
     public function test_favicon_ico_cache_control_and_body(): void
@@ -239,7 +236,6 @@ class UtilityEndpointsIntegrationTest extends MysqlTestCase
      * Sicherstellung, dass leere Tree-Listen nicht zu Fehlern führen
      * (Edge-Case-Abdeckung aus der portierten Quelle).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RobotsTxtTest.php
      * @group ported-l2-doubles
      */
     public function test_robots_txt_handles_empty_tree_list(): void
@@ -273,7 +269,6 @@ class UtilityEndpointsIntegrationTest extends MysqlTestCase
      * Sicherstellung, dass mehrere Tree-Einträge iteriert werden, ohne Fehler auszulösen
      * (Mehrfach-Tree-Abdeckung aus der portierten Quelle).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RobotsTxtTest.php
      * @group ported-l2-doubles
      */
     public function test_robots_txt_handles_multiple_trees(): void
@@ -312,7 +307,6 @@ class UtilityEndpointsIntegrationTest extends MysqlTestCase
      * Status und Content-Type werden bereits durch den utilityHandlerProvider abgedeckt;
      * diese Methode ergänzt Cache-Control- und Body-Checks aus der portierten Quelle.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/WebmanifestJsonTest.php
      * @group ported-l2-doubles
      */
     public function test_webmanifest_json_cache_control_and_body(): void

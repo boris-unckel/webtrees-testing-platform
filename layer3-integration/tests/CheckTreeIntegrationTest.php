@@ -70,7 +70,6 @@ class CheckTreeIntegrationTest extends MysqlTestCase
     /**
      * CheckTree auf leerem (frisch erstelltem) Baum liefert 200 OK.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CheckTreeTest.php
      * @group ported-l2-doubles
      */
     public function test_check_tree_returns_ok_for_empty_tree(): void
@@ -94,7 +93,6 @@ class CheckTreeIntegrationTest extends MysqlTestCase
      * CheckTree mit skip_to-Query-Parameter (Pagination-Resume) liefert 200 OK
      * auch wenn der angegebene XREF nicht existiert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CheckTreeTest.php
      * @group ported-l2-doubles
      */
     public function test_check_tree_returns_ok_with_skip_to_parameter(): void
@@ -121,7 +119,6 @@ class CheckTreeIntegrationTest extends MysqlTestCase
      * CheckTree liefert 200 OK, wenn TimeoutService einen Timeout signalisiert
      * und der Handler in Pagination-Mode wechselt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CheckTreeTest.php
      * @group ported-l2-doubles
      */
     public function test_check_tree_returns_ok_when_timeout_triggers_pagination(): void

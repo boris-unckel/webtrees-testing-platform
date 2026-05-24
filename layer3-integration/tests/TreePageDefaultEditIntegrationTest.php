@@ -21,7 +21,7 @@ use Illuminate\Support\Collection;
  * pruegft die Existenz der Default-Bloecke und liefert die verfuegbaren
  * Bloecke (zwei Spalten + verfuegbare Liste) an das Edit-Formular.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageDefaultEditTest.php
+ * @see docs/tds_conditions_ref.md A17
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePageDefaultEdit
  */
 class TreePageDefaultEditIntegrationTest extends MysqlTestCase
@@ -36,7 +36,6 @@ class TreePageDefaultEditIntegrationTest extends MysqlTestCase
      * Aufruf von checkDefaultTreeBlocksExist() existieren in der block-Tabelle
      * Default-Block-Zeilen mit gedcom_id = -1.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageDefaultEditTest.php
      * @group ported-l2-doubles
      */
     public function test_tree_page_default_edit_handles_request_via_container(): void
@@ -67,7 +66,6 @@ class TreePageDefaultEditIntegrationTest extends MysqlTestCase
      * HomePageService die Default-Block-Pruefung, beide Spalten und die
      * verfuegbaren Bloecke ab.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageDefaultEditTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_response(): void

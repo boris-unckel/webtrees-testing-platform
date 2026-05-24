@@ -30,10 +30,8 @@ use Fisharebest\Webtrees\Services\ModuleService;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AccountEdit
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AccountUpdate
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AccountDelete
+ * @see docs/tds_conditions_ref.md P38
  * @see docs/testquality_improve_P38.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountDeleteTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountEditTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountUpdateTest.php
  */
 class AccountSelfManagementIntegrationTest extends MysqlTestCase
 {
@@ -177,7 +175,6 @@ class AccountSelfManagementIntegrationTest extends MysqlTestCase
      * Der Handler darf in diesem Fall weder löschen noch ausloggen, sondern nur
      * auf AccountEdit umleiten.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountDeleteTest.php
      * @group ported-l2-doubles
      */
     public function test_account_delete_with_guest_user_redirects_without_delete(): void
@@ -205,7 +202,6 @@ class AccountSelfManagementIntegrationTest extends MysqlTestCase
      * Ein angemeldeter Non-Admin-Benutzer ohne aktiv ausgewählten Stammbaum
      * darf seine eigene Account-Seite weiterhin öffnen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountEditTest.php
      * @group ported-l2-doubles
      */
     public function test_account_edit_page_handles_request_without_tree_attribute(): void
@@ -242,7 +238,6 @@ class AccountSelfManagementIntegrationTest extends MysqlTestCase
      * Sichert ab, dass die Handler-Logik nicht von Administrator-Privilegien
      * abhängt: ein normaler Benutzer kann seine eigene Account-Seite öffnen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountEditTest.php
      * @group ported-l2-doubles
      */
     public function test_account_edit_page_returns_200_for_non_admin_user(): void
@@ -279,7 +274,6 @@ class AccountSelfManagementIntegrationTest extends MysqlTestCase
      * Der Handler überspringt setPassword(), wenn das Formularfeld "password"
      * leer ist. Der zuvor gesetzte Passwort-Hash muss erhalten bleiben.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_account_update_with_empty_password_keeps_old_password(): void
@@ -330,7 +324,6 @@ class AccountSelfManagementIntegrationTest extends MysqlTestCase
      * Der Handler erkennt Duplikate über UserService::findByEmail und unterdrückt
      * dann setEmail(); das Routing endet trotzdem in 302 (FlashMessage gesetzt).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_account_update_with_duplicate_email_does_not_change_email(): void
@@ -380,7 +373,6 @@ class AccountSelfManagementIntegrationTest extends MysqlTestCase
      * Der Handler erkennt Namens-Duplikate über UserService::findByUserName und
      * unterdrückt dann setUserName(); das Routing endet trotzdem in 302.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_account_update_with_duplicate_username_does_not_change_name(): void
@@ -430,7 +422,6 @@ class AccountSelfManagementIntegrationTest extends MysqlTestCase
      * Der Handler ruft Tree::setUserPreference(PREF_TREE_DEFAULT_XREF, …) nur dann auf,
      * wenn das Request einen echten Tree mitführt. Wert landet in user_gedcom_setting.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_account_update_with_tree_sets_default_xref(): void
@@ -491,7 +482,6 @@ class AccountSelfManagementIntegrationTest extends MysqlTestCase
      * Der Handler überspringt Tree::setUserPreference(PREF_TREE_DEFAULT_XREF, …),
      * wenn der Request kein Tree-Attribut mitführt; user_gedcom_setting bleibt leer.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AccountUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_account_update_without_tree_skips_default_xref(): void

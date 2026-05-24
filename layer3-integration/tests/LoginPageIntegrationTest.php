@@ -23,7 +23,7 @@ use Illuminate\Support\Collection;
  * - Kein Baum-Attribut, aber TreeService liefert einen Default → 302 (Self-Redirect).
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\LoginPage
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginPageTest.php
+ * @see docs/tds_conditions_ref.md S32
  */
 class LoginPageIntegrationTest extends MysqlTestCase
 {
@@ -31,7 +31,6 @@ class LoginPageIntegrationTest extends MysqlTestCase
      * Ohne Baum-Attribut, ohne angemeldeten Benutzer und ohne verfügbaren
      * Default-Baum rendert der Handler das Anmeldeformular (200).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginPageTest.php
      * @group ported-l2-doubles
      */
     public function test_login_page_renders_form_when_no_trees_and_guest(): void
@@ -54,7 +53,6 @@ class LoginPageIntegrationTest extends MysqlTestCase
      * Ist der Aufrufer bereits angemeldet (Request-Attribut `user` ist eine
      * `User`-Instanz), leitet der Handler zur UserPage weiter (302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginPageTest.php
      * @group ported-l2-doubles
      */
     public function test_login_page_redirects_when_user_already_logged_in(): void
@@ -77,7 +75,6 @@ class LoginPageIntegrationTest extends MysqlTestCase
      * Mit gesetztem Baum-Attribut rendert der Handler das Anmeldeformular
      * direkt (200) — kein Default-Baum-Lookup, kein Self-Redirect.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginPageTest.php
      * @group ported-l2-doubles
      */
     public function test_login_page_renders_form_when_tree_attribute_present(): void
@@ -102,7 +99,6 @@ class LoginPageIntegrationTest extends MysqlTestCase
      * Ohne Baum-Attribut liefert der TreeService einen Default-Baum; der
      * Handler erzeugt daraufhin einen Self-Redirect mit Baum-Parameter (302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginPageTest.php
      * @group ported-l2-doubles
      */
     public function test_login_page_redirects_to_default_tree_when_attribute_missing(): void

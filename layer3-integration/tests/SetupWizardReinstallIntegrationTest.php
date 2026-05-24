@@ -40,6 +40,7 @@ use Throwable;
  * `step6Install()` abgefangen.
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SetupWizard
+ * @see docs/tds_conditions_ref.md SEC-WZ05
  * @see docs/security-audit/tasks/SEC-AUDIT-007_setupwizard_superglobal.md
  */
 final class SetupWizardReinstallIntegrationTest extends MysqlTestCase

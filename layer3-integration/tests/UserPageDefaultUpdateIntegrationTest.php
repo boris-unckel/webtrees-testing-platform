@@ -23,7 +23,7 @@ use Fisharebest\Webtrees\Services\HomePageService;
  * zum Control-Panel. Der Handler delegiert die Persistenz an den
  * HomePageService (updateUserBlocks mit user_id = -1 fuer die Defaults).
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageDefaultUpdateTest.php
+ * @see docs/tds_conditions_ref.md A18
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserPageDefaultUpdate
  */
 class UserPageDefaultUpdateIntegrationTest extends MysqlTestCase
@@ -40,7 +40,6 @@ class UserPageDefaultUpdateIntegrationTest extends MysqlTestCase
      * keine Zeilen mehr mit user_id = -1 (alle vorher vorhandenen Defaults
      * werden geloescht, neue werden mangels Input nicht angelegt).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageDefaultUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_default_update_handles_request_via_container(): void
@@ -85,7 +84,6 @@ class UserPageDefaultUpdateIntegrationTest extends MysqlTestCase
      * den HomePageService (user_id = -1) und leitet nach dem Speichern
      * per HTTP 302 zum Control-Panel weiter.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageDefaultUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_to_control_panel(): void

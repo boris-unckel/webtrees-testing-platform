@@ -33,7 +33,7 @@ use Illuminate\Support\Collection;
  * werden als Mocks gefuehrt, wenn Interaktionen verifiziert werden
  * (Factory-Lookup mit XREF, pastableFacts-Aufruf).
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SourcePageTest.php
+ * @see docs/tds_conditions_ref.md S26
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SourcePage
  */
 class SourcePageIntegrationTest extends MysqlTestCase
@@ -50,7 +50,6 @@ class SourcePageIntegrationTest extends MysqlTestCase
      * Sichtbare Quelle mit uebereinstimmendem Slug rendert die
      * source-page mit 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SourcePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_for_visible_source(): void
@@ -109,7 +108,6 @@ class SourcePageIntegrationTest extends MysqlTestCase
      * Bei Slug-Mismatch antwortet der Handler mit 301 Moved Permanently auf die
      * kanonische URL der Quelle.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SourcePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_on_slug_mismatch(): void
@@ -156,7 +154,6 @@ class SourcePageIntegrationTest extends MysqlTestCase
      * Unbekannte Source-XREF (Factory liefert null) loest
      * HttpNotFoundException aus Auth::checkSourceAccess() aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SourcePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_unknown_source_throws_not_found_exception(): void

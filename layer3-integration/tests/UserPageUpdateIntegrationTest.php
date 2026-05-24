@@ -22,7 +22,7 @@ use Fisharebest\Webtrees\Services\HomePageService;
  * Redirect (HTTP 302). Der Handler delegiert die Persistenz an den
  * HomePageService (updateUserBlocks fuer die User-ID des aktuellen Benutzers).
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageUpdateTest.php
+ * @see docs/tds_conditions_ref.md S35, S46
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserPageUpdate
  */
 class UserPageUpdateIntegrationTest extends MysqlTestCase
@@ -70,7 +70,6 @@ class UserPageUpdateIntegrationTest extends MysqlTestCase
      *      `block`-Zeile fuer die `user_id` des Test-Admins in der MAIN_BLOCKS-
      *      Location.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_update_handles_request_via_container(): void
@@ -124,7 +123,6 @@ class UserPageUpdateIntegrationTest extends MysqlTestCase
      * UserPageUpdate::handle persistiert die uebermittelten User-Bloecke
      * ueber den HomePageService und leitet danach per HTTP 302 weiter.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageUpdateTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_explicit_blocks_redirects(): void

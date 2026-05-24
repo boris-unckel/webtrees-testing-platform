@@ -24,7 +24,7 @@ use Illuminate\Support\Collection;
  * mit gemocktem HomePageService, damit die View-Renderingkette der
  * echten Block-Module umgangen wird.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageTest.php
+ * @see docs/tds_conditions_ref.md S35
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserPage
  */
 class UserPageIntegrationTest extends MysqlTestCase
@@ -59,7 +59,6 @@ class UserPageIntegrationTest extends MysqlTestCase
      *      stattgefunden — nach `handle()` existieren `block`-Zeilen fuer
      *      die `user_id` des Test-Admins.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_handles_request_via_container(): void
@@ -105,7 +104,6 @@ class UserPageIntegrationTest extends MysqlTestCase
      * User-Bloecke fuer den angemeldeten Benutzer ab. HomePageService wird
      * gemockt, um das View-Rendering der echten Block-Module zu vermeiden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_response(): void

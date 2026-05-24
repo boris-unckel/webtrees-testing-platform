@@ -17,6 +17,7 @@ use Fisharebest\Webtrees\Module\StatisticsChartModule;
  * Container auto-wired: Statistics::class via Reflection (ModuleService + Tree + UserService).
  * Keine Feature-Matrix-ID — technischer Risikotest.
  *
+ * @see docs/tds_conditions_ref.md S41
  * @covers \Fisharebest\Webtrees\Module\StatisticsChartModule
  */
 class StatisticsChartIntegrationTest extends MysqlTestCase

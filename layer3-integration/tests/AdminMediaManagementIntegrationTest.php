@@ -26,8 +26,6 @@ use Fisharebest\Webtrees\Services\PhpService;
  * (nicht-existente Records), ManageMediaPage (Seitenrender).
  *
  * @see docs/tds_conditions_ref.md A08
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AdminMediaFileThumbnailTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ManageMediaActionTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\FixLevel0MediaPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AdminMediaFileDownload
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AdminMediaFileThumbnail
@@ -88,7 +86,6 @@ class AdminMediaManagementIntegrationTest extends MysqlTestCase
     /**
      * BVA: AdminMediaFileThumbnail mit Path-Traversal-Versuch → 400 Bad Request (Sicherheitstest).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AdminMediaFileThumbnailTest.php
      * @group ported-l2-doubles
      */
     public function test_admin_media_thumbnail_path_traversal(): void
@@ -158,7 +155,6 @@ class AdminMediaManagementIntegrationTest extends MysqlTestCase
      * Container-Verdrahtung und die Folder-Allowlist als Sicherheitseigenschaft
      * (verhindert beliebige Folder-Werte im Redirect-Target).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ManageMediaActionTest.php
      * @group ported-l2-doubles
      */
     public function test_manage_media_action_rejects_invalid_folder_via_container(): void
@@ -193,7 +189,6 @@ class AdminMediaManagementIntegrationTest extends MysqlTestCase
     /**
      * EP/B: ManageMediaAction verarbeitet POST und leitet auf ManageMediaPage weiter (302/303).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ManageMediaActionTest.php
      * @group ported-l2-doubles
      */
     public function test_manage_media_action_redirects_to_page(): void

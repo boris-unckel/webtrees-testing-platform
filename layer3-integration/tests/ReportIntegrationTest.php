@@ -36,10 +36,6 @@ use Illuminate\Support\Collection;
  * Verwendet birth_report (kleinstes XML, keine Pflicht-Eingaben).
  *
  * @see docs/tds_conditions_ref.md S43
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportSetupActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportSetupPageTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportSetupPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportSetupAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportGenerate
@@ -91,7 +87,6 @@ class ReportIntegrationTest extends MysqlTestCase
      * ReportSetupPage::handle leitet weiter (302 Found), wenn das Modul nicht gefunden wird.
      * Stub-basierter Negativpfad: ModuleService::findByName liefert null.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportSetupPageTest.php
      * @group ported-l2-doubles
      */
     public function test_report_setup_page_redirects_when_module_not_found(): void
@@ -340,7 +335,6 @@ class ReportIntegrationTest extends MysqlTestCase
     /**
      * ReportListAction::handle leitet zur Setup-Seite weiter, wenn das Modul gefunden wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListActionTest.php
      * @group ported-l2-doubles
      */
     public function test_report_list_action_redirects_to_setup_page_when_module_found(): void
@@ -376,7 +370,6 @@ class ReportIntegrationTest extends MysqlTestCase
     /**
      * ReportListAction::handle leitet zur Listenseite zurück, wenn kein Modul gefunden wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListActionTest.php
      * @group ported-l2-doubles
      */
     public function test_report_list_action_redirects_to_list_page_when_module_not_found(): void
@@ -409,7 +402,6 @@ class ReportIntegrationTest extends MysqlTestCase
      * ReportSetupAction::handle leitet zum Generate-Handler weiter, wenn das Modul gefunden wird.
      * Der Location-Header muss den Report-Namen enthalten.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportSetupActionTest.php
      * @group ported-l2-doubles
      */
     public function test_report_setup_action_redirects_to_generate_when_module_found(): void
@@ -451,7 +443,6 @@ class ReportIntegrationTest extends MysqlTestCase
     /**
      * ReportSetupAction::handle leitet zur Listenseite zurück, wenn kein Modul gefunden wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportSetupActionTest.php
      * @group ported-l2-doubles
      */
     public function test_report_setup_action_redirects_to_list_page_when_module_not_found(): void
@@ -494,7 +485,6 @@ class ReportIntegrationTest extends MysqlTestCase
      * wurde. Komplementär zu den beiden Stub-Tests darunter, die nur die
      * Statuscodes mit injiziertem ModuleService prüfen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListPageTest.php
      * @group ported-l2-doubles
      */
     public function test_report_list_page_handle_returns_ok_with_real_container_and_tree(): void
@@ -522,7 +512,6 @@ class ReportIntegrationTest extends MysqlTestCase
      * ReportListPage::handle gibt 200 OK zurück, wenn keine Reports zur Verfügung stehen.
      * ModuleService::findByComponent wird genau einmal mit (ModuleReportInterface, tree, user) aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListPageTest.php
      * @group ported-l2-doubles
      */
     public function test_report_list_page_handle_returns_ok_response_when_no_reports(): void
@@ -553,7 +542,6 @@ class ReportIntegrationTest extends MysqlTestCase
     /**
      * ReportListPage::handle gibt 200 OK zurück, wenn Reports verfügbar sind.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListPageTest.php
      * @group ported-l2-doubles
      */
     public function test_report_list_page_handle_returns_ok_response_when_reports_available(): void

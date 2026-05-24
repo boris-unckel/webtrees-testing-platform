@@ -27,7 +27,6 @@ use function e;
  *   muss solche xrefs überspringen, ohne zu crashen und ohne sie umzubenennen.
  *
  * @see docs/tds_conditions_ref.md P34
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RenumberTreePageTest.php
  * @see docs/security-audit/tasks/SEC-AUDIT-006_renumber_tree_raw_expression.md
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\RenumberTreeAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\RenumberTreePage
@@ -240,7 +239,6 @@ class RenumberTreeActionIntegrationTest extends MysqlTestCase
      * (leerer Baum, kein Formular) — hier wird der nicht-triviale Fall mit
      * Cross-Tree-Konflikt + gerendertem Formular gepinnt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RenumberTreePageTest.php
      * @group ported-l2-doubles
      */
     public function test_renumber_tree_page_handle_renders_title_and_renumber_form(): void
@@ -305,7 +303,6 @@ class RenumberTreeActionIntegrationTest extends MysqlTestCase
     /**
      * RenumberTreePage::handle() liefert 200 OK für einen leeren Baum (GET-Render).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RenumberTreePageTest.php
      * @group ported-l2-doubles
      */
     public function test_renumber_tree_page_handle_returns_ok_for_empty_tree(): void

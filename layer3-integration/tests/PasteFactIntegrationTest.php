@@ -28,7 +28,7 @@ use Fisharebest\Webtrees\Services\ClipboardService;
  * `expects(once())`-Verifikation des pasteFact-Aufrufs.
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\PasteFact
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PasteFactTest.php
+ * @see docs/tds_conditions_ref.md E02
  */
 class PasteFactIntegrationTest extends MysqlTestCase
 {
@@ -50,7 +50,6 @@ class PasteFactIntegrationTest extends MysqlTestCase
      * nur der Statuscode geprüft. Ersetzt eine class_exists-Tautologie aus dem
      * L2-Port (BEHAVIOR_HANDLE / L3SP-044).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PasteFactTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirect_location_propagates_record_url(): void
@@ -101,7 +100,6 @@ class PasteFactIntegrationTest extends MysqlTestCase
      * gesetzt, damit Auth::checkRecordAccess(..., true) den Edit-Pfad
      * akzeptiert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PasteFactTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_pastes_fact_and_redirects(): void

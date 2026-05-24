@@ -28,7 +28,7 @@ use Illuminate\Support\Collection;
  * Factory-Interfaces (HeaderFactoryInterface, SlugFactoryInterface) als Mock
  * mit Erwartungs-Verifikation (`expects($this->once())`) für den Factory-Aufruf.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/HeaderPageTest.php
+ * @see docs/tds_conditions_ref.md S25
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\HeaderPage
  */
 class HeaderPageIntegrationTest extends MysqlTestCase
@@ -46,7 +46,6 @@ class HeaderPageIntegrationTest extends MysqlTestCase
      * auf die kanonische URL des Headers (eigenständige Verhaltens-Property,
      * komplementär zu Statuscode 200 in test_handle_returns_ok_for_visible_header).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/HeaderPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_sets_canonical_link_header_on_visible_header(): void
@@ -97,7 +96,6 @@ class HeaderPageIntegrationTest extends MysqlTestCase
     /**
      * Sichtbarer Header mit übereinstimmendem Slug rendert die record-page mit 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/HeaderPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_for_visible_header(): void
@@ -143,7 +141,6 @@ class HeaderPageIntegrationTest extends MysqlTestCase
      * Bei Slug-Mismatch antwortet der Handler mit 301 Moved Permanently auf die
      * kanonische URL des Headers.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/HeaderPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_on_slug_mismatch(): void
@@ -187,7 +184,6 @@ class HeaderPageIntegrationTest extends MysqlTestCase
      * Unbekannte Header-XREF (Factory liefert null) löst HttpNotFoundException
      * aus Auth::checkHeaderAccess() aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/HeaderPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_unknown_header_throws_not_found_exception(): void

@@ -30,8 +30,8 @@ use Psr\Http\Message\StreamFactoryInterface;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ExportGedcomClient
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ExportGedcomServer
  * @covers \Fisharebest\Webtrees\Services\GedcomExportService
+ * @see docs/tds_conditions_ref.md A03
  * @see docs/testquality_improve_A03.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomExportServiceTest.php
  */
 class ExportGedcomIntegrationTest extends MysqlTestCase
 {
@@ -141,7 +141,6 @@ class ExportGedcomIntegrationTest extends MysqlTestCase
      * exerziert den `.ged`-Stripping-Branch in `ExportGedcomPage::handle()`
      * (download-filename = Tree-Name ohne ".ged"-Suffix).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ExportGedcomPageTest.php
      * @group ported-l2-doubles
      */
     public function test_export_gedcom_page_strips_ged_extension_from_tree_name(): void
@@ -173,7 +172,6 @@ class ExportGedcomIntegrationTest extends MysqlTestCase
      * hängt das Suffix vor dem Schreiben an und liefert anschließend einen
      * 302-Redirect zurück nach ManageTrees.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ExportGedcomServerTest.php
      * @group ported-l2-doubles
      */
     public function test_export_server_appends_ged_extension_when_missing(): void
@@ -206,7 +204,6 @@ class ExportGedcomIntegrationTest extends MysqlTestCase
      * GedcomExportService::wrapLongLines belässt kurze Zeilen unverändert
      * (Eingabe = Ausgabe), wenn die Zeilenlänge unter dem Limit liegt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomExportServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_wrap_long_lines_returns_short_line_unchanged(): void
@@ -230,7 +227,6 @@ class ExportGedcomIntegrationTest extends MysqlTestCase
      * mehrere Zeilen um (1 NOTE + 2 CONC-Fortsetzungen), wobei keine Zeile
      * das Limit überschreitet und die Rekonstruktion den Originalwert ergibt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomExportServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_wrap_long_lines_splits_long_line_with_conc(): void
@@ -272,7 +268,6 @@ class ExportGedcomIntegrationTest extends MysqlTestCase
      * Kurze Zeilen passieren unverändert, lange Zeilen werden gesplittet,
      * keine Zeile überschreitet das Limit.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomExportServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_wrap_long_lines_handles_mixed_short_and_long_lines(): void

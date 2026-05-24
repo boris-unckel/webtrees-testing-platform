@@ -21,7 +21,7 @@ use Illuminate\Support\Collection;
  * erzeugt; der SearchService bleibt gemockt, um die delegierten Aufrufe pro
  * Kontextzweig praezise zu verifizieren.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplaceActionTest.php
+ * @see docs/tds_conditions_ref.md S13
  * @group ported-l2-doubles
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SearchReplaceAction
@@ -35,7 +35,6 @@ class SearchReplaceActionIntegrationTest extends MysqlTestCase
      * im Handler besitzt kein default-Label; der Pfad ohne Such-Aufrufe ist somit eine
      * scharfe Verhaltensgarantie, die hier verankert wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplaceActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_unknown_context_invokes_no_search_methods_but_redirects(): void
@@ -74,7 +73,6 @@ class SearchReplaceActionIntegrationTest extends MysqlTestCase
      * (Individuals, Families, Repositories, Sources, Notes) und am Ende mit
      * einem HTTP-302-Redirect auf die SearchReplacePage zurueckkehren.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplaceActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_context_all_searches_all_record_types(): void
@@ -128,7 +126,6 @@ class SearchReplaceActionIntegrationTest extends MysqlTestCase
      * aufrufen; Familien-, Repositorien-, Quellen- und Notiz-Suchen duerfen
      * dabei nicht angefasst werden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplaceActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_context_name_searches_individuals_only(): void
@@ -168,7 +165,6 @@ class SearchReplaceActionIntegrationTest extends MysqlTestCase
      * Repositorien-, Quellen- und Notiz-Suchen muessen ausgelassen werden, da
      * dort keine Ortsangaben anfallen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplaceActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_context_place_searches_individuals_and_families_only(): void

@@ -23,13 +23,11 @@ use Fisharebest\Webtrees\Services\GedcomEditService;
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditRecordAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditRecordPage
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRecordActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRecordPageTest.php
+ * @see docs/tds_conditions_ref.md E02
  */
 class EditRecordIntegrationTest extends MysqlTestCase
 {
     /**
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRecordActionTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_record_action_class_exists(): void
@@ -45,7 +43,6 @@ class EditRecordIntegrationTest extends MysqlTestCase
      * EditRecordAction POST mit gueltigem SOUR-Record: editLinesToGedcom wird aufgerufen,
      * Record wird aktualisiert, Redirect (302) erfolgt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRecordActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_updates_record_and_redirects(): void
@@ -82,7 +79,6 @@ class EditRecordIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRecordPageTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_record_page_class_exists(): void
@@ -100,7 +96,6 @@ class EditRecordIntegrationTest extends MysqlTestCase
      * checkRecordAccess($record, true) verlangt Edit-Berechtigung — der Admin-User
      * aus createAndLoginAdmin() hat ROLE_MANAGER und damit Edit-Rechte.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRecordPageTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_record_page_returns_ok_for_source_record(): void

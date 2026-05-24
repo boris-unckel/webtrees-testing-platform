@@ -25,9 +25,6 @@ use Fisharebest\Webtrees\Services\SearchService;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AutoCompleteSurname
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\AutoCompleteCitation
  * @see docs/tds_conditions_ref.md S07, S08
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AutoCompleteCitationTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AutoCompletePlaceTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AutoCompleteSurnameTest.php
  */
 class AutoCompleteIntegrationTest extends MysqlTestCase
 {
@@ -109,7 +106,6 @@ class AutoCompleteIntegrationTest extends MysqlTestCase
      * AutoCompletePlace-Response muss einen cache-control-Header enthalten
      * (gesetzt von AbstractAutocompleteHandler).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AutoCompletePlaceTest.php
      * @group ported-l2-doubles
      */
     public function test_autocomplete_place_response_includes_cache_header(): void
@@ -178,7 +174,6 @@ class AutoCompleteIntegrationTest extends MysqlTestCase
      * AutoCompleteSurname-Response muss einen cache-control-Header enthalten
      * (gesetzt von AbstractAutocompleteHandler).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AutoCompleteSurnameTest.php
      * @group ported-l2-doubles
      */
     public function test_autocomplete_surname_response_includes_cache_header(): void
@@ -282,7 +277,6 @@ class AutoCompleteIntegrationTest extends MysqlTestCase
      * Importiert minimale SOUR/INDI-Records statt demo.ged, um den Upstream-Bug
      * (FamilyFactory::mapper() null für private Familienmitglieder) zu umgehen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AutoCompleteCitationTest.php
      * @group ported-l2-doubles
      */
     public function test_autocomplete_citation_returns_json_for_valid_source_with_minimal_records(): void
@@ -329,7 +323,6 @@ class AutoCompleteIntegrationTest extends MysqlTestCase
     /**
      * AutoCompleteCitation-Response muss einen cache-control-Header enthalten.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AutoCompleteCitationTest.php
      * @group ported-l2-doubles
      */
     public function test_autocomplete_citation_response_includes_cache_header(): void
@@ -370,7 +363,6 @@ class AutoCompleteIntegrationTest extends MysqlTestCase
     /**
      * Wenn keine Records die Quelle zitieren → leeres JSON-Array '[]'.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/AutoCompleteCitationTest.php
      * @group ported-l2-doubles
      */
     public function test_autocomplete_citation_empty_result_for_unmatched_query(): void

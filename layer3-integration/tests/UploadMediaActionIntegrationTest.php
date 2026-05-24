@@ -27,6 +27,7 @@ use const UPLOAD_ERR_OK;
  * - Gefährliche Extension (.php) → FlashMessage, 302
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UploadMediaAction
+ * @see docs/tds_conditions_ref.md G30
  * @see docs/testquality_improve_G30.md
  */
 class UploadMediaActionIntegrationTest extends MysqlTestCase
@@ -110,7 +111,6 @@ class UploadMediaActionIntegrationTest extends MysqlTestCase
      * `preg_match('/([:])/')`-Zweig zurückgewiesen. Schleifen-`continue` führt
      * weiterhin zum 302-Redirect, keine Exception.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UploadMediaActionTest.php
      * @group ported-l2-doubles
      */
     public function test_upload_filename_with_colon_is_rejected_and_redirects(): void
@@ -134,7 +134,6 @@ class UploadMediaActionIntegrationTest extends MysqlTestCase
      * `break`-Zweig des Handlers — die Verarbeitung stoppt vor dem Schreiben
      * und liefert weiterhin den 302-Redirect.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UploadMediaActionTest.php
      * @group ported-l2-doubles
      */
     public function test_upload_invalid_folder_breaks_and_redirects(): void

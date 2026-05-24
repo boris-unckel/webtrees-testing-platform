@@ -25,7 +25,6 @@ use Fisharebest\Webtrees\Services\PhpService;
  * AP C-06: EditMediaFileAction::handle (CRAP 182)
  *
  * @see docs/tds_conditions_ref.md G28
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditMediaFileModalTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditMediaFileAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditMediaFileModal
  */
@@ -203,7 +202,6 @@ class EditMediaFileIntegrationTest extends MysqlTestCase
      * Der Handler darf in diesem Fall kein 500 erzeugen, sondern
      * mit HTTP 302 zur Baumseite weiterleiten.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditMediaFileActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_to_tree_page_when_media_file_not_found(): void
@@ -255,7 +253,6 @@ class EditMediaFileIntegrationTest extends MysqlTestCase
      * nicht existiert (MediaFactory liefert null → Auth::checkMediaAccess wirft
      * HttpNotFoundException → Handler antwortet mit STATUS_FORBIDDEN).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditMediaFileModalTest.php
      * @group ported-l2-doubles
      */
     public function test_modal_handle_returns_forbidden_when_media_does_not_exist(): void
@@ -291,7 +288,6 @@ class EditMediaFileIntegrationTest extends MysqlTestCase
      * EditMediaFileModal: HTTP 404, wenn der Media-Datensatz existiert,
      * die übergebene fact_id aber zu keiner Media-Datei passt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditMediaFileModalTest.php
      * @group ported-l2-doubles
      */
     public function test_modal_handle_returns_not_found_when_fact_id_not_matched(): void

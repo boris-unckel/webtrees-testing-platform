@@ -20,7 +20,7 @@ use Fisharebest\Webtrees\Services\SearchService;
  * Verhalten gegen eine echte MySQL-DB-getragene Tree-Instanz
  * verifiziert.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchPhoneticPageTest.php
+ * @see docs/tds_conditions_ref.md S07, S08, S39
  * @group ported-l2-doubles
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SearchPhoneticPage
@@ -43,7 +43,6 @@ class SearchPhoneticPageIntegrationTest extends MysqlTestCase
      * Default-Seite (keine Query-Parameter) rendert mit STATUS_OK und
      * liefert einen nicht-leeren Body.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchPhoneticPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_default_page_returns_ok_with_body(): void
@@ -67,7 +66,6 @@ class SearchPhoneticPageIntegrationTest extends MysqlTestCase
      * Phonetische Suche mit Nachname und Russell-Soundex rendert die
      * Seite mit STATUS_OK.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchPhoneticPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_lastname_russell_returns_ok(): void
@@ -93,7 +91,6 @@ class SearchPhoneticPageIntegrationTest extends MysqlTestCase
      * Phonetische Suche mit Vorname/Nachname/Ort und Daitch-Mokotoff-
      * Soundex rendert die Seite mit STATUS_OK.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchPhoneticPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_daitch_mokotoff_returns_ok(): void

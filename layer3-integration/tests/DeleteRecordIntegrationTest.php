@@ -80,7 +80,6 @@ class DeleteRecordIntegrationTest extends MysqlTestCase
      * Unbekannte XREF: Auth::checkRecordAccess(null) wirft HttpNotFoundException —
      * der LinkedRecordService darf in diesem Fall nicht angefragt werden.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/DeleteRecordTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_throws_not_found_for_missing_record(): void

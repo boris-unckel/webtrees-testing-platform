@@ -31,7 +31,7 @@ use Illuminate\Support\Collection;
  * Services (ClipboardService, LinkedRecordService) werden als Mocks gefuehrt,
  * wenn Verhalten (Aufrufzahlen, Argumente) verifiziert wird.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RepositoryPageTest.php
+ * @see docs/tds_conditions_ref.md S29
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\RepositoryPage
  */
 class RepositoryPageIntegrationTest extends MysqlTestCase
@@ -48,7 +48,6 @@ class RepositoryPageIntegrationTest extends MysqlTestCase
      * Sichtbares Repository mit uebereinstimmendem Slug rendert die
      * repository-page mit 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RepositoryPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_for_visible_repository(): void
@@ -106,7 +105,6 @@ class RepositoryPageIntegrationTest extends MysqlTestCase
      * Bei Slug-Mismatch antwortet der Handler mit 301 Moved Permanently auf die
      * kanonische URL des Repositorys.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RepositoryPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_on_slug_mismatch(): void
@@ -153,7 +151,6 @@ class RepositoryPageIntegrationTest extends MysqlTestCase
      * Unbekannte Repository-XREF (Factory liefert null) loest
      * HttpNotFoundException aus Auth::checkRepositoryAccess() aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RepositoryPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_unknown_repository_throws_not_found_exception(): void

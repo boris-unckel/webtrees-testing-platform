@@ -38,10 +38,10 @@ use Throwable;
  *   Signatur gebunden sind — egal ob die Implementierung als
  *   konstruktor-injiziertes Service, als Middleware oder anders erfolgt.
  *
+ * @see docs/tds_conditions_ref.md P39, P44
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\LoginAction
  * @see docs/testquality_improve_P39.md
  * @see docs/security-audit/tasks/SEC-AUDIT-008_login_brute_force_no_rate_limit.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginActionTest.php
  */
 class LoginActionIntegrationTest extends MysqlTestCase
 {
@@ -105,7 +105,6 @@ class LoginActionIntegrationTest extends MysqlTestCase
      * Erfolgreiche Anmeldung: gültiger, verifizierter, freigegebener Benutzer
      * → handle() ruft Auth::login(), legt wt_user in Session ab und gibt 302 zurück.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_logs_in_user_with_valid_credentials(): void
@@ -142,7 +141,6 @@ class LoginActionIntegrationTest extends MysqlTestCase
      * incorrect"), handle() fängt sie und gibt 302 zur LoginPage zurück; wt_user
      * bleibt der ursprüngliche Admin-User (keine Anmeldung des Probanden).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_rejects_login_with_invalid_password(): void
@@ -179,7 +177,6 @@ class LoginActionIntegrationTest extends MysqlTestCase
      * Unbekannter Benutzer: doLogin() findet keinen User, wirft Exception,
      * handle() fängt sie und gibt 302 zurück; Session wt_user bleibt unverändert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_rejects_login_for_unknown_user(): void
@@ -212,7 +209,6 @@ class LoginActionIntegrationTest extends MysqlTestCase
      * Benutzer mit nicht verifizierter E-Mail: doLogin() wirft Exception,
      * handle() fängt sie und leitet zur LoginPage zurück (302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_rejects_login_for_unverified_email(): void
@@ -248,7 +244,6 @@ class LoginActionIntegrationTest extends MysqlTestCase
      * Benutzer ohne Admin-Freigabe: doLogin() wirft Exception, handle() fängt
      * sie und leitet zur LoginPage zurück (302).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/LoginActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_rejects_login_for_unapproved_account(): void

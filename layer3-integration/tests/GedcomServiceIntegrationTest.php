@@ -89,7 +89,6 @@ class GedcomServiceIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_canonical_tag_converts_birth_death_marriage_individual(): void
@@ -106,7 +105,6 @@ class GedcomServiceIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_canonical_tag_handles_pgv_synonyms(): void
@@ -119,7 +117,6 @@ class GedcomServiceIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_canonical_tag_passes_through_already_canonical_and_lowercase_custom(): void
@@ -132,7 +129,6 @@ class GedcomServiceIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_read_latitude_returns_null_for_invalid_and_empty(): void
@@ -145,7 +141,6 @@ class GedcomServiceIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * @see Quelle: port-layer2-test-doubles:tests/app/Services/GedcomServiceTest.php
      * @group ported-l2-doubles
      */
     public function test_read_longitude_returns_null_for_invalid(): void

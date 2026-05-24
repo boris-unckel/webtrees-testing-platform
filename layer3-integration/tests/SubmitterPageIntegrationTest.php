@@ -31,7 +31,7 @@ use Illuminate\Support\Collection;
  * Services (ClipboardService, LinkedRecordService) werden als Mocks gefuehrt,
  * wenn Verhalten (Aufrufzahlen, Argumente) verifiziert wird.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SubmitterPageTest.php
+ * @see docs/tds_conditions_ref.md S30
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SubmitterPage
  */
 class SubmitterPageIntegrationTest extends MysqlTestCase
@@ -48,7 +48,6 @@ class SubmitterPageIntegrationTest extends MysqlTestCase
      * Sichtbarer Submitter mit uebereinstimmendem Slug rendert die
      * submitter-page mit 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SubmitterPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_for_visible_submitter(): void
@@ -104,7 +103,6 @@ class SubmitterPageIntegrationTest extends MysqlTestCase
      * Bei Slug-Mismatch antwortet der Handler mit 301 Moved Permanently auf die
      * kanonische URL des Submitters.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SubmitterPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_on_slug_mismatch(): void
@@ -151,7 +149,6 @@ class SubmitterPageIntegrationTest extends MysqlTestCase
      * Unbekannte Submitter-XREF (Factory liefert null) loest
      * HttpNotFoundException aus Auth::checkSubmitterAccess() aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SubmitterPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_unknown_submitter_throws_not_found_exception(): void

@@ -24,7 +24,6 @@ use Psr\Http\Message\ServerRequestInterface;
  * B2 (Approval-Email) ausgeklammert — E-Mail-Versand nicht testbar ohne SMTP-Mock.
  *
  * @see docs/tds_conditions_ref.md P37
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserEditActionTest.php
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserEditAction
  */
 class UserEditActionIntegrationTest extends MysqlTestCase
@@ -189,7 +188,6 @@ class UserEditActionIntegrationTest extends MysqlTestCase
      * username/real_name/email/Sprache/Timezone/verified/approved und liefert
      * Redirect (Status 302) zurück (B3/EP10, EP3 Username-Rename).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserEditActionTest.php
      * @group ported-l2-doubles
      */
     public function test_user_edit_updates_user_attributes_when_admin_edits_other_user(): void
@@ -235,7 +233,6 @@ class UserEditActionIntegrationTest extends MysqlTestCase
      * Leeres Passwort-Feld lässt vorhandenes Passwort unverändert —
      * Authentifizierung mit altem Passwort gelingt nach Edit (B3/EP9).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserEditActionTest.php
      * @group ported-l2-doubles
      */
     public function test_user_edit_preserves_password_when_password_field_empty(): void

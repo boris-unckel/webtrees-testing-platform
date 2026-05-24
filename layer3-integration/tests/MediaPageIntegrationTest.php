@@ -33,7 +33,7 @@ use Illuminate\Support\Collection;
  * werden als Mocks gefuehrt, weil Interaktionen verifiziert werden
  * (Factory-Lookup mit XREF, pastableFacts-Aufruf).
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MediaPageTest.php
+ * @see docs/tds_conditions_ref.md S27
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\MediaPage
  */
 class MediaPageIntegrationTest extends MysqlTestCase
@@ -50,7 +50,6 @@ class MediaPageIntegrationTest extends MysqlTestCase
      * Sichtbares Medium mit uebereinstimmendem Slug rendert die
      * media-page mit 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MediaPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_returns_ok_for_visible_media(): void
@@ -110,7 +109,6 @@ class MediaPageIntegrationTest extends MysqlTestCase
      * Bei Slug-Mismatch antwortet der Handler mit 301 Moved Permanently auf die
      * kanonische URL des Mediums.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MediaPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects_on_slug_mismatch(): void
@@ -157,7 +155,6 @@ class MediaPageIntegrationTest extends MysqlTestCase
      * Unbekannte Media-XREF (Factory liefert null) loest
      * HttpNotFoundException aus Auth::checkMediaAccess() aus.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MediaPageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_unknown_media_throws_not_found_exception(): void

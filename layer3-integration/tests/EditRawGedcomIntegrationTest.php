@@ -28,10 +28,8 @@ use Fisharebest\Webtrees\Registry;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditRawFactAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditRawRecordAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditRawRecordPage
+ * @see docs/tds_conditions_ref.md E03
  * @see docs/testquality_improve_E03.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRawFactPageTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRawRecordActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRawRecordPageTest.php
  */
 class EditRawGedcomIntegrationTest extends MysqlTestCase
 {
@@ -111,7 +109,6 @@ class EditRawGedcomIntegrationTest extends MysqlTestCase
      * EditRawFactAction POST — unbekannte XREF: Auth::checkRecordAccess(null) wirft HttpNotFoundException,
      * bevor die Fakten-Schleife durchlaufen wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRawFactActionTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_raw_fact_action_throws_not_found_for_missing_record(): void
@@ -144,7 +141,6 @@ class EditRawGedcomIntegrationTest extends MysqlTestCase
      * einen aus dem importierten demo.ged stammenden Record (X1030) abgebildet — die
      * erste vorhandene Fact-ID wird zur Laufzeit ermittelt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRawFactPageTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_raw_fact_page_returns_200_for_valid_fact_id(): void
@@ -181,7 +177,6 @@ class EditRawGedcomIntegrationTest extends MysqlTestCase
      * Registry-Override; hier wird stattdessen der echte „Record fehlt"-Pfad
      * gegen MySQL geprüft.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRawFactPageTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_raw_fact_page_throws_not_found_for_unknown_record(): void
@@ -213,7 +208,6 @@ class EditRawGedcomIntegrationTest extends MysqlTestCase
      * der reale „Record fehlt"-Pfad gegen MySQL geprüft — die Factory liefert null,
      * Auth::checkRecordAccess(null, true) wirft die Exception.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRawRecordActionTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_raw_record_action_throws_not_found_for_missing_record(): void
@@ -245,7 +239,6 @@ class EditRawGedcomIntegrationTest extends MysqlTestCase
      * Registry-Override; hier wird stattdessen der echte „Record fehlt"-Pfad
      * gegen MySQL geprüft.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditRawRecordPageTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_raw_record_page_throws_not_found_for_unknown_record(): void

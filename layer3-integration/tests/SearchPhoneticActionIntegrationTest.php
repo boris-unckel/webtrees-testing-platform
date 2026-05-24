@@ -18,7 +18,7 @@ use Fisharebest\Webtrees\Http\RequestHandlers\SearchPhoneticAction;
  * als 302-Redirect auf SearchPhoneticPage weiter. Hier wird das Verhalten
  * gegen eine echte MySQL-DB-getragene Tree-Instanz verifiziert.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchPhoneticActionTest.php
+ * @see docs/tds_conditions_ref.md S07, S08, S39
  * @group ported-l2-doubles
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SearchPhoneticAction
@@ -31,7 +31,6 @@ class SearchPhoneticActionIntegrationTest extends MysqlTestCase
      * SearchPhoneticPage weiter und uebernimmt die Suchparameter in die
      * Folge-URL.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchPhoneticActionTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_redirects(): void

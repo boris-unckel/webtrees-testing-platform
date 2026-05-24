@@ -21,7 +21,7 @@ use Fisharebest\Webtrees\Session;
  * Content).
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SelectLanguage
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SelectLanguageTest.php
+ * @see docs/tds_conditions_ref.md S51
  */
 class SelectLanguageIntegrationTest extends MysqlTestCase
 {
@@ -30,7 +30,6 @@ class SelectLanguageIntegrationTest extends MysqlTestCase
      * und ruft `setPreference(PREF_LANGUAGE, $code)` am Gast-User auf.
      * Antwort ist 204 (No Content).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SelectLanguageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_sets_language_for_guest(): void
@@ -60,7 +59,6 @@ class SelectLanguageIntegrationTest extends MysqlTestCase
      * User auf. Antwort ist 204 (No Content) und die Preference ist nach
      * dem Handler-Aufruf in der DB gesetzt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SelectLanguageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_sets_language_for_user(): void

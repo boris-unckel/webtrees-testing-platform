@@ -180,7 +180,6 @@ class RequestHandlerBatchAIntegrationTest extends MysqlTestCase
     /**
      * UnconnectedAction leitet POST auf die UnconnectedPage um (302 Found).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UnconnectedActionTest.php
      * @group ported-l2-doubles
      */
     public function test_unconnected_action_post_redirects_to_unconnected_page(): void
@@ -207,7 +206,6 @@ class RequestHandlerBatchAIntegrationTest extends MysqlTestCase
     /**
      * UnconnectedPage liefert 200 OK für einen importierten Baum ohne Query-Parameter.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UnconnectedPageTest.php
      * @group ported-l2-doubles
      */
     public function test_unconnected_page_returns_ok_for_tree(): void
@@ -227,7 +225,6 @@ class RequestHandlerBatchAIntegrationTest extends MysqlTestCase
     /**
      * UnconnectedPage liefert 200 OK mit aktivierten aliases- und associates-Optionen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UnconnectedPageTest.php
      * @group ported-l2-doubles
      */
     public function test_unconnected_page_returns_ok_with_aliases_and_associates(): void

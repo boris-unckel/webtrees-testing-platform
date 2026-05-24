@@ -56,17 +56,8 @@ use Fisharebest\Webtrees\Registry;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\CreateSubmitterModal
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditNoteAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EditNotePage
+ * @see docs/tds_conditions_ref.md E04
  * @see docs/testquality_improve_E04.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateLocationActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateNoteActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateRepositoryActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSourceActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSubmissionActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSubmissionModalTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSubmitterActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSubmitterModalTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditNoteActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditNotePageTest.php
  */
 class CreateSubrecordIntegrationTest extends MysqlTestCase
 {
@@ -124,7 +115,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
     /**
      * EP3: CreateNoteAction POST — mit Restriction (confidential) → 200 + RESN-Tag im GEDCOM.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateNoteActionTest.php
      * @group ported-l2-doubles
      */
     public function test_create_note_action_includes_resn_when_restriction_set(): void
@@ -197,7 +187,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
     /**
      * EP7: CreateLocationAction POST → 200 + JSON-Antwort mit `value` (XREF des _LOC-Records).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateLocationActionTest.php
      * @group ported-l2-doubles
      */
     public function test_create_location_action_creates_location_and_returns_json_response(): void
@@ -225,7 +214,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
     /**
      * EP8: CreateRepositoryAction POST mit nur `name` → 200 + JSON mit `value` und `html`.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateRepositoryActionTest.php
      * @group ported-l2-doubles
      */
     public function test_create_repository_action_creates_repository_with_name_only(): void
@@ -258,7 +246,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
     /**
      * EP9: CreateRepositoryAction POST mit allen optionalen Feldern (address, url, restriction) → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateRepositoryActionTest.php
      * @group ported-l2-doubles
      */
     public function test_create_repository_action_creates_repository_with_all_fields(): void
@@ -287,7 +274,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
     /**
      * EP10: CreateSourceAction POST mit nur `source-title` → 200 + JSON mit `value` und `html`.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSourceActionTest.php
      * @group ported-l2-doubles
      */
     public function test_create_source_action_creates_source_with_title_only(): void
@@ -326,7 +312,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
      *
      * Optionale Felder: abbreviation, author, publication, text, restriction.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSourceActionTest.php
      * @group ported-l2-doubles
      */
     public function test_create_source_action_creates_source_with_all_fields(): void
@@ -361,7 +346,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
      *
      * Die Demo-GEDCOM enthält bereits einen Submitter-Record (@X1166@), der referenziert wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSubmissionActionTest.php
      * @group ported-l2-doubles
      */
     public function test_create_submission_action_creates_submission_and_returns_json(): void
@@ -394,7 +378,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
     /**
      * EP13: CreateSubmissionModal GET → 200 (Modal-Dialog für neue Submission).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSubmissionModalTest.php
      * @group ported-l2-doubles
      */
     public function test_create_submission_modal_returns_200(): void
@@ -416,7 +399,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
     /**
      * EP14: CreateSubmitterAction POST mit nur `submitter_name` → 200 + JSON mit `value` und `html`.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSubmitterActionTest.php
      * @group ported-l2-doubles
      */
     public function test_create_submitter_action_creates_submitter_with_name_only(): void
@@ -450,7 +432,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
     /**
      * EP15: CreateSubmitterAction POST mit allen optionalen Feldern (address, email, phone, restriction) → 200.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSubmitterActionTest.php
      * @group ported-l2-doubles
      */
     public function test_create_submitter_action_creates_submitter_with_all_fields(): void
@@ -480,7 +461,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
     /**
      * EP16: CreateSubmitterModal GET → 200 (Modal-Dialog für neuen Submitter).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateSubmitterModalTest.php
      * @group ported-l2-doubles
      */
     public function test_create_submitter_modal_returns_200(): void
@@ -505,7 +485,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
      * Voraussetzung: NOTE-Record mit XREF N1 wird vor dem Handler-Aufruf importiert.
      * Postcondition: Note-Datensatz enthält den aktualisierten Text.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditNoteActionTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_note_action_updates_note_and_redirects(): void
@@ -542,7 +521,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
      * Voraussetzung: NOTE-Record mit XREF N2 wird vor dem Handler-Aufruf importiert.
      * Admin-User (siehe setUp) hat Edit-Berechtigung; EditNotePage rendert das Bearbeitungsformular.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditNotePageTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_note_page_returns_ok_for_valid_note(): void
@@ -572,7 +550,6 @@ class CreateSubrecordIntegrationTest extends MysqlTestCase
      *
      * Auth::checkNoteAccess wirft NotFound, wenn die NoteFactory null liefert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EditNotePageTest.php
      * @group ported-l2-doubles
      */
     public function test_edit_note_page_throws_not_found_for_unknown_note(): void

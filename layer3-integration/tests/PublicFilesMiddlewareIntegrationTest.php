@@ -21,7 +21,7 @@ use function response;
  * Public-Dateien ist nicht abgedeckt — Mime-Erkennung und Filesystem-Zugriff
  * sind nicht im Fokus dieser Integrationsstufe.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/Middleware/PublicFilesTest.php
+ * @see docs/tds_conditions_ref.md M24
  * @group ported-l2-doubles
  * @covers \Fisharebest\Webtrees\Http\Middleware\PublicFiles
  */
@@ -41,7 +41,6 @@ class PublicFilesMiddlewareIntegrationTest extends MysqlTestCase
      * Der innere Handler wird nicht aufgerufen; Statuscode 200, Content-Type
      * gemäss Mime-Tabelle, Cache-Control mit max-age=31536000.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/Middleware/PublicFilesTest.php
      * @group ported-l2-doubles
      */
     public function test_public_path_existing_file_is_served_statically(): void
@@ -65,7 +64,6 @@ class PublicFilesMiddlewareIntegrationTest extends MysqlTestCase
     /**
      * Pfad ohne `/public/`-Präfix wird an den inneren Handler delegiert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/Middleware/PublicFilesTest.php
      * @group ported-l2-doubles
      */
     public function test_non_public_path_delegates_to_handler(): void
@@ -89,7 +87,6 @@ class PublicFilesMiddlewareIntegrationTest extends MysqlTestCase
     /**
      * Pfad mit Path-Traversal-Marker (`..`) wird an den inneren Handler delegiert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/Middleware/PublicFilesTest.php
      * @group ported-l2-doubles
      */
     public function test_public_path_with_traversal_delegates_to_handler(): void
@@ -113,7 +110,6 @@ class PublicFilesMiddlewareIntegrationTest extends MysqlTestCase
     /**
      * `/public/*`-Pfad auf nicht existierende Datei wird an den Handler delegiert.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/Middleware/PublicFilesTest.php
      * @group ported-l2-doubles
      */
     public function test_public_path_file_not_found_delegates_to_handler(): void

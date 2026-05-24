@@ -49,9 +49,8 @@ use Illuminate\Support\Collection;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\BroadcastAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\EmailPreferencesPage
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ControlPanel
+ * @see docs/tds_conditions_ref.md A11
  * @see docs/testquality_improve_A11.md
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/BroadcastActionTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ControlPanelTest.php
  */
 class SystemAdminIntegrationTest extends MysqlTestCase
 {
@@ -173,7 +172,6 @@ class SystemAdminIntegrationTest extends MysqlTestCase
     /**
      * BroadcastAction POST: erfolgreiche Auslieferung an alle Empfänger → 302.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/BroadcastActionTest.php
      * @group ported-l2-doubles
      */
     public function test_broadcast_action_delivers_to_all_recipients(): void
@@ -226,7 +224,6 @@ class SystemAdminIntegrationTest extends MysqlTestCase
     /**
      * BroadcastAction POST: gescheiterte Auslieferung → 302 (Redirect immer).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/BroadcastActionTest.php
      * @group ported-l2-doubles
      */
     public function test_broadcast_action_returns_302_when_delivery_fails(): void
@@ -279,7 +276,6 @@ class SystemAdminIntegrationTest extends MysqlTestCase
     /**
      * BroadcastAction POST: mehrere Empfänger → deliverMessage pro Empfänger.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/BroadcastActionTest.php
      * @group ported-l2-doubles
      */
     public function test_broadcast_action_delivers_to_multiple_recipients(): void
@@ -339,7 +335,6 @@ class SystemAdminIntegrationTest extends MysqlTestCase
     /**
      * BroadcastAction POST: keine Empfänger → deliverMessage wird nie aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/BroadcastActionTest.php
      * @group ported-l2-doubles
      */
     public function test_broadcast_action_with_no_recipients_does_not_deliver(): void
@@ -382,7 +377,6 @@ class SystemAdminIntegrationTest extends MysqlTestCase
     /**
      * ControlPanel GET: gestubbte Services liefern 200 OK (Admin-Dashboard).
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ControlPanelTest.php
      * @group ported-l2-doubles
      */
     public function test_control_panel_returns_ok_response(): void

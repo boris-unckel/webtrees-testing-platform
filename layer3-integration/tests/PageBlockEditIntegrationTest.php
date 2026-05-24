@@ -19,8 +19,7 @@ use Fisharebest\Webtrees\Services\HomePageService;
  * (TreePageBlockEdit, UserPageBlockEdit). Initialer Import deckt
  * TreePageBlockEdit ab; weitere Quellen werden in dieser Datei ergaenzt.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageBlockEditTest.php
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageBlockEditTest.php
+ * @see docs/tds_conditions_ref.md S46
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\TreePageBlockEdit
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\UserPageBlockEdit
  */
@@ -30,7 +29,6 @@ class PageBlockEditIntegrationTest extends MysqlTestCase
      * TreePageBlockEdit::handle liefert HTTP 200, wenn der HomePageService
      * den Block fuer das angefragte Tree/Block-ID-Paar zurueckgibt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageBlockEditTest.php
      * @group ported-l2-doubles
      */
     public function test_tree_page_block_edit_returns_ok_response(): void
@@ -73,7 +71,6 @@ class PageBlockEditIntegrationTest extends MysqlTestCase
      * Damit ist sichergestellt, dass weder block_id noch Titel stillschweigend
      * verloren gehen koennen, ohne dass dieser Test rot wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageBlockEditTest.php
      * @group ported-l2-doubles
      */
     public function test_tree_page_block_edit_propagates_block_id_and_title_into_response(): void
@@ -115,7 +112,6 @@ class PageBlockEditIntegrationTest extends MysqlTestCase
      * UserPageBlockEdit::handle liefert HTTP 200, wenn der HomePageService
      * den Block fuer das angefragte User/Block-ID-Paar zurueckgibt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageBlockEditTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_block_edit_returns_ok_response(): void
@@ -161,7 +157,6 @@ class PageBlockEditIntegrationTest extends MysqlTestCase
      * Damit ist sichergestellt, dass weder block_id noch Titel stillschweigend
      * verloren gehen koennen, ohne dass dieser Test rot wird.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageBlockEditTest.php
      * @group ported-l2-doubles
      */
     public function test_user_page_block_edit_propagates_block_id_and_title_into_response(): void

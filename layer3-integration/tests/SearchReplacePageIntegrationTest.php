@@ -17,7 +17,7 @@ use Fisharebest\Webtrees\Http\RequestHandlers\SearchReplacePage;
  * entgegen. Hier wird das Render-Verhalten gegen eine echte MySQL-DB-getragene
  * Tree-Instanz verifiziert; der Handler hat keine externen Abhaengigkeiten.
  *
- * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplacePageTest.php
+ * @see docs/tds_conditions_ref.md S13
  * @group ported-l2-doubles
  *
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\SearchReplacePage
@@ -33,7 +33,6 @@ class SearchReplacePageIntegrationTest extends MysqlTestCase
      * Ersetzt den frueheren `class_exists`-Tautologietest, der nur die
      * Autoloader-Konfiguration prueft und keine Verhaltensinformation traegt.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplacePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_renders_query_parameters_into_body(): void
@@ -69,7 +68,6 @@ class SearchReplacePageIntegrationTest extends MysqlTestCase
      * Default-Seite ohne Query-Parameter rendert mit STATUS_OK und liefert
      * einen nicht-leeren Body.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplacePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_default_page_returns_ok_with_body(): void
@@ -96,7 +94,6 @@ class SearchReplacePageIntegrationTest extends MysqlTestCase
      * Mit vorbelegten Query-Parametern (search, replace, context) rendert die
      * Seite ebenfalls mit STATUS_OK.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplacePageTest.php
      * @group ported-l2-doubles
      */
     public function test_handle_with_query_params_returns_ok(): void
