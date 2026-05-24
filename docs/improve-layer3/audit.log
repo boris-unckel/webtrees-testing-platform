@@ -15,3 +15,435 @@
 #   follow_up <kurzbeschreibung>     — Bestand-Problem ohne Bezug zum Task notiert (Orchestrator legt neuen Plan-Eintrag an)
 #   blocked <phase> <kurzgrund>      — Worker bricht ab, Status auf blockiert
 # Hinweis: Es gibt KEINE commit-Aktion. Der User reviewt am Ende und committet manuell.
+2026-05-23T15:48:41+02:00 L3SP-001 start
+2026-05-23T15:48:41+02:00 L3SP-001 plan_read kat=A2 file=AddMediaFileActionIntegrationTest.php:66 strategy=FIX_SET status=offen
+2026-05-23T15:48:47+02:00 L3SP-001 sut_read upstream/webtrees/app/Http/RequestHandlers/AddMediaFileAction.php
+2026-05-23T15:48:47+02:00 L3SP-001 strategy_chosen FIX_SET
+2026-05-23T15:50:28+02:00 L3SP-001 test_filter passed (3 tests, 9 assertions)
+2026-05-23T15:50:28+02:00 L3SP-001 plan_updated status=erledigt
+2026-05-23T15:50:28+02:00 L3SP-001 done
+2026-05-23T15:51:09+02:00 L3SP-002 start
+2026-05-23T15:51:35+02:00 L3SP-002 sut_read app/Http/RequestHandlers/AddMediaFileModal.php
+2026-05-23T15:52:04+02:00 L3SP-002 test_filter passed (3 tests, 9 assertions)
+2026-05-23T15:52:04+02:00 L3SP-002 done
+2026-05-23T15:53:31+02:00 L3SP-003 start
+2026-05-23T15:53:31+02:00 L3SP-003 plan_read kat=B file=AdminMediaManagementIntegrationTest.php:161 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T15:53:37+02:00 L3SP-003 sut_read upstream/webtrees/app/Http/RequestHandlers/ManageMediaAction.php
+2026-05-23T15:53:37+02:00 L3SP-003 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T15:55:07+02:00 L3SP-003 test_filter passed (8 tests, 32 assertions)
+2026-05-23T15:55:07+02:00 L3SP-003 plan_updated status=erledigt
+2026-05-23T15:55:07+02:00 L3SP-003 done
+2026-05-23T15:55:56+02:00 L3SP-004 start
+2026-05-23T15:55:56+02:00 L3SP-004 plan_read kat=A1 file=AutoCompleteIntegrationTest.php:211 strategy=BUG_PIN status=offen
+2026-05-23T15:57:03+02:00 L3SP-004 sut_read upstream/webtrees/app/Http/RequestHandlers/AutoCompleteCitation.php
+2026-05-23T15:57:03+02:00 L3SP-004 sut_read upstream/webtrees/app/Factories/FamilyFactory.php
+2026-05-23T15:57:03+02:00 L3SP-004 strategy_chosen BUG_PIN
+2026-05-23T15:59:54+02:00 L3SP-004 test_filter passed (10 tests, 46 assertions)
+2026-05-23T15:59:54+02:00 L3SP-004 plan_updated status=erledigt
+2026-05-23T15:59:54+02:00 L3SP-004 done
+2026-05-23T16:00:26+02:00 L3SP-005 start
+2026-05-23T16:00:47+02:00 L3SP-005 sut_read app/Http/RequestHandlers/CalendarAction.php
+2026-05-23T16:01:30+02:00 L3SP-005 strategy_chosen BEHAVIOR_HANDLE (class_exists ersetzt durch month-view handle()-Test, ergaenzt vorhandenen day-view-Test)
+2026-05-23T16:01:30+02:00 L3SP-005 test_filter passed (14 tests, 44 assertions)
+2026-05-23T16:01:30+02:00 L3SP-005 done
+2026-05-23T16:02:57+02:00 L3SP-006 start
+2026-05-23T16:02:57+02:00 L3SP-006 plan_read kat=B file=CalendarChartIntegrationTest.php:224 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T16:03:05+02:00 L3SP-006 sut_read upstream/webtrees/app/Http/RequestHandlers/CalendarPage.php
+2026-05-23T16:03:29+02:00 L3SP-006 strategy_chosen BEHAVIOR_HANDLE (class_exists ersetzt durch isInArray-Allowlist-Negativtest fuer CalendarPage::handle)
+2026-05-23T16:44:23+02:00 L3SP-006 test_filter passed (14 tests, 45 assertions)
+2026-05-23T16:44:23+02:00 L3SP-005 followup_fix calendar_action_tests_now_assign_tree_for_teardown
+2026-05-23T16:44:23+02:00 L3SP-006 db_cleanup orphan_rows_removed gedcom_name=cal-action,cal-action-month
+2026-05-23T16:44:23+02:00 L3SP-006 plan_updated status=erledigt
+2026-05-23T16:44:23+02:00 L3SP-006 done
+2026-05-23T16:45:18+02:00 L3SP-007 start
+2026-05-23T16:46:41+02:00 L3SP-007 plan_read kat=B file=CopyFactIntegrationTest.php:48 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T16:46:41+02:00 L3SP-007 sut_read upstream/webtrees/app/Http/RequestHandlers/CopyFact.php
+2026-05-23T16:46:41+02:00 L3SP-007 strategy_chosen BEHAVIOR_HANDLE (class_exists ersetzt durch loop-short-circuit Test: copyFact() einmal bei dupliziertem fact_id)
+2026-05-23T16:47:10+02:00 L3SP-007 test_filter passed (6 tests, 23 assertions)
+2026-05-23T16:47:10+02:00 L3SP-007 plan_updated status=erledigt
+2026-05-23T16:47:10+02:00 L3SP-007 done
+2026-05-23T16:48:08+02:00 L3SP-008 start
+2026-05-23T16:48:14+02:00 L3SP-008 sut_read upstream/webtrees/app/Http/RequestHandlers/EmptyClipboard.php
+2026-05-23T16:49:49+02:00 L3SP-008 strategy_chosen BEHAVIOR_HANDLE (class_exists ersetzt durch 2 EmptyClipboard-Handler-Tests)
+2026-05-23T16:49:49+02:00 L3SP-008 test_filter passed (6 tests, 26 assertions) verified_by_orchestrator
+2026-05-23T16:49:49+02:00 L3SP-008 plan_updated status=erledigt
+2026-05-23T16:49:49+02:00 L3SP-008 done worker_returned_without_json_orchestrator_finalized
+2026-05-23T16:51:27+02:00 L3SP-009 start
+2026-05-23T16:51:36+02:00 L3SP-009 plan_read kat=A2 file=EditMediaFileIntegrationTest.php:61 strategy=FIX_SET status=offen
+2026-05-23T16:51:36+02:00 L3SP-009 sut_read upstream/webtrees/app/Http/RequestHandlers/EditMediaFileAction.php
+2026-05-23T16:52:24+02:00 L3SP-009 strategy_chosen FIX_SET (markTestSkipped ersetzt durch ensureMediaRecord-Helper; assertLessThan(500) zu assertSame(STATUS_FOUND) verschaerft)
+2026-05-23T16:52:24+02:00 L3SP-009 test_filter passed (5 tests, 26 assertions)
+2026-05-23T16:52:31+02:00 L3SP-009 plan_updated status=erledigt
+2026-05-23T16:52:31+02:00 L3SP-009 done
+2026-05-23T16:53:20+02:00 L3SP-010 start
+2026-05-23T16:53:58+02:00 L3SP-010 sut_read upstream/webtrees/app/Http/RequestHandlers/EditMediaFileAction.php
+2026-05-23T16:54:40+02:00 L3SP-010 test_filter passed (5 tests, 26 assertions)
+2026-05-23T16:54:40+02:00 L3SP-010 done
+2026-05-23T16:55:26+02:00 L3SP-011 start
+2026-05-23T16:55:26+02:00 L3SP-011 plan_read kat=A2 file=EditMediaFileIntegrationTest.php:105 strategy=FIX_SET status=offen
+2026-05-23T16:55:26+02:00 L3SP-011 sut_read upstream/webtrees/app/Http/RequestHandlers/EditMediaFileAction.php
+2026-05-23T16:55:26+02:00 L3SP-011 sut_read upstream/webtrees/app/Media.php
+2026-05-23T16:55:26+02:00 L3SP-011 sut_read upstream/webtrees/app/Services/GedcomImportService.php
+2026-05-23T16:55:26+02:00 L3SP-011 strategy_chosen FIX_SET (ensureMediaRecord erweitert: garantiert mindestens eine FILE-Struktur via mediaFiles()-Check; markTestSkipped durch assertNotNull ersetzt)
+2026-05-23T16:55:26+02:00 L3SP-011 test_filter passed (5 tests, 27 assertions)
+2026-05-23T16:55:26+02:00 L3SP-011 plan_updated status=erledigt
+2026-05-23T16:55:26+02:00 L3SP-011 done
+2026-05-23T16:58:55+02:00 L3SP-013 start
+2026-05-23T16:59:11+02:00 L3SP-013 sut_read upstream/webtrees/app/Http/RequestHandlers/HeaderPage.php
+2026-05-23T17:00:04+02:00 L3SP-013 test_filter passed (4 tests, 25 assertions)
+2026-05-23T17:00:04+02:00 L3SP-013 done
+2026-05-23T17:01:42+02:00 L3SP-014 start
+2026-05-23T17:01:42+02:00 L3SP-014 plan_read kat=A2 file=InteractiveTreeIntegrationTest.php:70 strategy=FIX_SET status=offen
+2026-05-23T17:01:56+02:00 L3SP-014 sut_read upstream/webtrees/app/Module/InteractiveTree/TreeView.php
+2026-05-23T17:03:21+02:00 L3SP-014 strategy_chosen FIX_SET (markTestSkipped ersetzt durch harte Pruefung der Fixture-Familie f1; non-empty-Assertion durch JSON-decode + abbr=X1041 + tv_box-Marker verschaerft)
+2026-05-23T17:03:45+02:00 L3SP-014 test_filter passed (3 tests, 18 assertions)
+2026-05-23T17:03:45+02:00 L3SP-014 plan_updated status=erledigt
+2026-05-23T17:03:45+02:00 L3SP-014 done
+2026-05-23T17:05:32+02:00 L3SP-015 start
+2026-05-23T17:05:32+02:00 L3SP-015 plan_read kat=A2 file=InteractiveTreeIntegrationTest.php:98 strategy=FIX_SET status=offen
+2026-05-23T17:05:40+02:00 L3SP-015 sut_read upstream/webtrees/app/Module/InteractiveTree/TreeView.php
+2026-05-23T17:06:41+02:00 L3SP-015 strategy_chosen FIX_SET (markTestSkipped ersetzt durch harte Pruefung der f1-Kinderliste X1052,X1063,X1074,X1085; non-empty/contains-'<' durch JSON-decode + tv_box + pro-Kind abbr-Marker verschaerft)
+2026-05-23T17:06:41+02:00 L3SP-015 test_filter passed (3 tests, 25 assertions)
+2026-05-23T17:06:41+02:00 L3SP-015 plan_updated status=erledigt
+2026-05-23T17:06:41+02:00 L3SP-015 done
+2026-05-23T17:08:03+02:00 L3SP-016 start
+2026-05-23T17:08:14+02:00 L3SP-016 sut_read upstream/webtrees/app/Http/RequestHandlers/RedirectPedigreePhp.php
+2026-05-23T17:09:16+02:00 L3SP-016 strategy_chosen SHARP_CATCH (silenter catch entfernt, Happy-Path 301 verhalts-definitiv)
+2026-05-23T17:09:16+02:00 L3SP-016 test_filter passed (13 tests, 50 assertions)
+2026-05-23T17:09:16+02:00 L3SP-016 done
+2026-05-23T17:09:48+02:00 L3SP-018 start
+2026-05-23T17:10:11+02:00 L3SP-018 sut_read upstream/webtrees/app/Http/RequestHandlers/SiteLogsDelete.php
+2026-05-23T17:10:11+02:00 L3SP-018 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T17:11:08+02:00 L3SP-018 test_filter passed (14 tests, 50 assertions)
+2026-05-23T17:11:08+02:00 L3SP-018 done
+2026-05-23T17:12:17+02:00 L3SP-019 start
+2026-05-23T17:12:27+02:00 L3SP-019 plan_read kat=B file=LogsMonitoringIntegrationTest.php:220 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:12:27+02:00 L3SP-019 sut_read upstream/webtrees/app/Http/RequestHandlers/SiteLogsDownload.php
+2026-05-23T17:12:27+02:00 L3SP-019 sut_read upstream/webtrees/app/Services/SiteLogsService.php
+2026-05-23T17:12:27+02:00 L3SP-019 strategy_chosen BEHAVIOR_HANDLE (class_exists durch echten handle()-Lauf ersetzt; COALESCE-Property fuer NULL user/gedcom als <none> in CSV-Body gepinnt)
+2026-05-23T17:13:25+02:00 L3SP-019 test_filter passed (14 tests, 53 assertions)
+2026-05-23T17:13:25+02:00 L3SP-019 plan_updated status=erledigt
+2026-05-23T17:13:25+02:00 L3SP-019 done
+2026-05-23T17:14:24+02:00 L3SP-020 start
+2026-05-23T17:14:24+02:00 L3SP-020 plan_read kat=B file=LogsMonitoringIntegrationTest.php:359 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:14:59+02:00 L3SP-020 sut_read upstream/webtrees/app/Http/RequestHandlers/SiteLogsPage.php
+2026-05-23T17:14:59+02:00 L3SP-020 sut_read upstream/webtrees/resources/views/admin/site-logs.phtml
+2026-05-23T17:14:59+02:00 L3SP-020 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf ersetzt; zusaetzlich zu Statuscode wird Form-Marker im HTML-Body und der admin-layout-Pfad als Render-Property gepinnt — vermeidet Redundanz zu EP13/EP14)
+2026-05-23T17:15:51+02:00 L3SP-020 test_filter passed (14 tests, 58 assertions)
+2026-05-23T17:16:00+02:00 L3SP-020 plan_updated status=erledigt
+2026-05-23T17:16:00+02:00 L3SP-020 done
+2026-05-23T17:17:13+02:00 L3SP-021 start
+2026-05-23T17:17:13+02:00 L3SP-021 plan_read kat=B file=MapDataCrudIntegrationTest.php:195 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:17:13+02:00 L3SP-021 sut_read upstream/webtrees/app/Http/RequestHandlers/MapDataExportCSV.php
+2026-05-23T17:17:13+02:00 L3SP-021 sut_read upstream/webtrees/app/Services/MapDataService.php
+2026-05-23T17:20:47+02:00 L3SP-021 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf ersetzt; pinnt CSV-Header-Zeile Level...Longitude;Latitude;Zoom;Icon und Default-Dateinamen Global.csv im Content-Disposition — Eigenschaften, die test_map_data_export_csv_returns_csv nicht prueft)
+2026-05-23T17:20:47+02:00 L3SP-021 follow_up test_create_location_modal_handle_returns_ok (Zeile 286) erzeugte lokal  statt ->tree -> tearDown raeumte ihn nicht; Wiederholungslauf brach mit Duplicate-Key auf clm-<md5> ab. Im Rahmen der Session-Verantwortung mitgefixt (auf ->tree-Pattern umgestellt)
+2026-05-23T17:20:47+02:00 L3SP-021 follow_up MapDataCrudIntegrationTest::test_map_data_edit_handle_non_existent_location_redirects nutzt createMock(LeafletJsService) ohne Expectations -> PHPUnit-Notice. Ausserhalb L3SP-021-Scope (Methode gehoert zu L3SP-026 Territorium ab Zeile 400); nicht jetzt fixen.
+2026-05-23T17:20:47+02:00 L3SP-021 test_filter passed (21 tests, 82 assertions)
+2026-05-23T17:20:47+02:00 L3SP-021 plan_updated status=erledigt
+2026-05-23T17:20:47+02:00 L3SP-021 done
+2026-05-23T17:22:24+02:00 L3SP-022 start
+2026-05-23T17:22:28+02:00 L3SP-022 plan_read kat=B file=MapDataCrudIntegrationTest.php:240 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:22:38+02:00 L3SP-022 sut_read upstream/webtrees/app/Http/RequestHandlers/CreateLocationModal.php
+2026-05-23T17:24:32+02:00 L3SP-022 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf ersetzt; pinnt Modal-Form-Action mit URL-encoded Tree-Pfad route=%2F<treename>%2Fcreate-location und CSRF-Hidden-Field name=_csrf — komplementaer zu test_create_location_modal_handle_returns_ok das nur den Statuscode prueft)
+2026-05-23T17:24:32+02:00 L3SP-022 follow_up MapDataCrudIntegrationTest::test_map_data_edit_handle_non_existent_location_redirects (Zeile 464) nutzt createMock(LeafletJsService) ohne Expectations -> PHPUnit-Notice persistiert. Bereits in L3SP-021-follow_up notiert (L3SP-026-Territorium); ausserhalb meines Edit-Bereichs (Zeile 271-308), nicht jetzt fixen.
+2026-05-23T17:24:32+02:00 L3SP-022 test_filter passed (21 tests, 86 assertions)
+2026-05-23T17:24:32+02:00 L3SP-022 plan_updated status=erledigt
+2026-05-23T17:24:32+02:00 L3SP-022 done
+2026-05-23T17:25:05+02:00 L3SP-023 start
+2026-05-23T17:26:27+02:00 L3SP-023 plan_read kat=B file=MapDataCrudIntegrationTest.php:274 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:26:27+02:00 L3SP-023 sut_read upstream/webtrees/app/Http/RequestHandlers/MapDataAdd.php
+2026-05-23T17:26:27+02:00 L3SP-023 sut_read upstream/webtrees/resources/views/admin/location-edit.phtml
+2026-05-23T17:26:27+02:00 L3SP-023 sut_read upstream/webtrees/app/Http/Routes/WebRoutes.php
+2026-05-23T17:27:33+02:00 L3SP-023 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf ersetzt; pinnt Form-Action mit URL-encoded MapDataSave-Route route=%2Fmap-data-update und leeres Hidden-Input name=parent_id value= — komplementaer zu test_map_data_add_handle_with_no_parent_returns_ok das nur den Statuscode prueft)
+2026-05-23T17:27:33+02:00 L3SP-023 follow_up_fix MapDataCrudIntegrationTest::test_map_data_edit_handle_non_existent_location_redirects: createMock(LeafletJsService::class) -> createStub gemaess Session-Verantwortung und Prompt-Hinweis (LeafletJsService wird im null-id-Pfad nie aufgerufen, createMock ohne Expectations erzeugte PHPUnit-Notice)
+2026-05-23T17:27:33+02:00 L3SP-023 test_filter passed (21 tests, 90 assertions)
+2026-05-23T17:27:40+02:00 L3SP-023 plan_updated status=erledigt
+2026-05-23T17:27:40+02:00 L3SP-023 done
+2026-05-23T17:28:39+02:00 L3SP-024 start
+2026-05-23T17:28:39+02:00 L3SP-024 plan_read kat=B file=MapDataCrudIntegrationTest.php:309 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:28:48+02:00 L3SP-024 sut_read upstream/webtrees/app/Http/RequestHandlers/MapDataDelete.php
+2026-05-23T17:29:54+02:00 L3SP-024 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf mit gestubter Parent-Id ersetzt; pinnt Location-Header mit URL-encoded MapDataList-Route route=%2Fmap-data%2F7 — beweist place->parent()->id()-Propagation in den Redirect-URL und ist komplementaer zu test_map_data_delete_handle_with_mock_service_returns_found das nur Statuscode und findById/deleteRecursively-Calls prueft)
+2026-05-23T17:30:06+02:00 L3SP-024 test_filter passed (21 tests, 96 assertions)
+2026-05-23T17:30:12+02:00 L3SP-024 plan_updated status=erledigt
+2026-05-23T17:30:12+02:00 L3SP-024 done
+2026-05-23T17:32:16+02:00 L3SP-025 start
+2026-05-23T17:32:21+02:00 L3SP-025 plan_read kat=B file=MapDataCrudIntegrationTest.php:361 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:32:21+02:00 L3SP-025 sut_read upstream/webtrees/app/Http/RequestHandlers/MapDataDeleteUnused.php
+2026-05-23T17:32:21+02:00 L3SP-025 sut_read upstream/webtrees/app/Http/Routes/WebRoutes.php
+2026-05-23T17:33:09+02:00 L3SP-025 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf mit gemocktem MapDataService ersetzt; pinnt Location-Header mit URL-encoded MapDataList-Route route=%2Fmap-data ohne parent_id-Suffix — beweist route(MapDataList::class) ohne Parameter und ist komplementaer zu test_map_data_delete_unused_handle_deletes_and_redirects das nur deleteUnusedLocations(null, [0]) und Statuscode prueft)
+2026-05-23T17:33:18+02:00 L3SP-025 test_filter passed (21 tests, 103 assertions)
+2026-05-23T17:33:29+02:00 L3SP-025 plan_updated status=erledigt
+2026-05-23T17:33:29+02:00 L3SP-025 done
+2026-05-23T17:35:41+02:00 L3SP-026 start
+2026-05-23T17:35:51+02:00 L3SP-026 plan_read kat=B file=MapDataCrudIntegrationTest.php:400 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:35:51+02:00 L3SP-026 sut_read upstream/webtrees/app/Http/RequestHandlers/MapDataEdit.php
+2026-05-23T17:35:51+02:00 L3SP-026 sut_read upstream/webtrees/resources/views/admin/location-edit.phtml
+2026-05-23T17:35:51+02:00 L3SP-026 sut_read upstream/webtrees/app/PlaceLocation.php
+2026-05-23T17:36:23+02:00 L3SP-026 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf mit DB-inserted Location ersetzt; pinnt 200-Render-Pfad, Form-Action route=%2Fmap-data-update, Hidden-Input place_id mit DB-id und new_place_name mit locationName — komplementaer zu test_map_data_edit_handle_non_existent_location_redirects das nur den id===null-Redirect-Pfad prueft)
+2026-05-23T17:36:34+02:00 L3SP-026 test_filter passed (21 tests, 108 assertions)
+2026-05-23T17:36:40+02:00 L3SP-026 plan_updated status=erledigt
+2026-05-23T17:36:40+02:00 L3SP-026 done
+2026-05-23T17:37:20+02:00 L3SP-027 start
+2026-05-23T17:37:28+02:00 L3SP-027 plan_read kat=B file=MapDataCrudIntegrationTest.php:450 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:37:41+02:00 L3SP-027 sut_read upstream/webtrees/app/Http/RequestHandlers/MapDataExportGeoJson.php
+2026-05-23T17:38:02+02:00 L3SP-027 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf mit Registry-injected MapDataService ersetzt; pinnt content-disposition mit Default-Dateinamen Global.geojson bei null parent_id — komplementaer zu test_map_data_export_geojson_returns_geojson das nur Statuscode und content-type prueft)
+2026-05-23T17:38:15+02:00 L3SP-027 test_filter passed (21 tests, 110 assertions)
+2026-05-23T17:38:15+02:00 L3SP-027 plan_updated status=erledigt
+2026-05-23T17:38:15+02:00 L3SP-027 done
+2026-05-23T17:39:12+02:00 L3SP-028 start
+2026-05-23T17:39:12+02:00 L3SP-028 plan_read kat=B file=MapDataCrudIntegrationTest.php:530 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:39:12+02:00 L3SP-028 sut_read upstream/webtrees/app/Http/RequestHandlers/MapDataSave.php
+2026-05-23T17:39:51+02:00 L3SP-028 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf mit bereits in DB existierendem Namen ersetzt; pinnt Idempotenz-Zweig if (!exists_query->exists()) — kein doppelter INSERT bei (name, parent_id=null), Statuscode 302, Original-Koordinaten unveraendert; komplementaer zu test_map_data_save_inserts_new_location und test_map_data_save_with_empty_coordinates_creates_location die nur Neuanlage-Pfade pruefen)
+2026-05-23T17:40:01+02:00 L3SP-028 test_filter passed (21 tests, 115 assertions)
+2026-05-23T17:40:06+02:00 L3SP-028 plan_updated status=erledigt
+2026-05-23T17:40:06+02:00 L3SP-028 done
+2026-05-23T17:40:51+02:00 L3SP-031 start
+2026-05-23T17:41:55+02:00 L3SP-031 sut_read app/Http/RequestHandlers/MergeFactsAction.php
+2026-05-23T17:42:29+02:00 L3SP-031 test_filter passed (1 tests, 7 assertions)
+2026-05-23T17:42:29+02:00 L3SP-031 done
+2026-05-23T17:43:31+02:00 L3SP-035 start
+2026-05-23T17:43:47+02:00 L3SP-035 plan_read kat=B file=NotFoundIntegrationTest.php:36 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:43:47+02:00 L3SP-035 sut_read upstream/webtrees/app/Http/RequestHandlers/NotFound.php
+2026-05-23T17:44:29+02:00 L3SP-035 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf ersetzt; pinnt Location-Header auf Home-Page-Route '/' — komplementaer zu test_handle_get_request_redirects_to_home_page das nur Statuscode 302 prueft, der Redirect-Ziel-Pfad war bisher nicht assertiert)
+2026-05-23T17:45:00+02:00 L3SP-035 test_filter passed (4 tests, 14 assertions)
+2026-05-23T17:45:08+02:00 L3SP-035 plan_updated status=erledigt
+2026-05-23T17:45:08+02:00 L3SP-035 done
+2026-05-23T17:45:48+02:00 L3SP-036 start
+2026-05-23T17:46:30+02:00 L3SP-036 sut_read upstream/webtrees/app/Http/RequestHandlers/NotePage.php
+2026-05-23T17:47:37+02:00 L3SP-036 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf ersetzt; pinnt Link-Header mit rel="canonical" und Note-URL — komplementaer zu test_handle_returns_ok_for_visible_note das nur den 200-Statuscode prueft, der Canonical-Marker war bisher nicht assertiert)
+2026-05-23T17:47:54+02:00 L3SP-036 test_filter passed (4 tests, 27 assertions)
+2026-05-23T17:47:54+02:00 L3SP-036 done
+2026-05-23T17:49:34+02:00 L3SP-037 start
+2026-05-23T17:49:34+02:00 L3SP-037 plan_read kat=B file=PageBlockDisplayIntegrationTest.php:74 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:49:34+02:00 L3SP-037 sut_read upstream/webtrees/app/Http/RequestHandlers/TreePageBlock.php
+2026-05-23T17:50:16+02:00 L3SP-037 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf mit realem Tree und realer block-Zeile ersetzt; pinnt DB-Lookup-Branch DB::table('block')->where(...)->value('block_id') — Handler reicht aufgeloeste block_id (>0) an HomePageService::getBlockModule durch und rendert Block-Inhalt in layouts/ajax; komplementaer zu test_tree_page_block_returns_ok_response das nur den Tree-Stub-Pfad mit block_id=0 und reinen Statuscode prueft)
+2026-05-23T17:50:23+02:00 L3SP-037 test_filter passed (4 tests, 17 assertions)
+2026-05-23T17:50:23+02:00 L3SP-037 plan_updated status=erledigt
+2026-05-23T17:50:23+02:00 L3SP-037 done
+2026-05-23T17:51:20+02:00 L3SP-038 start
+2026-05-23T17:51:31+02:00 L3SP-038 sut_read upstream/webtrees/app/Http/RequestHandlers/UserPageBlock.php
+2026-05-23T17:52:16+02:00 L3SP-038 test_filter passed (4 tests, 22 assertions)
+2026-05-23T17:52:16+02:00 L3SP-038 done
+2026-05-23T17:52:52+02:00 L3SP-039 start
+2026-05-23T17:52:52+02:00 L3SP-039 plan_read kat=B file=PageBlockEditIntegrationTest.php:70 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:53:04+02:00 L3SP-039 sut_read upstream/webtrees/app/Http/RequestHandlers/TreePageBlockEdit.php
+2026-05-23T17:54:10+02:00 L3SP-039 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf mit realem Tree und distinkter block_id=4711 ersetzt; pinnt zwei bisher nicht-asserted Properties: a) save_url im Body enthaelt 'tree-page-block-update/4711' — propagiert block_id aus dem Request in die Form-Action, b) gerenderter H2 enthaelt block->title() konkateniert mit ' — Preferences' — propagiert den vom HomePageService aufgeloesten Block-Titel. Komplementaer zu test_tree_page_block_edit_returns_ok_response das nur Statuscode 200 mit block_id=1 prueft)
+2026-05-23T17:56:10+02:00 L3SP-039 test_filter passed (4 tests, 16 assertions)
+2026-05-23T17:56:15+02:00 L3SP-039 plan_updated status=erledigt
+2026-05-23T17:56:15+02:00 L3SP-039 done
+2026-05-23T17:57:42+02:00 L3SP-040 start
+2026-05-23T17:57:42+02:00 L3SP-040 plan_read kat=B file=PageBlockEditIntegrationTest.php:117 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T17:57:48+02:00 L3SP-040 sut_read upstream/webtrees/app/Http/RequestHandlers/UserPageBlockEdit.php
+2026-05-23T17:58:16+02:00 L3SP-040 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf mit realem Tree, realem User und distinkter block_id=4712 ersetzt; pinnt zwei bisher nicht-asserted Properties: a) save_url im Body enthaelt 'my-page-block-edit%2F4712' — propagiert block_id aus dem Request in die Form-Action, b) gerenderter H2 enthaelt block->title() konkateniert mit ' — Preferences' — propagiert den vom HomePageService aufgeloesten Block-Titel. Schwester von L3SP-039 fuer UserPageBlockEdit; komplementaer zu test_user_page_block_edit_returns_ok_response das nur Statuscode 200 mit block_id=1 prueft)
+2026-05-23T17:58:27+02:00 L3SP-040 test_filter passed (4 tests, 20 assertions)
+2026-05-23T17:58:27+02:00 L3SP-040 plan_updated status=erledigt
+2026-05-23T17:58:27+02:00 L3SP-040 done
+2026-05-23T17:59:00+02:00 L3SP-041 start
+2026-05-23T17:59:18+02:00 L3SP-041 sut_read app/Http/RequestHandlers/TreePageBlockUpdate.php
+2026-05-23T18:01:16+02:00 L3SP-041 test_filter passed (4 tests, 20 assertions)
+2026-05-23T18:01:16+02:00 L3SP-041 done
+2026-05-23T18:02:01+02:00 L3SP-042 start
+2026-05-23T18:02:20+02:00 L3SP-042 sut_read app/Http/RequestHandlers/UserPageBlockUpdate.php
+2026-05-23T18:03:03+02:00 L3SP-042 test_filter passed (4 tests, 26 assertions)
+2026-05-23T18:03:03+02:00 L3SP-042 done
+2026-05-23T18:03:52+02:00 L3SP-043 start
+2026-05-23T18:03:52+02:00 L3SP-043 plan_read kat=B file=PasswordResetActionIntegrationTest.php:56 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T18:03:52+02:00 L3SP-043 sut_read upstream/webtrees/app/Http/RequestHandlers/PasswordResetAction.php
+2026-05-23T18:05:40+02:00 L3SP-043 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf mit realem Tree und expired-token ersetzt; pinnt die in den anderen beiden Tests nicht-asserted tree?->name()-Propagation aus dem Expired-Token-Zweig: route(PasswordRequestPage::class, ['tree' => $tree?->name()]) — Tree-Name landet im Location-Header. test_handle_with_expired_token setzt kein Tree-Attribut, test_handle_with_valid_token leitet auf HomePage ohne Tree-Parameter; daher komplementaer)
+2026-05-23T18:05:40+02:00 L3SP-043 test_filter passed (3 tests, 16 assertions)
+2026-05-23T18:05:40+02:00 L3SP-043 plan_updated status=erledigt
+2026-05-23T18:05:40+02:00 L3SP-043 done
+2026-05-23T18:06:23+02:00 L3SP-044 start
+2026-05-23T18:06:46+02:00 L3SP-044 sut_read upstream/webtrees/app/Http/RequestHandlers/PasteFact.php
+2026-05-23T18:07:59+02:00 L3SP-044 plan_read kat=B file=PasteFactIntegrationTest.php:51 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T18:07:59+02:00 L3SP-044 strategy_chosen BEHAVIOR_HANDLE (class_exists durch handle()-Lauf ersetzt; pinnt die Location-Header-Propagation aus redirect($record->url()) — Property nicht durch test_handle_pastes_fact_and_redirects abgedeckt, dort wird nur der Statuscode geprueft)
+2026-05-23T18:07:59+02:00 L3SP-044 test_filter passed (2 tests, 13 assertions)
+2026-05-23T18:07:59+02:00 L3SP-044 plan_updated status=erledigt
+2026-05-23T18:07:59+02:00 L3SP-044 done
+2026-05-23T18:09:08+02:00 L3SP-045 start
+2026-05-23T18:09:16+02:00 L3SP-045 sut_read app/Http/Middleware/PublicFiles.php
+2026-05-23T18:09:39+02:00 L3SP-045 test_filter passed (4 tests, 18 assertions)
+2026-05-23T18:09:39+02:00 L3SP-045 done
+2026-05-23T18:10:44+02:00 L3SP-046 start
+2026-05-23T18:10:44+02:00 L3SP-046 plan_read kat=B file=RenumberTreeActionIntegrationTest.php:239 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T18:13:57+02:00 L3SP-046 sut_read upstream/webtrees/app/Http/RequestHandlers/RenumberTreePage.php
+2026-05-23T18:13:57+02:00 L3SP-046 strategy_chosen BEHAVIOR_HANDLE (class_exists durch RenumberTreePage->handle()-Lauf ersetzt; pinnt den nicht-leeren Render-Pfad: Tree mit Cross-Tree-Duplikat-XREF -> View rendert das POST-Formular nach RenumberTreeAction; komplementär zum bestehenden Leer-Baum-Test, der den emptyTree-Pfad pinnt; $this->tree wird neu zugewiesen, damit Teardown den neuen Baum aufräumt)
+2026-05-23T18:13:57+02:00 L3SP-046 test_filter passed (6 tests, 28 assertions)
+2026-05-23T18:13:57+02:00 L3SP-046 plan_updated status=erledigt
+2026-05-23T18:13:57+02:00 L3SP-046 done
+2026-05-23T18:15:10+02:00 L3SP-047 start
+2026-05-23T18:15:19+02:00 L3SP-047 sut_read upstream/webtrees/app/Http/RequestHandlers/ReportListPage.php
+2026-05-23T18:16:46+02:00 L3SP-047 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T18:16:46+02:00 L3SP-047 test_filter passed (16 tests, 64 assertions)
+2026-05-23T18:16:46+02:00 L3SP-047 plan_updated status=erledigt
+2026-05-23T18:16:46+02:00 L3SP-047 done
+2026-05-23T18:18:13+02:00 L3SP-048 start
+2026-05-23T18:18:13+02:00 L3SP-048 plan_read kat=C file=ReportPdfObjectsIntegrationTest.php:78 strategy=POSTCOND status=offen
+2026-05-23T18:19:25+02:00 L3SP-048 sut_read upstream/webtrees/app/Report/ReportPdfTextBox.php
+2026-05-23T18:19:25+02:00 L3SP-048 strategy_chosen POSTCOND (assertTrue(true) durch echte TCPDF-Postconditions ersetzt: GetY()=cY+cH=20.0 pinnt den newline-Zweig (line 318-321), lastCellHeight=0.0 pinnt den Reset-Pfad im newline-Zweig komplementär zum non-newline-Zweig (line 313-316) im with_border_and_fill-Test, largestFontHeight=0.0 pinnt die Renderer-Initialisierung in line 115)
+2026-05-23T18:19:25+02:00 L3SP-048 test_filter passed (10 tests, 25 assertions)
+2026-05-23T18:19:25+02:00 L3SP-048 plan_updated status=erledigt
+2026-05-23T18:19:25+02:00 L3SP-048 done
+2026-05-23T18:21:02+02:00 L3SP-049 start
+2026-05-23T18:21:02+02:00 L3SP-049 plan_read kat=C file=ReportPdfObjectsIntegrationTest.php:103 strategy=POSTCOND status=offen
+2026-05-23T18:21:16+02:00 L3SP-049 sut_read upstream/webtrees/app/Report/ReportPdfTextBox.php
+2026-05-23T18:21:36+02:00 L3SP-049 strategy_chosen POSTCOND (assertTrue(true) durch echte TCPDF-Postconditions des Else-Zweigs ersetzt: GetY()=cY=0.0 pinnt das Halten der Y-Position (line 314 setXY), lastCellHeight=15.0 pinnt das Speichern des Cell-Footprints (line 315) — komplementär zum newline-Zweig in L3SP-048 (lastCellHeight=0.0, Y vorgerückt))
+2026-05-23T18:21:49+02:00 L3SP-049 test_filter passed (10 tests, 27 assertions)
+2026-05-23T18:21:57+02:00 L3SP-049 plan_updated status=erledigt
+2026-05-23T18:21:57+02:00 L3SP-049 done
+2026-05-23T18:22:48+02:00 L3SP-050 start
+2026-05-23T18:22:48+02:00 L3SP-050 plan_read kat=C file=ReportPdfObjectsIntegrationTest.php:128 strategy=POSTCOND status=offen
+2026-05-23T18:24:03+02:00 L3SP-050 sut_read upstream/webtrees/app/Report/ReportPdfTextBox.php
+2026-05-23T18:24:03+02:00 L3SP-050 strategy_chosen POSTCOND (assertTrue(true) durch echte TCPDF-Postconditions ersetzt: pagecheck=true + reseth=true + newline=true → setY(cY+0)=0.0 pinnt das Zusammenspiel des Reseth-Zweigs (line 305-306, cH=0) mit dem Newline-Zweig (line 319, setY(cY+cH)); lastCellHeight=0.0 pinnt sowohl Pagecheck-Reset (line 221) als auch Newline-Reset (line 320); getPage()=1 pinnt das Ausbleiben des Seitenumbruchs (checkPageBreakPDF(10.0)=false auf frischer Seite))
+2026-05-23T18:24:17+02:00 L3SP-050 test_filter passed (10 tests, 32 assertions)
+2026-05-23T18:24:22+02:00 L3SP-050 plan_updated status=erledigt
+2026-05-23T18:24:22+02:00 L3SP-050 done
+2026-05-23T18:24:57+02:00 L3SP-051 start
+2026-05-23T18:26:01+02:00 L3SP-051 sut_read upstream/webtrees/app/Report/ReportPdfCell.php
+2026-05-23T18:27:05+02:00 L3SP-051 strategy_chosen POSTCOND
+2026-05-23T18:27:05+02:00 L3SP-051 test_filter passed (1 tests, 6 assertions)
+2026-05-23T18:27:05+02:00 L3SP-051 done
+2026-05-23T18:28:06+02:00 L3SP-052 start
+2026-05-23T18:29:36+02:00 L3SP-052 plan_read kat=C file=ReportPdfObjectsIntegrationTest.php:184 strategy=POSTCOND status=offen
+2026-05-23T18:29:36+02:00 L3SP-052 sut_read upstream/webtrees/app/Report/ReportPdfCell.php
+2026-05-23T18:29:36+02:00 L3SP-052 strategy_chosen POSTCOND (assertTrue(true) durch echte TCPDF-Postconditions des elseif-Zweigs (line 138-140) ersetzt: newline=0 + nicht-leerer Text triggert die Bedingung lastCellHeight(0.0) < getLastH() → lastCellHeight = getLastH(); assertSame(lastH, lastCellHeight) und assertGreaterThan(0.0, lastH) pinnen die Zuweisung; GetY()=0.0 pinnt das Ausbleiben des Newline-Vorrückens (newline=0 hält Cursor in Zeile); komplementär zu L3SP-051 (newline=1 → Reset-Zweig line 136-137, lastCellHeight=0))
+2026-05-23T18:29:36+02:00 L3SP-052 test_filter passed (10 tests, 41 assertions)
+2026-05-23T18:29:36+02:00 L3SP-052 plan_updated status=erledigt
+2026-05-23T18:29:36+02:00 L3SP-052 done
+2026-05-23T18:30:06+02:00 L3SP-053 start
+2026-05-23T18:30:34+02:00 L3SP-053 sut_read upstream/webtrees/app/Http/RequestHandlers/SearchReplaceAction.php
+2026-05-23T18:31:00+02:00 L3SP-053 test_filter passed (4 tests, 32 assertions)
+2026-05-23T18:31:00+02:00 L3SP-053 done
+2026-05-23T18:32:03+02:00 L3SP-054 start
+2026-05-23T18:32:14+02:00 L3SP-054 sut_read app/Http/RequestHandlers/SearchReplacePage.php
+2026-05-23T18:32:42+02:00 L3SP-054 test_filter passed (3 tests, 12 assertions)
+2026-05-23T18:32:42+02:00 L3SP-054 done
+2026-05-23T18:33:18+02:00 L3SP-055 start
+2026-05-23T18:34:46+02:00 L3SP-055 sut_read upstream/webtrees/app/Http/RequestHandlers/TomSelectFamily.php
+2026-05-23T18:34:46+02:00 L3SP-055 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T18:35:44+02:00 L3SP-055 test_filter passed (30 tests, 157 assertions)
+2026-05-23T18:35:44+02:00 L3SP-055 done
+2026-05-23T18:36:44+02:00 L3SP-056 start
+2026-05-23T18:37:06+02:00 L3SP-056 sut_read upstream/webtrees/app/Http/RequestHandlers/TomSelectIndividual.php
+2026-05-23T18:38:32+02:00 L3SP-056 test_filter passed (30 tests, 168 assertions)
+2026-05-23T18:38:32+02:00 L3SP-056 done
+2026-05-23T18:39:08+02:00 L3SP-057 start
+2026-05-23T18:40:48+02:00 L3SP-057 sut_read app/Http/RequestHandlers/TomSelectLocation.php
+2026-05-23T18:41:08+02:00 L3SP-057 test_filter passed (1 tests, 8 assertions)
+2026-05-23T18:41:08+02:00 L3SP-057 done
+2026-05-23T18:42:30+02:00 L3SP-058 start
+2026-05-23T18:42:45+02:00 L3SP-058 plan_read kat=B file=TomSelectIntegrationTest.php:357 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T18:42:45+02:00 L3SP-058 sut_read upstream/webtrees/app/Http/RequestHandlers/TomSelectMediaObject.php
+2026-05-23T18:42:45+02:00 L3SP-058 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T18:44:00+02:00 L3SP-058 test_filter passed (30 tests, 185 assertions)
+2026-05-23T18:44:00+02:00 L3SP-058 plan_updated status=erledigt
+2026-05-23T18:44:00+02:00 L3SP-058 done
+2026-05-23T18:44:27+02:00 L3SP-059 start
+2026-05-23T18:45:40+02:00 L3SP-059 sut_read upstream/webtrees/app/Http/RequestHandlers/TomSelectNote.php
+2026-05-23T18:46:49+02:00 L3SP-059 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T18:46:49+02:00 L3SP-059 test_filter passed (1 tests, 8 assertions)
+2026-05-23T18:46:49+02:00 L3SP-059 class_filter passed (30 tests, 191 assertions)
+2026-05-23T18:46:49+02:00 L3SP-059 done
+2026-05-23T18:47:39+02:00 L3SP-060 start
+2026-05-23T18:49:23+02:00 L3SP-060 sut_read app/Http/RequestHandlers/TomSelectPlace.php
+2026-05-23T18:49:30+02:00 L3SP-060 strategy_chosen BEHAVIOR_HANDLE (kein XREF-Lookup-Zweig in TomSelectPlace; positiver searchPlaces-Treffer mit Althorp)
+2026-05-23T18:50:09+02:00 L3SP-060 test_filter passed (1 tests, 13 assertions)
+2026-05-23T18:50:09+02:00 L3SP-060 done
+2026-05-23T18:50:47+02:00 L3SP-061 start
+2026-05-23T18:52:01+02:00 L3SP-061 sut_read app/Http/RequestHandlers/TomSelectRepository.php
+2026-05-23T18:52:34+02:00 L3SP-061 test_filter passed (1 test, 13 assertions)
+2026-05-23T18:52:34+02:00 L3SP-061 done
+2026-05-23T18:53:07+02:00 L3SP-062 start
+2026-05-23T18:53:07+02:00 L3SP-062 plan_read kat=B file=TomSelectIntegrationTest.php:625 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T18:53:07+02:00 L3SP-062 sut_read upstream/webtrees/app/Http/RequestHandlers/TomSelectSource.php
+2026-05-23T18:53:07+02:00 L3SP-062 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T18:53:07+02:00 L3SP-062 test_filter passed (1 test, 13 assertions)
+2026-05-23T18:53:07+02:00 L3SP-062 class_filter passed (30 tests, 224 assertions)
+2026-05-23T18:53:07+02:00 L3SP-062 plan_updated status=erledigt
+2026-05-23T18:53:07+02:00 L3SP-062 done
+2026-05-23T18:57:00+02:00 L3SP-063 start
+2026-05-23T18:57:00+02:00 L3SP-063 plan_read kat=B file=TomSelectIntegrationTest.php:665 strategy=BEHAVIOR_HANDLE status=offen
+2026-05-23T18:57:42+02:00 L3SP-063 sut_read upstream/webtrees/app/Http/RequestHandlers/TomSelectSubmitter.php
+2026-05-23T18:57:42+02:00 L3SP-063 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T18:59:42+02:00 L3SP-063 test_filter passed (1 test, 13 assertions) verified_by_orchestrator
+2026-05-23T18:59:42+02:00 L3SP-063 plan_updated status=erledigt
+2026-05-23T18:59:42+02:00 L3SP-063 done worker_returned_without_json_orchestrator_finalized
+2026-05-23T19:00:16+02:00 L3SP-064 start
+2026-05-23T19:00:37+02:00 L3SP-064 sut_read upstream/webtrees/app/Http/RequestHandlers/CreateTreePage.php
+2026-05-23T19:01:42+02:00 L3SP-064 test_filter passed (19 tests, 59 assertions)
+2026-05-23T19:01:42+02:00 L3SP-064 done
+ L3SP-065 start
+2026-05-23T19:03:01+02:00 L3SP-065 start
+2026-05-23T19:03:41+02:00 L3SP-065 sut_read upstream/webtrees/app/Http/RequestHandlers/ManageTrees.php
+2026-05-23T19:04:51+02:00 L3SP-065 test_filter passed (1 test, 3 assertions) verified_by_orchestrator
+2026-05-23T19:04:51+02:00 L3SP-065 plan_updated status=erledigt
+2026-05-23T19:04:51+02:00 L3SP-065 done worker_returned_without_json_orchestrator_finalized
+2026-05-23T19:05:23+02:00 L3SP-066 start
+2026-05-23T19:05:51+02:00 L3SP-066 sut_read upstream/webtrees/app/Http/RequestHandlers/MergeTreesAction.php
+2026-05-23T19:06:58+02:00 L3SP-066 test_filter passed (19 tests, 61 assertions)
+2026-05-23T19:06:58+02:00 L3SP-066 done
+2026-05-23T19:07:39+02:00 L3SP-067 start
+2026-05-23T19:08:10+02:00 L3SP-067 sut_read app/Http/RequestHandlers/MergeTreesPage.php
+2026-05-23T19:09:21+02:00 L3SP-067 test_filter passed (19 tests, 62 assertions)
+2026-05-23T19:09:21+02:00 L3SP-067 done
+2026-05-23T19:09:47+02:00 L3SP-068 start
+2026-05-23T19:10:18+02:00 L3SP-068 sut_read upstream/webtrees/app/Http/RequestHandlers/SelectDefaultTree.php
+2026-05-23T19:11:17+02:00 L3SP-068 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T19:11:17+02:00 L3SP-068 test_filter passed (1 tests, 4 assertions)
+2026-05-23T19:11:17+02:00 L3SP-068 done
+2026-05-23T19:11:56+02:00 L3SP-069 start
+2026-05-23T19:12:24+02:00 L3SP-069 sut_read upstream/webtrees/app/Http/RequestHandlers/SynchronizeTrees.php
+2026-05-23T19:20:20+02:00 L3SP-069 test_filter passed (19 tests, 66 assertions)
+2026-05-23T19:20:20+02:00 L3SP-069 follow_up pre_existing_db_orphan first_run_red_then_green (a01-mgmt-924b6904) — cleared by new BEHAVIOR_HANDLE sweep; not a worker-scope regression
+2026-05-23T19:20:20+02:00 L3SP-069 done
+2026-05-23T19:22:22+02:00 L3SP-070 start
+2026-05-23T19:22:29+02:00 L3SP-070 sut_read upstream/webtrees/app/Http/RequestHandlers/TreePageDefaultEdit.php
+2026-05-23T19:23:24+02:00 L3SP-070 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T19:23:30+02:00 L3SP-070 test_filter passed (2 tests, 8 assertions)
+2026-05-23T19:23:36+02:00 L3SP-070 done
+2026-05-23T19:24:16+02:00 L3SP-071 start
+2026-05-23T19:24:35+02:00 L3SP-071 sut_read upstream/webtrees/app/Http/RequestHandlers/TreePageDefaultUpdate.php
+2026-05-23T19:26:37+02:00 L3SP-071 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T19:26:37+02:00 L3SP-071 test_filter passed (2 tests, 12 assertions)
+2026-05-23T19:26:37+02:00 L3SP-071 done
+2026-05-23T19:27:17+02:00 L3SP-072 start
+2026-05-23T19:27:29+02:00 L3SP-072 sut_read upstream/webtrees/app/Http/RequestHandlers/TreePageEdit.php
+2026-05-23T19:28:28+02:00 L3SP-072 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T19:33:08+02:00 L3SP-072 test_filter passed (2 tests, 7 assertions)
+2026-05-23T19:33:08+02:00 L3SP-072 follow_up pre_existing_phpunit_notice TreePageEditIntegrationTest::test_handle_returns_ok_response uses createMock+method+willReturn ohne expects — PHPUnit 12 notice (Stub-Pattern empfohlen). Bestand vor L3SP-072, kein Eingriff.
+2026-05-23T19:33:11+02:00 L3SP-072 done
+2026-05-23T19:33:43+02:00 L3SP-073 start
+2026-05-23T19:33:56+02:00 L3SP-073 sut_read app/Http/RequestHandlers/TreePage.php
+2026-05-23T19:36:04+02:00 L3SP-073 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T19:36:04+02:00 L3SP-073 test_filter passed (2 tests, 8 assertions)
+2026-05-23T19:36:04+02:00 L3SP-073 done
+2026-05-23T19:36:45+02:00 L3SP-074 start
+2026-05-23T19:37:26+02:00 L3SP-074 sut_read upstream/webtrees/app/Http/RequestHandlers/TreePageUpdate.php
+2026-05-23T19:37:57+02:00 L3SP-074 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T19:39:06+02:00 L3SP-074 test_filter passed (2 tests, 9 assertions) verified_by_orchestrator
+2026-05-23T19:39:06+02:00 L3SP-074 plan_updated status=erledigt
+2026-05-23T19:39:06+02:00 L3SP-074 done worker_returned_without_json_orchestrator_finalized
+2026-05-23T19:39:40+02:00 L3SP-075 start
+2026-05-23T19:40:12+02:00 L3SP-075 sut_read app/Http/RequestHandlers/UserPageDefaultEdit.php
+2026-05-23T19:41:06+02:00 L3SP-075 test_filter passed (2 tests, 7 assertions; 1 PHPUnit Notice aus Bestand-Testmethode test_handle_returns_ok_response — ausserhalb Scope)
+2026-05-23T19:41:06+02:00 L3SP-075 done
+2026-05-23T19:42:27+02:00 L3SP-076 start
+2026-05-23T19:42:35+02:00 L3SP-076 sut_read upstream/webtrees/app/Http/RequestHandlers/UserPageDefaultUpdate.php
+2026-05-23T19:43:03+02:00 L3SP-076 strategy_chosen BEHAVIOR_HANDLE
+2026-05-23T19:43:18+02:00 L3SP-076 test_filter passed (2 tests, 12 assertions)
+2026-05-23T19:43:18+02:00 L3SP-076 done
+2026-05-23T19:43:56+02:00 L3SP-077 start
+2026-05-23T19:44:18+02:00 L3SP-077 sut_read app/Http/RequestHandlers/UserPageEdit.php
+2026-05-23T19:46:07+02:00 L3SP-077 test_filter passed (2 tests, 8 assertions)
+2026-05-23T19:46:07+02:00 L3SP-077 done
+2026-05-23T19:47:10+02:00 L3SP-078 start
+2026-05-23T19:47:13+02:00 L3SP-078 sut_read app/Http/RequestHandlers/UserPage.php
+2026-05-23T19:48:52+02:00 L3SP-078 test_filter passed (2 tests, 8 assertions, 1 phpunit notice from bestand test_handle_returns_ok_response) verified_by_orchestrator
+2026-05-23T19:48:52+02:00 L3SP-078 plan_updated status=erledigt
+2026-05-23T19:48:52+02:00 L3SP-078 done worker_returned_without_json_orchestrator_finalized
+2026-05-23T19:49:29+02:00 L3SP-079 start
+2026-05-23T19:49:42+02:00 L3SP-079 sut_read app/Http/RequestHandlers/UserPageUpdate.php
+2026-05-23T19:50:28+02:00 L3SP-079 sut_read app/Http/RequestHandlers/UserPageUpdate.php
+2026-05-23T19:51:23+02:00 L3SP-079 test_filter passed (2 tests, 10 assertions)
+2026-05-23T19:51:23+02:00 L3SP-079 done

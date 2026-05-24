@@ -245,6 +245,10 @@ class LegacyUrlRedirectIntegrationTest extends MysqlTestCase
 
     /**
      * B6: Pedigree-Redirect mit Style-Mapping (orientation→style).
+     *
+     * Der PedigreeChartModule gehört zu den per Default aktivierten Core-Modulen
+     * (siehe ModuleService::CORE_MODULES), nach `bootModules()` im Test-Setup
+     * findet `findByComponent` den Handler — Happy-Path 301 ist verhalts-definitiv.
      */
     public function test_pedigree_redirect_with_style_mapping(): void
     {
@@ -254,18 +258,14 @@ class LegacyUrlRedirectIntegrationTest extends MysqlTestCase
         $request = $this->createRequest(query: [
             'ged'         => $this->tree->name(),
             'rootid'      => 'I1',
-            'orientation'  => '2',
-            'generations'  => '5',
+            'orientation' => '2',
+            'generations' => '5',
         ]);
 
-        try {
-            $response = $handler->handle($request);
-            $this->assertSame(301, $response->getStatusCode());
-            $location = $response->getHeaderLine('Location');
-            $this->assertNotEmpty($location);
-        } catch (HttpGoneException) {
-            // PedigreeChartModule nicht für diesen Test-Tree verfügbar — akzeptabel
-            $this->addToAssertionCount(1);
-        }
+        $response = $handler->handle($request);
+
+        $this->assertSame(301, $response->getStatusCode());
+        $this->assertNotEmpty($response->getHeaderLine('Location'));
+        $this->assertStringContainsString('rel="canonical"', $response->getHeaderLine('Link'));
     }
 }

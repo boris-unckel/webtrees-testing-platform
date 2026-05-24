@@ -25,15 +25,44 @@ use Fisharebest\Webtrees\Http\RequestHandlers\SearchReplacePage;
 class SearchReplacePageIntegrationTest extends MysqlTestCase
 {
     /**
-     * Die Handler-Klasse muss unter ihrem voll qualifizierten Namen ladbar sein.
+     * Vorbelegte Query-Parameter (search, replace, context) muessen unveraendert
+     * in den gerenderten Response-Body durchgereicht werden — das ist der
+     * eigentliche Kontrakt des Page-Handlers, der das Formular fuer den
+     * SearchReplaceAction-Endpoint vorbereitet.
+     *
+     * Ersetzt den frueheren `class_exists`-Tautologietest, der nur die
+     * Autoloader-Konfiguration prueft und keine Verhaltensinformation traegt.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplacePageTest.php
      * @group ported-l2-doubles
      */
-    public function test_class_exists(): void
+    public function test_handle_renders_query_parameters_into_body(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(SearchReplacePage::class));
+        // Arrange
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create(
+            'search-replace-page-' . substr(md5($this->name()), 0, 8),
+            'Test 3'
+        );
+
+        $handler = new SearchReplacePage();
+        $request = $this->createRequest(
+            query: [
+                'search'  => 'Mueller-Token-' . substr(md5($this->name()), 0, 8),
+                'replace' => 'Schmidt-Token-' . substr(md5($this->name()), 0, 8),
+                'context' => 'name',
+            ],
+            attributes: ['tree' => $this->tree],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+        $body     = (string) $response->getBody();
+
+        // Assert
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertStringContainsString('Mueller-Token-' . substr(md5($this->name()), 0, 8), $body);
+        self::assertStringContainsString('Schmidt-Token-' . substr(md5($this->name()), 0, 8), $body);
     }
 
     /**

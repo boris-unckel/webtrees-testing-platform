@@ -7,6 +7,8 @@ declare(strict_types=1);
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Http\RequestHandlers\TreePageBlock;
 use Fisharebest\Webtrees\Http\RequestHandlers\UserPageBlock;
 use Fisharebest\Webtrees\Module\ModuleBlockInterface;
@@ -63,15 +65,66 @@ class PageBlockDisplayIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Klassen-Smoke-Test: TreePageBlock existiert und ist ladbar.
+     * TreePageBlock::handle resolviert die `block_id`-Query gegen die
+     * `block`-Tabelle und uebergibt das aufgeloeste Ergebnis an den
+     * HomePageService. Komplementaer zu test_tree_page_block_returns_ok_response
+     * (Tree-Stub, block_id=0) — hier wird ein realer Tree und eine echte
+     * block-Zeile angelegt, sodass der DB-Lookup eine konkrete block_id liefert
+     * (nicht 0). Die Mock-Erwartung pinnt die durchgereichte block_id auf den
+     * eingefuegten Primaerschluessel; zusaetzlich wird der gerenderte
+     * Block-Inhalt im Response-Body verifiziert (view layouts/ajax). Damit ist
+     * sichergestellt, dass die DB-Lookup-Branch nicht stillschweigend uebersprungen
+     * werden kann, ohne dass dieser Test rot wird.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageBlockTest.php
      * @group ported-l2-doubles
      */
-    public function test_tree_page_block_class_exists(): void
+    public function test_tree_page_block_resolves_block_id_from_db_and_renders_content(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(TreePageBlock::class));
+        // Arrange — realer Tree mit Admin-Login (TreeService::create benoetigt Schreibrecht)
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('tpb-l3sp037', 'TreePageBlock L3SP-037');
+
+        // Echte block-Zeile fuer diesen Tree anlegen
+        $expected_block_id = (int) DB::table('block')->insertGetId([
+            'gedcom_id'   => $this->tree->id(),
+            'user_id'     => null,
+            'xref'        => null,
+            'location'    => 'main',
+            'block_order' => 1,
+            'module_name' => 'todo',
+        ]);
+
+        $rendered_content = '<p>Block-Inhalt L3SP-037</p>';
+
+        $block = self::createStub(ModuleBlockInterface::class);
+        $block->method('getBlock')->willReturn($rendered_content);
+
+        // Mock-Erwartung pinnt: Handler reicht die aufgeloeste block_id (nicht 0) durch
+        $home_page_service = $this->createMock(HomePageService::class);
+        $home_page_service->expects(self::once())
+            ->method('getBlockModule')
+            ->with($this->tree, $expected_block_id)
+            ->willReturn($block);
+
+        $handler = new TreePageBlock($home_page_service);
+        $request = $this->createRequest(
+            method: 'GET',
+            query: ['block_id' => (string) $expected_block_id],
+            attributes: ['tree' => $this->tree],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: Statuscode 200 und gerenderter Block-Inhalt landet im Response-Body
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString($rendered_content, $body);
+
+        // Aufraeumen: angelegte block-Zeile vor tearDown loeschen (FK auf gedcom_id)
+        DB::table('block')->where('block_id', '=', $expected_block_id)->delete();
+        Auth::logout();
     }
 
     /**
@@ -112,14 +165,66 @@ class PageBlockDisplayIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Klassen-Smoke-Test: UserPageBlock existiert und ist ladbar.
+     * UserPageBlock::handle resolviert die `block_id`-Query gegen die
+     * `block`-Tabelle und uebergibt das aufgeloeste Ergebnis an den
+     * HomePageService. Komplementaer zu test_user_page_block_returns_ok_response
+     * (Tree-Stub, block_id=0) — hier wird ein realer Tree, ein realer User und
+     * eine echte block-Zeile (mit user_id, gedcom_id=null) angelegt, sodass der
+     * DB-Lookup eine konkrete block_id liefert (nicht 0). Die Mock-Erwartung
+     * pinnt die durchgereichte block_id auf den eingefuegten Primaerschluessel;
+     * zusaetzlich wird der gerenderte Block-Inhalt im Response-Body verifiziert
+     * (view layouts/ajax). Damit ist sichergestellt, dass die DB-Lookup-Branch
+     * (Filter auf user_id, nicht gedcom_id) nicht stillschweigend uebersprungen
+     * werden kann, ohne dass dieser Test rot wird.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageBlockTest.php
      * @group ported-l2-doubles
      */
-    public function test_user_page_block_class_exists(): void
+    public function test_user_page_block_resolves_block_id_from_db_and_renders_content(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(UserPageBlock::class));
+        // Arrange — realer Admin-User und realer Tree (TreeService::create benoetigt Schreibrecht)
+        $admin = $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('upb-l3sp038', 'UserPageBlock L3SP-038');
+
+        // Echte block-Zeile fuer diesen User anlegen (user_id gesetzt, gedcom_id=null gemaess UserPageBlock-WHERE)
+        $expected_block_id = (int) DB::table('block')->insertGetId([
+            'gedcom_id'   => null,
+            'user_id'     => $admin->id(),
+            'xref'        => null,
+            'location'    => 'main',
+            'block_order' => 1,
+            'module_name' => 'todo',
+        ]);
+
+        $rendered_content = '<p>User-Block-Inhalt L3SP-038</p>';
+
+        $block = self::createStub(ModuleBlockInterface::class);
+        $block->method('getBlock')->willReturn($rendered_content);
+
+        // Mock-Erwartung pinnt: Handler reicht die aufgeloeste block_id (nicht 0) durch
+        $home_page_service = $this->createMock(HomePageService::class);
+        $home_page_service->expects(self::once())
+            ->method('getBlockModule')
+            ->with($this->tree, $expected_block_id)
+            ->willReturn($block);
+
+        $handler = new UserPageBlock($home_page_service);
+        $request = $this->createRequest(
+            method: 'GET',
+            query: ['block_id' => (string) $expected_block_id],
+            attributes: ['tree' => $this->tree, 'user' => $admin],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: Statuscode 200 und gerenderter Block-Inhalt landet im Response-Body
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString($rendered_content, $body);
+
+        // Aufraeumen: angelegte block-Zeile vor tearDown loeschen (FK auf user_id)
+        DB::table('block')->where('block_id', '=', $expected_block_id)->delete();
+        Auth::logout();
     }
 }

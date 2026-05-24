@@ -41,14 +41,54 @@ class PasteFactIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Bootstrap-Smoke: Handler-Klasse ist autoloadbar.
+     * Der 302-Redirect propagiert die vom GedcomRecord gelieferte URL
+     * unverändert in den Location-Header.
+     *
+     * Pinnt die `redirect($record->url())`-Propagation: Der Location-Header
+     * muss exakt dem `$record->url()`-Rückgabewert entsprechen. Diese Property
+     * ist von test_handle_pastes_fact_and_redirects nicht abgedeckt — dort wird
+     * nur der Statuscode geprüft. Ersetzt eine class_exists-Tautologie aus dem
+     * L2-Port (BEHAVIOR_HANDLE / L3SP-044).
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PasteFactTest.php
      * @group ported-l2-doubles
      */
-    public function test_class_exists(): void
+    public function test_handle_redirect_location_propagates_record_url(): void
     {
-        self::assertTrue(class_exists(PasteFact::class));
+        // Arrange
+        $this->createAndLoginAdmin();
+
+        $expected_url = 'https://webtrees.test/record/X2-url-propagation';
+
+        $record = self::createStub(GedcomRecord::class);
+        $record->method('xref')->willReturn('X2');
+        $record->method('tree')->willReturn($this->tree);
+        $record->method('canEdit')->willReturn(true);
+        $record->method('canShow')->willReturn(true);
+        $record->method('url')->willReturn($expected_url);
+
+        $record_factory = self::createStub(GedcomRecordFactoryInterface::class);
+        $record_factory->method('make')->willReturn($record);
+        Registry::gedcomRecordFactory($record_factory);
+
+        $clipboard_service = $this->createMock(ClipboardService::class);
+        $clipboard_service->expects(self::once())
+            ->method('pasteFact')
+            ->with('fact-url-prop', $record);
+
+        $handler = new PasteFact($clipboard_service);
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_POST,
+            params:     ['fact_id' => 'fact-url-prop'],
+            attributes: ['tree' => $this->tree, 'xref' => 'X2'],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: Location-Header trägt exakt die vom Record gelieferte URL.
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        self::assertSame($expected_url, $response->getHeaderLine('location'));
     }
 
     /**

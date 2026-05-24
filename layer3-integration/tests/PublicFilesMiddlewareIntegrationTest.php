@@ -36,14 +36,30 @@ class PublicFilesMiddlewareIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Klassenexistenz-Smoke.
+     * Existierende `/public/*`-Datei wird statisch ausgeliefert.
+     *
+     * Der innere Handler wird nicht aufgerufen; Statuscode 200, Content-Type
+     * gemäss Mime-Tabelle, Cache-Control mit max-age=31536000.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/Middleware/PublicFilesTest.php
      * @group ported-l2-doubles
      */
-    public function test_class_exists(): void
+    public function test_public_path_existing_file_is_served_statically(): void
     {
-        self::assertTrue(class_exists(PublicFiles::class));
+        // Arrange
+        $request = $this->createRequest();
+        $request = $request->withUri($request->getUri()->withPath('/public/favicon.ico'));
+
+        $innerHandler = $this->createMock(RequestHandlerInterface::class);
+        $innerHandler->expects(self::never())->method('handle');
+
+        // Act
+        $response = $this->middleware->process($request, $innerHandler);
+
+        // Assert
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertSame('image/x-icon', $response->getHeaderLine('content-type'));
+        self::assertSame('public,max-age=31536000', $response->getHeaderLine('cache-control'));
     }
 
     /**

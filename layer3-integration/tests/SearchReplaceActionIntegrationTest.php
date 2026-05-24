@@ -29,15 +29,44 @@ use Illuminate\Support\Collection;
 class SearchReplaceActionIntegrationTest extends MysqlTestCase
 {
     /**
-     * Die Handler-Klasse muss unter ihrem voll qualifizierten Namen ladbar sein.
+     * Bei einem unbekannten Kontext (kein "all", "name" oder "place") darf der Handler
+     * keinerlei Such-Methoden des SearchService aufrufen, muss aber dennoch mit einem
+     * HTTP-302-Redirect auf die SearchReplacePage zurueckkehren. Die switch-Anweisung
+     * im Handler besitzt kein default-Label; der Pfad ohne Such-Aufrufe ist somit eine
+     * scharfe Verhaltensgarantie, die hier verankert wird.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SearchReplaceActionTest.php
      * @group ported-l2-doubles
      */
-    public function test_class_exists(): void
+    public function test_handle_unknown_context_invokes_no_search_methods_but_redirects(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(SearchReplaceAction::class));
+        // Arrange
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('search-replace-unknown-' . substr(md5($this->name()), 0, 8), 'Test');
+
+        $search_service = $this->createMock(SearchService::class);
+        $search_service->expects(self::never())->method('searchIndividuals');
+        $search_service->expects(self::never())->method('searchFamilies');
+        $search_service->expects(self::never())->method('searchRepositories');
+        $search_service->expects(self::never())->method('searchSources');
+        $search_service->expects(self::never())->method('searchNotes');
+
+        $handler = new SearchReplaceAction($search_service);
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            params: [
+                'search'  => 'old-text',
+                'replace' => 'new-text',
+                'context' => 'unknown-context',
+            ],
+            attributes: ['tree' => $this->tree],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
     }
 
     /**

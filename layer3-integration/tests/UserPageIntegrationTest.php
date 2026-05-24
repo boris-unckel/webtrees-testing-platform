@@ -7,7 +7,9 @@ declare(strict_types=1);
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Http\RequestHandlers\UserPage;
+use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\HomePageService;
 use Illuminate\Support\Collection;
 
@@ -43,15 +45,59 @@ class UserPageIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Klassen-Smoke-Test: UserPage existiert und ist ladbar.
+     * UserPage: Container-Resolution + handle() → 200 mit realem HomePageService.
+     *
+     * Verhaltens-Test (BEHAVIOR_HANDLE / L3SP-078): ersetzt die ehemalige
+     * `class_exists`-Tautologie durch einen vollstaendigen Request-Durchlauf
+     * gegen die real verdrahtete Klasse aus dem DI-Container. Smoke-Aspekt
+     * (Aufloesbarkeit) ist im 200-OK enthalten; zusaetzlich werden zwei
+     * spezifische Postconditions geprueft:
+     *   1. Das gerenderte View ist `user-page` — Body enthaelt die in der
+     *      View-Datei verankerte Block-Container-Klasse `wt-main-blocks`.
+     *   2. Der dokumentierte Side-Effekt des Handlers (Default-User-Bloecke
+     *      kopieren, wenn der User noch keine eigenen Bloecke hat) hat
+     *      stattgefunden — nach `handle()` existieren `block`-Zeilen fuer
+     *      die `user_id` des Test-Admins.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/UserPageTest.php
      * @group ported-l2-doubles
      */
-    public function test_user_page_class_exists(): void
+    public function test_user_page_handles_request_via_container(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(UserPage::class));
+        // Arrange: Tree, eingeloggter Admin als Request-User; UserPage setzt
+        // einen angemeldeten Benutzer voraus (Validator::attributes->user()).
+        $this->tree = $this->treeService->create('user-page', 'User Page');
+        $admin      = $this->createAndLoginAdmin();
+
+        // Ausgangslage: Admin hat noch keine eigenen User-Bloecke. Damit der
+        // Default-Copy-Pfad des Handlers tatsaechlich greift, evtl. von
+        // frueheren Laeufen liegen gebliebene Bloecke fuer diese user_id
+        // entfernen.
+        DB::table('block')->where('user_id', '=', $admin->id())->delete();
+
+        $handler = Registry::container()->get(UserPage::class);
+        $request = $this->createRequest(
+            attributes: ['tree' => $this->tree, 'user' => $admin],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: 200 OK — Handler ist real aufloesbar und liefert die
+        // User-Page aus.
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        // Postcondition 1: das gerenderte View ist `user-page` — die
+        // Block-Container-Klasse aus der View-Datei steht im Body.
+        $body = (string) $response->getBody();
+        self::assertStringContainsString('wt-main-blocks', $body);
+
+        // Postcondition 2: der Side-Effekt des Handlers (Defaults kopieren,
+        // wenn der User noch keine eigenen Bloecke hat) ist eingetreten.
+        $block_count = DB::table('block')
+            ->where('user_id', '=', $admin->id())
+            ->count();
+        self::assertGreaterThan(0, $block_count);
     }
 
     /**

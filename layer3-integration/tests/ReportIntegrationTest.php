@@ -16,6 +16,7 @@ use Fisharebest\Webtrees\Http\RequestHandlers\ReportListPage;
 use Fisharebest\Webtrees\Http\RequestHandlers\ReportSetupAction;
 use Fisharebest\Webtrees\Http\RequestHandlers\ReportSetupPage;
 use Fisharebest\Webtrees\Module\ModuleReportInterface;
+use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Report\HtmlRenderer;
 use Fisharebest\Webtrees\Report\PdfRenderer;
 use Fisharebest\Webtrees\Report\ReportParserGenerate;
@@ -486,14 +487,35 @@ class ReportIntegrationTest extends MysqlTestCase
     // --- ReportListPage (Auswahl-Übersicht — Render via ViewResponseTrait) ---
 
     /**
-     * ReportListPage existiert als ladbare Klasse.
+     * ReportListPage::handle liefert über die Container-Auflösung mit echtem
+     * Tree und eingeloggtem Admin eine 200-OK-Response. Der gerenderte Body
+     * enthält den lokalisierten Titel "Choose a report to run" — Beweis, dass
+     * die View `report-select-page` mit der erwarteten Übersetzung gerendert
+     * wurde. Komplementär zu den beiden Stub-Tests darunter, die nur die
+     * Statuscodes mit injiziertem ModuleService prüfen.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ReportListPageTest.php
      * @group ported-l2-doubles
      */
-    public function test_report_list_page_class_exists(): void
+    public function test_report_list_page_handle_returns_ok_with_real_container_and_tree(): void
     {
-        $this->assertTrue(class_exists(ReportListPage::class));
+        $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
+        $admin = $this->createAndLoginAdmin();
+
+        $handler  = Registry::container()->get(ReportListPage::class);
+        $request  = $this->createRequest(
+            attributes: [
+                'tree' => $this->tree,
+                'user' => $admin,
+            ],
+        );
+        $response = $handler->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $this->assertStringContainsString(
+            'Choose a report to run',
+            (string) $response->getBody(),
+        );
     }
 
     /**

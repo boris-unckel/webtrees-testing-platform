@@ -57,14 +57,11 @@ class AddMediaFileActionIntegrationTest extends MysqlTestCase
      */
     public function test_handle_redirects_when_upload_fails(): void
     {
-        // Arrange: existierenden Media-Record aus demo.ged ermitteln.
-        $xref = DB::table('media')
-            ->where('m_file', '=', $this->tree->id())
-            ->value('m_id');
-
-        if ($xref === null) {
-            self::markTestSkipped('Kein Media-Record in demo.ged vorhanden.');
-        }
+        // Arrange: Media-Record sicherstellen — bevorzugt aus demo.ged,
+        // ansonsten via GedcomImportService selbst anlegen. Damit ist der
+        // Test unabhängig vom Fixture-Inhalt und führt keinen verhalts-blinden
+        // markTestSkipped-Pfad mehr aus.
+        $xref = $this->ensureMediaRecord();
 
         // file_location='url' + leerer remote → MediaFileService::uploadFile gibt ''
         // zurück (URL ohne Schema). Identische fachliche Wirkung wie der L2-Quelltest,
@@ -100,14 +97,11 @@ class AddMediaFileActionIntegrationTest extends MysqlTestCase
      */
     public function test_modal_handle_returns_ok_for_valid_media(): void
     {
-        // Arrange: existierenden Media-Record aus demo.ged ermitteln.
-        $xref = DB::table('media')
-            ->where('m_file', '=', $this->tree->id())
-            ->value('m_id');
-
-        if ($xref === null) {
-            self::markTestSkipped('Kein Media-Record in demo.ged vorhanden.');
-        }
+        // Arrange: Media-Record sicherstellen — bevorzugt aus demo.ged,
+        // ansonsten via GedcomImportService selbst anlegen (FIX_SET).
+        // Damit ist der Erfolgs-Branch des Modal-Handlers unabhängig vom
+        // Fixture-Inhalt prüfbar und nicht mehr verhalts-blind übersprungen.
+        $xref = $this->ensureMediaRecord();
 
         $modal_handler = new AddMediaFileModal(
             media_file_service: new MediaFileService(new PhpService()),
@@ -148,5 +142,37 @@ class AddMediaFileActionIntegrationTest extends MysqlTestCase
 
         // Assert: HttpNotFoundException wird gefangen, error-view → 200 OK.
         self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    /**
+     * Stellt einen Media-Record im Testbaum sicher. Greift bevorzugt auf einen
+     * bereits aus demo.ged importierten Record zu; legt sonst über den
+     * GedcomImportService einen minimalen OBJE-Record an. Damit ist die
+     * Voraussetzung für die Handler-Tests vom Testcode selbst hergestellt
+     * (FIX_SET) — keine verhalts-blinde markTestSkipped-Auslassung mehr.
+     */
+    private function ensureMediaRecord(): string
+    {
+        $xref = DB::table('media')
+            ->where('m_file', '=', $this->tree->id())
+            ->value('m_id');
+
+        if ($xref !== null) {
+            return (string) $xref;
+        }
+
+        // Eindeutiger Test-xref; importRecord lässt den Server eine neue ID
+        // vergeben, wenn das @@-Platzhalter-Muster benutzt wird, aber für
+        // unsere Zwecke reicht ein deterministischer xref.
+        $gedcom = "0 @MTESTL3SP@ OBJE\n1 FILE photo.jpg\n2 FORM jpeg\n2 TITL Test Photo";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $xref = DB::table('media')
+            ->where('m_file', '=', $this->tree->id())
+            ->value('m_id');
+
+        self::assertNotNull($xref, 'Media-Record konnte nicht aufgebaut werden.');
+
+        return (string) $xref;
     }
 }

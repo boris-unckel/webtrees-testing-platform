@@ -14,6 +14,7 @@ use Fisharebest\Webtrees\Http\RequestHandlers\FixLevel0MediaAction;
 use Fisharebest\Webtrees\Http\RequestHandlers\FixLevel0MediaPage;
 use Fisharebest\Webtrees\Http\RequestHandlers\ManageMediaAction;
 use Fisharebest\Webtrees\Http\RequestHandlers\ManageMediaPage;
+use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\MediaFileService;
 use Fisharebest\Webtrees\Services\PhpService;
 
@@ -150,15 +151,43 @@ class AdminMediaManagementIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Smoke-Test: Handler-Klasse existiert und ist instanziierbar.
+     * EP/B: ManageMediaAction via Container aufgeloest — invalider media_folder
+     * (nicht in der allMediaFolders()-Allowlist) wird durch Validator::isInArray
+     * genullt; Validator::string() wirft daraufhin HttpBadRequestException.
+     * Komplementaer zum Happy-Path-Test darunter: verifiziert die
+     * Container-Verdrahtung und die Folder-Allowlist als Sicherheitseigenschaft
+     * (verhindert beliebige Folder-Werte im Redirect-Target).
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ManageMediaActionTest.php
      * @group ported-l2-doubles
      */
-    public function test_manage_media_action_class_exists(): void
+    public function test_manage_media_action_rejects_invalid_folder_via_container(): void
     {
-        // Assert
-        $this->assertTrue(class_exists(ManageMediaAction::class));
+        // Arrange — Admin-Auth + Tree, damit allMediaFolders() nicht-leer ist.
+        $admin = $this->createAndLoginAdmin();
+
+        $uniqueName = 'media-mgmt-inv-' . substr(md5($this->name()), 0, 8);
+        $this->tree = $this->treeService->create($uniqueName, 'Manage Media Invalid Folder');
+
+        $handler = Registry::container()->get(ManageMediaAction::class);
+        self::assertInstanceOf(ManageMediaAction::class, $handler);
+
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            params: [
+                'files'        => 'local',
+                'media_folder' => '/does/not/exist/',
+                'subfolders'   => 'include',
+            ],
+            attributes: ['user' => $admin],
+        );
+
+        // Assert — invalider Folder-Wert wird vom Validator abgewiesen.
+        $this->expectException(HttpBadRequestException::class);
+        $this->expectExceptionMessage('media_folder');
+
+        // Act
+        $handler->handle($request);
     }
 
     /**

@@ -15,6 +15,8 @@ use Fisharebest\Webtrees\Services\AdminService;
 use Fisharebest\Webtrees\Services\PhpService;
 use Fisharebest\Webtrees\Services\TimeoutService;
 
+use function e;
+
 /**
  * Komponentenintegrationstest: RenumberTreeAction.
  *
@@ -228,15 +230,76 @@ class RenumberTreeActionIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * RenumberTreePage-Klasse existiert (Bootstrap-Smoke).
+     * RenumberTreePage::handle() rendert die Renumber-Übersicht für einen Baum
+     * mit Cross-Tree-Duplikat-XREF: 200 OK, escapter Baumtitel im Response-Body
+     * und das Renumber-Formular (POST → RenumberTreeAction) ist im Body
+     * vorhanden — letzteres rendert die View nur, wenn duplicateXrefs() einen
+     * nicht-leeren Treffer liefert (`<?php if (!empty($xrefs)) ?>`).
+     *
+     * Komplementär zu test_renumber_tree_page_handle_returns_ok_for_empty_tree
+     * (leerer Baum, kein Formular) — hier wird der nicht-triviale Fall mit
+     * Cross-Tree-Konflikt + gerendertem Formular gepinnt.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/RenumberTreePageTest.php
      * @group ported-l2-doubles
      */
-    public function test_renumber_tree_page_class_exists(): void
+    public function test_renumber_tree_page_handle_renders_title_and_renumber_form(): void
     {
-        // Arrange / Act / Assert
-        $this->assertTrue(class_exists(RenumberTreePage::class));
+        // Frischen Primärbaum mit Titel anlegen, der ein '&' enthält — so kann
+        // verifiziert werden, dass der Titel via e() entitisiert im Body landet
+        // (rohes '&' darf nicht erscheinen, '&amp;' muss erscheinen).
+        $titleRaw = 'Renumber Page L3SP-046 & ' . uniqid();
+        $this->treeService->delete($this->tree);
+        $this->tree = $this->treeService->create(
+            'renum-page-pin-' . substr(md5($this->name()), 0, 8),
+            $titleRaw,
+        );
+        $tree1Id = $this->tree->id();
+
+        // Cross-Tree-Duplikat-XREF: Ein zweiter Baum mit identischer INDI-XREF
+        // sorgt dafür, dass duplicateXrefs() einen nicht-leeren Treffer liefert
+        // und die View damit das Formular rendert.
+        $tree2 = $this->treeService->create(
+            'renum-page-pin-other-' . uniqid(),
+            'Renumber Page Sibling',
+        );
+        $tree2Id = $tree2->id();
+
+        $dupXref = 'PAGEDUP' . strtoupper(substr(uniqid(), -6));
+        foreach ([$tree1Id, $tree2Id] as $treeId) {
+            DB::table('individuals')->insert([
+                'i_file'   => $treeId,
+                'i_id'     => $dupXref,
+                'i_rin'    => '',
+                'i_sex'    => 'U',
+                'i_gedcom' => '0 @' . $dupXref . '@ INDI',
+            ]);
+        }
+
+        $pageHandler = new RenumberTreePage(new AdminService());
+        $request     = $this->createRequest(
+            method: RequestMethodInterface::METHOD_GET,
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $pageHandler->handle($request);
+
+        $body = (string) $response->getBody();
+
+        // Property 1: Statuscode 200 — Page rendert ohne Fehler.
+        $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        // Property 2: Der escape'te Baumtitel landet im Body (h1 / breadcrumb).
+        // Der SUT pre-escaped den Titel via e() und konkateniert ihn in $title;
+        // die View gibt $title unescaped aus — d. h. der Body muss den
+        // entitisierten Titel enthalten.
+        $this->assertStringContainsString(e($titleRaw), $body);
+
+        // Property 3: Bei nicht-leerer Trefferliste rendert die View das POST-
+        // Formular Richtung RenumberTreeAction. Das ist der diskriminierende
+        // Render-Pfad gegenüber dem leeren Baum (kein <form …>).
+        $this->assertStringContainsString('<form method="post"', $body);
+        $this->assertStringContainsString('renumber', $body); // Form-Action enthält den Route-Namen
     }
 
     /**

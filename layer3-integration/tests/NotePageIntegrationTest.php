@@ -45,14 +45,72 @@ class NotePageIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Bootstrap-Smoke: Handler-Klasse ist autoloadbar.
+     * Sichtbare Note rendert einen kanonischen Link-Header mit der Note-URL.
+     *
+     * Komplementaer zu test_handle_returns_ok_for_visible_note, das nur den
+     * 200-Statuscode prueft. Hier wird die letzte Operation von handle() —
+     * `->withHeader('Link', '<' . $record->url() . '>; rel="canonical"')` —
+     * verhaltens-definitiv fixiert: der Link-Header wird mit dem RFC 5988
+     * `rel="canonical"`-Marker auf die URL der Note gesetzt. Damit ist auch
+     * dann erkennbar, wenn Upstream den Canonical-Mechanismus aenderte.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotePageTest.php
      * @group ported-l2-doubles
      */
-    public function test_class_exists(): void
+    public function test_handle_sets_canonical_link_header_for_visible_note(): void
     {
-        self::assertTrue(class_exists(NotePage::class));
+        // Arrange
+        $note_url = 'https://webtrees.test/note/N1';
+
+        $note = self::createStub(Note::class);
+        $note->method('xref')->willReturn('N1');
+        $note->method('tree')->willReturn($this->tree);
+        $note->method('canShow')->willReturn(true);
+        $note->method('canEdit')->willReturn(false);
+        $note->method('fullName')->willReturn('Test Note');
+        $note->method('url')->willReturn($note_url);
+        $note->method('facts')->willReturn(new Collection());
+
+        $note_factory = $this->createMock(NoteFactoryInterface::class);
+        $note_factory
+            ->expects($this->once())
+            ->method('make')
+            ->with('N1', $this->tree)
+            ->willReturn($note);
+        Registry::noteFactory($note_factory);
+
+        $slug_factory = self::createStub(SlugFactoryInterface::class);
+        $slug_factory->method('make')->willReturn('');
+        Registry::slugFactory($slug_factory);
+
+        $clipboard_service = $this->createMock(ClipboardService::class);
+        $clipboard_service
+            ->expects($this->once())
+            ->method('pastableFacts')
+            ->willReturn(new Collection());
+
+        $linked_record_service = self::createStub(LinkedRecordService::class);
+        $linked_record_service->method('linkedFamilies')->willReturn(new Collection());
+        $linked_record_service->method('linkedIndividuals')->willReturn(new Collection());
+        $linked_record_service->method('linkedLocations')->willReturn(new Collection());
+        $linked_record_service->method('linkedMedia')->willReturn(new Collection());
+        $linked_record_service->method('linkedRepositories')->willReturn(new Collection());
+        $linked_record_service->method('linkedSources')->willReturn(new Collection());
+        $linked_record_service->method('linkedSubmitters')->willReturn(new Collection());
+
+        $handler = new NotePage($clipboard_service, $linked_record_service);
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_GET,
+            attributes: ['tree' => $this->tree, 'xref' => 'N1', 'slug' => ''],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: Link-Header ist gesetzt und enthaelt die Note-URL plus rel=canonical
+        $link_header = $response->getHeaderLine('Link');
+        self::assertNotSame('', $link_header, 'Link-Header muss bei 200-Render gesetzt sein');
+        self::assertSame('<' . $note_url . '>; rel="canonical"', $link_header);
     }
 
     /**

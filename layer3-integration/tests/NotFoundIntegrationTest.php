@@ -26,14 +26,33 @@ use Fisharebest\Webtrees\Http\RequestHandlers\NotFound;
 class NotFoundIntegrationTest extends MysqlTestCase
 {
     /**
-     * Bootstrap-Smoke: Handler-Klasse ist autoloadbar.
+     * GET ohne Robot-Attribut → Location-Header zeigt auf Home-Page-Route.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/NotFoundTest.php
+     * Komplementaer zu test_handle_get_request_redirects_to_home_page, das nur
+     * den 302-Statuscode prueft. Hier wird das eigentliche Redirect-Ziel
+     * fixiert: redirect(route(HomePage::class)) erzeugt einen 'location'-Header,
+     * der auf die index.php-URL der Webtrees-Installation zeigt
+     * (Same-Origin: nutzt das base_url-Attribut der Request).
+     *
+     * Damit wird der zweite Zweig des Handlers (Container-Registry +
+     * route-Generierung) verhaltens-definitiv gepinnt — ohne Annahmen ueber
+     * das interne Format der Route-Query (z. B. ?route=0).
+     *
      * @group ported-l2-doubles
      */
-    public function test_class_exists(): void
+    public function test_handle_get_request_location_header_points_to_home_page(): void
     {
-        self::assertTrue(class_exists(NotFound::class));
+        $handler = new NotFound();
+        $request = $this->createRequest();
+
+        $response = $handler->handle($request);
+
+        $location = $response->getHeaderLine('location');
+        self::assertNotSame('', $location, 'Location-Header muss bei 302-Redirect gesetzt sein');
+        // Same-Origin: Redirect-Ziel liegt auf der gleichen Webtrees-Installation,
+        // erkennbar am base_url-Praefix aus createRequest() und am index.php-Skript.
+        self::assertStringStartsWith('https://webtrees.test/', $location);
+        self::assertStringContainsString('index.php', $location);
     }
 
     /**

@@ -203,15 +203,35 @@ class AutoCompleteIntegrationTest extends MysqlTestCase
     // --- AutoCompleteCitation ---
 
     /**
+     * BUG-PIN: AutoCompleteCitation gibt auf demo.ged eine JSON-Antwort zurück,
+     * deren Body ein JSON-Objekt mit numerischen String-Keys (`{"0":..., "2":...}`)
+     * statt eines JSON-Arrays (`[..., ...]`) ist.
+     *
+     * Ursache liegt im Upstream-Code: `search()` kombiniert Individuen und Familien
+     * via `merge()`, filtert privacy-gefilterte Records via `accessFilter()` heraus
+     * und ruft `uniqueStrict()` auf — beides bewahrt die ursprünglichen, nun
+     * lückenhaften numerischen Keys. `json_encode()` auf einer `Collection` mit
+     * nicht-fortlaufenden Integer-Keys serialisiert als Objekt statt Array.
+     *
+     * AJAX-Clients (TomSelect/jQuery-Autocomplete) erwarten ein Array. Der Defekt
+     * wird hier als reproduzierbares Verhalten gepinnt: sobald Upstream auf
+     * `values()` vor `json_encode()` umstellt (oder `uniqueStrict()`-Keys
+     * normalisiert), beginnt der Response-Body mit `[` und der Test geht rot —
+     * die Bug-Behebung wird sichtbar, nicht maskiert.
+     *
+     * Verwandt: `FamilyFactory::mapper()` deklariert `Closure(object):Family`,
+     * kann aber `null` zurückliefern (Cache-Hit auf bereits gelöschtem Record).
+     * Die accessFilter-Closure würde bei null mit TypeError abbrechen — auf
+     * demo.ged in dieser Konstellation aber nicht beobachtbar (keine null-Trefer
+     * in der Collection bis zum Filter).
+     *
      * @see https://github.com/fisharebest/webtrees/issues/XXXX
-     * FamilyFactory::mapper() gibt null für private Familienmitglieder zurück — Upstream-Bug.
+     * @see AutoCompleteCitation::search() — uniqueStrict() bewahrt gappy keys
      */
     public function test_autocomplete_citation_returns_json_for_valid_source(): void
     {
-        self::markTestSkipped('Upstream-Bug: FamilyFactory::mapper() gibt null für private Familienmitglieder zurück');
-
+        // Arrange — demo.ged enthält Familien-/Individuen-Records mit privacy-Filter
         $this->createTreeWithGedcom('demo', 'Demo', self::DEMO_GED);
-        $this->createAndLoginAdmin();
 
         $source_xref = DB::table('sources')
             ->where('s_file', '=', $this->tree->id())
@@ -226,12 +246,38 @@ class AutoCompleteIntegrationTest extends MysqlTestCase
             attributes: ['tree' => $this->tree],
         );
 
+        // Act
         $response = $handler->handle($request);
 
+        // Assert — Statuscode und Content-Type stimmen bereits
         $this->assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $this->assertStringContainsString('application/json', $response->getHeaderLine('content-type'));
 
-        $json = json_decode((string) $response->getBody(), true);
-        $this->assertIsArray($json);
+        $body = (string) $response->getBody();
+
+        // BUG-CANDIDATE: Body ist ein JSON-Objekt (beginnt mit `{`) statt eines
+        // JSON-Arrays (beginnt mit `[`). Sobald Upstream den uniqueStrict-/Key-
+        // Re-Index-Defekt behebt, beginnt der Body mit `[` und diese Assertion
+        // wird rot — der Bugfix wird sichtbar.
+        $this->assertNotSame('', $body, 'Body darf nicht leer sein — Treffer in demo.ged erwartet');
+        $this->assertSame(
+            '{',
+            $body[0],
+            'BUG-CANDIDATE: Body soll laut Schnittstellenvertrag ein JSON-Array (`[`) sein, '
+            . 'liefert aber wegen gappy keys nach uniqueStrict() ein JSON-Objekt (`{`). '
+            . 'Wenn diese Assertion grün bleibt, ist der Upstream-Defekt aktiv.'
+        );
+
+        // Begleit-Assertion: json_decode liefert eine assoziative Map mit numerischen
+        // String-Keys — Beweis, dass die Serialisierung keinen List-Layout liefert.
+        $decoded = json_decode($body, true);
+        $this->assertIsArray($decoded);
+        $this->assertNotSame(
+            array_values($decoded),
+            $decoded,
+            'BUG-CANDIDATE: Decoded payload ist eine assoziative Map mit lückenhaften '
+            . 'Integer-Keys (entspricht JSON-Objekt), nicht eine List mit fortlaufenden Keys.'
+        );
     }
 
     /**

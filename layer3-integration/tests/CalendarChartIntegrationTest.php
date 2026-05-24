@@ -8,6 +8,7 @@ namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\Http\Exceptions\HttpBadRequestException;
 use Fisharebest\Webtrees\Http\RequestHandlers\CalendarAction;
 use Fisharebest\Webtrees\Http\RequestHandlers\CalendarEvents;
 use Fisharebest\Webtrees\Http\RequestHandlers\CalendarPage;
@@ -164,15 +165,44 @@ class CalendarChartIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * CalendarAction-Klasse ist ladbar.
+     * CalendarAction::handle leitet POST mit view=month auf CalendarPage um.
+     *
+     * Ergaenzt den day-View-Test um den month-View-Pfad der isInArray-Allowlist
+     * (view in {day, month, year}) und sichert die Routen-Erzeugung fuer einen
+     * zweiten erlaubten Allowlist-Wert.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarActionTest.php
      * @group ported-l2-doubles
      */
-    public function test_calendar_action_class_exists(): void
+    public function test_calendar_action_handle_month_view_redirects_to_calendar_page(): void
     {
-        // Arrange + Act + Assert: Klassenexistenz prueft Autoloading des Handlers.
-        $this->assertTrue(class_exists(CalendarAction::class));
+        // Arrange.
+        $this->tree = $this->treeService->create('cal-action-month', 'Calendar Action Month');
+        $this->createAndLoginAdmin();
+
+        $handler = new CalendarAction();
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_POST,
+            params:     [
+                'cal'      => '@#DGREGORIAN@',
+                'day'      => 1,
+                'month'    => 'JAN',
+                'year'     => 2026,
+                'filterev' => 'BIRT DEAT MARR',
+                'filterof' => 'all',
+                'filtersx' => '',
+            ],
+            attributes: ['tree' => $this->tree, 'view' => 'month'],
+        );
+
+        // Act.
+        $response = $handler->handle($request);
+
+        // Assert: 302 mit Ziel-Route calendar/month.
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        $this->assertStringContainsString('calendar%2Fmonth', $response->getHeaderLine('location'));
+        $this->assertStringContainsString('JAN', $response->getHeaderLine('location'));
+        $this->assertStringContainsString('2026', $response->getHeaderLine('location'));
     }
 
     /**
@@ -184,8 +214,7 @@ class CalendarChartIntegrationTest extends MysqlTestCase
     public function test_calendar_action_handle_redirects_to_calendar_page(): void
     {
         // Arrange.
-        $tree_service = Registry::container()->get(TreeService::class);
-        $tree         = $tree_service->create('cal-action', 'Calendar Action');
+        $this->tree = $this->treeService->create('cal-action', 'Calendar Action');
         $this->createAndLoginAdmin();
 
         $handler = new CalendarAction();
@@ -200,7 +229,7 @@ class CalendarChartIntegrationTest extends MysqlTestCase
                 'filterof' => 'all',
                 'filtersx' => 'M',
             ],
-            attributes: ['tree' => $tree, 'view' => 'day'],
+            attributes: ['tree' => $this->tree, 'view' => 'day'],
         );
 
         // Act.
@@ -213,15 +242,30 @@ class CalendarChartIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * CalendarPage-Klasse ist ladbar.
+     * CalendarPage::handle wirft HttpBadRequestException bei view ausserhalb der Allowlist.
+     *
+     * Ersetzt vormaligen class_exists-Smoke (L3SP-006). Validator::attributes()->isInArray(['day','month','year'])
+     * mappt ungueltige Werte auf null; ->string('view') wirft daraufhin HttpBadRequestException
+     * ("parameter missing"). Sichert die Validator-Allowlist als Verhaltens-Property ab.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CalendarPageTest.php
      * @group ported-l2-doubles
      */
-    public function test_calendar_page_class_exists(): void
+    public function test_calendar_page_handle_invalid_view_throws_bad_request(): void
     {
-        // Arrange + Act + Assert: Klassenexistenz prueft Autoloading des Handlers.
-        $this->assertTrue(class_exists(CalendarPage::class));
+        // Arrange.
+        $this->createAndLoginAdmin();
+        $this->tree = $this->treeService->create('cal-page-invalid', 'Calendar Page Invalid View');
+
+        $handler = new CalendarPage($this->calendar_service);
+        $request = $this->createRequest(
+            query:      ['cal' => '@#DGREGORIAN@', 'day' => '1', 'month' => 'JAN', 'year' => '2000'],
+            attributes: ['tree' => $this->tree, 'view' => 'decade'],
+        );
+
+        // Assert + Act.
+        $this->expectException(HttpBadRequestException::class);
+        $handler->handle($request);
     }
 
     /**

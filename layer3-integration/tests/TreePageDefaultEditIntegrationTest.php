@@ -7,7 +7,9 @@ declare(strict_types=1);
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Http\RequestHandlers\TreePageDefaultEdit;
+use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\HomePageService;
 use Illuminate\Support\Collection;
 
@@ -25,15 +27,39 @@ use Illuminate\Support\Collection;
 class TreePageDefaultEditIntegrationTest extends MysqlTestCase
 {
     /**
-     * Klassen-Smoke-Test: TreePageDefaultEdit existiert und ist ladbar.
+     * TreePageDefaultEdit: Container-Resolution + handle() → 200 mit realen Services.
+     *
+     * Verhaltens-Test (BEHAVIOR_HANDLE): ersetzt die ehemalige `class_exists`-Tautologie
+     * durch einen vollstaendigen Request-Durchlauf gegen die real verdrahtete Klasse
+     * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 200-OK enthalten,
+     * zusaetzlich wird die dokumentierte Side-Effect-Postcondition geprueft: nach
+     * Aufruf von checkDefaultTreeBlocksExist() existieren in der block-Tabelle
+     * Default-Block-Zeilen mit gedcom_id = -1.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TreePageDefaultEditTest.php
      * @group ported-l2-doubles
      */
-    public function test_tree_page_default_edit_class_exists(): void
+    public function test_tree_page_default_edit_handles_request_via_container(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(TreePageDefaultEdit::class));
+        // Arrange: vor dem Lauf sicherstellen, dass keine Defaults existieren —
+        // der Handler soll die Default-Block-Zeilen idempotent anlegen.
+        DB::table('block')->where('gedcom_id', '=', -1)->delete();
+
+        $handler = Registry::container()->get(TreePageDefaultEdit::class);
+        $request = $this->createRequest();
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: 200 OK — Handler ist real auflösbar und liefert die Edit-Blocks-Page aus.
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        // Postcondition: HomePageService::checkDefaultTreeBlocksExist hat
+        // Default-Block-Zeilen fuer den virtuellen Default-Tree (-1) angelegt.
+        self::assertTrue(
+            DB::table('block')->where('gedcom_id', '=', -1)->exists(),
+            'Default-Block-Zeilen fuer gedcom_id = -1 wurden vom Handler nicht angelegt.',
+        );
     }
 
     /**

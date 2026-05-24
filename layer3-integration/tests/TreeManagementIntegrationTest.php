@@ -162,15 +162,28 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * CreateTreePage: Klasse existiert (Smoke).
+     * CreateTreePage: Container-Resolution + handle() → 200 mit realem TreeService.
+     *
+     * Verhaltens-Test (BEHAVIOR_HANDLE): ersetzt die ehemalige `class_exists`-Tautologie
+     * durch einen vollständigen Request-Durchlauf gegen die real verdrahtete Klasse
+     * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 200-OK enthalten.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/CreateTreePageTest.php
      * @group ported-l2-doubles
      */
-    public function test_create_tree_page_class_exists(): void
+    public function test_create_tree_page_handles_request_via_container(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(CreateTreePage::class));
+        // Arrange: Container resolved CreateTreePage mit realem TreeService
+        $handler = Registry::container()->get(CreateTreePage::class);
+        $request = $this->createRequest(
+            attributes: ['tree' => $this->tree],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: 200 OK — Handler ist real auflösbar und liefert die Create-Page aus
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
 
     /**
@@ -247,27 +260,60 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * ManageTrees: Klasse existiert (Smoke).
+     * ManageTrees: Container-Resolution + handle() → 200 mit realem TreeService.
+     *
+     * Verhaltens-Test (BEHAVIOR_HANDLE): ersetzt die ehemalige `class_exists`-Tautologie
+     * durch einen vollständigen Request-Durchlauf gegen die real verdrahtete Klasse
+     * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 200-OK enthalten.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/ManageTreesTest.php
      * @group ported-l2-doubles
      */
-    public function test_manage_trees_class_exists(): void
+    public function test_manage_trees_handles_request_via_container(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(ManageTrees::class));
+        // Arrange: Container resolved ManageTrees mit realen AdminService und TreeService
+        $handler = Registry::container()->get(ManageTrees::class);
+        $request = $this->createRequest(
+            attributes: ['tree' => $this->tree],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: 200 OK — Handler ist real auflösbar und liefert die Manage-Trees-View aus
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
 
     /**
-     * MergeTreesAction: Klasse existiert (Smoke).
+     * MergeTreesAction: Container-Resolution + handle() → 302 mit realen Services.
+     *
+     * Verhaltens-Test (BEHAVIOR_HANDLE): ersetzt die ehemalige `class_exists`-Tautologie
+     * durch einen vollständigen Request-Durchlauf gegen die real verdrahtete Klasse
+     * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 302-Redirect enthalten.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeTreesActionTest.php
      * @group ported-l2-doubles
      */
-    public function test_merge_trees_action_class_exists(): void
+    public function test_merge_trees_action_handles_request_via_container(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(MergeTreesAction::class));
+        // Arrange: Container resolved MergeTreesAction mit realen AdminService und TreeService;
+        // zwei leere Bäume sind die Merge-Quellen (Erfolgspfad → 302 zur ManageTrees-Seite).
+        $tree1   = $this->treeService->create('merge-ct-src-' . uniqid(), 'Merge Container Source');
+        $tree2   = $this->treeService->create('merge-ct-dst-' . uniqid(), 'Merge Container Destination');
+        $handler = Registry::container()->get(MergeTreesAction::class);
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            params: [
+                'tree1_name' => $tree1->name(),
+                'tree2_name' => $tree2->name(),
+            ],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: 302 — Handler ist real auflösbar und führt den Merge-Redirect aus
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
     }
 
     /**
@@ -328,15 +374,28 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * MergeTreesPage: Klasse existiert (Smoke).
+     * MergeTreesPage: Container-Resolution + handle() → 200 mit realen Services.
+     *
+     * Verhaltens-Test (BEHAVIOR_HANDLE): ersetzt die ehemalige `class_exists`-Tautologie
+     * durch einen vollständigen Request-Durchlauf gegen die real verdrahtete Klasse
+     * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 200-OK enthalten.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/MergeTreesPageTest.php
      * @group ported-l2-doubles
      */
-    public function test_merge_trees_page_class_exists(): void
+    public function test_merge_trees_page_handles_request_via_container(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(MergeTreesPage::class));
+        // Arrange: Container resolved MergeTreesPage mit realen AdminService und TreeService
+        $handler = Registry::container()->get(MergeTreesPage::class);
+        $request = $this->createRequest(
+            attributes: ['tree' => $this->tree],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: 200 OK — Handler ist real auflösbar und liefert die Merge-Trees-Page aus
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
     }
 
     /**
@@ -390,15 +449,42 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * SelectDefaultTree: Klasse existiert (Smoke).
+     * SelectDefaultTree: Container-Resolution + handle() → 302 mit realer Site-Postcondition.
+     *
+     * Verhaltens-Test (BEHAVIOR_HANDLE): ersetzt die ehemalige `class_exists`-Tautologie
+     * durch einen vollständigen Request-Durchlauf gegen die real verdrahtete Klasse
+     * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 302-Redirect enthalten,
+     * zusätzlich wird die Side-Effect-Postcondition (`Site::DEFAULT_GEDCOM`) geprüft.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SelectDefaultTreeTest.php
      * @group ported-l2-doubles
      */
-    public function test_select_default_tree_class_exists(): void
+    public function test_select_default_tree_handles_request_via_container(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(SelectDefaultTree::class));
+        // Arrange: Container resolved SelectDefaultTree; frischer Baum wird über $this->tree
+        // gehalten, damit tearDown ihn isolationsfrei wieder entsorgt.
+        $previous_default = Site::getPreference('DEFAULT_GEDCOM');
+        $tree_name        = 'select-default-ct-' . uniqid();
+        $this->tree       = $this->treeService->create($tree_name, 'Select Default Container');
+
+        $handler = Registry::container()->get(SelectDefaultTree::class);
+        $request = $this->createRequest(
+            method: RequestMethodInterface::METHOD_POST,
+            attributes: ['tree' => $this->tree],
+        );
+
+        try {
+            // Act
+            $response = $handler->handle($request);
+
+            // Assert: 302 — Handler ist real auflösbar und führt den Redirect aus;
+            // Side-Effect: DEFAULT_GEDCOM trägt nun den Baumnamen.
+            self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+            self::assertSame($tree_name, Site::getPreference('DEFAULT_GEDCOM'));
+        } finally {
+            // Isolation (FIRST): vorherigen Site-State wiederherstellen
+            Site::setPreference('DEFAULT_GEDCOM', $previous_default);
+        }
     }
 
     /**
@@ -434,15 +520,47 @@ class TreeManagementIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * SynchronizeTrees: Klasse existiert (Smoke).
+     * SynchronizeTrees: Container-Resolution + handle() → 302 mit realen Services.
+     *
+     * Verhaltens-Test (BEHAVIOR_HANDLE): ersetzt die ehemalige `class_exists`-Tautologie
+     * durch einen vollständigen Request-Durchlauf gegen die real verdrahtete Klasse
+     * aus dem DI-Container. Smoke-Aspekt (Auflösbarkeit) ist im 302-Redirect enthalten.
+     *
+     * AdminService wird als Stub in den Container injiziert (gedcomFiles liefert den
+     * Namen des Test-Baums), damit der Handler weder eine reale Filesystem-Iteration
+     * noch eine GEDCOM-Import-Pipeline anstößt: der Datenträger ist nicht Bestandteil
+     * dieses Verhaltens-Tests, und die DI-Verdrahtung von StreamFactoryInterface,
+     * TimeoutService und TreeService bleibt real. Der Container ist pro Test frisch
+     * (vgl. MysqlTestCase::setUp → Webtrees::bootstrap), deshalb leakt der Override
+     * nicht in nachfolgende Tests.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SynchronizeTreesTest.php
      * @group ported-l2-doubles
      */
-    public function test_synchronize_trees_class_exists(): void
+    public function test_synchronize_trees_handles_request_via_container(): void
     {
-        // Arrange / Act / Assert
-        self::assertTrue(class_exists(SynchronizeTrees::class));
+        // Arrange: frischer Baum, dessen Name in der gedcomFiles-Collection auftaucht,
+        // damit der Handler ihn beim Delete-Sweep stehen lässt und der finale Redirect
+        // auf einen existierenden Baum ziehen kann (route(ManageTrees, ['tree' => …])).
+        $tree_name  = 'sync-ct-' . uniqid();
+        $this->tree = $this->treeService->create($tree_name, 'Sync Container Tree');
+
+        $admin_service = $this->createMock(AdminService::class);
+        $admin_service->expects(self::once())
+            ->method('gedcomFiles')
+            ->willReturn(new Collection([$tree_name]));
+
+        Registry::container()->set(AdminService::class, $admin_service);
+
+        $handler = Registry::container()->get(SynchronizeTrees::class);
+        $request = $this->createRequest();
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: 302 — Handler ist real auflösbar und führt den Redirect nach
+        // ManageTrees mit dem ersten verbleibenden Baum aus.
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
     }
 
     /**

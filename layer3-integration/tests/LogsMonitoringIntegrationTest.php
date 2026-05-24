@@ -148,14 +148,57 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP6: SiteLogsDelete-Klasse existiert (Smoke).
+     * EP6: SiteLogsDelete::handle() liefert 204 No Content auch bei leerer
+     * Treffermenge und lässt nicht passende Log-Einträge unangetastet.
+     *
+     * Komplementär zu EP7: dort wird der Treffer-Pfad gepinnt (Marker
+     * verschwindet). Hier wird der Nicht-Treffer-Pfad gepinnt — die Filter-
+     * Query darf keine fremden Einträge löschen, und die Antwort ist
+     * weiterhin 204 (response() mit leerem Body).
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsDeleteTest.php
      * @group ported-l2-doubles
      */
-    public function test_site_logs_delete_class_exists(): void
+    public function test_site_logs_delete_with_no_matches_returns_no_content_and_preserves_logs(): void
     {
-        self::assertTrue(class_exists(SiteLogsDelete::class));
+        // Arrange: Fremder Log-Eintrag, der NICHT vom Filter erfasst werden darf.
+        $foreign_marker = 'integration-test-foreign-marker L3SP-018 ' . uniqid('', true);
+        \Fisharebest\Webtrees\DB::table('log')->insert([
+            'log_type'    => 'config',
+            'log_message' => $foreign_marker,
+            'ip_address'  => '127.0.0.1',
+            'user_id'     => null,
+            'gedcom_id'   => null,
+        ]);
+        $before_foreign = \Fisharebest\Webtrees\DB::table('log')
+            ->where('log_message', '=', $foreign_marker)
+            ->count();
+        self::assertSame(1, $before_foreign);
+
+        $handler = new SiteLogsDelete(
+            Registry::container()->get(SiteLogsService::class),
+        );
+        $request = $this->createRequest(
+            query: [
+                'from'     => '2020-01-01',
+                'to'       => '2030-12-31',
+                'type'     => 'error',
+                'text'     => 'no-such-text-' . uniqid('', true),
+                'ip'       => '',
+                'username' => '',
+                'tree'     => '',
+            ],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: 204 No Content und der fremde Eintrag ist unverändert vorhanden.
+        self::assertSame(StatusCodeInterface::STATUS_NO_CONTENT, $response->getStatusCode());
+        $after_foreign = \Fisharebest\Webtrees\DB::table('log')
+            ->where('log_message', '=', $foreign_marker)
+            ->count();
+        self::assertSame(1, $after_foreign);
     }
 
     /**
@@ -210,14 +253,58 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP8: SiteLogsDownload-Klasse existiert (Smoke).
+     * EP8: SiteLogsDownload mappt NULL-Werte aus log.user_id und log.gedcom_id
+     * im CSV-Body auf den Marker "<none>" (SiteLogsService::logsQuery
+     * COALESCE-Property).
+     *
+     * Anders als die L2-Vorlage mit class_exists-Smoke pruefen wir hier den
+     * realen LEFT-JOIN-Pfad gegen MySQL: ein Log-Eintrag ohne user_id und
+     * ohne gedcom_id wird per Marker selektiv abgegriffen und im CSV-Body
+     * muessen die beiden CSV-Felder den COALESCE-Defaultwert "<none>"
+     * tragen.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsDownloadTest.php
      * @group ported-l2-doubles
      */
-    public function test_site_logs_download_class_exists(): void
+    public function test_site_logs_download_renders_none_marker_for_null_user_and_tree(): void
     {
-        self::assertTrue(class_exists(SiteLogsDownload::class));
+        // Arrange: Marker-Log-Eintrag ohne user_id und ohne gedcom_id einfuegen.
+        $marker = 'integration-test-marker SiteLogsDownload NullUserNullGedcom ' . uniqid('', true);
+        \Fisharebest\Webtrees\DB::table('log')->insert([
+            'log_type'    => 'config',
+            'log_message' => $marker,
+            'ip_address'  => '127.0.0.1',
+            'user_id'     => null,
+            'gedcom_id'   => null,
+        ]);
+
+        $handler = new SiteLogsDownload(
+            Registry::container()->get(SiteLogsService::class),
+        );
+        $request = $this->createRequest(
+            query: [
+                'from'     => '2020-01-01',
+                'to'       => '2030-12-31',
+                'type'     => 'config',
+                'text'     => $marker,
+                'ip'       => '',
+                'username' => '',
+                'tree'     => '',
+            ],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: 200 OK, Marker-Zeile enthaelt zwei "<none>"-Felder als CSV
+        // (jeweils in Anfuehrungszeichen). Die CSV-Struktur ist:
+        // "log_time","log_type","log_message","ip_address","user_name","gedcom_name"
+        // Mit NULL-User und NULL-Gedcom muessen die letzten beiden Felder
+        // "<none>" sein.
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString($marker, $body);
+        self::assertStringContainsString('"<none>","<none>"', $body);
     }
 
     /**
@@ -349,14 +436,39 @@ class LogsMonitoringIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP12: SiteLogsPage-Klasse existiert (Smoke).
+     * EP12: SiteLogsPage::handle() rendert das Admin-Filterformular für /admin/site-logs.
+     *
+     * Anders als die L2-Vorlage mit class_exists-Smoke prüft der L3-Test den
+     * realen Render-Pfad: SiteLogsPage benutzt ViewResponseTrait und schaltet
+     * das Layout auf 'layouts/administration'; die View 'admin/site-logs'
+     * rendert ein POST-Formular mit name="logs" und sichtbaren Filterfeldern
+     * für 'from', 'to' und 'type'. Diese Marker pinnen die Render-Property,
+     * ohne EP13/EP14 (reine Statuscode-Assertions) zu duplizieren.
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/SiteLogsPageTest.php
      * @group ported-l2-doubles
      */
-    public function test_site_logs_page_class_exists(): void
+    public function test_site_logs_page_renders_admin_filter_form(): void
     {
-        self::assertTrue(class_exists(SiteLogsPage::class));
+        // Arrange
+        $handler = new SiteLogsPage(
+            $this->treeService,
+            $this->userService,
+        );
+        $request = $this->createRequest();
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert: 200 OK, Body enthält Admin-Filterformular mit name="logs"
+        // und die drei Eingabefelder from/to/type (Render-Property der View
+        // 'admin/site-logs' unter dem 'layouts/administration'-Layout).
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString('name="logs"', $body);
+        self::assertStringContainsString('name="from"', $body);
+        self::assertStringContainsString('name="to"', $body);
+        self::assertStringContainsString('name="type"', $body);
     }
 
     /**

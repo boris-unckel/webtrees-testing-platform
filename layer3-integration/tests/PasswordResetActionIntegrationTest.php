@@ -46,14 +46,46 @@ class PasswordResetActionIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Bootstrap-Smoke: Handler-Klasse ist autoloadbar.
+     * Expired token mit Tree-Attribut → 302-Redirect, dessen Location-Header
+     * den Tree-Namen propagiert.
+     *
+     * Pinnt die `$tree?->name()`-Propagation aus dem Expired-Token-Zweig der
+     * route(PasswordRequestPage::class, ['tree' => $tree?->name()])-Aufruf.
+     * Diese Property ist von den beiden anderen Methoden nicht abgedeckt:
+     * test_handle_with_expired_token setzt kein Tree-Attribut (→ $tree ist
+     * null und der Tree-Segment-Teil wird leer/abwesend); test_handle_with_valid_token
+     * leitet auf HomePage um, ohne Tree-Parameter. Hier wird ein realer Tree
+     * via TreeService::create angelegt und in $this->tree gehalten — tearDown
+     * der Basisklasse räumt ihn auf. Ersetzt eine class_exists-Tautologie aus
+     * dem L2-Port (BEHAVIOR_HANDLE / L3SP-043).
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/PasswordResetActionTest.php
      * @group ported-l2-doubles
      */
-    public function test_class_exists(): void
+    public function test_handle_with_expired_token_propagates_tree_into_redirect_location(): void
     {
-        self::assertTrue(class_exists(PasswordResetAction::class));
+        // Arrange: realer Tree, dessen Name im Redirect-Ziel landen muss.
+        $this->tree = $this->treeService->create('pwd-reset-tree', 'Password Reset Tree');
+
+        $user_service = $this->createMock(UserService::class);
+        $user_service->expects(self::once())
+            ->method('findByToken')
+            ->with('expired-token')
+            ->willReturn(null);
+
+        $handler = new PasswordResetAction($user_service);
+        $request = $this->createRequest(
+            method:     RequestMethodInterface::METHOD_POST,
+            params:     ['password' => 'newpass123'],
+            attributes: ['tree' => $this->tree],
+        )->withAttribute('token', 'expired-token');
+
+        // Act.
+        $response = $handler->handle($request);
+
+        // Assert: 302 mit Tree-Name in der Location.
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        self::assertStringContainsString($this->tree->name(), $response->getHeaderLine('location'));
     }
 
     /**

@@ -171,14 +171,49 @@ class TomSelectIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP6: TomSelectFamily-Klasse ist vorhanden (Smoke-Test).
+     * EP6: TomSelectFamily mit gueltigem XREF → liefert genau diese Familie zurueck.
+     *
+     * Loest den Smoke-Test (class_exists) ab durch Pruefung des XREF-Lookup-Zweigs
+     * in TomSelectFamily::search(): Registry::familyFactory()->make($query, $tree)
+     * findet die Familie direkt und liefert eine Collection mit genau einem Treffer.
+     *
+     * Verifiziert:
+     *   - Statuscode 200
+     *   - JSON-Struktur {data: [...], nextUrl: null}
+     *   - data ist nicht leer (XREF-Lookup hat getroffen)
+     *   - jeder Treffer hat die Felder text/value
+     *   - value enthaelt den XREF der gefundenen Familie
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectFamilyTest.php
      * @group ported-l2-doubles
      */
-    public function test_tomselect_family_class_exists(): void
+    public function test_tomselect_family_xref_query_returns_family(): void
     {
-        self::assertTrue(class_exists(TomSelectFamily::class));
+        $this->tree = $this->createTreeWithGedcom('tomselect-fam-xref', 'TomSelect Family XREF', self::DEMO_GED);
+
+        $handler = new TomSelectFamily($this->search_service);
+        $request = $this->createRequest(
+            query: ['query' => 'f1', 'at' => ''],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        $json = json_decode((string) $response->getBody(), true);
+        self::assertIsArray($json);
+        self::assertArrayHasKey('data', $json);
+        self::assertArrayHasKey('nextUrl', $json);
+        self::assertNull($json['nextUrl']);
+        self::assertNotEmpty($json['data']);
+        self::assertCount(1, $json['data']);
+
+        $hit = $json['data'][0];
+        self::assertIsArray($hit);
+        self::assertArrayHasKey('text', $hit);
+        self::assertArrayHasKey('value', $hit);
+        self::assertSame('f1', $hit['value']);
     }
 
     /**
@@ -239,14 +274,50 @@ class TomSelectIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP9: TomSelectIndividual-Klasse ist vorhanden (Smoke-Test).
+     * EP9: TomSelectIndividual mit gueltigem XREF → liefert genau dieses Individuum zurueck.
+     *
+     * Loest den Smoke-Test (class_exists) ab durch Pruefung des XREF-Lookup-Zweigs
+     * in TomSelectIndividual::search(): Registry::individualFactory()->make($query, $tree)
+     * findet das Individuum direkt und liefert eine Collection mit genau einem Treffer.
+     *
+     * Verifiziert:
+     *   - Statuscode 200
+     *   - JSON-Struktur {data: [...], nextUrl: null}
+     *   - data ist nicht leer (XREF-Lookup hat getroffen)
+     *   - genau ein Treffer
+     *   - jeder Treffer hat die Felder text/value
+     *   - value enthaelt den XREF des gefundenen Individuums
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectIndividualTest.php
      * @group ported-l2-doubles
      */
-    public function test_tomselect_individual_class_exists(): void
+    public function test_tomselect_individual_xref_query_returns_single_individual(): void
     {
-        self::assertTrue(class_exists(TomSelectIndividual::class));
+        $this->tree = $this->createTreeWithGedcom('tomselect-ind-xref-single', 'TomSelect Individual XREF Single', self::DEMO_GED);
+
+        $handler = new TomSelectIndividual($this->search_service);
+        $request = $this->createRequest(
+            query: ['query' => 'X1030', 'at' => ''],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        $json = json_decode((string) $response->getBody(), true);
+        self::assertIsArray($json);
+        self::assertArrayHasKey('data', $json);
+        self::assertArrayHasKey('nextUrl', $json);
+        self::assertNull($json['nextUrl']);
+        self::assertNotEmpty($json['data']);
+        self::assertCount(1, $json['data']);
+
+        $hit = $json['data'][0];
+        self::assertIsArray($hit);
+        self::assertArrayHasKey('text', $hit);
+        self::assertArrayHasKey('value', $hit);
+        self::assertSame('X1030', $hit['value']);
     }
 
     /**
@@ -279,14 +350,42 @@ class TomSelectIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP11: TomSelectLocation-Klasse ist vorhanden (Smoke-Test).
+     * EP11: TomSelectLocation mit XREF-aehnlichem Query → leere data-Liste, Strukturassertion.
+     *
+     * Loest den Smoke-Test (class_exists) ab durch Pruefung des XREF-Lookup-Zweigs
+     * in TomSelectLocation::search(): Registry::locationFactory()->make($query, $tree)
+     * liefert null, weil demo.ged keinen _LOC-Record mit dieser XREF enthaelt; der
+     * Fallback-Pfad ueber SearchService::searchLocations() liefert ebenfalls eine leere
+     * Collection. Geprueft wird die vollstaendige JSON-Struktur des Handlers.
+     *
+     * Verifiziert:
+     *   - Statuscode 200
+     *   - JSON-Struktur {data: [...], nextUrl: null}
+     *   - data ist leer (kein _LOC-Record in demo.ged matcht den XREF)
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectLocationTest.php
      * @group ported-l2-doubles
      */
-    public function test_tomselect_location_class_exists(): void
+    public function test_tomselect_location_xref_query_returns_empty_data(): void
     {
-        self::assertTrue(class_exists(TomSelectLocation::class));
+        $this->tree = $this->createTreeWithGedcom('tomselect-loc-xref', 'TomSelect Location XREF', self::DEMO_GED);
+
+        $handler = new TomSelectLocation($this->search_service);
+        $request = $this->createRequest(
+            query: ['query' => 'L1', 'at' => ''],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        $json = json_decode((string) $response->getBody(), true);
+        self::assertIsArray($json);
+        self::assertArrayHasKey('data', $json);
+        self::assertArrayHasKey('nextUrl', $json);
+        self::assertNull($json['nextUrl']);
+        self::assertEmpty($json['data']);
     }
 
     /**
@@ -347,14 +446,50 @@ class TomSelectIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP14: TomSelectMediaObject-Klasse ist vorhanden (Smoke-Test).
+     * EP14: TomSelectMediaObject mit gueltigem XREF → liefert genau dieses Medienobjekt zurueck.
+     *
+     * Loest den Smoke-Test (class_exists) ab durch Pruefung des XREF-Lookup-Zweigs
+     * in TomSelectMediaObject::search(): Registry::mediaFactory()->make($query, $tree)
+     * findet das Medienobjekt direkt und liefert eine Collection mit genau einem Treffer.
+     *
+     * Verifiziert:
+     *   - Statuscode 200
+     *   - JSON-Struktur {data: [...], nextUrl: null}
+     *   - data ist nicht leer (XREF-Lookup hat getroffen)
+     *   - genau ein Treffer
+     *   - jeder Treffer hat die Felder text/value
+     *   - value enthaelt den XREF des gefundenen Medienobjekts
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectMediaObjectTest.php
      * @group ported-l2-doubles
      */
-    public function test_tomselect_media_object_class_exists(): void
+    public function test_tomselect_media_object_xref_query_returns_media_object(): void
     {
-        self::assertTrue(class_exists(TomSelectMediaObject::class));
+        $this->tree = $this->createTreeWithGedcom('tomselect-med-xref', 'TomSelect Media XREF', self::DEMO_GED);
+
+        $handler = new TomSelectMediaObject($this->search_service);
+        $request = $this->createRequest(
+            query: ['query' => 'X247', 'at' => ''],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        $json = json_decode((string) $response->getBody(), true);
+        self::assertIsArray($json);
+        self::assertArrayHasKey('data', $json);
+        self::assertArrayHasKey('nextUrl', $json);
+        self::assertNull($json['nextUrl']);
+        self::assertNotEmpty($json['data']);
+        self::assertCount(1, $json['data']);
+
+        $hit = $json['data'][0];
+        self::assertIsArray($hit);
+        self::assertArrayHasKey('text', $hit);
+        self::assertArrayHasKey('value', $hit);
+        self::assertSame('X247', $hit['value']);
     }
 
     /**
@@ -414,14 +549,44 @@ class TomSelectIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP17: TomSelectNote-Klasse ist vorhanden (Smoke-Test).
+     * EP17: TomSelectNote mit XREF-aehnlichem Query → leere data-Liste, Strukturassertion.
+     *
+     * Loest den Smoke-Test (class_exists) ab durch Pruefung des XREF-Lookup-Zweigs
+     * in TomSelectNote::search(): Registry::noteFactory()->make($query, $tree) liefert
+     * null, weil demo.ged keinen Level-0-NOTE-Record mit dieser XREF enthaelt; der
+     * Fallback-Pfad ueber SearchService::searchNotes() liefert ebenfalls eine leere
+     * Collection (demo.ged enthaelt nur Inline-Notes, keine Shared/Level-0-Notes in
+     * der `other`-Tabelle vom Typ NOTE). Geprueft wird die vollstaendige JSON-Struktur
+     * des Handlers.
+     *
+     * Verifiziert:
+     *   - Statuscode 200
+     *   - JSON-Struktur {data: [...], nextUrl: null}
+     *   - data ist leer (kein Level-0-NOTE-Record in demo.ged matcht den XREF)
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectNoteTest.php
      * @group ported-l2-doubles
      */
-    public function test_tomselect_note_class_exists(): void
+    public function test_tomselect_note_xref_query_returns_empty_data(): void
     {
-        self::assertTrue(class_exists(TomSelectNote::class));
+        $this->tree = $this->createTreeWithGedcom('tomselect-note-xref', 'TomSelect Note XREF', self::DEMO_GED);
+
+        $handler = new TomSelectNote($this->search_service);
+        $request = $this->createRequest(
+            query: ['query' => 'N1', 'at' => ''],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        $json = json_decode((string) $response->getBody(), true);
+        self::assertIsArray($json);
+        self::assertArrayHasKey('data', $json);
+        self::assertArrayHasKey('nextUrl', $json);
+        self::assertNull($json['nextUrl']);
+        self::assertEmpty($json['data']);
     }
 
     /**
@@ -481,14 +646,52 @@ class TomSelectIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP20: TomSelectPlace-Klasse ist vorhanden (Smoke-Test).
+     * EP20: TomSelectPlace mit Orts-Query → liefert konkreten Place-Treffer mit text/value.
+     *
+     * Loest den Smoke-Test (class_exists) ab durch Pruefung des einzigen Such-Zweigs in
+     * TomSelectPlace::search(): SearchService::searchPlaces() laeuft an MySQL und liefert
+     * eine Collection von Place-Objekten. Im Gegensatz zu TomSelectFamily/Individual/Media
+     * besitzt TomSelectPlace keinen separaten XREF-Lookup-Zweig — die mappende Closure
+     * setzt text auf Place::gedcomName() und value auf die numerische Place::id().
+     *
+     * Verifiziert:
+     *   - Statuscode 200
+     *   - JSON-Struktur {data: [...], nextUrl: null}
+     *   - data ist nicht leer (searchPlaces hat getroffen)
+     *   - jeder Treffer hat die Felder text/value
+     *   - text enthaelt den Such-Term (Place::gedcomName)
+     *   - value ist eine numerische String-ID (Place::id)
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectPlaceTest.php
      * @group ported-l2-doubles
      */
-    public function test_tomselect_place_class_exists(): void
+    public function test_tomselect_place_query_returns_place_hits(): void
     {
-        self::assertTrue(class_exists(TomSelectPlace::class));
+        $this->tree = $this->createTreeWithGedcom('tomselect-plc-hit', 'TomSelect Place Hit', self::DEMO_GED);
+
+        $handler = new TomSelectPlace($this->search_service);
+        $request = $this->createRequest(
+            query: ['query' => 'Althorp', 'at' => ''],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        $json = json_decode((string) $response->getBody(), true);
+        self::assertIsArray($json);
+        self::assertArrayHasKey('data', $json);
+        self::assertArrayHasKey('nextUrl', $json);
+        self::assertNull($json['nextUrl']);
+        self::assertNotEmpty($json['data']);
+
+        $hit = $json['data'][0];
+        self::assertIsArray($hit);
+        self::assertArrayHasKey('text', $hit);
+        self::assertArrayHasKey('value', $hit);
+        self::assertStringContainsString('Althorp', $hit['text']);
+        self::assertMatchesRegularExpression('/^\d+$/', $hit['value']);
     }
 
     /**
@@ -548,14 +751,50 @@ class TomSelectIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP23: TomSelectRepository-Klasse ist vorhanden (Smoke-Test).
+     * EP23: TomSelectRepository mit XREF-Query → gibt genau dieses Repository zurueck.
+     *
+     * Loest den Smoke-Test (class_exists) ab durch Pruefung des XREF-Lookup-Zweigs
+     * in TomSelectRepository::search(): Registry::repositoryFactory()->make($query, $tree)
+     * findet das Repository direkt und liefert eine Collection mit genau einem Treffer.
+     *
+     * Verifiziert:
+     *   - Statuscode 200
+     *   - JSON-Struktur {data: [...], nextUrl: null}
+     *   - data ist nicht leer (XREF-Lookup hat getroffen)
+     *   - genau ein Treffer
+     *   - jeder Treffer hat die Felder text/value
+     *   - value enthaelt den XREF des gefundenen Repositories
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectRepositoryTest.php
      * @group ported-l2-doubles
      */
-    public function test_tomselect_repository_class_exists(): void
+    public function test_tomselect_repository_xref_query_returns_repository(): void
     {
-        self::assertTrue(class_exists(TomSelectRepository::class));
+        $this->tree = $this->createTreeWithGedcom('tomselect-rep-xref', 'TomSelect Repository XREF', self::DEMO_GED);
+
+        $handler = new TomSelectRepository($this->search_service);
+        $request = $this->createRequest(
+            query: ['query' => 'X1165', 'at' => ''],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        $json = json_decode((string) $response->getBody(), true);
+        self::assertIsArray($json);
+        self::assertArrayHasKey('data', $json);
+        self::assertArrayHasKey('nextUrl', $json);
+        self::assertNull($json['nextUrl']);
+        self::assertNotEmpty($json['data']);
+        self::assertCount(1, $json['data']);
+
+        $hit = $json['data'][0];
+        self::assertIsArray($hit);
+        self::assertArrayHasKey('text', $hit);
+        self::assertArrayHasKey('value', $hit);
+        self::assertSame('X1165', $hit['value']);
     }
 
     /**
@@ -615,14 +854,50 @@ class TomSelectIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP26: TomSelectSource-Klasse ist vorhanden (Smoke-Test).
+     * EP26: TomSelectSource mit XREF-Query → gibt genau diese Source zurueck.
+     *
+     * Loest den Smoke-Test (class_exists) ab durch Pruefung des XREF-Lookup-Zweigs
+     * in TomSelectSource::search(): Registry::sourceFactory()->make($query, $tree)
+     * findet die Source direkt und liefert eine Collection mit genau einem Treffer.
+     *
+     * Verifiziert:
+     *   - Statuscode 200
+     *   - JSON-Struktur {data: [...], nextUrl: null}
+     *   - data ist nicht leer (XREF-Lookup hat getroffen)
+     *   - genau ein Treffer
+     *   - jeder Treffer hat die Felder text/value
+     *   - value enthaelt den XREF der gefundenen Source
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectSourceTest.php
      * @group ported-l2-doubles
      */
-    public function test_tomselect_source_class_exists(): void
+    public function test_tomselect_source_xref_query_returns_source(): void
     {
-        self::assertTrue(class_exists(TomSelectSource::class));
+        $this->tree = $this->createTreeWithGedcom('tomselect-src-xref', 'TomSelect Source XREF', self::DEMO_GED);
+
+        $handler = new TomSelectSource($this->search_service);
+        $request = $this->createRequest(
+            query: ['query' => 'X1102', 'at' => ''],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        $json = json_decode((string) $response->getBody(), true);
+        self::assertIsArray($json);
+        self::assertArrayHasKey('data', $json);
+        self::assertArrayHasKey('nextUrl', $json);
+        self::assertNull($json['nextUrl']);
+        self::assertNotEmpty($json['data']);
+        self::assertCount(1, $json['data']);
+
+        $hit = $json['data'][0];
+        self::assertIsArray($hit);
+        self::assertArrayHasKey('text', $hit);
+        self::assertArrayHasKey('value', $hit);
+        self::assertSame('X1102', $hit['value']);
     }
 
     /**
@@ -655,14 +930,50 @@ class TomSelectIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * EP28: TomSelectSubmitter-Klasse ist vorhanden (Smoke-Test).
+     * EP28: TomSelectSubmitter mit XREF-Query → gibt genau diesen Submitter zurueck.
+     *
+     * Loest den Smoke-Test (class_exists) ab durch Pruefung des XREF-Lookup-Zweigs
+     * in TomSelectSubmitter::search(): Registry::submitterFactory()->make($query, $tree)
+     * findet den Submitter direkt und liefert eine Collection mit genau einem Treffer.
+     *
+     * Verifiziert:
+     *   - Statuscode 200
+     *   - JSON-Struktur {data: [...], nextUrl: null}
+     *   - data ist nicht leer (XREF-Lookup hat getroffen)
+     *   - genau ein Treffer
+     *   - jeder Treffer hat die Felder text/value
+     *   - value enthaelt den XREF des gefundenen Submitters
      *
      * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/TomSelectSubmitterTest.php
      * @group ported-l2-doubles
      */
-    public function test_tomselect_submitter_class_exists(): void
+    public function test_tomselect_submitter_xref_query_returns_submitter(): void
     {
-        self::assertTrue(class_exists(TomSelectSubmitter::class));
+        $this->tree = $this->createTreeWithGedcom('tomselect-sub-xref', 'TomSelect Submitter XREF', self::DEMO_GED);
+
+        $handler = new TomSelectSubmitter($this->search_service);
+        $request = $this->createRequest(
+            query: ['query' => 'X1166', 'at' => ''],
+            attributes: ['tree' => $this->tree],
+        );
+
+        $response = $handler->handle($request);
+
+        self::assertSame(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+
+        $json = json_decode((string) $response->getBody(), true);
+        self::assertIsArray($json);
+        self::assertArrayHasKey('data', $json);
+        self::assertArrayHasKey('nextUrl', $json);
+        self::assertNull($json['nextUrl']);
+        self::assertNotEmpty($json['data']);
+        self::assertCount(1, $json['data']);
+
+        $hit = $json['data'][0];
+        self::assertIsArray($hit);
+        self::assertArrayHasKey('text', $hit);
+        self::assertArrayHasKey('value', $hit);
+        self::assertSame('X1166', $hit['value']);
     }
 
     /**

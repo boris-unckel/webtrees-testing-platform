@@ -48,18 +48,17 @@ class EditMediaFileIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Media-Datei Metadaten bearbeiten — Redirect nach Erfolg.
+     * Media-Datei bearbeiten mit leerer fact_id → media_file === null →
+     * Handler redirected zur Baumseite (HTTP 302). Voraussetzung (Media-Record
+     * im Testbaum) wird vom Test selbst aufgebaut — kein verhalts-blinder
+     * markTestSkipped-Pfad mehr (FIX_SET, L3SP-009).
      */
     public function test_edit_media_file_title_and_type(): void
     {
-        // Media-Record aus demo.ged holen
-        $xref = DB::table('media')
-            ->where('m_file', '=', $this->tree->id())
-            ->value('m_id');
-
-        if ($xref === null) {
-            $this->markTestSkipped('Kein Media-Record in demo.ged vorhanden.');
-        }
+        // Arrange: Media-Record sicherstellen — bevorzugt aus demo.ged,
+        // ansonsten via GedcomImportService selbst anlegen. Damit ist die
+        // Voraussetzung des Tests vom Testcode selbst hergestellt (FIX_SET).
+        $xref = $this->ensureMediaRecord();
 
         $request = $this->createRequest(
             method:     RequestMethodInterface::METHOD_POST,
@@ -72,15 +71,67 @@ class EditMediaFileIntegrationTest extends MysqlTestCase
             ],
             attributes: [
                 'tree'    => $this->tree,
-                'xref'    => (string) $xref,
-                // Leere fact_id → media_file === null → Redirect zu Baumseite (kein 500)
+                'xref'    => $xref,
+                // Leere fact_id → media_file === null → Redirect zu Baumseite (kein 500).
+                // SUT-Pfad: EditMediaFileAction::handle() liefert
+                // redirect(route(TreePage::class, ...)) → HTTP 302.
                 'fact_id' => '',
             ],
         );
 
         $response = $this->handler->handle($request);
 
-        $this->assertLessThan(500, $response->getStatusCode());
+        // Echte Verhaltens-Assertion: nicht-Datei-Branch redirected (302 Found),
+        // nicht nur "kein 5xx". Pinnt den TreePage-Redirect-Branch fest.
+        $this->assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+    }
+
+    /**
+     * Stellt einen Media-Record im Testbaum sicher, der zusätzlich mindestens
+     * eine FILE-Struktur trägt (für factId-basierte Tests notwendig).
+     *
+     * Greift bevorzugt auf einen bereits aus demo.ged importierten Record mit
+     * mindestens einer Media-Datei zu; legt sonst über den GedcomImportService
+     * einen minimalen OBJE-Record mit FILE/FORM/TITL an. Damit ist die
+     * Voraussetzung für die Handler-Tests vom Testcode selbst hergestellt
+     * (FIX_SET, L3SP-009/-010/-011) — keine verhalts-blinde markTestSkipped-
+     * Auslassung mehr, auch nicht für den Sub-Fall „Record existiert, hat
+     * aber keine FILE-Struktur".
+     */
+    private function ensureMediaRecord(): string
+    {
+        // Bevorzugt ein Media-Record aus demo.ged, der via media_file-Tabelle
+        // mindestens eine FILE-Struktur trägt — sonst wäre $media->mediaFiles()
+        // leer und der Happy-Path-Test (mit factId) nicht durchführbar.
+        $xref = DB::table('media')
+            ->join('media_file', static function ($join): void {
+                $join->on('media.m_id', '=', 'media_file.m_id')
+                    ->on('media.m_file', '=', 'media_file.m_file');
+            })
+            ->where('media.m_file', '=', $this->tree->id())
+            ->value('media.m_id');
+
+        if ($xref !== null) {
+            return (string) $xref;
+        }
+
+        // Fallback: minimalen OBJE-Record mit FILE/FORM/TITL importieren —
+        // GedcomImportService::importRecord legt automatisch die zugehörige
+        // media_file-Row an (upstream: GedcomImportService.php:417–423).
+        $gedcom = "0 @MTESTL3SP@ OBJE\n1 FILE photo.jpg\n2 FORM jpeg\n2 TITL Test Photo";
+        $this->gedcomImportService->importRecord($gedcom, $this->tree, false);
+
+        $xref = DB::table('media')
+            ->join('media_file', static function ($join): void {
+                $join->on('media.m_id', '=', 'media_file.m_id')
+                    ->on('media.m_file', '=', 'media_file.m_file');
+            })
+            ->where('media.m_file', '=', $this->tree->id())
+            ->value('media.m_id');
+
+        self::assertNotNull($xref, 'Media-Record mit FILE-Struktur konnte nicht aufgebaut werden.');
+
+        return (string) $xref;
     }
 
     // --- Neue Assertion-Tests (Runde 4, G28) ---
@@ -88,22 +139,29 @@ class EditMediaFileIntegrationTest extends MysqlTestCase
     /**
      * Happy Path: gültige fact_id → GEDCOM mit neuem Titel in change-Tabelle (EP1 / DB-Postcondition).
      * new_file='' → Dateiname unverändert → $old === $new → acceptRecord NICHT aufgerufen → change bleibt pending.
+     *
+     * Voraussetzung (Media-Record im Testbaum, mit mindestens einer FILE-Struktur)
+     * wird vom Test selbst aufgebaut — Wiederverwendung des in L3SP-009 eingeführten
+     * und in L3SP-011 verschärften Helpers ensureMediaRecord(). Damit entfällt der
+     * verhalts-blinde markTestSkipped-Pfad für den fehlenden Demo-Media-Record
+     * (FIX_SET, L3SP-010) ebenso wie der zweite Skip-Pfad „Record ohne Dateien"
+     * (FIX_SET, L3SP-011).
      */
     public function test_edit_media_file_happy_path_creates_pending_change_with_updated_title(): void
     {
+        // Arrange: Media-Record mit FILE-Struktur sicherstellen — bevorzugt aus
+        // demo.ged, ansonsten via GedcomImportService selbst anlegen (siehe
+        // Helper). Der Helper garantiert mindestens eine media_file-Row für
+        // den zurückgegebenen xref, sodass mediaFiles()->first() nie null ist.
+        $xref   = $this->ensureMediaRecord();
         $treeId = $this->tree->id();
-        $xref   = DB::table('media')->where('m_file', '=', $treeId)->value('m_id');
-
-        if ($xref === null) {
-            $this->markTestSkipped('Kein Media-Record in demo.ged vorhanden.');
-        }
 
         $media     = Registry::mediaFactory()->make($xref, $this->tree);
         $firstFile = $media->mediaFiles()->first();
 
-        if ($firstFile === null) {
-            $this->markTestSkipped('Media-Record hat keine Dateien.');
-        }
+        // Postcondition des Helpers: Record trägt mindestens eine FILE-Struktur.
+        // Statt verhalts-blindem markTestSkipped — siehe L3SP-011.
+        self::assertNotNull($firstFile, 'ensureMediaRecord() hat einen Record ohne FILE-Struktur geliefert.');
 
         $factId = $firstFile->factId();
 

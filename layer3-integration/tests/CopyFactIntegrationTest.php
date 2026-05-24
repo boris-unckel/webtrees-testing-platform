@@ -39,13 +39,74 @@ class CopyFactIntegrationTest extends MysqlTestCase
     private const DEMO_GED = '/fixtures/demo.ged';
 
     /**
-     * Bootstrap-Smoke: Handler-Klasse ist autoloadbar.
+     * Wenn die Fact-Collection mehrere Einträge enthält und der gesuchte Fact in der
+     * Mitte liegt, ruft der Handler ClipboardService::copyFact() genau einmal mit
+     * exakt diesem Fact auf und bricht die Schleife danach ab (kein Doppelaufruf
+     * durch andere oder nachfolgende Facts mit gleicher ID).
+     *
+     * Ergänzt {@see self::test_handle_copies_matching_fact()} um die Loop-Short-Circuit-
+     * Eigenschaft: das `break` nach erstem Treffer in CopyFact::handle() ist
+     * verhaltensrelevant — ohne wird ein nachfolgender Fact mit gleicher ID
+     * fälschlich erneut kopiert.
      *
      * @group ported-l2-doubles
      */
-    public function test_class_exists(): void
+    public function test_handle_copies_first_matching_fact_and_breaks(): void
     {
-        self::assertTrue(class_exists(CopyFact::class));
+        // Arrange
+        $this->createTreeWithGedcom('copy-fact-loop', 'CopyFact Loop', self::DEMO_GED);
+
+        $fact_decoy_a = self::createStub(Fact::class);
+        $fact_decoy_a->method('id')->willReturn('fact-other-a');
+
+        $fact_target = self::createStub(Fact::class);
+        $fact_target->method('id')->willReturn('fact-target');
+        $fact_target->method('name')->willReturn('Death');
+
+        // Zweiter Fact mit gleicher ID — würde ohne `break` ein zweites Mal kopiert.
+        $fact_target_duplicate = self::createStub(Fact::class);
+        $fact_target_duplicate->method('id')->willReturn('fact-target');
+        $fact_target_duplicate->method('name')->willReturn('Death-Duplicate');
+
+        $fact_decoy_b = self::createStub(Fact::class);
+        $fact_decoy_b->method('id')->willReturn('fact-other-b');
+
+        $record = self::createStub(GedcomRecord::class);
+        $record->method('xref')->willReturn('X1');
+        $record->method('tree')->willReturn($this->tree);
+        $record->method('canEdit')->willReturn(true);
+        $record->method('canShow')->willReturn(true);
+        $record->method('facts')->willReturn(new Collection([
+            $fact_decoy_a,
+            $fact_target,
+            $fact_target_duplicate,
+            $fact_decoy_b,
+        ]));
+
+        $record_factory = self::createStub(GedcomRecordFactoryInterface::class);
+        $record_factory->method('make')->willReturn($record);
+
+        Registry::gedcomRecordFactory($record_factory);
+
+        $clipboard_service = $this->createMock(ClipboardService::class);
+        $clipboard_service
+            ->expects($this->once())
+            ->method('copyFact')
+            ->with(self::identicalTo($fact_target));
+
+        $handler = new CopyFact($clipboard_service);
+        $request = $this->createRequest(
+            RequestMethodInterface::METHOD_POST,
+            [],
+            [],
+            ['tree' => $this->tree, 'xref' => 'X1', 'fact_id' => 'fact-target'],
+        );
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert
+        self::assertSame(StatusCodeInterface::STATUS_NO_CONTENT, $response->getStatusCode());
     }
 
     /**
@@ -182,14 +243,36 @@ class CopyFactIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Bootstrap-Smoke: EmptyClipboard-Handler ist autoloadbar.
+     * Security-Property: EmptyClipboard akzeptiert keine fremden Hosts als Redirect-Ziel.
+     * Eine nicht-lokale URL im Body wird durch Validator::isLocalUrl() verworfen; der
+     * Handler fällt auf den Referer-Header zurück (Open-Redirect-Schutz). Trotz
+     * verworfener URL wird ClipboardService::emptyClipboard() unverändert aufgerufen.
      *
-     * @see Quelle: port-layer2-test-doubles:tests/app/Http/RequestHandlers/EmptyClipboardTest.php
      * @group ported-l2-doubles
      */
-    public function test_empty_clipboard_class_exists(): void
+    public function test_empty_clipboard_rejects_non_local_url_and_falls_back_to_referer(): void
     {
-        self::assertTrue(class_exists(EmptyClipboard::class));
+        // Arrange
+        $clipboard_service = $this->createMock(ClipboardService::class);
+        $clipboard_service
+            ->expects($this->once())
+            ->method('emptyClipboard');
+
+        $handler = new EmptyClipboard($clipboard_service);
+
+        $referer = 'https://webtrees.test/index.php?route=/tree/x/manage';
+        $request = $this->createRequest(
+            RequestMethodInterface::METHOD_POST,
+            [],
+            ['url' => 'https://evil.example.com/steal'],
+        )->withHeader('Referer', $referer);
+
+        // Act
+        $response = $handler->handle($request);
+
+        // Assert
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        self::assertSame($referer, $response->getHeaderLine('Location'));
     }
 
     /**

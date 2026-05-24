@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fig\Http\Message\RequestMethodInterface;
+use Fig\Http\Message\StatusCodeInterface;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Http\RequestHandlers\MergeFactsAction;
 use Fisharebest\Webtrees\Services\LinkedRecordService;
@@ -35,20 +36,20 @@ class MergeFactsIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * Zwei Individuals mergen — INDI1 bleibt, INDI2 gelöscht.
+     * Zwei Individuals mergen — Happy-Path-Redirect zu ManageTrees
+     * und pending-Löschung von xref2 in der change-Tabelle (EP1, DB-Postcondition).
      */
     public function test_merge_individuals_redirects(): void
     {
-        // Zwei INDIs aus demo.ged holen
+        // Zwei INDIs aus demo.ged holen — Fixture-Invariante: demo.ged liefert >= 72 Individuals.
         $xrefs = DB::table('individuals')
             ->where('i_file', '=', $this->tree->id())
+            ->orderBy('i_id')
             ->limit(2)
             ->pluck('i_id')
             ->toArray();
 
-        if (count($xrefs) < 2) {
-            $this->markTestSkipped('Nicht genug Individuals in demo.ged vorhanden.');
-        }
+        self::assertGreaterThanOrEqual(2, count($xrefs), 'demo.ged-Fixture muss mindestens zwei Individuals enthalten.');
 
         [$xref1, $xref2] = $xrefs;
 
@@ -65,6 +66,17 @@ class MergeFactsIntegrationTest extends MysqlTestCase
 
         $response = $this->handler->handle($request);
 
-        $this->assertLessThan(500, $response->getStatusCode());
+        // Happy-Path-Redirect: 302 zu ManageTrees — Location enthält kein 'xref1' (Guard-Redirect-Signatur).
+        self::assertSame(StatusCodeInterface::STATUS_FOUND, $response->getStatusCode());
+        self::assertStringNotContainsString('xref1', $response->getHeaderLine('Location'));
+
+        // DB-Postcondition: deleteRecord() legt für xref2 einen change-Eintrag mit new_gedcom='' an.
+        $deleted = DB::table('change')
+            ->where('gedcom_id', '=', $this->tree->id())
+            ->where('xref', '=', $xref2)
+            ->where('new_gedcom', '=', '')
+            ->whereIn('status', ['pending', 'accepted'])
+            ->exists();
+        self::assertTrue($deleted, 'Für xref2 muss eine pending/accepted Löschung in der change-Tabelle stehen.');
     }
 }
