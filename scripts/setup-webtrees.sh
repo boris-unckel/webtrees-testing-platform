@@ -66,6 +66,21 @@ fi
 # Temporäre Dateien aus früheren Testläufen bereinigen
 rm -f "${TESTS_DATA_DIR}/offline.txt" "${TESTS_DATA_DIR}/foo"
 
+# 0c. resources/lang-Volume seeden (analog tests/data). webtrees kompiliert
+# .po zur Laufzeit nach .php und cached das Ergebnis in
+# resources/lang/<locale>/messages.php (Build-Artefakt, in upstream-.gitignore).
+# Ohne RW-Cache schlaegt file_put_contents am :ro-Mount fehl → 500 sobald
+# UseLanguage-Middleware einen unbekannten locale instanziiert.
+LANG_DIR="${WEBTREES_DIR}/resources/lang"
+LANG_SEED="/webtrees-lang-seed"
+if [ -d "${LANG_SEED}" ] && [ ! -f "${LANG_DIR}/.seeded" ]; then
+    echo "[0b/4] resources/lang-Volume seeden..."
+    cp -a "${LANG_SEED}/." "${LANG_DIR}/"
+    chown -R www-data:www-data "${LANG_DIR}"
+    touch "${LANG_DIR}/.seeded"
+    echo "  Seed abgeschlossen."
+fi
+
 # 1. Composer install
 echo "[1/4] composer install..."
 cd "${WEBTREES_DIR}"

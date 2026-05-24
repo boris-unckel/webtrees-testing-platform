@@ -42,6 +42,12 @@ services:
       - webtrees-unit-tests-data:/var/www/html/tests/data
       # Seeding-Quelle: webtrees tests/data als ro-Mount auf separatem Pfad
       - ${WEBTREES_SOURCE:-./upstream/webtrees}/tests/data:/webtrees-tests-data-seed:ro,z
+      # resources/lang schreibbar — webtrees kompiliert .po → .php zur Laufzeit
+      # in resources/lang/<locale>/messages.php (nicht im git, in upstream/.gitignore).
+      # Ohne RW-Cache: file_put_contents auf den :ro-Mount → 500 auf jeder Seite,
+      # die UseLanguage durchläuft. Pattern wie webtrees-unit-tests-data.
+      - webtrees-lang-cache:/var/www/html/resources/lang
+      - ${WEBTREES_SOURCE:-./upstream/webtrees}/resources/lang:/webtrees-lang-seed:ro,z
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: "3306"
@@ -204,6 +210,7 @@ volumes:
   webtrees-data:
   webtrees-vendor:
   webtrees-unit-tests-data:
+  webtrees-lang-cache:
   mysql-data:
   mysql-security-data:
   coverage-data:
