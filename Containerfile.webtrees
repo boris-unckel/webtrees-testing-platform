@@ -79,7 +79,10 @@ RUN a2enconf boomerang
 COPY --from=docker.io/library/composer:2 /usr/bin/composer /usr/bin/composer
 
 # PHP-Konfiguration für Tests
-RUN echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/webtrees-test.ini \
+# memory_limit muss 2048M sein: PHPUnit aggregiert Coverage-Daten in
+# ProcessedCodeCoverageData; bei 1325 Tests / 44k Statements (Layer 3) sprengt der
+# Default 512M den Heap und PHPUnit bricht mit OOM ab.
+RUN echo "memory_limit = 2048M" > /usr/local/etc/php/conf.d/webtrees-test.ini \
     && echo "max_execution_time = 300" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
     && echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
     && echo "display_errors = On" >> /usr/local/etc/php/conf.d/webtrees-test.ini \
@@ -89,8 +92,13 @@ RUN echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/webtrees-test.ini \
     && chmod 666 /var/log/php_errors.log
 
 # pcov-Konfiguration für Coverage
+# initial.memory + initial.files müssen erhöht sein: bei den Defaults (64 KB / 64 Files)
+# verliert PCOV bei Suiten dieser Größe still Coverage-Daten ohne Fehlermeldung
+# (manifestiert sich als implausibel niedrige Coverage-Werte).
 RUN echo "pcov.enabled = 1" > /usr/local/etc/php/conf.d/pcov.ini \
-    && echo "pcov.directory = /var/www/html/app" >> /usr/local/etc/php/conf.d/pcov.ini
+    && echo "pcov.directory = /var/www/html/app" >> /usr/local/etc/php/conf.d/pcov.ini \
+    && echo "pcov.initial.memory = 134217728" >> /usr/local/etc/php/conf.d/pcov.ini \
+    && echo "pcov.initial.files = 4096" >> /usr/local/etc/php/conf.d/pcov.ini
 
 # Setup-Skript kopieren
 COPY scripts/setup-webtrees.sh /usr/local/bin/setup-webtrees.sh

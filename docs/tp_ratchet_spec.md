@@ -42,38 +42,36 @@ Verwandte Dokumente:
 | **Scope** | Service-Klassen der Feature-Matrizen (G01–G23, S01–S24, S26–S40, P01–P29) |
 | **Reporting** | Coverage-HTML als CI-Artefakt (7 Tage Retention) |
 
-### Ist-Stand (Stand: 2026-04-11, Commit: 72bb731)
+### Ist-Stand (Stand: 2026-05-24)
 
-> Vollständiger Layer-Vergleich: [`docs/coverage-runs/2026-04-11_layer2-vs-layer3.md`](coverage-runs/2026-04-11_layer2-vs-layer3.md)
+> Mess-Basis: webtrees-Source `./upstream/webtrees` lokal im Testing-Platform-Repo.
+> L2 gegen Upstream-`main` @ `6966db16a6` (keine forks-eigenen Test-Erweiterungen).
+> L3 gegen `security-audit-consolidated` @ `9c7bdfd95a` (Upstream-`main` + Security-Audit-Fixes).
 
 #### Layer 2 — Upstream-Unit-Tests (Teststufe 1, `make test-unit`)
 
 | Metrik | Wert |
 |---|---|
-| Anweisungsüberdeckung | **39,82 %** (17.527 / 44.021 Statements) |
-| Methodenüberdeckung | 36,06 % (1.598 / 4.432 Methoden) |
-| Pakete mit >80 %-Coverage | Census (99,8 %), SurnameTradition (89,8 %), Report (79,1 %), Elements (86,9 %) |
-| Pakete mit 0 %-Coverage | CustomTags, Cli, GedcomFilters, Helpers, Statistics |
+| Anweisungsüberdeckung | **29,84 %** (13.138 / 44.027 Statements) |
+| Methodenüberdeckung | 26,96 % (1.195 / 4.432 Methoden) |
+| Pakete mit >80 %-Coverage | Census (99,8 %), Http/Routes (99,7 %), SurnameTradition (89,8 %), Elements (86,9 %) |
+| Pakete mit 0 %-Coverage | Cli, Cli/Commands, CustomTags, Schema, Statistics/Service, Module/InteractiveTree, Exceptions, GedcomFilters, Http/Exceptions |
 
 #### Layer 3 — Integrationstests (Teststufe 2, `make test-integration`)
 
-> Vorherige Werte (2026-04-04, nach AP A-01 + AP B-01–B-07 + AP C-01–C-07): 32,4 % / 22,8 %.
-
 | Metrik | Wert |
 |---|---|
-| Anweisungsüberdeckung | **39,83 %** (17.540 / 44.035 Statements) — Ratchet-Basis |
-| Methodenüberdeckung | 36,19 % (1.604 / 4.432 Methoden) |
-| Pakete mit >80 %-Coverage | CustomTags (97,2 %), Helpers (94,1 %), GedcomFilters (81,5 %), Date (77,0 %) |
-| Pakete mit 0 %-Coverage | Statistics, Schema (<4 %), Census (<3 %) |
-| Größte unabgedeckte Pakete | Http/RequestHandlers (35 %), Module (restliche Methoden) |
+| Anweisungsüberdeckung | **49,05 %** (21.619 / 44.073 Statements) — Ratchet-Basis |
+| Methodenüberdeckung | 44,75 % (1.984 / 4.434 Methoden) |
+| Pakete mit >80 %-Coverage | Http/Routes (100,0 %), CustomTags (97,2 %), Http (95,0 %), Module/InteractiveTree (86,5 %), Http/Exceptions (84,6 %), GedcomFilters (81,5 %), Date (80,4 %) |
+| Pakete mit 0 %-Coverage | Cli, Statistics/Service |
+| Größte unabgedeckte Pakete | Module (31,5 %), Elements (34,3 %), Census (2,2 %), Schema (3,8 %) |
 
-#### Komplementarität
-
-Layer 2 und Layer 3 decken überwiegend **verschiedene Bereiche** ab:
-- L2 stärker: Census (−97,6 %), Elements (−58,5 %), SurnameTradition (−67,1 %), Http (−26,4 %), Report (−21,3 %)
-- L3 stärker: Services (+39,7 %), CustomTags (+97,2 %), Date (+70,3 %), Cli (+45,2 %), Module (+14,0 %)
-
-Nettobilanz: +6.645 Statements wo L3 besser / −6.648 wo L2 besser → Gesamtdifferenz ≈ 0.
+> **PCOV-Konfiguration:** Die Coverage-Erhebung benötigt `memory_limit = 2048M`,
+> `pcov.initial.memory = 134217728`, `pcov.initial.files = 4096`. Mit Default-PCOV-
+> Werten verliert PCOV bei einer Suite dieser Größe still Daten (manifestiert sich als
+> implausibel niedrige Werte ohne Fehlermeldung). Werte sind in `Containerfile.webtrees`
+> verankert.
 
 **Begründung:** Das Projekt startet bei ~0% substanzieller Überdeckung (95% Stub-Tests).
 Ein willkürlicher Zielwert (z. B. 80%) wäre spekulativ. Die Ratchet-Strategie schützt

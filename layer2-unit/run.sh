@@ -31,6 +31,11 @@ chown -R www-data:www-data "${WEBTREES_DIR}/tests/data/"
 chown -R www-data:www-data "${ARTIFACTS}" 2>/dev/null || true
 mkdir -p /tmp/phpunit-cache && chown www-data:www-data /tmp/phpunit-cache
 
+# Host-Umask kann der Bind-Mount-Source restriktive Permissions verleihen (z. B. 0640),
+# sodass www-data die Source nicht lesen kann. Sicherstellen, dass app/, tests/ und vendor/
+# world-readable sind — die Source ist read-only und ihre Sichtbarkeit unkritisch.
+chmod -R o+rX "${WEBTREES_DIR}/app" "${WEBTREES_DIR}/tests" "${WEBTREES_DIR}/vendor" 2>/dev/null || true
+
 EXIT_CODE=0
 su -s /bin/bash www-data -c "cd ${WEBTREES_DIR} && vendor/bin/phpunit \
     --configuration=/tests/layer2-unit/phpunit-unit.xml \
