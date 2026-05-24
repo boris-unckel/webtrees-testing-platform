@@ -12,8 +12,6 @@ use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Http\Exceptions\HttpTooManyRequestsException;
 use Fisharebest\Webtrees\Http\RequestHandlers\LoginAction;
 use Fisharebest\Webtrees\Registry;
-use Fisharebest\Webtrees\Services\RateLimitService;
-use Fisharebest\Webtrees\Services\UpgradeService;
 use Fisharebest\Webtrees\Session;
 use Fisharebest\Webtrees\Site;
 use Psr\Http\Message\ServerRequestInterface;
@@ -77,11 +75,7 @@ class LoginActionIntegrationTest extends MysqlTestCase
      */
     public function test_login_action_redirects_when_cookies_disabled(): void
     {
-        $handler = new LoginAction(
-            Registry::container()->get(UpgradeService::class),
-            new RateLimitService(),
-            $this->userService,
-        );
+        $handler = Registry::container()->get(LoginAction::class);
 
         $request = $this->createRequest(
             method: RequestMethodInterface::METHOD_POST,
@@ -115,10 +109,7 @@ class LoginActionIntegrationTest extends MysqlTestCase
         $user->setPreference(UserInterface::PREF_IS_EMAIL_VERIFIED, '1');
         $user->setPreference(UserInterface::PREF_IS_ACCOUNT_APPROVED, '1');
 
-        $upgrade_service = self::createStub(UpgradeService::class);
-        $upgrade_service->method('isUpgradeAvailable')->willReturn(false);
-
-        $handler  = new LoginAction($upgrade_service, new RateLimitService(), $this->userService);
+        $handler  = Registry::container()->get(LoginAction::class);
         $request  = $this->createRequest(
             method: RequestMethodInterface::METHOD_POST,
             params: [
@@ -153,9 +144,7 @@ class LoginActionIntegrationTest extends MysqlTestCase
         // Per-User-Rate-Limit für diesen User zurücksetzen (Test isoliert halten).
         $user->setPreference('rate-limit-login', '');
 
-        $upgrade_service = self::createStub(UpgradeService::class);
-
-        $handler = new LoginAction($upgrade_service, new RateLimitService(), $this->userService);
+        $handler = Registry::container()->get(LoginAction::class);
         $request = $this->createRequest(
             method: RequestMethodInterface::METHOD_POST,
             params: [
@@ -185,9 +174,7 @@ class LoginActionIntegrationTest extends MysqlTestCase
         $this->prepareLoginAttempt();
         $session_user_before = Session::get('wt_user');
 
-        $upgrade_service = self::createStub(UpgradeService::class);
-
-        $handler = new LoginAction($upgrade_service, new RateLimitService(), $this->userService);
+        $handler = Registry::container()->get(LoginAction::class);
         $request = $this->createRequest(
             method: RequestMethodInterface::METHOD_POST,
             params: [
@@ -220,9 +207,7 @@ class LoginActionIntegrationTest extends MysqlTestCase
         $user->setPreference(UserInterface::PREF_IS_ACCOUNT_APPROVED, '1');
         $user->setPreference('rate-limit-login', '');
 
-        $upgrade_service = self::createStub(UpgradeService::class);
-
-        $handler = new LoginAction($upgrade_service, new RateLimitService(), $this->userService);
+        $handler = Registry::container()->get(LoginAction::class);
         $request = $this->createRequest(
             method: RequestMethodInterface::METHOD_POST,
             params: [
@@ -255,9 +240,7 @@ class LoginActionIntegrationTest extends MysqlTestCase
         $user->setPreference(UserInterface::PREF_IS_ACCOUNT_APPROVED, '0');
         $user->setPreference('rate-limit-login', '');
 
-        $upgrade_service = self::createStub(UpgradeService::class);
-
-        $handler = new LoginAction($upgrade_service, new RateLimitService(), $this->userService);
+        $handler = Registry::container()->get(LoginAction::class);
         $request = $this->createRequest(
             method: RequestMethodInterface::METHOD_POST,
             params: [
@@ -283,7 +266,7 @@ class LoginActionIntegrationTest extends MysqlTestCase
      * Pre-fix: alle Versuche → 302 (keine Drosselung).
      * Post-fix (egal in welcher Form): nach 10 Fehlversuchen → 429 / Throw.
      */
-    public function test_sec_audit_008_per_user_rate_limit_fires_after_threshold(): void
+    public function test_per_user_rate_limit_fires_after_threshold(): void
     {
         $this->prepareLoginAttempt();
 
@@ -310,6 +293,8 @@ class LoginActionIntegrationTest extends MysqlTestCase
 
         $this->assertRateLimitBlocks(
             fn (): mixed => $handler->handle($this->makeLoginRequest('sec008probe', 'bad-trigger')),
+            'Per-user rate-limit',
+            10,
         );
     }
 
@@ -318,7 +303,7 @@ class LoginActionIntegrationTest extends MysqlTestCase
      * Post-fix: nach 20 Versuchen auf nicht existierende User → 429 / Throw,
      * unabhängig von der Existenz des Accounts (Schutz vor User-Enumeration).
      */
-    public function test_sec_audit_008_site_wide_rate_limit_fires_for_unknown_users(): void
+    public function test_site_wide_rate_limit_fires_for_unknown_users(): void
     {
         $this->prepareLoginAttempt();
 
@@ -335,10 +320,17 @@ class LoginActionIntegrationTest extends MysqlTestCase
 
         $this->assertRateLimitBlocks(
             fn (): mixed => $handler->handle($this->makeLoginRequest('no-such-sec008', 'bad-trigger')),
+            'Site-wide rate-limit fuer unbekannte User',
+            20,
         );
     }
 
-    private function assertRateLimitBlocks(callable $invoke): void
+    /**
+     * FAILURE_PIN-Helper nach wf_test-iteration_guide.md §i.7. Asserted das
+     * Soll-Verhalten (Throttle nach Threshold) und liefert eine sprechende
+     * Failure-Message, solange Upstream den Rate-Limit nicht implementiert.
+     */
+    private function assertRateLimitBlocks(callable $invoke, string $variant, int $threshold): void
     {
         try {
             $response = $invoke();
@@ -356,7 +348,16 @@ class LoginActionIntegrationTest extends MysqlTestCase
         self::assertSame(
             429,
             $response->getStatusCode(),
-            'Rate limit must fire via HTTP 429 or HttpTooManyRequestsException',
+            sprintf(
+                'LoginAction::handle (%s): nach %d fehlgeschlagenen Login-Versuchen muss eine Rate-Limit-Drosselung greifen '
+                . '(HTTP 429 oder HttpTooManyRequestsException). Aktuell HTTP %d — Upstream `main` enthaelt keine '
+                . 'Login-Rate-Limit-Implementierung (Services\\RateLimitService fehlt). '
+                . 'FAILURE_PIN nach wf_test-iteration_guide.md §i.7; siehe '
+                . 'docs/security-audit/tasks/SEC-AUDIT-008_login_brute_force_no_rate_limit.md.',
+                $variant,
+                $threshold,
+                $response->getStatusCode(),
+            ),
         );
     }
 
