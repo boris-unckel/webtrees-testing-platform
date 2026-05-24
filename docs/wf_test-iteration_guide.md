@@ -563,6 +563,20 @@ $request = $this->createRequest(query: ['path' => '../../../etc/passwd'], ...);
 $handler->handle($request);
 ```
 
+### i.7 FAILURE_PIN — Default-Pattern für dokumentierte Upstream-Bugs
+
+Default für dieses Repo: testbar reproduzierbare Upstream-Bugs werden weder per `markTestSkipped` versteckt noch invertiert gepinnt (Test grün solange Bug aktiv), sondern als echtes Failure gepinnt — Test asserted das **Soll-Verhalten** und ist rot, solange Upstream nicht fixt.
+
+```php
+$this->assertSame(
+    $expected,
+    $actual,
+    '<SUT::method>: <Soll-Verhalten>. Aktuell <Ist-Verhalten> — Upstream-Bug in <Ort> (<nötiger Fix>).'
+);
+```
+
+Failure-Message benennt SUT, Defekt-Ort und nötigen Fix. Konsequenz: `make test-integration` exitet ≠ 0 — CI-Gate auf erwarteten Failure-Count kalibrieren, nicht auf "0 Failures". Abgrenzung zu §11: nicht reproduzierbare Defekte (DNS, Race, Filesystem-Permissions) bleiben dort.
+
 ---
 
 ## 6 Aufwandskategorien
@@ -769,6 +783,8 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ---
 
 ## 11 Nicht verbesserbar (dauerhaft ausgeklammert)
+
+Diese Liste enthält Branches, deren Defekt-Verhalten ohne SUT-Änderung oder externe Infrastruktur **nicht einmal reproduzierbar** ist — daher weder per FAILURE_PIN (§5 i.7) noch per Standard-Test abdeckbar. Für dokumentierte Upstream-Bugs, die testbar reproduzierbar sind, gilt FAILURE_PIN als Default und nicht dieser Abschnitt.
 
 Die folgenden Branches konnen mit vertretbarem Aufwand nicht auf eine hohere Qualitatsstufe angehoben werden, ohne externe Infrastruktur oder SUT-Anderungen:
 

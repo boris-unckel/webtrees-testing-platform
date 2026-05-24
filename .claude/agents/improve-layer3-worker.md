@@ -59,7 +59,7 @@ Bestätige oder weiche vom Strategie-Hinweis aus plan.md ab. Bei Abweichung: `au
 
 | Strategie | Vorgehen |
 |---|---|
-| `BUG_PIN` | `markTestSkipped` raus. Schreibe einen Test, der den dokumentierten Bug exakt asserted (z. B. `assertNull(...)` für "gibt null zurück"). Über die Assertion: `// BUG-CANDIDATE: <kurzbegruendung>`. Sobald Upstream den Bug behebt, geht der Test rot — die Diskrepanz wird sichtbar, nicht maskiert. |
+| `FAILURE_PIN` | `markTestSkipped` raus. Schreibe einen Test, der das **Soll-Verhalten** asserted (z. B. `assertSame('[', $body[0])` wenn die Schnittstelle ein JSON-Array vorschreibt). Test schlägt rot fehl, solange der Upstream-Bug aktiv ist — Default-Politik dieses Repos, siehe `docs/wf_test-iteration_guide.md` §5 i.7. Failure-Message benennt SUT-Klasse, Defekt-Ort und den nötigen Fix. **Keine Inversion** (Defekt-Verhalten asserten) — das täuscht grünen CI vor und ist explizit untersagt. |
 | `FIX_SET` | Skip-Guard entfernen. Voraussetzung im `setUp()` oder am Methoden-Anfang selbst aufbauen: Media-Record via `MediaFileService::uploadFile` oder direktes `DB::table('media')->insert(...)`, Familie via `GedcomImportService::importRecord(...)`, Individuals via direktes `DB::table('individuals')->insert(...)`, etc. Anschließend echte Verhaltens-Assertion (Statuscode, DB-Postcondition, Response-Inhalt). |
 | `BEHAVIOR_HANDLE` | `assertTrue(class_exists(X::class))` durch echten Verhaltens-Test ersetzen: <br>`$handler = Registry::container()->get(X::class);` <br>`$request = $this->createRequest(method: …, attributes: ['tree' => $this->tree, 'user' => $this->admin], query: …);` <br>`$response = $handler->handle($request);` <br>`self::assertSame(<erwartet>, $response->getStatusCode());` <br>Wenn Auth notwendig: `$this->admin = $this->createAndLoginAdmin();` im `setUp`. Wenn Tree notwendig: `$this->tree = $this->treeService->create(...)`. |
 | `POSTCOND` | `assertTrue(true)` durch echte Postcondition ersetzen. Für `Report*`-Renderer: den Renderer per `createMock` injizieren, Argumente per `with($this->callback(fn($x) => …))` capturen, dann `assertSame(...)` auf die Capture. Für Middleware/Side-Effekte: System-Zustand vor/nach prüfen (`ob_get_level()`-Delta, set_error_handler-Stack, DB-Tabellen). |
@@ -70,7 +70,7 @@ Konstruktor-Verifikation: bevor du `new X(...)` oder `Registry::container()->get
 
 ### 7. Filter-Lauf im Container
 
-Nur bei tatsächlichem Code-Change (`BUG_PIN`, `FIX_SET`, `BEHAVIOR_HANDLE`, `POSTCOND`, `SHARP_CATCH`):
+Nur bei tatsächlichem Code-Change (`FAILURE_PIN`, `FIX_SET`, `BEHAVIOR_HANDLE`, `POSTCOND`, `SHARP_CATCH`):
 
 ```bash
 podman-compose exec webtrees vendor/bin/phpunit \

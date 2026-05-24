@@ -203,29 +203,26 @@ class AutoCompleteIntegrationTest extends MysqlTestCase
     // --- AutoCompleteCitation ---
 
     /**
-     * BUG-PIN: AutoCompleteCitation gibt auf demo.ged eine JSON-Antwort zurück,
-     * deren Body ein JSON-Objekt mit numerischen String-Keys (`{"0":..., "2":...}`)
-     * statt eines JSON-Arrays (`[..., ...]`) ist.
+     * Schnittstellenvertrag: AutoCompleteCitation muss ein JSON-Array
+     * (`[..., ...]`) zurueckliefern — AJAX-Clients (TomSelect/jQuery-Autocomplete)
+     * erwarten eine Liste.
      *
-     * Ursache liegt im Upstream-Code: `search()` kombiniert Individuen und Familien
-     * via `merge()`, filtert privacy-gefilterte Records via `accessFilter()` heraus
-     * und ruft `uniqueStrict()` auf — beides bewahrt die ursprünglichen, nun
-     * lückenhaften numerischen Keys. `json_encode()` auf einer `Collection` mit
-     * nicht-fortlaufenden Integer-Keys serialisiert als Objekt statt Array.
-     *
-     * AJAX-Clients (TomSelect/jQuery-Autocomplete) erwarten ein Array. Der Defekt
-     * wird hier als reproduzierbares Verhalten gepinnt: sobald Upstream auf
-     * `values()` vor `json_encode()` umstellt (oder `uniqueStrict()`-Keys
-     * normalisiert), beginnt der Response-Body mit `[` und der Test geht rot —
-     * die Bug-Behebung wird sichtbar, nicht maskiert.
+     * Aktueller Upstream-Defekt: `search()` kombiniert Individuen und Familien
+     * via `merge()`, filtert privacy-gefilterte Records via `accessFilter()`
+     * heraus und ruft `uniqueStrict()` auf — beides bewahrt die urspruenglichen,
+     * nun lueckenhaften numerischen Keys. `json_encode()` auf einer `Collection`
+     * mit nicht-fortlaufenden Integer-Keys serialisiert als Objekt (`{"0":..., "2":...}`)
+     * statt als Array. Solange der Upstream `values()` nicht vor `json_encode()`
+     * einschiebt (oder `uniqueStrict()`-Keys normalisiert), faellt dieser Test
+     * rot — bewusster Failure, kein verstecktes Skip/Pin. Sobald Upstream
+     * fixt, wird der Test gruen.
      *
      * Verwandt: `FamilyFactory::mapper()` deklariert `Closure(object):Family`,
-     * kann aber `null` zurückliefern (Cache-Hit auf bereits gelöschtem Record).
-     * Die accessFilter-Closure würde bei null mit TypeError abbrechen — auf
-     * demo.ged in dieser Konstellation aber nicht beobachtbar (keine null-Trefer
+     * kann aber `null` zurueckliefern (Cache-Hit auf bereits geloeschtem Record).
+     * Die accessFilter-Closure wuerde bei null mit TypeError abbrechen — auf
+     * demo.ged in dieser Konstellation aber nicht beobachtbar (keine null-Treffer
      * in der Collection bis zum Filter).
      *
-     * @see https://github.com/fisharebest/webtrees/issues/XXXX
      * @see AutoCompleteCitation::search() — uniqueStrict() bewahrt gappy keys
      */
     public function test_autocomplete_citation_returns_json_for_valid_source(): void
@@ -255,28 +252,27 @@ class AutoCompleteIntegrationTest extends MysqlTestCase
 
         $body = (string) $response->getBody();
 
-        // BUG-CANDIDATE: Body ist ein JSON-Objekt (beginnt mit `{`) statt eines
-        // JSON-Arrays (beginnt mit `[`). Sobald Upstream den uniqueStrict-/Key-
-        // Re-Index-Defekt behebt, beginnt der Body mit `[` und diese Assertion
-        // wird rot — der Bugfix wird sichtbar.
+        // Soll-Verhalten: Body beginnt mit `[` (JSON-Array). Bei `{` ist der
+        // Upstream-Bug aktiv — Test schlaegt rot fehl, bis Upstream
+        // uniqueStrict()-Keys vor json_encode() re-indiziert.
         $this->assertNotSame('', $body, 'Body darf nicht leer sein — Treffer in demo.ged erwartet');
         $this->assertSame(
-            '{',
+            '[',
             $body[0],
-            'BUG-CANDIDATE: Body soll laut Schnittstellenvertrag ein JSON-Array (`[`) sein, '
-            . 'liefert aber wegen gappy keys nach uniqueStrict() ein JSON-Objekt (`{`). '
-            . 'Wenn diese Assertion grün bleibt, ist der Upstream-Defekt aktiv.'
+            'Schnittstellenvertrag: Body muss JSON-Array (`[`) sein. Aktuell `{` '
+            . 'wegen gappy keys nach uniqueStrict() — Upstream-Bug in '
+            . 'AutoCompleteCitation::search() (values() vor json_encode() fehlt).'
         );
 
-        // Begleit-Assertion: json_decode liefert eine assoziative Map mit numerischen
-        // String-Keys — Beweis, dass die Serialisierung keinen List-Layout liefert.
+        // Begleit-Assertion: json_decode liefert eine List mit fortlaufenden
+        // numerischen Keys — Beweis, dass die Serialisierung List-Layout liefert.
         $decoded = json_decode($body, true);
         $this->assertIsArray($decoded);
-        $this->assertNotSame(
+        $this->assertSame(
             array_values($decoded),
             $decoded,
-            'BUG-CANDIDATE: Decoded payload ist eine assoziative Map mit lückenhaften '
-            . 'Integer-Keys (entspricht JSON-Objekt), nicht eine List mit fortlaufenden Keys.'
+            'JSON-Liste muss fortlaufende numerische Keys haben (List-Layout). '
+            . 'Lueckenhafte Integer-Keys signalisieren den uniqueStrict()-Bug.'
         );
     }
 

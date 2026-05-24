@@ -447,3 +447,4 @@
 2026-05-23T19:50:28+02:00 L3SP-079 sut_read app/Http/RequestHandlers/UserPageUpdate.php
 2026-05-23T19:51:23+02:00 L3SP-079 test_filter passed (2 tests, 10 assertions)
 2026-05-23T19:51:23+02:00 L3SP-079 done
+2026-05-24T07:49:23+02:00 L3SP-004 strategy_changed BUG_PIN→FAILURE_PIN reason=user_requirement_red_not_inverted file=AutoCompleteIntegrationTest.php verified_filter=1_failure_2_tests

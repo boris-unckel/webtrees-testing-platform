@@ -19,7 +19,7 @@ Baseline: 79 Sweep-Treffer (Stand der Baseline: 2026-05-23). Quelle: `artifacts/
 
 | Code | Vorgehen |
 |---|---|
-| `BUG_PIN` | Skip entfernen; Ist-Verhalten exakt asserten mit `BUG-CANDIDATE`-Marker. Test geht rot, wenn Upstream fixt. |
+| `FAILURE_PIN` | Skip entfernen; **Soll-Verhalten** asserten. Test schlägt rot fehl, solange der Upstream-Bug aktiv ist (Default-Politik dieses Repos, siehe `docs/wf_test-iteration_guide.md` §5 i.7). Failure-Message benennt SUT, Defekt-Ort und nötigen Fix. Sobald Upstream fixt, wird der Test grün. |
 | `FIX_SET` | Skip entfernen; Voraussetzung im Test selbst aufbauen (Media-Record, Familie, …) und echte Postcondition prüfen. |
 | `BEHAVIOR_HANDLE` | `class_exists`-Smoke durch Container-Instanziierung + `handle()` + Statuscode-Assertion ersetzen. |
 | `POSTCOND` | `assertTrue(true)` durch echte Postcondition ersetzen (DB-Zustand, Mock-Capture, Returnwert). |
@@ -46,7 +46,7 @@ Baseline: 79 Sweep-Treffer (Stand der Baseline: 2026-05-23). Quelle: `artifacts/
 | L3SP-001 | A2 | AddMediaFileActionIntegrationTest.php:66 | FIX_SET | erledigt |
 | L3SP-002 | A2 | AddMediaFileActionIntegrationTest.php:109 | FIX_SET | erledigt |
 | L3SP-003 | B | AdminMediaManagementIntegrationTest.php:161 | BEHAVIOR_HANDLE | erledigt |
-| L3SP-004 | A1 | AutoCompleteIntegrationTest.php:211 | BUG_PIN | erledigt |
+| L3SP-004 | A1 | AutoCompleteIntegrationTest.php:211 | FAILURE_PIN | erledigt |
 | L3SP-005 | B | CalendarChartIntegrationTest.php:175 | BEHAVIOR_HANDLE | erledigt |
 | L3SP-006 | B | CalendarChartIntegrationTest.php:224 | BEHAVIOR_HANDLE | erledigt |
 | L3SP-007 | B | CopyFactIntegrationTest.php:48 | BEHAVIOR_HANDLE | erledigt |
