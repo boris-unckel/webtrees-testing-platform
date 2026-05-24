@@ -1,0 +1,13 @@
+/tests/layer3-integration/tests/EditMediaFileIntegrationTest.php:53:     * markTestSkipped-Pfad mehr (FIX_SET, L3SP-009).
+/tests/layer3-integration/tests/EditMediaFileIntegrationTest.php:96:     * (FIX_SET, L3SP-009/-010/-011) — keine verhalts-blinde markTestSkipped-
+/tests/layer3-integration/tests/EditMediaFileIntegrationTest.php:145:     * verhalts-blinde markTestSkipped-Pfad für den fehlenden Demo-Media-Record
+/tests/layer3-integration/tests/EditMediaFileIntegrationTest.php:162:        // Statt verhalts-blindem markTestSkipped — siehe L3SP-011.
+/tests/layer3-integration/tests/MediaFileServiceUploadIntegrationTest.php:191:            self::assertTrue(true, "Dangerous extension {$filename} rejected via exception");
+/tests/layer3-integration/tests/ErrorHandlerMiddlewareIntegrationTest.php:115:        $this->assertTrue(true, 'Error-Handler wurde korrekt restauriert');
+/tests/layer3-integration/tests/MediaFileDeliveryIntegrationTest.php:405:            self::assertTrue(true, 'Upload rejected — strongest mitigation (L0)');
+/tests/layer3-integration/tests/AddMediaFileActionIntegrationTest.php:61:        // markTestSkipped-Pfad mehr aus.
+/tests/layer3-integration/tests/AddMediaFileActionIntegrationTest.php:148:     * (FIX_SET) — keine verhalts-blinde markTestSkipped-Auslassung mehr.
+/tests/layer3-integration/tests/ModuleActionIntegrationTest.php:33: * Fixture-Bedingung (keine Patch-Bedingung) — wird per markTestSkipped
+/tests/layer3-integration/tests/ModuleActionIntegrationTest.php:105:            self::assertTrue(true, "Block via HttpAccessDeniedException for {$method} /module/{$module}/{$action}");
+/tests/layer3-integration/tests/ModuleActionIntegrationTest.php:134:                self::markTestSkipped(sprintf(
+/tests/layer3-integration/tests/LoginActionIntegrationTest.php:338:            self::assertTrue(true, 'Rate limit fired via HttpTooManyRequestsException');

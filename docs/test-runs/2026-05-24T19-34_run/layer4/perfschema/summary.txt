@@ -1,0 +1,19 @@
+=== PerfSchema Summary: layer4 (2026-05-24T19:48:13+02:00) ===
+
+--- Top-10 Queries by Total Latency ---
+1. SET NAMES `utf8mb4` , `sql_mode` := ? , `TIME_ZONE` := ? , `SQL_BIG_SELECTS` :=   avg=0.07ms  calls=6  rows=0
+2. START TRANSACTION  avg=0.06ms  calls=6  rows=0
+3. USE `webtrees_test`  avg=0.05ms  calls=6  rows=0
+4. COMMIT  avg=0.05ms  calls=6  rows=0
+
+--- Top-5 Tables by I/O Wait ---
+1. wt_dates  reads=3622  writes=0  total_wait=1.86ms
+2. wt_module  reads=1278  writes=0  total_wait=0.55ms
+3. wt_site_setting  reads=48  writes=0  total_wait=0.15ms
+4. wt_gedcom  reads=20  writes=0  total_wait=0.12ms
+5. wt_user_setting  reads=62  writes=0  total_wait=0.09ms
+
+--- Warnungen ---
+Full Table Scans: 0 Queries
+No-Index Queries: 0 Queries
+Temp-Tabellen auf Disk: 0 Queries

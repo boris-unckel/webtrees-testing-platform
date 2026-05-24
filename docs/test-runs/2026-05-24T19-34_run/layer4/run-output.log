@@ -1,0 +1,1113 @@
+Testlauf: d634ee7b-a1e1-4238-85a9-bfea7cf57b93
+=== Teststufe 3 — Systemtest ===
+[1G[0K\[1G[0K
+Running 533 tests using 1 worker
+
+[1A[2K[1/533] [chromium] › tests/access-control.spec.ts:21:7 › Access Control › P27 — editor sees edit page for person
+[1A[2K[2/533] [chromium] › tests/access-control.spec.ts:37:7 › Access Control › P29 — visitor sees no edit buttons on person page
+[1A[2K[3/533] [chromium] › tests/access-control.spec.ts:48:7 › Access Control › P29 — member sees no edit buttons on person page
+[1A[2K[4/533] [chromium] › tests/access-control.spec.ts:58:7 › Access Control › P29 — editor cannot edit RESN locked person
+[1A[2K[5/533] [chromium] › tests/access-control.spec.ts:75:7 › Access Control › P28 — moderator can access pending changes page
+[1A[2K[6/533] [chromium] › tests/account-self-management.spec.ts:12:5 › P38 — Account-Seite lädt korrekt
+[1A[2K[7/533] [chromium] › tests/account-self-management.spec.ts:18:5 › P38 — Account-Formular zeigt E-Mail-Feld
+[1A[2K[8/533] [chromium] › tests/account-self-management.spec.ts:24:5 › P38 — Account-Formular zeigt Sprachauswahl
+[1A[2K[9/533] [chromium] › tests/advanced-search-execution.spec.ts:21:9 › Theme: webtrees › S05 — Erweiterte Suchseite rendert Formular [webtrees]
+[1A[2K[10/533] [chromium] › tests/advanced-search-execution.spec.ts:27:9 › Theme: webtrees › S05 — Suche nach Vorname liefert Treffer [webtrees]
+[1A[2K[11/533] [chromium] › tests/advanced-search-execution.spec.ts:37:9 › Theme: webtrees › S05 — Suche nach Nachname liefert Treffer [webtrees]
+[1A[2K[12/533] [chromium] › tests/advanced-search-execution.spec.ts:49:9 › Theme: webtrees › S06 — Erweiterte Suche mit Datumsfeld liefert Treffer [webtrees]
+[1A[2K[13/533] [chromium] › tests/advanced-search-execution.spec.ts:21:9 › Theme: clouds › S05 — Erweiterte Suchseite rendert Formular [clouds]
+[1A[2K[14/533] [chromium] › tests/advanced-search-execution.spec.ts:27:9 › Theme: clouds › S05 — Suche nach Vorname liefert Treffer [clouds]
+[1A[2K[15/533] [chromium] › tests/advanced-search-execution.spec.ts:37:9 › Theme: clouds › S05 — Suche nach Nachname liefert Treffer [clouds]
+[1A[2K[16/533] [chromium] › tests/advanced-search-execution.spec.ts:49:9 › Theme: clouds › S06 — Erweiterte Suche mit Datumsfeld liefert Treffer [clouds]
+[1A[2K[17/533] [chromium] › tests/advanced-search-execution.spec.ts:21:9 › Theme: colors › S05 — Erweiterte Suchseite rendert Formular [colors]
+[1A[2K[18/533] [chromium] › tests/advanced-search-execution.spec.ts:27:9 › Theme: colors › S05 — Suche nach Vorname liefert Treffer [colors]
+[1A[2K[19/533] [chromium] › tests/advanced-search-execution.spec.ts:37:9 › Theme: colors › S05 — Suche nach Nachname liefert Treffer [colors]
+[1A[2K[20/533] [chromium] › tests/advanced-search-execution.spec.ts:49:9 › Theme: colors › S06 — Erweiterte Suche mit Datumsfeld liefert Treffer [colors]
+[1A[2K[21/533] [chromium] › tests/advanced-search-execution.spec.ts:21:9 › Theme: fab › S05 — Erweiterte Suchseite rendert Formular [fab]
+[1A[2K[22/533] [chromium] › tests/advanced-search-execution.spec.ts:27:9 › Theme: fab › S05 — Suche nach Vorname liefert Treffer [fab]
+[1A[2K[23/533] [chromium] › tests/advanced-search-execution.spec.ts:37:9 › Theme: fab › S05 — Suche nach Nachname liefert Treffer [fab]
+[1A[2K[24/533] [chromium] › tests/advanced-search-execution.spec.ts:49:9 › Theme: fab › S06 — Erweiterte Suche mit Datumsfeld liefert Treffer [fab]
+[1A[2K[25/533] [chromium] › tests/advanced-search-execution.spec.ts:21:9 › Theme: xenea › S05 — Erweiterte Suchseite rendert Formular [xenea]
+[1A[2K[26/533] [chromium] › tests/advanced-search-execution.spec.ts:27:9 › Theme: xenea › S05 — Suche nach Vorname liefert Treffer [xenea]
+[1A[2K[27/533] [chromium] › tests/advanced-search-execution.spec.ts:37:9 › Theme: xenea › S05 — Suche nach Nachname liefert Treffer [xenea]
+[1A[2K[28/533] [chromium] › tests/advanced-search-execution.spec.ts:49:9 › Theme: xenea › S06 — Erweiterte Suche mit Datumsfeld liefert Treffer [xenea]
+[1A[2K[29/533] [chromium] › tests/auth.spec.ts:17:7 › Auth Pages › S33 — registration page renders
+[1A[2K[30/533] [chromium] › tests/auth.spec.ts:24:7 › Auth Pages › S34 — password reset page renders
+[1A[2K[31/533] [chromium] › tests/calendar.spec.ts:19:9 › Theme: webtrees › S31 — month calendar renders [webtrees]
+[1A[2K[32/533] [chromium] › tests/calendar.spec.ts:28:9 › Theme: webtrees › S31 — year calendar renders [webtrees]
+[1A[2K[33/533] [chromium] › tests/calendar.spec.ts:19:9 › Theme: clouds › S31 — month calendar renders [clouds]
+[1A[2K[34/533] [chromium] › tests/calendar.spec.ts:28:9 › Theme: clouds › S31 — year calendar renders [clouds]
+[1A[2K[35/533] [chromium] › tests/calendar.spec.ts:19:9 › Theme: colors › S31 — month calendar renders [colors]
+[1A[2K[36/533] [chromium] › tests/calendar.spec.ts:28:9 › Theme: colors › S31 — year calendar renders [colors]
+[1A[2K[37/533] [chromium] › tests/calendar.spec.ts:19:9 › Theme: fab › S31 — month calendar renders [fab]
+[1A[2K[38/533] [chromium] › tests/calendar.spec.ts:28:9 › Theme: fab › S31 — year calendar renders [fab]
+[1A[2K[39/533] [chromium] › tests/calendar.spec.ts:19:9 › Theme: xenea › S31 — month calendar renders [xenea]
+[1A[2K[40/533] [chromium] › tests/calendar.spec.ts:28:9 › Theme: xenea › S31 — year calendar renders [xenea]
+[1A[2K[41/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: webtrees › S18 — Timeline-Chart lädt ohne Fehler [webtrees]
+[1A[2K[42/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: webtrees › S18 — Timeline-Chart zeigt Inhaltsbereich [webtrees]
+[1A[2K[43/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: webtrees › S18 — Lifespans-Chart lädt ohne Fehler [webtrees]
+[1A[2K[44/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: webtrees › S18 — Lifespans-Chart zeigt Inhaltsbereich [webtrees]
+[1A[2K[45/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: webtrees › S18 — FamilyBook-Chart lädt ohne Fehler [webtrees]
+[1A[2K[46/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: webtrees › S18 — FamilyBook-Chart zeigt Inhaltsbereich [webtrees]
+[1A[2K[47/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: webtrees › S18 — Descendants-Chart lädt ohne Fehler [webtrees]
+[1A[2K[48/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: webtrees › S18 — Descendants-Chart zeigt Inhaltsbereich [webtrees]
+[1A[2K[49/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: webtrees › S18 — Branches-Chart lädt ohne Fehler [webtrees]
+[1A[2K[50/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: webtrees › S18 — Branches-Chart zeigt Inhaltsbereich [webtrees]
+[1A[2K[51/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: clouds › S18 — Timeline-Chart lädt ohne Fehler [clouds]
+[1A[2K[52/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: clouds › S18 — Timeline-Chart zeigt Inhaltsbereich [clouds]
+[1A[2K[53/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: clouds › S18 — Lifespans-Chart lädt ohne Fehler [clouds]
+[1A[2K[54/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: clouds › S18 — Lifespans-Chart zeigt Inhaltsbereich [clouds]
+[1A[2K[55/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: clouds › S18 — FamilyBook-Chart lädt ohne Fehler [clouds]
+[1A[2K[56/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: clouds › S18 — FamilyBook-Chart zeigt Inhaltsbereich [clouds]
+[1A[2K[57/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: clouds › S18 — Descendants-Chart lädt ohne Fehler [clouds]
+[1A[2K[58/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: clouds › S18 — Descendants-Chart zeigt Inhaltsbereich [clouds]
+[1A[2K[59/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: clouds › S18 — Branches-Chart lädt ohne Fehler [clouds]
+[1A[2K[60/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: clouds › S18 — Branches-Chart zeigt Inhaltsbereich [clouds]
+[1A[2K[61/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: colors › S18 — Timeline-Chart lädt ohne Fehler [colors]
+[1A[2K[62/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: colors › S18 — Timeline-Chart zeigt Inhaltsbereich [colors]
+[1A[2K[63/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: colors › S18 — Lifespans-Chart lädt ohne Fehler [colors]
+[1A[2K[64/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: colors › S18 — Lifespans-Chart zeigt Inhaltsbereich [colors]
+[1A[2K[65/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: colors › S18 — FamilyBook-Chart lädt ohne Fehler [colors]
+[1A[2K[66/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: colors › S18 — FamilyBook-Chart zeigt Inhaltsbereich [colors]
+[1A[2K[67/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: colors › S18 — Descendants-Chart lädt ohne Fehler [colors]
+[1A[2K[68/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: colors › S18 — Descendants-Chart zeigt Inhaltsbereich [colors]
+[1A[2K[69/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: colors › S18 — Branches-Chart lädt ohne Fehler [colors]
+[1A[2K[70/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: colors › S18 — Branches-Chart zeigt Inhaltsbereich [colors]
+[1A[2K[71/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: fab › S18 — Timeline-Chart lädt ohne Fehler [fab]
+[1A[2K[72/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: fab › S18 — Timeline-Chart zeigt Inhaltsbereich [fab]
+[1A[2K[73/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: fab › S18 — Lifespans-Chart lädt ohne Fehler [fab]
+[1A[2K[74/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: fab › S18 — Lifespans-Chart zeigt Inhaltsbereich [fab]
+[1A[2K[75/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: fab › S18 — FamilyBook-Chart lädt ohne Fehler [fab]
+[1A[2K[76/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: fab › S18 — FamilyBook-Chart zeigt Inhaltsbereich [fab]
+[1A[2K[77/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: fab › S18 — Descendants-Chart lädt ohne Fehler [fab]
+[1A[2K[78/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: fab › S18 — Descendants-Chart zeigt Inhaltsbereich [fab]
+[1A[2K[79/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: fab › S18 — Branches-Chart lädt ohne Fehler [fab]
+[1A[2K[80/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: fab › S18 — Branches-Chart zeigt Inhaltsbereich [fab]
+[1A[2K[81/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: xenea › S18 — Timeline-Chart lädt ohne Fehler [xenea]
+[1A[2K[82/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: xenea › S18 — Timeline-Chart zeigt Inhaltsbereich [xenea]
+[1A[2K[83/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: xenea › S18 — Lifespans-Chart lädt ohne Fehler [xenea]
+[1A[2K[84/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: xenea › S18 — Lifespans-Chart zeigt Inhaltsbereich [xenea]
+[1A[2K[85/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: xenea › S18 — FamilyBook-Chart lädt ohne Fehler [xenea]
+[1A[2K[86/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: xenea › S18 — FamilyBook-Chart zeigt Inhaltsbereich [xenea]
+[1A[2K[87/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: xenea › S18 — Descendants-Chart lädt ohne Fehler [xenea]
+[1A[2K[88/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: xenea › S18 — Descendants-Chart zeigt Inhaltsbereich [xenea]
+[1A[2K[89/533] [chromium] › tests/chart-types.spec.ts:28:11 › Theme: xenea › S18 — Branches-Chart lädt ohne Fehler [xenea]
+[1A[2K[90/533] [chromium] › tests/chart-types.spec.ts:36:11 › Theme: xenea › S18 — Branches-Chart zeigt Inhaltsbereich [xenea]
+[1A[2K[91/533] [chromium] › tests/contact-form.spec.ts:21:9 › Theme: webtrees › K01 — Kontaktformular rendert korrekt [webtrees]
+[1A[2K[92/533] [chromium] › tests/contact-form.spec.ts:27:9 › Theme: webtrees › K01 — Kontaktformular zeigt Pflichtfelder [webtrees]
+[1A[2K[93/533] [chromium] › tests/contact-form.spec.ts:38:9 › Theme: webtrees › K01 — Leeres Kontaktformular-Submit [webtrees]
+[1A[2K[94/533] [chromium] › tests/contact-form.spec.ts:21:9 › Theme: clouds › K01 — Kontaktformular rendert korrekt [clouds]
+[1A[2K[95/533] [chromium] › tests/contact-form.spec.ts:27:9 › Theme: clouds › K01 — Kontaktformular zeigt Pflichtfelder [clouds]
+[1A[2K[96/533] [chromium] › tests/contact-form.spec.ts:38:9 › Theme: clouds › K01 — Leeres Kontaktformular-Submit [clouds]
+[1A[2K[97/533] [chromium] › tests/contact-form.spec.ts:21:9 › Theme: colors › K01 — Kontaktformular rendert korrekt [colors]
+[1A[2K[98/533] [chromium] › tests/contact-form.spec.ts:27:9 › Theme: colors › K01 — Kontaktformular zeigt Pflichtfelder [colors]
+[1A[2K[99/533] [chromium] › tests/contact-form.spec.ts:38:9 › Theme: colors › K01 — Leeres Kontaktformular-Submit [colors]
+[1A[2K[100/533] [chromium] › tests/contact-form.spec.ts:21:9 › Theme: fab › K01 — Kontaktformular rendert korrekt [fab]
+[1A[2K[101/533] [chromium] › tests/contact-form.spec.ts:27:9 › Theme: fab › K01 — Kontaktformular zeigt Pflichtfelder [fab]
+[1A[2K[102/533] (retries) [chromium] › tests/contact-form.spec.ts:27:9 › Theme: fab › K01 — Kontaktformular zeigt Pflichtfelder [fab] (retry #1)
+[1A[2K  1) [chromium] › tests/contact-form.spec.ts:27:9 › Theme: fab › K01 — Kontaktformular zeigt Pflichtfelder [fab] 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m0[39m
+    Received:   [31m0[39m
+
+      33 |       const fields = page.locator('input[name="subject"], textarea[name="body"], input[name="from_name"], input[name="from_email"]');
+      34 |       const count = await fields.count();
+    > 35 |       expect(count).toBeGreaterThan(0);
+         |                     ^
+      36 |     });
+      37 |
+      38 |     test(`K01 — Leeres Kontaktformular-Submit [${theme}]`, async ({ page }) => {
+        at /tests/e2e/tests/contact-form.spec.ts:35:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../artifacts/layer4/test-results/contact-form-Theme-fab-K01-849ca-ar-zeigt-Pflichtfelder-fab--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../artifacts/layer4/test-results/contact-form-Theme-fab-K01-849ca-ar-zeigt-Pflichtfelder-fab--chromium/error-context.md
+
+
+[1A[2K[103/533] [chromium] › tests/contact-form.spec.ts:38:9 › Theme: fab › K01 — Leeres Kontaktformular-Submit [fab]
+[1A[2K[104/533] [chromium] › tests/contact-form.spec.ts:21:9 › Theme: xenea › K01 — Kontaktformular rendert korrekt [xenea]
+[1A[2K[105/533] [chromium] › tests/contact-form.spec.ts:27:9 › Theme: xenea › K01 — Kontaktformular zeigt Pflichtfelder [xenea]
+[1A[2K[106/533] [chromium] › tests/contact-form.spec.ts:38:9 › Theme: xenea › K01 — Leeres Kontaktformular-Submit [xenea]
+[1A[2K[107/533] [chromium] › tests/error-handling.spec.ts:21:7 › M16 — Error-Page-Rendering › M16 — Client-Error bei nicht existierender XREF
+[1A[2K[108/533] [chromium] › tests/error-handling.spec.ts:31:7 › M16 — Error-Page-Rendering › M16 — Admin-Seite ohne Login wird umgeleitet
+[1A[2K[109/533] [chromium] › tests/error-handling.spec.ts:40:7 › M16 — Error-Page-Rendering › M16 — Error-Page enthaelt Alert-Container mit ARIA-Rolle
+[1A[2K[110/533] [chromium] › tests/error-handling.spec.ts:47:7 › M16 — Error-Page-Rendering › M16 — Error-Page enthaelt Fehlermeldung
+[1A[2K[111/533] [chromium] › tests/error-handling.spec.ts:55:7 › M16 — Error-Page-Rendering › M16 — Client-Error bei ungueltigem Tree-Namen
+[1A[2K[112/533] [chromium] › tests/fact-edit.spec.ts:19:9 › Theme: webtrees › E02 — Fakt-hinzufügen-Seite rendert korrekt [webtrees]
+[1A[2K[113/533] [chromium] › tests/fact-edit.spec.ts:26:9 › Theme: webtrees › E02 — Personenseite zeigt bestehende Fakten [webtrees]
+[1A[2K[114/533] [chromium] › tests/fact-edit.spec.ts:34:9 › Theme: webtrees › E02 — Edit-Links auf Personenseite vorhanden [webtrees]
+[1A[2K[115/533] [chromium] › tests/fact-edit.spec.ts:19:9 › Theme: clouds › E02 — Fakt-hinzufügen-Seite rendert korrekt [clouds]
+[1A[2K[116/533] [chromium] › tests/fact-edit.spec.ts:26:9 › Theme: clouds › E02 — Personenseite zeigt bestehende Fakten [clouds]
+[1A[2K[117/533] [chromium] › tests/fact-edit.spec.ts:34:9 › Theme: clouds › E02 — Edit-Links auf Personenseite vorhanden [clouds]
+[1A[2K[118/533] [chromium] › tests/fact-edit.spec.ts:19:9 › Theme: colors › E02 — Fakt-hinzufügen-Seite rendert korrekt [colors]
+[1A[2K[119/533] [chromium] › tests/fact-edit.spec.ts:26:9 › Theme: colors › E02 — Personenseite zeigt bestehende Fakten [colors]
+[1A[2K[120/533] [chromium] › tests/fact-edit.spec.ts:34:9 › Theme: colors › E02 — Edit-Links auf Personenseite vorhanden [colors]
+[1A[2K[121/533] [chromium] › tests/fact-edit.spec.ts:19:9 › Theme: fab › E02 — Fakt-hinzufügen-Seite rendert korrekt [fab]
+[1A[2K[122/533] [chromium] › tests/fact-edit.spec.ts:26:9 › Theme: fab › E02 — Personenseite zeigt bestehende Fakten [fab]
+[1A[2K[123/533] [chromium] › tests/fact-edit.spec.ts:34:9 › Theme: fab › E02 — Edit-Links auf Personenseite vorhanden [fab]
+[1A[2K[124/533] [chromium] › tests/fact-edit.spec.ts:19:9 › Theme: xenea › E02 — Fakt-hinzufügen-Seite rendert korrekt [xenea]
+[1A[2K[125/533] [chromium] › tests/fact-edit.spec.ts:26:9 › Theme: xenea › E02 — Personenseite zeigt bestehende Fakten [xenea]
+[1A[2K[126/533] [chromium] › tests/fact-edit.spec.ts:34:9 › Theme: xenea › E02 — Edit-Links auf Personenseite vorhanden [xenea]
+[1A[2K[127/533] [chromium] › tests/family.spec.ts:19:9 › Theme: webtrees › S24 — family page loads without errors [webtrees]
+[1A[2K[128/533] [chromium] › tests/family.spec.ts:26:9 › Theme: webtrees › S24 — family page shows family header [webtrees]
+[1A[2K[129/533] [chromium] › tests/family.spec.ts:34:9 › Theme: webtrees › S24 — family page shows facts area [webtrees]
+[1A[2K[130/533] [chromium] › tests/family.spec.ts:19:9 › Theme: clouds › S24 — family page loads without errors [clouds]
+[1A[2K[131/533] [chromium] › tests/family.spec.ts:26:9 › Theme: clouds › S24 — family page shows family header [clouds]
+[1A[2K[132/533] [chromium] › tests/family.spec.ts:34:9 › Theme: clouds › S24 — family page shows facts area [clouds]
+[1A[2K[133/533] [chromium] › tests/family.spec.ts:19:9 › Theme: colors › S24 — family page loads without errors [colors]
+[1A[2K[134/533] [chromium] › tests/family.spec.ts:26:9 › Theme: colors › S24 — family page shows family header [colors]
+[1A[2K[135/533] [chromium] › tests/family.spec.ts:34:9 › Theme: colors › S24 — family page shows facts area [colors]
+[1A[2K[136/533] [chromium] › tests/family.spec.ts:19:9 › Theme: fab › S24 — family page loads without errors [fab]
+[1A[2K[137/533] [chromium] › tests/family.spec.ts:26:9 › Theme: fab › S24 — family page shows family header [fab]
+[1A[2K[138/533] [chromium] › tests/family.spec.ts:34:9 › Theme: fab › S24 — family page shows facts area [fab]
+[1A[2K[139/533] [chromium] › tests/family.spec.ts:19:9 › Theme: xenea › S24 — family page loads without errors [xenea]
+[1A[2K[140/533] [chromium] › tests/family.spec.ts:26:9 › Theme: xenea › S24 — family page shows family header [xenea]
+[1A[2K[141/533] [chromium] › tests/family.spec.ts:34:9 › Theme: xenea › S24 — family page shows facts area [xenea]
+[1A[2K[142/533] [chromium] › tests/help-texts.spec.ts:21:9 › Theme: webtrees › S50 — Hilfe-Endpunkte liefern Inhalte für bekannte Topics [webtrees]
+[1A[2K[143/533] [chromium] › tests/help-texts.spec.ts:32:9 › Theme: webtrees › S50 — Hilfe-Endpunkt für unbekannten Topic liefert Fallback [webtrees]
+[1A[2K[144/533] [chromium] › tests/help-texts.spec.ts:39:9 › Theme: webtrees › S50 — Hilfe-Icon auf Personenseite führt zu Hilfetext [webtrees]
+[1A[2K[145/533] [chromium] › tests/help-texts.spec.ts:21:9 › Theme: clouds › S50 — Hilfe-Endpunkte liefern Inhalte für bekannte Topics [clouds]
+[1A[2K[146/533] [chromium] › tests/help-texts.spec.ts:32:9 › Theme: clouds › S50 — Hilfe-Endpunkt für unbekannten Topic liefert Fallback [clouds]
+[1A[2K[147/533] [chromium] › tests/help-texts.spec.ts:39:9 › Theme: clouds › S50 — Hilfe-Icon auf Personenseite führt zu Hilfetext [clouds]
+[1A[2K[148/533] [chromium] › tests/help-texts.spec.ts:21:9 › Theme: colors › S50 — Hilfe-Endpunkte liefern Inhalte für bekannte Topics [colors]
+[1A[2K[149/533] [chromium] › tests/help-texts.spec.ts:32:9 › Theme: colors › S50 — Hilfe-Endpunkt für unbekannten Topic liefert Fallback [colors]
+[1A[2K[150/533] [chromium] › tests/help-texts.spec.ts:39:9 › Theme: colors › S50 — Hilfe-Icon auf Personenseite führt zu Hilfetext [colors]
+[1A[2K[151/533] [chromium] › tests/help-texts.spec.ts:21:9 › Theme: fab › S50 — Hilfe-Endpunkte liefern Inhalte für bekannte Topics [fab]
+[1A[2K[152/533] [chromium] › tests/help-texts.spec.ts:32:9 › Theme: fab › S50 — Hilfe-Endpunkt für unbekannten Topic liefert Fallback [fab]
+[1A[2K[153/533] [chromium] › tests/help-texts.spec.ts:39:9 › Theme: fab › S50 — Hilfe-Icon auf Personenseite führt zu Hilfetext [fab]
+[1A[2K[154/533] [chromium] › tests/help-texts.spec.ts:21:9 › Theme: xenea › S50 — Hilfe-Endpunkte liefern Inhalte für bekannte Topics [xenea]
+[1A[2K[155/533] [chromium] › tests/help-texts.spec.ts:32:9 › Theme: xenea › S50 — Hilfe-Endpunkt für unbekannten Topic liefert Fallback [xenea]
+[1A[2K[156/533] [chromium] › tests/help-texts.spec.ts:39:9 › Theme: xenea › S50 — Hilfe-Icon auf Personenseite führt zu Hilfetext [xenea]
+[1A[2K[157/533] [chromium] › tests/homepage-blocks.spec.ts:19:9 › Theme: webtrees › S46 — Homepage zeigt mindestens einen Block [webtrees]
+[1A[2K[158/533] [chromium] › tests/homepage-blocks.spec.ts:26:9 › Theme: webtrees › S46 — Homepage zeigt Statistik-Block [webtrees]
+[1A[2K[159/533] [chromium] › tests/homepage-blocks.spec.ts:32:9 › Theme: webtrees › S46 — Homepage-Block-Konfiguration erreichbar [webtrees]
+[1A[2K[160/533] [chromium] › tests/homepage-blocks.spec.ts:19:9 › Theme: clouds › S46 — Homepage zeigt mindestens einen Block [clouds]
+[1A[2K[161/533] [chromium] › tests/homepage-blocks.spec.ts:26:9 › Theme: clouds › S46 — Homepage zeigt Statistik-Block [clouds]
+[1A[2K[162/533] [chromium] › tests/homepage-blocks.spec.ts:32:9 › Theme: clouds › S46 — Homepage-Block-Konfiguration erreichbar [clouds]
+[1A[2K[163/533] [chromium] › tests/homepage-blocks.spec.ts:19:9 › Theme: colors › S46 — Homepage zeigt mindestens einen Block [colors]
+[1A[2K[164/533] [chromium] › tests/homepage-blocks.spec.ts:26:9 › Theme: colors › S46 — Homepage zeigt Statistik-Block [colors]
+[1A[2K[165/533] [chromium] › tests/homepage-blocks.spec.ts:32:9 › Theme: colors › S46 — Homepage-Block-Konfiguration erreichbar [colors]
+[1A[2K[166/533] [chromium] › tests/homepage-blocks.spec.ts:19:9 › Theme: fab › S46 — Homepage zeigt mindestens einen Block [fab]
+[1A[2K[167/533] [chromium] › tests/homepage-blocks.spec.ts:26:9 › Theme: fab › S46 — Homepage zeigt Statistik-Block [fab]
+[1A[2K[168/533] [chromium] › tests/homepage-blocks.spec.ts:32:9 › Theme: fab › S46 — Homepage-Block-Konfiguration erreichbar [fab]
+[1A[2K[169/533] [chromium] › tests/homepage-blocks.spec.ts:19:9 › Theme: xenea › S46 — Homepage zeigt mindestens einen Block [xenea]
+[1A[2K[170/533] [chromium] › tests/homepage-blocks.spec.ts:26:9 › Theme: xenea › S46 — Homepage zeigt Statistik-Block [xenea]
+[1A[2K[171/533] [chromium] › tests/homepage-blocks.spec.ts:32:9 › Theme: xenea › S46 — Homepage-Block-Konfiguration erreichbar [xenea]
+[1A[2K[172/533] [chromium] › tests/homepage.spec.ts:19:9 › Theme: webtrees › S40 — homepage loads without errors [webtrees]
+[1A[2K[173/533] [chromium] › tests/homepage.spec.ts:28:9 › Theme: webtrees › S40 — homepage shows tree statistics or welcome block [webtrees]
+[1A[2K[174/533] [chromium] › tests/homepage.spec.ts:19:9 › Theme: clouds › S40 — homepage loads without errors [clouds]
+[1A[2K[175/533] [chromium] › tests/homepage.spec.ts:28:9 › Theme: clouds › S40 — homepage shows tree statistics or welcome block [clouds]
+[1A[2K[176/533] [chromium] › tests/homepage.spec.ts:19:9 › Theme: colors › S40 — homepage loads without errors [colors]
+[1A[2K[177/533] [chromium] › tests/homepage.spec.ts:28:9 › Theme: colors › S40 — homepage shows tree statistics or welcome block [colors]
+[1A[2K[178/533] [chromium] › tests/homepage.spec.ts:19:9 › Theme: fab › S40 — homepage loads without errors [fab]
+[1A[2K[179/533] [chromium] › tests/homepage.spec.ts:28:9 › Theme: fab › S40 — homepage shows tree statistics or welcome block [fab]
+[1A[2K[180/533] [chromium] › tests/homepage.spec.ts:19:9 › Theme: xenea › S40 — homepage loads without errors [xenea]
+[1A[2K[181/533] [chromium] › tests/homepage.spec.ts:28:9 › Theme: xenea › S40 — homepage shows tree statistics or welcome block [xenea]
+[1A[2K[182/533] [chromium] › tests/individual.spec.ts:19:9 › Theme: webtrees › S23 — person page shows name and vital facts [webtrees]
+[1A[2K[183/533] [chromium] › tests/individual.spec.ts:29:9 › Theme: webtrees › S23 — person page shows facts area [webtrees]
+[1A[2K[184/533] [chromium] › tests/individual.spec.ts:19:9 › Theme: clouds › S23 — person page shows name and vital facts [clouds]
+[1A[2K[185/533] [chromium] › tests/individual.spec.ts:29:9 › Theme: clouds › S23 — person page shows facts area [clouds]
+[1A[2K[186/533] [chromium] › tests/individual.spec.ts:19:9 › Theme: colors › S23 — person page shows name and vital facts [colors]
+[1A[2K[187/533] [chromium] › tests/individual.spec.ts:29:9 › Theme: colors › S23 — person page shows facts area [colors]
+[1A[2K[188/533] [chromium] › tests/individual.spec.ts:19:9 › Theme: fab › S23 — person page shows name and vital facts [fab]
+[1A[2K[189/533] [chromium] › tests/individual.spec.ts:29:9 › Theme: fab › S23 — person page shows facts area [fab]
+[1A[2K[190/533] [chromium] › tests/individual.spec.ts:19:9 › Theme: xenea › S23 — person page shows name and vital facts [xenea]
+[1A[2K[191/533] [chromium] › tests/individual.spec.ts:29:9 › Theme: xenea › S23 — person page shows facts area [xenea]
+[1A[2K[192/533] [chromium] › tests/interactive-tree.spec.ts:19:9 › Theme: webtrees › S47 — Interaktiver Stammbaum lädt [webtrees]
+[1A[2K[193/533] [chromium] › tests/interactive-tree.spec.ts:26:9 › Theme: webtrees › S47 — Widget-Container sichtbar [webtrees]
+[1A[2K[194/533] [chromium] › tests/interactive-tree.spec.ts:35:9 › Theme: webtrees › S47 — Stammbaum zeigt Personendaten [webtrees]
+[1A[2K[195/533] [chromium] › tests/interactive-tree.spec.ts:19:9 › Theme: clouds › S47 — Interaktiver Stammbaum lädt [clouds]
+[1A[2K[196/533] [chromium] › tests/interactive-tree.spec.ts:26:9 › Theme: clouds › S47 — Widget-Container sichtbar [clouds]
+[1A[2K[197/533] [chromium] › tests/interactive-tree.spec.ts:35:9 › Theme: clouds › S47 — Stammbaum zeigt Personendaten [clouds]
+[1A[2K[198/533] [chromium] › tests/interactive-tree.spec.ts:19:9 › Theme: colors › S47 — Interaktiver Stammbaum lädt [colors]
+[1A[2K[199/533] [chromium] › tests/interactive-tree.spec.ts:26:9 › Theme: colors › S47 — Widget-Container sichtbar [colors]
+[1A[2K[200/533] [chromium] › tests/interactive-tree.spec.ts:35:9 › Theme: colors › S47 — Stammbaum zeigt Personendaten [colors]
+[1A[2K[201/533] [chromium] › tests/interactive-tree.spec.ts:19:9 › Theme: fab › S47 — Interaktiver Stammbaum lädt [fab]
+[1A[2K[202/533] [chromium] › tests/interactive-tree.spec.ts:26:9 › Theme: fab › S47 — Widget-Container sichtbar [fab]
+[1A[2K[203/533] [chromium] › tests/interactive-tree.spec.ts:35:9 › Theme: fab › S47 — Stammbaum zeigt Personendaten [fab]
+[1A[2K[204/533] [chromium] › tests/interactive-tree.spec.ts:19:9 › Theme: xenea › S47 — Interaktiver Stammbaum lädt [xenea]
+[1A[2K[205/533] [chromium] › tests/interactive-tree.spec.ts:26:9 › Theme: xenea › S47 — Widget-Container sichtbar [xenea]
+[1A[2K[206/533] [chromium] › tests/interactive-tree.spec.ts:35:9 › Theme: xenea › S47 — Stammbaum zeigt Personendaten [xenea]
+[1A[2K[207/533] [chromium] › tests/legacy-url-redirects.spec.ts:21:7 › S53 — Legacy-URL-Weiterleitungen › S53 — Individual-Redirect liefert 301 mit Location
+[1A[2K[208/533] [chromium] › tests/legacy-url-redirects.spec.ts:32:7 › S53 — Legacy-URL-Weiterleitungen › S53 — Individual-Redirect mit ungueltiger XREF liefert 410
+[1A[2K[209/533] [chromium] › tests/legacy-url-redirects.spec.ts:40:7 › S53 — Legacy-URL-Weiterleitungen › S53 — Family-Redirect liefert 301 mit Location
+[1A[2K[210/533] [chromium] › tests/legacy-url-redirects.spec.ts:51:7 › S53 — Legacy-URL-Weiterleitungen › S53 — Source-Redirect liefert 301 mit Location
+[1A[2K[211/533] [chromium] › tests/legacy-url-redirects.spec.ts:62:7 › S53 — Legacy-URL-Weiterleitungen › S53 — Calendar-Redirect liefert 301
+[1A[2K[212/533] [chromium] › tests/legacy-url-redirects.spec.ts:73:7 › S53 — Legacy-URL-Weiterleitungen › S53 — Pedigree-Redirect liefert 301
+[1A[2K[213/533] [chromium] › tests/legacy-url-redirects.spec.ts:83:7 › S53 — Legacy-URL-Weiterleitungen › S53 — ungueltiger Baumname liefert 410
+[1A[2K[214/533] [chromium] › tests/legacy-url-redirects.spec.ts:91:7 › S53 — Legacy-URL-Weiterleitungen › S53 — Redirect-Response enthaelt Link-Header mit rel=canonical
+[1A[2K[215/533] [chromium] › tests/login.spec.ts:15:7 › Login › should show login page
+[1A[2K[216/533] [chromium] › tests/login.spec.ts:23:7 › Login › should login with valid credentials
+[1A[2K[217/533] [chromium] › tests/login.spec.ts:36:7 › Login › should reject invalid credentials
+[1A[2K[218/533] [chromium] › tests/media-admin.spec.ts:18:7 › A08 — Medienverwaltung Admin › A08 — ManageMedia-Seite laedt mit Formular
+[1A[2K[219/533] [chromium] › tests/media-admin.spec.ts:29:7 › A08 — Medienverwaltung Admin › A08 — Radio "local" zeigt lokale Media-Dateien
+[1A[2K[220/533] [chromium] › tests/media-admin.spec.ts:40:7 › A08 — Medienverwaltung Admin › A08 — Radio "external" zeigt externe Referenzen
+[1A[2K[221/533] [chromium] › tests/media-admin.spec.ts:50:7 › A08 — Medienverwaltung Admin › A08 — Radio "unused" zeigt unbenutzte Dateien
+[1A[2K[222/533] [chromium] › tests/media-admin.spec.ts:60:7 › A08 — Medienverwaltung Admin › A08 — FixLevel0Media-Seite laedt
+[1A[2K[223/533] [chromium] › tests/media-admin.spec.ts:67:7 › A08 — Medienverwaltung Admin › A08 — Non-Admin erhaelt 403 oder Redirect zu Login
+[1A[2K[224/533] [chromium] › tests/media-object.spec.ts:19:9 › Theme: webtrees › E05 — Media-erstellen-Endpunkt erreichbar [webtrees]
+[1A[2K[225/533] [chromium] › tests/media-object.spec.ts:25:9 › Theme: webtrees › E05 — Media-Seite auf Person X1030 zeigt Medien-Tab [webtrees]
+[1A[2K[226/533] [chromium] › tests/media-object.spec.ts:34:9 › Theme: webtrees › E05 — Medienobjekt-Seite lädt [webtrees]
+[1A[2K[227/533] [chromium] › tests/media-object.spec.ts:19:9 › Theme: clouds › E05 — Media-erstellen-Endpunkt erreichbar [clouds]
+[1A[2K[228/533] [chromium] › tests/media-object.spec.ts:25:9 › Theme: clouds › E05 — Media-Seite auf Person X1030 zeigt Medien-Tab [clouds]
+[1A[2K[229/533] [chromium] › tests/media-object.spec.ts:34:9 › Theme: clouds › E05 — Medienobjekt-Seite lädt [clouds]
+[1A[2K[230/533] [chromium] › tests/media-object.spec.ts:19:9 › Theme: colors › E05 — Media-erstellen-Endpunkt erreichbar [colors]
+[1A[2K[231/533] [chromium] › tests/media-object.spec.ts:25:9 › Theme: colors › E05 — Media-Seite auf Person X1030 zeigt Medien-Tab [colors]
+[1A[2K[232/533] [chromium] › tests/media-object.spec.ts:34:9 › Theme: colors › E05 — Medienobjekt-Seite lädt [colors]
+[1A[2K[233/533] [chromium] › tests/media-object.spec.ts:19:9 › Theme: fab › E05 — Media-erstellen-Endpunkt erreichbar [fab]
+[1A[2K[234/533] [chromium] › tests/media-object.spec.ts:25:9 › Theme: fab › E05 — Media-Seite auf Person X1030 zeigt Medien-Tab [fab]
+[1A[2K[235/533] [chromium] › tests/media-object.spec.ts:34:9 › Theme: fab › E05 — Medienobjekt-Seite lädt [fab]
+[1A[2K[236/533] [chromium] › tests/media-object.spec.ts:19:9 › Theme: xenea › E05 — Media-erstellen-Endpunkt erreichbar [xenea]
+[1A[2K[237/533] [chromium] › tests/media-object.spec.ts:25:9 › Theme: xenea › E05 — Media-Seite auf Person X1030 zeigt Medien-Tab [xenea]
+[1A[2K[238/533] [chromium] › tests/media-object.spec.ts:34:9 › Theme: xenea › E05 — Medienobjekt-Seite lädt [xenea]
+[1A[2K[239/533] [chromium] › tests/merge-records.spec.ts:15:5 › P30 — Merge-Seite lädt mit Formular
+[1A[2K[240/533] [chromium] › tests/merge-records.spec.ts:23:5 › P30 — Merge-Seite zeigt Record-Typ-Auswahl und Felder
+[1A[2K[241/533] [chromium] › tests/merge-records.spec.ts:32:5 › P30 — Merge-Seite zeigt Continue-Button
+[1A[2K[242/533] [chromium] › tests/merge-records.spec.ts:41:5 › P41 — Merge-Formular lädt ohne Fehler
+[1A[2K[243/533] [chromium] › tests/merge-records.spec.ts:49:5 › P41 — Merge-Seite ohne Crash bei leerer Eingabe
+[1A[2K[244/533] [chromium] › tests/module-configuration.spec.ts:22:7 › A05 — Alle Module-Seite lädt
+[1A[2K[245/533] [chromium] › tests/module-configuration.spec.ts:22:7 › A05 — Analytics-Seite lädt
+[1A[2K[246/533] [chromium] › tests/module-configuration.spec.ts:22:7 › A05 — Blocks-Seite lädt
+[1A[2K[247/533] [chromium] › tests/module-configuration.spec.ts:22:7 › A05 — Charts-Seite lädt
+[1A[2K[248/533] [chromium] › tests/module-configuration.spec.ts:22:7 › A05 — Menus-Seite lädt
+[1A[2K[249/533] [chromium] › tests/module-configuration.spec.ts:22:7 › A05 — Reports-Seite lädt
+[1A[2K[250/533] [chromium] › tests/module-configuration.spec.ts:29:5 › A05 — Modul-Übersicht zeigt Modultabelle
+[1A[2K[251/533] [chromium] › tests/navigation.spec.ts:19:9 › Theme: webtrees › S23 — individual list renders [webtrees]
+[1A[2K[252/533] [chromium] › tests/navigation.spec.ts:29:9 › Theme: webtrees › S20 — family list renders [webtrees]
+[1A[2K[253/533] [chromium] › tests/navigation.spec.ts:38:9 › Theme: webtrees › S09 — quick search returns results [webtrees]
+[1A[2K[254/533] [chromium] › tests/navigation.spec.ts:19:9 › Theme: clouds › S23 — individual list renders [clouds]
+[1A[2K[255/533] [chromium] › tests/navigation.spec.ts:29:9 › Theme: clouds › S20 — family list renders [clouds]
+[1A[2K[256/533] [chromium] › tests/navigation.spec.ts:38:9 › Theme: clouds › S09 — quick search returns results [clouds]
+[1A[2K[257/533] [chromium] › tests/navigation.spec.ts:19:9 › Theme: colors › S23 — individual list renders [colors]
+[1A[2K[258/533] [chromium] › tests/navigation.spec.ts:29:9 › Theme: colors › S20 — family list renders [colors]
+[1A[2K[259/533] [chromium] › tests/navigation.spec.ts:38:9 › Theme: colors › S09 — quick search returns results [colors]
+[1A[2K[260/533] [chromium] › tests/navigation.spec.ts:19:9 › Theme: fab › S23 — individual list renders [fab]
+[1A[2K[261/533] [chromium] › tests/navigation.spec.ts:29:9 › Theme: fab › S20 — family list renders [fab]
+[1A[2K[262/533] [chromium] › tests/navigation.spec.ts:38:9 › Theme: fab › S09 — quick search returns results [fab]
+[1A[2K[263/533] [chromium] › tests/navigation.spec.ts:19:9 › Theme: xenea › S23 — individual list renders [xenea]
+[1A[2K[264/533] [chromium] › tests/navigation.spec.ts:29:9 › Theme: xenea › S20 — family list renders [xenea]
+[1A[2K[265/533] [chromium] › tests/navigation.spec.ts:38:9 › Theme: xenea › S09 — quick search returns results [xenea]
+[1A[2K[266/533] [chromium] › tests/pedigree.spec.ts:19:9 › Theme: webtrees › S14 — pedigree chart loads without errors [webtrees]
+[1A[2K[267/533] [chromium] › tests/pedigree.spec.ts:26:9 › Theme: webtrees › S14 — pedigree chart area visible [webtrees]
+[1A[2K[268/533] [chromium] › tests/pedigree.spec.ts:19:9 › Theme: clouds › S14 — pedigree chart loads without errors [clouds]
+[1A[2K[269/533] [chromium] › tests/pedigree.spec.ts:26:9 › Theme: clouds › S14 — pedigree chart area visible [clouds]
+[1A[2K[270/533] [chromium] › tests/pedigree.spec.ts:19:9 › Theme: colors › S14 — pedigree chart loads without errors [colors]
+[1A[2K[271/533] [chromium] › tests/pedigree.spec.ts:26:9 › Theme: colors › S14 — pedigree chart area visible [colors]
+[1A[2K[272/533] [chromium] › tests/pedigree.spec.ts:19:9 › Theme: fab › S14 — pedigree chart loads without errors [fab]
+[1A[2K[273/533] [chromium] › tests/pedigree.spec.ts:26:9 › Theme: fab › S14 — pedigree chart area visible [fab]
+[1A[2K[274/533] [chromium] › tests/pedigree.spec.ts:19:9 › Theme: xenea › S14 — pedigree chart loads without errors [xenea]
+[1A[2K[275/533] [chromium] › tests/pedigree.spec.ts:26:9 › Theme: xenea › S14 — pedigree chart area visible [xenea]
+[1A[2K[276/533] [chromium] › tests/pending-changes.spec.ts:20:5 › P40 — Pending-Changes-Seite lädt als Admin
+[1A[2K[277/533] [chromium] › tests/pending-changes.spec.ts:33:5 › P40 — Moderator kann Pending-Changes-Seite aufrufen
+[1A[2K[278/533] [chromium] › tests/pending-changes.spec.ts:43:5 › P40 — Editor sieht Personenseite im Privacy-Baum
+[1A[2K[279/533] [chromium] › tests/pending-changes.spec.ts:53:5 › P40 — Editor sieht Edit-Optionen auf Personenseite
+[1A[2K[280/533] [chromium] › tests/pending-changes.spec.ts:62:5 › P40 — Member hat keinen Zugriff auf Pending-Changes
+[1A[2K[281/533] [chromium] › tests/pending-changes.spec.ts:91:5 › P40 — Moderator akzeptiert fully-pending Add-Child Change und Eintrag verschwindet bei Reload
+[1A[2K[282/533] [chromium] › tests/person-family-create.spec.ts:19:9 › Theme: webtrees › E01 — Formular Kind hinzufügen lädt korrekt [webtrees]
+[1A[2K[283/533] [chromium] › tests/person-family-create.spec.ts:25:9 › Theme: webtrees › E01 — Formular Elternteil hinzufügen lädt korrekt [webtrees]
+[1A[2K[284/533] [chromium] › tests/person-family-create.spec.ts:31:9 › Theme: webtrees › E01 — Formular Ehepartner hinzufügen lädt korrekt [webtrees]
+[1A[2K[285/533] [chromium] › tests/person-family-create.spec.ts:37:9 › Theme: webtrees › E01 — Formular Kind zu Familie hinzufügen lädt [webtrees]
+[1A[2K[286/533] [chromium] › tests/person-family-create.spec.ts:19:9 › Theme: clouds › E01 — Formular Kind hinzufügen lädt korrekt [clouds]
+[1A[2K[287/533] [chromium] › tests/person-family-create.spec.ts:25:9 › Theme: clouds › E01 — Formular Elternteil hinzufügen lädt korrekt [clouds]
+[1A[2K[288/533] [chromium] › tests/person-family-create.spec.ts:31:9 › Theme: clouds › E01 — Formular Ehepartner hinzufügen lädt korrekt [clouds]
+[1A[2K[289/533] [chromium] › tests/person-family-create.spec.ts:37:9 › Theme: clouds › E01 — Formular Kind zu Familie hinzufügen lädt [clouds]
+[1A[2K[290/533] [chromium] › tests/person-family-create.spec.ts:19:9 › Theme: colors › E01 — Formular Kind hinzufügen lädt korrekt [colors]
+[1A[2K[291/533] [chromium] › tests/person-family-create.spec.ts:25:9 › Theme: colors › E01 — Formular Elternteil hinzufügen lädt korrekt [colors]
+[1A[2K[292/533] [chromium] › tests/person-family-create.spec.ts:31:9 › Theme: colors › E01 — Formular Ehepartner hinzufügen lädt korrekt [colors]
+[1A[2K[293/533] [chromium] › tests/person-family-create.spec.ts:37:9 › Theme: colors › E01 — Formular Kind zu Familie hinzufügen lädt [colors]
+[1A[2K[294/533] [chromium] › tests/person-family-create.spec.ts:19:9 › Theme: fab › E01 — Formular Kind hinzufügen lädt korrekt [fab]
+[1A[2K[295/533] [chromium] › tests/person-family-create.spec.ts:25:9 › Theme: fab › E01 — Formular Elternteil hinzufügen lädt korrekt [fab]
+[1A[2K[296/533] [chromium] › tests/person-family-create.spec.ts:31:9 › Theme: fab › E01 — Formular Ehepartner hinzufügen lädt korrekt [fab]
+[1A[2K[297/533] [chromium] › tests/person-family-create.spec.ts:37:9 › Theme: fab › E01 — Formular Kind zu Familie hinzufügen lädt [fab]
+[1A[2K[298/533] [chromium] › tests/person-family-create.spec.ts:19:9 › Theme: xenea › E01 — Formular Kind hinzufügen lädt korrekt [xenea]
+[1A[2K[299/533] [chromium] › tests/person-family-create.spec.ts:25:9 › Theme: xenea › E01 — Formular Elternteil hinzufügen lädt korrekt [xenea]
+[1A[2K[300/533] [chromium] › tests/person-family-create.spec.ts:31:9 › Theme: xenea › E01 — Formular Ehepartner hinzufügen lädt korrekt [xenea]
+[1A[2K[301/533] [chromium] › tests/person-family-create.spec.ts:37:9 › Theme: xenea › E01 — Formular Kind zu Familie hinzufügen lädt [xenea]
+[1A[2K[302/533] [chromium] › tests/phonetic-search-execution.spec.ts:22:9 › Theme: webtrees › S07 — Phonetische Suchseite rendert Formular [webtrees]
+[1A[2K[303/533] [chromium] › tests/phonetic-search-execution.spec.ts:30:9 › Theme: webtrees › S07 — Russell-Soundex-Suche nach phonetischer Variante liefert Treffer [webtrees]
+[1A[2K[304/533] [chromium] › tests/phonetic-search-execution.spec.ts:44:9 › Theme: webtrees › S07 — Russell-Soundex-Suche ohne Treffer [webtrees]
+[1A[2K[305/533] [chromium] › tests/phonetic-search-execution.spec.ts:58:9 › Theme: webtrees › S08 — DM-Soundex-Suche nach phonetischer Variante liefert Treffer [webtrees]
+[1A[2K[306/533] [chromium] › tests/phonetic-search-execution.spec.ts:70:9 › Theme: webtrees › S08 — DM-Soundex-Suche ohne Treffer [webtrees]
+[1A[2K[307/533] [chromium] › tests/phonetic-search-execution.spec.ts:22:9 › Theme: clouds › S07 — Phonetische Suchseite rendert Formular [clouds]
+[1A[2K[308/533] [chromium] › tests/phonetic-search-execution.spec.ts:30:9 › Theme: clouds › S07 — Russell-Soundex-Suche nach phonetischer Variante liefert Treffer [clouds]
+[1A[2K[309/533] [chromium] › tests/phonetic-search-execution.spec.ts:44:9 › Theme: clouds › S07 — Russell-Soundex-Suche ohne Treffer [clouds]
+[1A[2K[310/533] [chromium] › tests/phonetic-search-execution.spec.ts:58:9 › Theme: clouds › S08 — DM-Soundex-Suche nach phonetischer Variante liefert Treffer [clouds]
+[1A[2K[311/533] [chromium] › tests/phonetic-search-execution.spec.ts:70:9 › Theme: clouds › S08 — DM-Soundex-Suche ohne Treffer [clouds]
+[1A[2K[312/533] [chromium] › tests/phonetic-search-execution.spec.ts:22:9 › Theme: colors › S07 — Phonetische Suchseite rendert Formular [colors]
+[1A[2K[313/533] [chromium] › tests/phonetic-search-execution.spec.ts:30:9 › Theme: colors › S07 — Russell-Soundex-Suche nach phonetischer Variante liefert Treffer [colors]
+[1A[2K[314/533] [chromium] › tests/phonetic-search-execution.spec.ts:44:9 › Theme: colors › S07 — Russell-Soundex-Suche ohne Treffer [colors]
+[1A[2K[315/533] [chromium] › tests/phonetic-search-execution.spec.ts:58:9 › Theme: colors › S08 — DM-Soundex-Suche nach phonetischer Variante liefert Treffer [colors]
+[1A[2K[316/533] [chromium] › tests/phonetic-search-execution.spec.ts:70:9 › Theme: colors › S08 — DM-Soundex-Suche ohne Treffer [colors]
+[1A[2K[317/533] [chromium] › tests/phonetic-search-execution.spec.ts:22:9 › Theme: fab › S07 — Phonetische Suchseite rendert Formular [fab]
+[1A[2K[318/533] [chromium] › tests/phonetic-search-execution.spec.ts:30:9 › Theme: fab › S07 — Russell-Soundex-Suche nach phonetischer Variante liefert Treffer [fab]
+[1A[2K[319/533] [chromium] › tests/phonetic-search-execution.spec.ts:44:9 › Theme: fab › S07 — Russell-Soundex-Suche ohne Treffer [fab]
+[1A[2K[320/533] [chromium] › tests/phonetic-search-execution.spec.ts:58:9 › Theme: fab › S08 — DM-Soundex-Suche nach phonetischer Variante liefert Treffer [fab]
+[1A[2K[321/533] [chromium] › tests/phonetic-search-execution.spec.ts:70:9 › Theme: fab › S08 — DM-Soundex-Suche ohne Treffer [fab]
+[1A[2K[322/533] [chromium] › tests/phonetic-search-execution.spec.ts:22:9 › Theme: xenea › S07 — Phonetische Suchseite rendert Formular [xenea]
+[1A[2K[323/533] [chromium] › tests/phonetic-search-execution.spec.ts:30:9 › Theme: xenea › S07 — Russell-Soundex-Suche nach phonetischer Variante liefert Treffer [xenea]
+[1A[2K[324/533] [chromium] › tests/phonetic-search-execution.spec.ts:44:9 › Theme: xenea › S07 — Russell-Soundex-Suche ohne Treffer [xenea]
+[1A[2K[325/533] [chromium] › tests/phonetic-search-execution.spec.ts:58:9 › Theme: xenea › S08 — DM-Soundex-Suche nach phonetischer Variante liefert Treffer [xenea]
+[1A[2K[326/533] [chromium] › tests/phonetic-search-execution.spec.ts:70:9 › Theme: xenea › S08 — DM-Soundex-Suche ohne Treffer [xenea]
+[1A[2K[327/533] [chromium] › tests/privacy-charts.spec.ts:18:7 › Privacy Charts › P26 — pedigree chart shows private boxes for visitor
+[1A[2K[328/533] [chromium] › tests/privacy-charts.spec.ts:40:7 › Privacy Charts › P26 — pedigree chart shows full data for manager
+[1A[2K[329/533] [chromium] › tests/privacy-relationship.spec.ts:21:7 › Privacy Relationship › P22 — relationship user sees close relative
+[1A[2K[330/533] [chromium] › tests/privacy-relationship.spec.ts:31:7 › Privacy Relationship › P22 — relationship user cannot see far relative
+[1A[2K[331/533] [chromium] › tests/privacy-relationship.spec.ts:46:7 › Privacy Relationship › P22 — relationship user cannot see unrelated person
+[1A[2K[332/533] [chromium] › tests/privacy-resn.spec.ts:19:7 › Privacy RESN › P16 — visitor sees person with RESN none despite being alive
+[1A[2K[333/533] [chromium] › tests/privacy-resn.spec.ts:29:7 › Privacy RESN › P17 — visitor cannot see RESN privacy person
+[1A[2K[334/533] [chromium] › tests/privacy-resn.spec.ts:43:7 › Privacy RESN › P17 — member sees RESN privacy person
+[1A[2K[335/533] [chromium] › tests/privacy-resn.spec.ts:53:7 › Privacy RESN › P18 — member cannot see RESN confidential person
+[1A[2K[336/533] [chromium] › tests/privacy-resn.spec.ts:67:7 › Privacy RESN › P18 — manager sees RESN confidential person
+[1A[2K[337/533] [chromium] › tests/privacy-resn.spec.ts:77:7 › Privacy RESN › P19 — visitor sees person but not RESN-privacy birth date
+[1A[2K[338/533] [chromium] › tests/privacy-resn.spec.ts:89:7 › Privacy RESN › P19 — member sees RESN-privacy birth date
+[1A[2K[339/533] [chromium] › tests/privacy-search.spec.ts:18:7 › Privacy Search › P24 — visitor search for living person returns no results
+[1A[2K[340/533] [chromium] › tests/privacy-search.spec.ts:30:7 › Privacy Search › P24 — member search for living person returns results
+[1A[2K[341/533] [chromium] › tests/privacy-search.spec.ts:39:7 › Privacy Search › P24 — visitor search for RESN none person returns results
+[1A[2K[342/533] [chromium] › tests/privacy-search.spec.ts:48:7 › Privacy Search › P24 — visitor search for RESN confidential returns no results
+[1A[2K[343/533] [chromium] › tests/privacy-visibility.spec.ts:25:7 › Privacy Visibility › P25 — visitor cannot see living person page
+[1A[2K[344/533] [chromium] › tests/privacy-visibility.spec.ts:41:7 › Privacy Visibility › P25 — member sees living person page
+[1A[2K[345/533] [chromium] › tests/privacy-visibility.spec.ts:51:7 › Privacy Visibility › P02 — visitor sees historically dead person
+[1A[2K[346/533] [chromium] › tests/privacy-visibility.spec.ts:60:7 › Privacy Visibility › P03 — manager sees all persons
+[1A[2K[347/533] [chromium] › tests/privacy-visibility.spec.ts:70:7 › Privacy Visibility › P14 — visitor may see name but not details of living person
+[1A[2K[348/533] [chromium] › tests/raw-gedcom-edit.spec.ts:12:5 › E03 — Raw-Edit-Seite lädt für bekannten Record
+[1A[2K[349/533] [chromium] › tests/raw-gedcom-edit.spec.ts:20:5 › E03 — Raw-Edit-Seite zeigt GEDCOM-Inhalt
+[1A[2K[350/533] [chromium] › tests/records.spec.ts:22:9 › Theme: webtrees › S26 — source page renders [webtrees]
+[1A[2K[351/533] [chromium] › tests/records.spec.ts:31:9 › Theme: webtrees › S27 — media page renders [webtrees]
+[1A[2K[352/533] [chromium] › tests/records.spec.ts:40:9 › Theme: webtrees › S29 — repository page renders [webtrees]
+[1A[2K[353/533] [chromium] › tests/records.spec.ts:49:9 › Theme: webtrees › S30 — submitter page renders [webtrees]
+[1A[2K[354/533] [chromium] › tests/records.spec.ts:58:9 › Theme: webtrees › S28 — note page renders [webtrees]
+[1A[2K[355/533] [chromium] › tests/records.spec.ts:22:9 › Theme: clouds › S26 — source page renders [clouds]
+[1A[2K[356/533] [chromium] › tests/records.spec.ts:31:9 › Theme: clouds › S27 — media page renders [clouds]
+[1A[2K[357/533] [chromium] › tests/records.spec.ts:40:9 › Theme: clouds › S29 — repository page renders [clouds]
+[1A[2K[358/533] [chromium] › tests/records.spec.ts:49:9 › Theme: clouds › S30 — submitter page renders [clouds]
+[1A[2K[359/533] [chromium] › tests/records.spec.ts:58:9 › Theme: clouds › S28 — note page renders [clouds]
+[1A[2K[360/533] [chromium] › tests/records.spec.ts:22:9 › Theme: colors › S26 — source page renders [colors]
+[1A[2K[361/533] [chromium] › tests/records.spec.ts:31:9 › Theme: colors › S27 — media page renders [colors]
+[1A[2K[362/533] [chromium] › tests/records.spec.ts:40:9 › Theme: colors › S29 — repository page renders [colors]
+[1A[2K[363/533] [chromium] › tests/records.spec.ts:49:9 › Theme: colors › S30 — submitter page renders [colors]
+[1A[2K[364/533] [chromium] › tests/records.spec.ts:58:9 › Theme: colors › S28 — note page renders [colors]
+[1A[2K[365/533] [chromium] › tests/records.spec.ts:22:9 › Theme: fab › S26 — source page renders [fab]
+[1A[2K[366/533] [chromium] › tests/records.spec.ts:31:9 › Theme: fab › S27 — media page renders [fab]
+[1A[2K[367/533] [chromium] › tests/records.spec.ts:40:9 › Theme: fab › S29 — repository page renders [fab]
+[1A[2K[368/533] [chromium] › tests/records.spec.ts:49:9 › Theme: fab › S30 — submitter page renders [fab]
+[1A[2K[369/533] [chromium] › tests/records.spec.ts:58:9 › Theme: fab › S28 — note page renders [fab]
+[1A[2K[370/533] [chromium] › tests/records.spec.ts:22:9 › Theme: xenea › S26 — source page renders [xenea]
+[1A[2K[371/533] [chromium] › tests/records.spec.ts:31:9 › Theme: xenea › S27 — media page renders [xenea]
+[1A[2K[372/533] [chromium] › tests/records.spec.ts:40:9 › Theme: xenea › S29 — repository page renders [xenea]
+[1A[2K[373/533] [chromium] › tests/records.spec.ts:49:9 › Theme: xenea › S30 — submitter page renders [xenea]
+[1A[2K[374/533] [chromium] › tests/records.spec.ts:58:9 › Theme: xenea › S28 — note page renders [xenea]
+[1A[2K[375/533] [chromium] › tests/relationship-chart.spec.ts:19:9 › Theme: webtrees › S16 — Beziehungs-Chart-Seite lädt korrekt [webtrees]
+[1A[2K[376/533] [chromium] › tests/relationship-chart.spec.ts:25:9 › Theme: webtrees › S16 — Beziehungspfad zwischen zwei Personen angezeigt [webtrees]
+[1A[2K[377/533] [chromium] › tests/relationship-chart.spec.ts:35:9 › Theme: webtrees › S16 — Eltern-Kind-Beziehung wird angezeigt [webtrees]
+[1A[2K[378/533] [chromium] › tests/relationship-chart.spec.ts:19:9 › Theme: clouds › S16 — Beziehungs-Chart-Seite lädt korrekt [clouds]
+[1A[2K[379/533] [chromium] › tests/relationship-chart.spec.ts:25:9 › Theme: clouds › S16 — Beziehungspfad zwischen zwei Personen angezeigt [clouds]
+[1A[2K[380/533] [chromium] › tests/relationship-chart.spec.ts:35:9 › Theme: clouds › S16 — Eltern-Kind-Beziehung wird angezeigt [clouds]
+[1A[2K[381/533] [chromium] › tests/relationship-chart.spec.ts:19:9 › Theme: colors › S16 — Beziehungs-Chart-Seite lädt korrekt [colors]
+[1A[2K[382/533] [chromium] › tests/relationship-chart.spec.ts:25:9 › Theme: colors › S16 — Beziehungspfad zwischen zwei Personen angezeigt [colors]
+[1A[2K[383/533] [chromium] › tests/relationship-chart.spec.ts:35:9 › Theme: colors › S16 — Eltern-Kind-Beziehung wird angezeigt [colors]
+[1A[2K[384/533] [chromium] › tests/relationship-chart.spec.ts:19:9 › Theme: fab › S16 — Beziehungs-Chart-Seite lädt korrekt [fab]
+[1A[2K[385/533] [chromium] › tests/relationship-chart.spec.ts:25:9 › Theme: fab › S16 — Beziehungspfad zwischen zwei Personen angezeigt [fab]
+[1A[2K[386/533] [chromium] › tests/relationship-chart.spec.ts:35:9 › Theme: fab › S16 — Eltern-Kind-Beziehung wird angezeigt [fab]
+[1A[2K[387/533] [chromium] › tests/relationship-chart.spec.ts:19:9 › Theme: xenea › S16 — Beziehungs-Chart-Seite lädt korrekt [xenea]
+[1A[2K[388/533] [chromium] › tests/relationship-chart.spec.ts:25:9 › Theme: xenea › S16 — Beziehungspfad zwischen zwei Personen angezeigt [xenea]
+[1A[2K[389/533] [chromium] › tests/relationship-chart.spec.ts:35:9 › Theme: xenea › S16 — Eltern-Kind-Beziehung wird angezeigt [xenea]
+[1A[2K[390/533] [chromium] › tests/reorder.spec.ts:12:5 › E06 — Reorder-Children-Seite lädt für Familie
+[1A[2K[391/533] [chromium] › tests/reorder.spec.ts:18:5 › E06 — Reorder-Names-Seite lädt für Person
+[1A[2K[392/533] [chromium] › tests/reorder.spec.ts:24:5 › E06 — Reorder-Families-Seite lädt für Person
+[1A[2K[393/533] [chromium] › tests/search-forms.spec.ts:19:9 › Theme: webtrees › S38 — advanced search form renders [webtrees]
+[1A[2K[394/533] [chromium] › tests/search-forms.spec.ts:28:9 › Theme: webtrees › S39 — phonetic search form renders [webtrees]
+[1A[2K[395/533] [chromium] › tests/search-forms.spec.ts:19:9 › Theme: clouds › S38 — advanced search form renders [clouds]
+[1A[2K[396/533] [chromium] › tests/search-forms.spec.ts:28:9 › Theme: clouds › S39 — phonetic search form renders [clouds]
+[1A[2K[397/533] [chromium] › tests/search-forms.spec.ts:19:9 › Theme: colors › S38 — advanced search form renders [colors]
+[1A[2K[398/533] [chromium] › tests/search-forms.spec.ts:28:9 › Theme: colors › S39 — phonetic search form renders [colors]
+[1A[2K[399/533] [chromium] › tests/search-forms.spec.ts:19:9 › Theme: fab › S38 — advanced search form renders [fab]
+[1A[2K[400/533] [chromium] › tests/search-forms.spec.ts:28:9 › Theme: fab › S39 — phonetic search form renders [fab]
+[1A[2K[401/533] [chromium] › tests/search-forms.spec.ts:19:9 › Theme: xenea › S38 — advanced search form renders [xenea]
+[1A[2K[402/533] [chromium] › tests/search-forms.spec.ts:28:9 › Theme: xenea › S39 — phonetic search form renders [xenea]
+[1A[2K[403/533] [chromium] › tests/search-pagination.spec.ts:19:9 › Theme: webtrees › S10 — Suche mit vielen Treffern zeigt Datentabelle [webtrees]
+[1A[2K[404/533] [chromium] › tests/search-pagination.spec.ts:29:9 › Theme: webtrees › S10 — Suchergebnisse zeigen Paginierungs-Controls [webtrees]
+[1A[2K[405/533] [chromium] › tests/search-pagination.spec.ts:38:9 › Theme: webtrees › S10 — Paginierung: Seitenwechsel zeigt andere Ergebnisse [webtrees]
+[1A[2K[406/533] [chromium] › tests/search-pagination.spec.ts:19:9 › Theme: clouds › S10 — Suche mit vielen Treffern zeigt Datentabelle [clouds]
+[1A[2K[407/533] [chromium] › tests/search-pagination.spec.ts:29:9 › Theme: clouds › S10 — Suchergebnisse zeigen Paginierungs-Controls [clouds]
+[1A[2K[408/533] [chromium] › tests/search-pagination.spec.ts:38:9 › Theme: clouds › S10 — Paginierung: Seitenwechsel zeigt andere Ergebnisse [clouds]
+[1A[2K[409/533] [chromium] › tests/search-pagination.spec.ts:19:9 › Theme: colors › S10 — Suche mit vielen Treffern zeigt Datentabelle [colors]
+[1A[2K[410/533] [chromium] › tests/search-pagination.spec.ts:29:9 › Theme: colors › S10 — Suchergebnisse zeigen Paginierungs-Controls [colors]
+[1A[2K[411/533] [chromium] › tests/search-pagination.spec.ts:38:9 › Theme: colors › S10 — Paginierung: Seitenwechsel zeigt andere Ergebnisse [colors]
+[1A[2K[412/533] [chromium] › tests/search-pagination.spec.ts:19:9 › Theme: fab › S10 — Suche mit vielen Treffern zeigt Datentabelle [fab]
+[1A[2K[413/533] [chromium] › tests/search-pagination.spec.ts:29:9 › Theme: fab › S10 — Suchergebnisse zeigen Paginierungs-Controls [fab]
+[1A[2K[414/533] [chromium] › tests/search-pagination.spec.ts:38:9 › Theme: fab › S10 — Paginierung: Seitenwechsel zeigt andere Ergebnisse [fab]
+[1A[2K[415/533] [chromium] › tests/search-pagination.spec.ts:19:9 › Theme: xenea › S10 — Suche mit vielen Treffern zeigt Datentabelle [xenea]
+[1A[2K[416/533] [chromium] › tests/search-pagination.spec.ts:29:9 › Theme: xenea › S10 — Suchergebnisse zeigen Paginierungs-Controls [xenea]
+[1A[2K[417/533] [chromium] › tests/search-pagination.spec.ts:38:9 › Theme: xenea › S10 — Paginierung: Seitenwechsel zeigt andere Ergebnisse [xenea]
+[1A[2K[418/533] [chromium] › tests/search-replace.spec.ts:21:9 › Theme: webtrees › S13 — search-and-replace page renders for admin [webtrees]
+[1A[2K[419/533] [chromium] › tests/search-replace.spec.ts:30:9 › Theme: webtrees › S13 — search-and-replace page shows form fields [webtrees]
+[1A[2K[420/533] [chromium] › tests/search-replace.spec.ts:21:9 › Theme: clouds › S13 — search-and-replace page renders for admin [clouds]
+[1A[2K[421/533] [chromium] › tests/search-replace.spec.ts:30:9 › Theme: clouds › S13 — search-and-replace page shows form fields [clouds]
+[1A[2K[422/533] [chromium] › tests/search-replace.spec.ts:21:9 › Theme: colors › S13 — search-and-replace page renders for admin [colors]
+[1A[2K[423/533] [chromium] › tests/search-replace.spec.ts:30:9 › Theme: colors › S13 — search-and-replace page shows form fields [colors]
+[1A[2K[424/533] [chromium] › tests/search-replace.spec.ts:21:9 › Theme: fab › S13 — search-and-replace page renders for admin [fab]
+[1A[2K[425/533] [chromium] › tests/search-replace.spec.ts:30:9 › Theme: fab › S13 — search-and-replace page shows form fields [fab]
+[1A[2K[426/533] [chromium] › tests/search-replace.spec.ts:21:9 › Theme: xenea › S13 — search-and-replace page renders for admin [xenea]
+[1A[2K[427/533] [chromium] › tests/search-replace.spec.ts:30:9 › Theme: xenea › S13 — search-and-replace page shows form fields [xenea]
+[1A[2K[428/533] [chromium] › tests/search-replace.spec.ts:48:7 › Visitor › S13 — search-and-replace page not accessible for visitor
+[1A[2K[429/533] [chromium] › tests/source-list.spec.ts:19:9 › Theme: webtrees › S20 — source list loads without errors [webtrees]
+[1A[2K[430/533] [chromium] › tests/source-list.spec.ts:28:9 › Theme: webtrees › S20 — source list shows entries or table [webtrees]
+[1A[2K[431/533] [chromium] › tests/source-list.spec.ts:19:9 › Theme: clouds › S20 — source list loads without errors [clouds]
+[1A[2K[432/533] [chromium] › tests/source-list.spec.ts:28:9 › Theme: clouds › S20 — source list shows entries or table [clouds]
+[1A[2K[433/533] [chromium] › tests/source-list.spec.ts:19:9 › Theme: colors › S20 — source list loads without errors [colors]
+[1A[2K[434/533] [chromium] › tests/source-list.spec.ts:28:9 › Theme: colors › S20 — source list shows entries or table [colors]
+[1A[2K[435/533] [chromium] › tests/source-list.spec.ts:19:9 › Theme: fab › S20 — source list loads without errors [fab]
+[1A[2K[436/533] [chromium] › tests/source-list.spec.ts:28:9 › Theme: fab › S20 — source list shows entries or table [fab]
+[1A[2K[437/533] [chromium] › tests/source-list.spec.ts:19:9 › Theme: xenea › S20 — source list loads without errors [xenea]
+[1A[2K[438/533] [chromium] › tests/source-list.spec.ts:28:9 › Theme: xenea › S20 — source list shows entries or table [xenea]
+[1A[2K[439/533] [chromium] › tests/statistics-page.spec.ts:19:9 › Theme: webtrees › S41 — Statistik-Seite lädt ohne Fehler [webtrees]
+[1A[2K[440/533] [chromium] › tests/statistics-page.spec.ts:25:9 › Theme: webtrees › S41 — Statistik-Seite zeigt Inhaltsbereich [webtrees]
+[1A[2K[441/533] [chromium] › tests/statistics-page.spec.ts:30:9 › Theme: webtrees › S41 — Statistik-Seite zeigt Diagramm-/Tabellenbereich [webtrees]
+[1A[2K[442/533] [chromium] › tests/statistics-page.spec.ts:19:9 › Theme: clouds › S41 — Statistik-Seite lädt ohne Fehler [clouds]
+[1A[2K[443/533] [chromium] › tests/statistics-page.spec.ts:25:9 › Theme: clouds › S41 — Statistik-Seite zeigt Inhaltsbereich [clouds]
+[1A[2K[444/533] [chromium] › tests/statistics-page.spec.ts:30:9 › Theme: clouds › S41 — Statistik-Seite zeigt Diagramm-/Tabellenbereich [clouds]
+[1A[2K[445/533] [chromium] › tests/statistics-page.spec.ts:19:9 › Theme: colors › S41 — Statistik-Seite lädt ohne Fehler [colors]
+[1A[2K[446/533] [chromium] › tests/statistics-page.spec.ts:25:9 › Theme: colors › S41 — Statistik-Seite zeigt Inhaltsbereich [colors]
+[1A[2K[447/533] [chromium] › tests/statistics-page.spec.ts:30:9 › Theme: colors › S41 — Statistik-Seite zeigt Diagramm-/Tabellenbereich [colors]
+[1A[2K[448/533] [chromium] › tests/statistics-page.spec.ts:19:9 › Theme: fab › S41 — Statistik-Seite lädt ohne Fehler [fab]
+[1A[2K[449/533] [chromium] › tests/statistics-page.spec.ts:25:9 › Theme: fab › S41 — Statistik-Seite zeigt Inhaltsbereich [fab]
+[1A[2K[450/533] [chromium] › tests/statistics-page.spec.ts:30:9 › Theme: fab › S41 — Statistik-Seite zeigt Diagramm-/Tabellenbereich [fab]
+[1A[2K[451/533] [chromium] › tests/statistics-page.spec.ts:19:9 › Theme: xenea › S41 — Statistik-Seite lädt ohne Fehler [xenea]
+[1A[2K[452/533] [chromium] › tests/statistics-page.spec.ts:25:9 › Theme: xenea › S41 — Statistik-Seite zeigt Inhaltsbereich [xenea]
+[1A[2K[453/533] [chromium] › tests/statistics-page.spec.ts:30:9 › Theme: xenea › S41 — Statistik-Seite zeigt Diagramm-/Tabellenbereich [xenea]
+[1A[2K[454/533] [chromium] › tests/subrecord-create.spec.ts:19:9 › Theme: webtrees › E04 — Personenseite mit Edit-Optionen lädt [webtrees]
+[1A[2K[455/533] [chromium] › tests/subrecord-create.spec.ts:25:9 › Theme: webtrees › E04 — Note-erstellen-Endpunkt erreichbar [webtrees]
+[1A[2K[456/533] [chromium] › tests/subrecord-create.spec.ts:31:9 › Theme: webtrees › E04 — Source-erstellen-Endpunkt erreichbar [webtrees]
+[1A[2K[457/533] [chromium] › tests/subrecord-create.spec.ts:37:9 › Theme: webtrees › E04 — Repository-erstellen-Endpunkt erreichbar [webtrees]
+[1A[2K[458/533] [chromium] › tests/subrecord-create.spec.ts:19:9 › Theme: clouds › E04 — Personenseite mit Edit-Optionen lädt [clouds]
+[1A[2K[459/533] [chromium] › tests/subrecord-create.spec.ts:25:9 › Theme: clouds › E04 — Note-erstellen-Endpunkt erreichbar [clouds]
+[1A[2K[460/533] [chromium] › tests/subrecord-create.spec.ts:31:9 › Theme: clouds › E04 — Source-erstellen-Endpunkt erreichbar [clouds]
+[1A[2K[461/533] [chromium] › tests/subrecord-create.spec.ts:37:9 › Theme: clouds › E04 — Repository-erstellen-Endpunkt erreichbar [clouds]
+[1A[2K[462/533] [chromium] › tests/subrecord-create.spec.ts:19:9 › Theme: colors › E04 — Personenseite mit Edit-Optionen lädt [colors]
+[1A[2K[463/533] [chromium] › tests/subrecord-create.spec.ts:25:9 › Theme: colors › E04 — Note-erstellen-Endpunkt erreichbar [colors]
+[1A[2K[464/533] [chromium] › tests/subrecord-create.spec.ts:31:9 › Theme: colors › E04 — Source-erstellen-Endpunkt erreichbar [colors]
+[1A[2K[465/533] [chromium] › tests/subrecord-create.spec.ts:37:9 › Theme: colors › E04 — Repository-erstellen-Endpunkt erreichbar [colors]
+[1A[2K[466/533] [chromium] › tests/subrecord-create.spec.ts:19:9 › Theme: fab › E04 — Personenseite mit Edit-Optionen lädt [fab]
+[1A[2K[467/533] [chromium] › tests/subrecord-create.spec.ts:25:9 › Theme: fab › E04 — Note-erstellen-Endpunkt erreichbar [fab]
+[1A[2K[468/533] [chromium] › tests/subrecord-create.spec.ts:31:9 › Theme: fab › E04 — Source-erstellen-Endpunkt erreichbar [fab]
+[1A[2K[469/533] [chromium] › tests/subrecord-create.spec.ts:37:9 › Theme: fab › E04 — Repository-erstellen-Endpunkt erreichbar [fab]
+[1A[2K[470/533] [chromium] › tests/subrecord-create.spec.ts:19:9 › Theme: xenea › E04 — Personenseite mit Edit-Optionen lädt [xenea]
+[1A[2K[471/533] [chromium] › tests/subrecord-create.spec.ts:25:9 › Theme: xenea › E04 — Note-erstellen-Endpunkt erreichbar [xenea]
+[1A[2K[472/533] [chromium] › tests/subrecord-create.spec.ts:31:9 › Theme: xenea › E04 — Source-erstellen-Endpunkt erreichbar [xenea]
+[1A[2K[473/533] [chromium] › tests/subrecord-create.spec.ts:37:9 › Theme: xenea › E04 — Repository-erstellen-Endpunkt erreichbar [xenea]
+[1A[2K[474/533] [chromium] › tests/tomselect-autocomplete.spec.ts:19:9 › Theme: webtrees › E08 — Edit-Seite mit TomSelect-Widget lädt [webtrees]
+[1A[2K[475/533] [chromium] › tests/tomselect-autocomplete.spec.ts:29:9 › Theme: webtrees › E08 — TomSelect-Widget rendert auf Edit-Seite [webtrees]
+[1A[2K[476/533] [chromium] › tests/tomselect-autocomplete.spec.ts:37:9 › Theme: webtrees › E08 — TomSelect-API-Endpunkt für Individuen antwortet [webtrees]
+[1A[2K[477/533] [chromium] › tests/tomselect-autocomplete.spec.ts:46:9 › Theme: webtrees › E08 — TomSelect-API für Quellen antwortet [webtrees]
+[1A[2K[478/533] [chromium] › tests/tomselect-autocomplete.spec.ts:53:9 › Theme: webtrees › E08 — TomSelect-Eingabefeld auf Add-Child-Seite [webtrees]
+[1A[2K[479/533] [chromium] › tests/tomselect-autocomplete.spec.ts:19:9 › Theme: clouds › E08 — Edit-Seite mit TomSelect-Widget lädt [clouds]
+[1A[2K[480/533] [chromium] › tests/tomselect-autocomplete.spec.ts:29:9 › Theme: clouds › E08 — TomSelect-Widget rendert auf Edit-Seite [clouds]
+[1A[2K[481/533] [chromium] › tests/tomselect-autocomplete.spec.ts:37:9 › Theme: clouds › E08 — TomSelect-API-Endpunkt für Individuen antwortet [clouds]
+[1A[2K[482/533] [chromium] › tests/tomselect-autocomplete.spec.ts:46:9 › Theme: clouds › E08 — TomSelect-API für Quellen antwortet [clouds]
+[1A[2K[483/533] [chromium] › tests/tomselect-autocomplete.spec.ts:53:9 › Theme: clouds › E08 — TomSelect-Eingabefeld auf Add-Child-Seite [clouds]
+[1A[2K[484/533] [chromium] › tests/tomselect-autocomplete.spec.ts:19:9 › Theme: colors › E08 — Edit-Seite mit TomSelect-Widget lädt [colors]
+[1A[2K[485/533] [chromium] › tests/tomselect-autocomplete.spec.ts:29:9 › Theme: colors › E08 — TomSelect-Widget rendert auf Edit-Seite [colors]
+[1A[2K[486/533] [chromium] › tests/tomselect-autocomplete.spec.ts:37:9 › Theme: colors › E08 — TomSelect-API-Endpunkt für Individuen antwortet [colors]
+[1A[2K[487/533] [chromium] › tests/tomselect-autocomplete.spec.ts:46:9 › Theme: colors › E08 — TomSelect-API für Quellen antwortet [colors]
+[1A[2K[488/533] [chromium] › tests/tomselect-autocomplete.spec.ts:53:9 › Theme: colors › E08 — TomSelect-Eingabefeld auf Add-Child-Seite [colors]
+[1A[2K[489/533] [chromium] › tests/tomselect-autocomplete.spec.ts:19:9 › Theme: fab › E08 — Edit-Seite mit TomSelect-Widget lädt [fab]
+[1A[2K[490/533] [chromium] › tests/tomselect-autocomplete.spec.ts:29:9 › Theme: fab › E08 — TomSelect-Widget rendert auf Edit-Seite [fab]
+[1A[2K[491/533] [chromium] › tests/tomselect-autocomplete.spec.ts:37:9 › Theme: fab › E08 — TomSelect-API-Endpunkt für Individuen antwortet [fab]
+[1A[2K[492/533] [chromium] › tests/tomselect-autocomplete.spec.ts:46:9 › Theme: fab › E08 — TomSelect-API für Quellen antwortet [fab]
+[1A[2K[493/533] [chromium] › tests/tomselect-autocomplete.spec.ts:53:9 › Theme: fab › E08 — TomSelect-Eingabefeld auf Add-Child-Seite [fab]
+[1A[2K[494/533] [chromium] › tests/tomselect-autocomplete.spec.ts:19:9 › Theme: xenea › E08 — Edit-Seite mit TomSelect-Widget lädt [xenea]
+[1A[2K[495/533] [chromium] › tests/tomselect-autocomplete.spec.ts:29:9 › Theme: xenea › E08 — TomSelect-Widget rendert auf Edit-Seite [xenea]
+[1A[2K[496/533] [chromium] › tests/tomselect-autocomplete.spec.ts:37:9 › Theme: xenea › E08 — TomSelect-API-Endpunkt für Individuen antwortet [xenea]
+[1A[2K[497/533] [chromium] › tests/tomselect-autocomplete.spec.ts:46:9 › Theme: xenea › E08 — TomSelect-API für Quellen antwortet [xenea]
+[1A[2K[498/533] [chromium] › tests/tomselect-autocomplete.spec.ts:53:9 › Theme: xenea › E08 — TomSelect-Eingabefeld auf Add-Child-Seite [xenea]
+[1A[2K[499/533] [chromium] › tests/tree-management.spec.ts:12:5 › A01 — ManageTrees-Seite lädt korrekt
+[1A[2K[500/533] [chromium] › tests/tree-management.spec.ts:21:5 › A01 — Admin-Kontrollzentrum zeigt Bäume
+[1A[2K[501/533] [chromium] › tests/tree-management.spec.ts:29:5 › A01 — Create-Tree-Seite lädt mit Formular
+[1A[2K[502/533] [chromium] › tests/tree-management.spec.ts:43:5 › A01 — Neuen Baum anlegen und bereinigen
+[1A[2K[503/533] [chromium] › tests/tree-preferences.spec.ts:12:5 › A04 — Präferenzen-Seite lädt korrekt
+[1A[2K[504/533] [chromium] › tests/tree-preferences.spec.ts:19:5 › A04 — Präferenzen-Formular zeigt Einstellungsfelder
+[1A[2K[505/533] [chromium] › tests/upload-validation.spec.ts:15:5 › G21 — import page renders for admin
+[1A[2K[506/533] [chromium] › tests/upload-validation.spec.ts:25:5 › G21 — upload empty file shows error or rejects
+[1A[2K[507/533] [chromium] › tests/upload-validation.spec.ts:52:5 › G21 — upload text file shows error or rejects
+[1A[2K[508/533] [chromium] › tests/upload-validation.spec.ts:74:5 › G21 — upload binary file shows error or rejects
+[1A[2K[509/533] [chromium] › tests/user-admin.spec.ts:12:5 › A07 — User-Liste lädt korrekt
+[1A[2K[510/533] [chromium] › tests/user-admin.spec.ts:20:5 › A07 — User-Liste mit Filter
+[1A[2K[511/533] [chromium] › tests/user-admin.spec.ts:26:5 › A07 — Cleanup-Seite lädt
+[1A[2K[512/533] [chromium] › tests/user-edit-admin.spec.ts:12:5 › P37 — User-Liste zeigt Benutzer
+[1A[2K[513/533] [chromium] › tests/user-edit-admin.spec.ts:20:5 › P37 — User-Edit-Seite lädt für Admin-User
+[1A[2K[514/533] [chromium] › tests/user-edit-admin.spec.ts:28:5 › P37 — User-Edit-Formular zeigt E-Mail-Feld
+[1A[2K[515/533] [chromium] › tests/user-edit-admin.spec.ts:34:5 › P37 — User-Edit-Formular zeigt Username-Feld
+[1A[2K[516/533] [chromium] › tests/user-messages.spec.ts:12:5 › K02 — Nachrichten-Formular rendert korrekt
+[1A[2K[517/533] [chromium] › tests/user-messages.spec.ts:18:5 › K02 — Nachrichten-Formular zeigt Subject und Body
+[1A[2K[518/533] [chromium] › tests/user-messages.spec.ts:29:5 › K02 — Nachricht senden via Submit
+[1A[2K[519/533] [chromium] › tests/user-messages.spec.ts:49:5 › K02 — Leeres Formular-Submit ohne Crash
+[1A[2K[520/533] [chromium] › tests/user-pages.spec.ts:19:9 › Theme: webtrees › S35 — my page renders with blocks [webtrees]
+[1A[2K[521/533] [chromium] › tests/user-pages.spec.ts:28:9 › Theme: webtrees › S36 — contact page renders [webtrees]
+[1A[2K[522/533] [chromium] › tests/user-pages.spec.ts:35:9 › Theme: webtrees › S37 — report list renders [webtrees]
+[1A[2K[523/533] [chromium] › tests/user-pages.spec.ts:19:9 › Theme: clouds › S35 — my page renders with blocks [clouds]
+[1A[2K[524/533] [chromium] › tests/user-pages.spec.ts:28:9 › Theme: clouds › S36 — contact page renders [clouds]
+[1A[2K[525/533] [chromium] › tests/user-pages.spec.ts:35:9 › Theme: clouds › S37 — report list renders [clouds]
+[1A[2K[526/533] [chromium] › tests/user-pages.spec.ts:19:9 › Theme: colors › S35 — my page renders with blocks [colors]
+[1A[2K[527/533] [chromium] › tests/user-pages.spec.ts:28:9 › Theme: colors › S36 — contact page renders [colors]
+[1A[2K[528/533] [chromium] › tests/user-pages.spec.ts:35:9 › Theme: colors › S37 — report list renders [colors]
+[1A[2K[529/533] [chromium] › tests/user-pages.spec.ts:19:9 › Theme: fab › S35 — my page renders with blocks [fab]
+[1A[2K[530/533] [chromium] › tests/user-pages.spec.ts:28:9 › Theme: fab › S36 — contact page renders [fab]
+[1A[2K[531/533] [chromium] › tests/user-pages.spec.ts:35:9 › Theme: fab › S37 — report list renders [fab]
+[1A[2K[532/533] [chromium] › tests/user-pages.spec.ts:19:9 › Theme: xenea › S35 — my page renders with blocks [xenea]
+[1A[2K[533/533] [chromium] › tests/user-pages.spec.ts:28:9 › Theme: xenea › S36 — contact page renders [xenea]
+[1A[2K[534/533] [chromium] › tests/user-pages.spec.ts:35:9 › Theme: xenea › S37 — report list renders [xenea]
+[1A[2K  1 flaky
+    [chromium] › tests/contact-form.spec.ts:27:9 › Theme: fab › K01 — Kontaktformular zeigt Pflichtfelder [fab] 
+  532 passed (14.0m)
+
+To open last HTML report run:
+
+  npx playwright show-report ../../artifacts/layer4/playwright-report
+
+[1G[0K\[1G[0K[1mnpm[22m [96mnotice[39m
+[1mnpm[22m [96mnotice[39m New [31mmajor[39m version of npm available! [31m10.9.7[39m -> [34m11.15.0[39m
+[1mnpm[22m [96mnotice[39m Changelog: [34mhttps://github.com/npm/cli/releases/tag/v11.15.0[39m
+[1mnpm[22m [96mnotice[39m To update run: [4mnpm install -g npm@11.15.0[24m
+[1mnpm[22m [96mnotice[39m
+[1G[0K\[1G[0K=== Systemtest abgeschlossen (Exit: 0) ===
+=== PerfSchema-Extraktion fuer layer4 ===
+  statements_by_digest.json...
+  table_io_waits.json...
+  stages_global.json...
+  transactions_global.json...
+  summary.txt...
+=== PerfSchema-Extraktion abgeschlossen: artifacts/layer4/perfschema/ ===
+=== Testlauf: d634ee7b (2026-05-24T17:48:41.364138+00:00) ===
+Gefundene Spans: 1003598
+Playwright-Root-Spans: 525
+Testfälle: 524
+  - A01___Admin-Kontrollzentrum_zeigt_B_ume  (spans: 162)
+  - A01___Create-Tree-Seite_l_dt_mit_Formular  (spans: 90)
+  - A01___ManageTrees-Seite_l_dt_korrekt  (spans: 102)
+  - A01___Neuen_Baum_anlegen_und_bereinigen  (spans: 328)
+  - A04___Pr_ferenzen-Formular_zeigt_Einstellungsfelder  (spans: 231)
+  - A04___Pr_ferenzen-Seite_l_dt_korrekt  (spans: 231)
+  - A05___Alle_Module-Seite_l_dt  (spans: 90)
+  - A05___Analytics-Seite_l_dt  (spans: 99)
+  - A05___Blocks-Seite_l_dt  (spans: 99)
+  - A05___Charts-Seite_l_dt  (spans: 99)
+  - A05___Menus-Seite_l_dt  (spans: 99)
+  - A05___Modul-_bersicht_zeigt_Modultabelle  (spans: 90)
+  - A05___Reports-Seite_l_dt  (spans: 99)
+  - A07___Cleanup-Seite_l_dt  (spans: 111)
+  - A07___User-Liste_l_dt_korrekt  (spans: 212)
+  - A07___User-Liste_mit_Filter  (spans: 182)
+  - A08___FixLevel0Media-Seite_laedt  (spans: 494)
+  - A08___ManageMedia-Seite_laedt_mit_Formular  (spans: 665)
+  - A08___Radio__external__zeigt_externe_Referenzen  (spans: 1040)
+  - A08___Radio__local__zeigt_lokale_Media-Dateien  (spans: 665)
+  - A08___Radio__unused__zeigt_unbenutzte_Dateien  (spans: 947)
+  - E01___Formular_Ehepartner_hinzuf_gen_l_dt_korrekt__clouds_  (spans: 193)
+  - E01___Formular_Ehepartner_hinzuf_gen_l_dt_korrekt__colors_  (spans: 193)
+  - E01___Formular_Ehepartner_hinzuf_gen_l_dt_korrekt__fab_  (spans: 193)
+  - E01___Formular_Ehepartner_hinzuf_gen_l_dt_korrekt__webtrees_  (spans: 193)
+  - E01___Formular_Ehepartner_hinzuf_gen_l_dt_korrekt__xenea_  (spans: 193)
+  - E01___Formular_Elternteil_hinzuf_gen_l_dt_korrekt__clouds_  (spans: 190)
+  - E01___Formular_Elternteil_hinzuf_gen_l_dt_korrekt__colors_  (spans: 190)
+  - E01___Formular_Elternteil_hinzuf_gen_l_dt_korrekt__fab_  (spans: 190)
+  - E01___Formular_Elternteil_hinzuf_gen_l_dt_korrekt__webtrees_  (spans: 190)
+  - E01___Formular_Elternteil_hinzuf_gen_l_dt_korrekt__xenea_  (spans: 190)
+  - E01___Formular_Kind_hinzuf_gen_l_dt_korrekt__clouds_  (spans: 190)
+  - E01___Formular_Kind_hinzuf_gen_l_dt_korrekt__colors_  (spans: 190)
+  - E01___Formular_Kind_hinzuf_gen_l_dt_korrekt__fab_  (spans: 190)
+  - E01___Formular_Kind_hinzuf_gen_l_dt_korrekt__webtrees_  (spans: 190)
+  - E01___Formular_Kind_hinzuf_gen_l_dt_korrekt__xenea_  (spans: 190)
+  - E01___Formular_Kind_zu_Familie_hinzuf_gen_l_dt__clouds_  (spans: 225)
+  - E01___Formular_Kind_zu_Familie_hinzuf_gen_l_dt__colors_  (spans: 225)
+  - E01___Formular_Kind_zu_Familie_hinzuf_gen_l_dt__fab_  (spans: 225)
+  - E01___Formular_Kind_zu_Familie_hinzuf_gen_l_dt__webtrees_  (spans: 225)
+  - E01___Formular_Kind_zu_Familie_hinzuf_gen_l_dt__xenea_  (spans: 225)
+  - E02___Edit-Links_auf_Personenseite_vorhanden__clouds_  (spans: 11442)
+  - E02___Edit-Links_auf_Personenseite_vorhanden__colors_  (spans: 11442)
+  - E02___Edit-Links_auf_Personenseite_vorhanden__fab_  (spans: 11442)
+  - E02___Edit-Links_auf_Personenseite_vorhanden__webtrees_  (spans: 11446)
+  - E02___Edit-Links_auf_Personenseite_vorhanden__xenea_  (spans: 11451)
+  - E02___Fakt-hinzuf_gen-Seite_rendert_korrekt__clouds_  (spans: 190)
+  - E02___Fakt-hinzuf_gen-Seite_rendert_korrekt__colors_  (spans: 190)
+  - E02___Fakt-hinzuf_gen-Seite_rendert_korrekt__fab_  (spans: 190)
+  - E02___Fakt-hinzuf_gen-Seite_rendert_korrekt__webtrees_  (spans: 190)
+  - E02___Fakt-hinzuf_gen-Seite_rendert_korrekt__xenea_  (spans: 190)
+  - E02___Personenseite_zeigt_bestehende_Fakten__clouds_  (spans: 11452)
+  - E02___Personenseite_zeigt_bestehende_Fakten__colors_  (spans: 11452)
+  - E02___Personenseite_zeigt_bestehende_Fakten__fab_  (spans: 11452)
+  - E02___Personenseite_zeigt_bestehende_Fakten__webtrees_  (spans: 11460)
+  - E02___Personenseite_zeigt_bestehende_Fakten__xenea_  (spans: 11452)
+  - E03___Raw-Edit-Seite_l_dt_f_r_bekannten_Record  (spans: 362)
+  - E03___Raw-Edit-Seite_zeigt_GEDCOM-Inhalt  (spans: 355)
+  - E04___Note-erstellen-Endpunkt_erreichbar__clouds_  (spans: 93)
+  - E04___Note-erstellen-Endpunkt_erreichbar__colors_  (spans: 93)
+  - E04___Note-erstellen-Endpunkt_erreichbar__fab_  (spans: 93)
+  - E04___Note-erstellen-Endpunkt_erreichbar__webtrees_  (spans: 93)
+  - E04___Note-erstellen-Endpunkt_erreichbar__xenea_  (spans: 93)
+  - E04___Personenseite_mit_Edit-Optionen_l_dt__clouds_  (spans: 11452)
+  - E04___Personenseite_mit_Edit-Optionen_l_dt__colors_  (spans: 11454)
+  - E04___Personenseite_mit_Edit-Optionen_l_dt__fab_  (spans: 11456)
+  - E04___Personenseite_mit_Edit-Optionen_l_dt__webtrees_  (spans: 11452)
+  - E04___Personenseite_mit_Edit-Optionen_l_dt__xenea_  (spans: 11452)
+  - E04___Repository-erstellen-Endpunkt_erreichbar__clouds_  (spans: 93)
+  - E04___Repository-erstellen-Endpunkt_erreichbar__colors_  (spans: 93)
+  - E04___Repository-erstellen-Endpunkt_erreichbar__fab_  (spans: 93)
+  - E04___Repository-erstellen-Endpunkt_erreichbar__webtrees_  (spans: 93)
+  - E04___Repository-erstellen-Endpunkt_erreichbar__xenea_  (spans: 93)
+  - E04___Source-erstellen-Endpunkt_erreichbar__clouds_  (spans: 93)
+  - E04___Source-erstellen-Endpunkt_erreichbar__colors_  (spans: 93)
+  - E04___Source-erstellen-Endpunkt_erreichbar__fab_  (spans: 93)
+  - E04___Source-erstellen-Endpunkt_erreichbar__webtrees_  (spans: 93)
+  - E04___Source-erstellen-Endpunkt_erreichbar__xenea_  (spans: 93)
+  - E05___Media-Seite_auf_Person_X1030_zeigt_Medien-Tab__clouds_  (spans: 11452)
+  - E05___Media-Seite_auf_Person_X1030_zeigt_Medien-Tab__colors_  (spans: 11452)
+  - E05___Media-Seite_auf_Person_X1030_zeigt_Medien-Tab__fab_  (spans: 11452)
+  - E05___Media-Seite_auf_Person_X1030_zeigt_Medien-Tab__webtrees_  (spans: 11452)
+  - E05___Media-Seite_auf_Person_X1030_zeigt_Medien-Tab__xenea_  (spans: 11456)
+  - E05___Media-erstellen-Endpunkt_erreichbar__clouds_  (spans: 96)
+  - E05___Media-erstellen-Endpunkt_erreichbar__colors_  (spans: 96)
+  - E05___Media-erstellen-Endpunkt_erreichbar__fab_  (spans: 96)
+  - E05___Media-erstellen-Endpunkt_erreichbar__webtrees_  (spans: 96)
+  - E05___Media-erstellen-Endpunkt_erreichbar__xenea_  (spans: 98)
+  - E05___Medienobjekt-Seite_l_dt__clouds_  (spans: 631)
+  - E05___Medienobjekt-Seite_l_dt__colors_  (spans: 631)
+  - E05___Medienobjekt-Seite_l_dt__fab_  (spans: 631)
+  - E05___Medienobjekt-Seite_l_dt__webtrees_  (spans: 631)
+  - E05___Medienobjekt-Seite_l_dt__xenea_  (spans: 631)
+  - E06___Reorder-Children-Seite_l_dt_f_r_Familie  (spans: 360)
+  - E06___Reorder-Families-Seite_l_dt_f_r_Person  (spans: 180)
+  - E06___Reorder-Names-Seite_l_dt_f_r_Person  (spans: 174)
+  - E08___Edit-Seite_mit_TomSelect-Widget_l_dt__clouds_  (spans: 193)
+  - E08___Edit-Seite_mit_TomSelect-Widget_l_dt__colors_  (spans: 193)
+  - E08___Edit-Seite_mit_TomSelect-Widget_l_dt__fab_  (spans: 193)
+  - E08___Edit-Seite_mit_TomSelect-Widget_l_dt__webtrees_  (spans: 193)
+  - E08___Edit-Seite_mit_TomSelect-Widget_l_dt__xenea_  (spans: 193)
+  - E08___TomSelect-API-Endpunkt_f_r_Individuen_antwortet__clouds_  (spans: 168)
+  - E08___TomSelect-API-Endpunkt_f_r_Individuen_antwortet__colors_  (spans: 168)
+  - E08___TomSelect-API-Endpunkt_f_r_Individuen_antwortet__fab_  (spans: 168)
+  - E08___TomSelect-API-Endpunkt_f_r_Individuen_antwortet__webtrees_  (spans: 168)
+  - E08___TomSelect-API-Endpunkt_f_r_Individuen_antwortet__xenea_  (spans: 168)
+  - E08___TomSelect-API_f_r_Quellen_antwortet__clouds_  (spans: 168)
+  - E08___TomSelect-API_f_r_Quellen_antwortet__colors_  (spans: 168)
+  - E08___TomSelect-API_f_r_Quellen_antwortet__fab_  (spans: 168)
+  - E08___TomSelect-API_f_r_Quellen_antwortet__webtrees_  (spans: 168)
+  - E08___TomSelect-API_f_r_Quellen_antwortet__xenea_  (spans: 168)
+  - E08___TomSelect-Eingabefeld_auf_Add-Child-Seite__clouds_  (spans: 190)
+  - E08___TomSelect-Eingabefeld_auf_Add-Child-Seite__colors_  (spans: 190)
+  - E08___TomSelect-Eingabefeld_auf_Add-Child-Seite__fab_  (spans: 190)
+  - E08___TomSelect-Eingabefeld_auf_Add-Child-Seite__webtrees_  (spans: 190)
+  - E08___TomSelect-Eingabefeld_auf_Add-Child-Seite__xenea_  (spans: 190)
+  - E08___TomSelect-Widget_rendert_auf_Edit-Seite__clouds_  (spans: 193)
+  - E08___TomSelect-Widget_rendert_auf_Edit-Seite__colors_  (spans: 193)
+  - E08___TomSelect-Widget_rendert_auf_Edit-Seite__fab_  (spans: 193)
+  - E08___TomSelect-Widget_rendert_auf_Edit-Seite__webtrees_  (spans: 193)
+  - E08___TomSelect-Widget_rendert_auf_Edit-Seite__xenea_  (spans: 193)
+  - G21___import_page_renders_for_admin  (spans: 102)
+  - G21___upload_binary_file_shows_error_or_rejects  (spans: 102)
+  - G21___upload_empty_file_shows_error_or_rejects  (spans: 102)
+  - G21___upload_text_file_shows_error_or_rejects  (spans: 102)
+  - K01___Kontaktformular_rendert_korrekt__clouds_  (spans: 187)
+  - K01___Kontaktformular_rendert_korrekt__colors_  (spans: 187)
+  - K01___Kontaktformular_rendert_korrekt__fab_  (spans: 187)
+  - K01___Kontaktformular_rendert_korrekt__webtrees_  (spans: 187)
+  - K01___Kontaktformular_rendert_korrekt__xenea_  (spans: 187)
+  - K01___Kontaktformular_zeigt_Pflichtfelder__clouds_  (spans: 187)
+  - K01___Kontaktformular_zeigt_Pflichtfelder__colors_  (spans: 187)
+  - K01___Kontaktformular_zeigt_Pflichtfelder__fab_  (spans: 374)
+  - K01___Kontaktformular_zeigt_Pflichtfelder__webtrees_  (spans: 187)
+  - K01___Kontaktformular_zeigt_Pflichtfelder__xenea_  (spans: 187)
+  - K01___Leeres_Kontaktformular-Submit__clouds_  (spans: 187)
+  - K01___Leeres_Kontaktformular-Submit__colors_  (spans: 187)
+  - K01___Leeres_Kontaktformular-Submit__fab_  (spans: 187)
+  - K01___Leeres_Kontaktformular-Submit__webtrees_  (spans: 187)
+  - K01___Leeres_Kontaktformular-Submit__xenea_  (spans: 187)
+  - K02___Leeres_Formular-Submit_ohne_Crash  (spans: 174)
+  - K02___Nachricht_senden_via_Submit  (spans: 1245)
+  - K02___Nachrichten-Formular_rendert_korrekt  (spans: 174)
+  - K02___Nachrichten-Formular_zeigt_Subject_und_Body  (spans: 174)
+  - M16___Admin-Seite_ohne_Login_wird_umgeleitet  (spans: 1113)
+  - M16___Client-Error_bei_nicht_existierender_XREF  (spans: 169)
+  - M16___Client-Error_bei_ungueltigem_Tree-Namen  (spans: 24)
+  - M16___Error-Page_enthaelt_Alert-Container_mit_ARIA-Rolle  (spans: 169)
+  - M16___Error-Page_enthaelt_Fehlermeldung  (spans: 169)
+  - P02___visitor_sees_historically_dead_person  (spans: 652)
+  - P03___manager_sees_all_persons  (spans: 1850)
+  - P14___visitor_may_see_name_but_not_details_of_living_person  (spans: 491)
+  - P16___visitor_sees_person_with_RESN_none_despite_being_alive  (spans: 628)
+  - P17___member_sees_RESN_privacy_person  (spans: 1805)
+  - P17___visitor_cannot_see_RESN_privacy_person  (spans: 302)
+  - P18___manager_sees_RESN_confidential_person  (spans: 1855)
+  - P18___member_cannot_see_RESN_confidential_person  (spans: 1496)
+  - P19___member_sees_RESN-privacy_birth_date  (spans: 1826)
+  - P19___visitor_sees_person_but_not_RESN-privacy_birth_date  (spans: 640)
+  - P22___relationship_user_cannot_see_far_relative  (spans: 1526)
+  - P22___relationship_user_cannot_see_unrelated_person  (spans: 1524)
+  - P22___relationship_user_sees_close_relative  (spans: 2461)
+  - P24___member_search_for_living_person_returns_results  (spans: 1836)
+  - P24___visitor_search_for_RESN_confidential_returns_no_results  (spans: 332)
+  - P24___visitor_search_for_RESN_none_person_returns_results  (spans: 644)
+  - P24___visitor_search_for_living_person_returns_no_results  (spans: 343)
+  - P25___member_sees_living_person_page  (spans: 1820)
+  - P25___visitor_cannot_see_living_person_page  (spans: 311)
+  - P26___pedigree_chart_shows_full_data_for_manager  (spans: 2252)
+  - P26___pedigree_chart_shows_private_boxes_for_visitor  (spans: 866)
+  - P27___editor_sees_edit_page_for_person  (spans: 1919)
+  - P28___moderator_can_access_pending_changes_page  (spans: 1519)
+  - P29___editor_cannot_edit_RESN_locked_person  (spans: 1847)
+  - P29___member_sees_no_edit_buttons_on_person_page  (spans: 1837)
+  - P29___visitor_sees_no_edit_buttons_on_person_page  (spans: 654)
+  - P30___Merge-Seite_l_dt_mit_Formular  (spans: 129)
+  - P30___Merge-Seite_zeigt_Continue-Button  (spans: 129)
+  - P30___Merge-Seite_zeigt_Record-Typ-Auswahl_und_Felder  (spans: 129)
+  - P37___User-Edit-Formular_zeigt_E-Mail-Feld  (spans: 126)
+  - P37___User-Edit-Formular_zeigt_Username-Feld  (spans: 131)
+  - P37___User-Edit-Seite_l_dt_f_r_Admin-User  (spans: 126)
+  - P37___User-Liste_zeigt_Benutzer  (spans: 212)
+  - P38___Account-Formular_zeigt_E-Mail-Feld  (spans: 168)
+  - P38___Account-Formular_zeigt_Sprachauswahl  (spans: 168)
+  - P38___Account-Seite_l_dt_korrekt  (spans: 168)
+  - P40___Editor_sieht_Edit-Optionen_auf_Personenseite  (spans: 1916)
+  - P40___Editor_sieht_Personenseite_im_Privacy-Baum  (spans: 1916)
+  - P40___Member_hat_keinen_Zugriff_auf_Pending-Changes  (spans: 1476)
+  - P40___Moderator_akzeptiert_fully-pending_Add-Child_Change_und_Eintrag_verschwindet_bei_Reload  (spans: 4803)
+  - P40___Moderator_kann_Pending-Changes-Seite_aufrufen  (spans: 1514)
+  - P40___Pending-Changes-Seite_l_dt_als_Admin  (spans: 1490)
+  - P41___Merge-Formular_l_dt_ohne_Fehler  (spans: 129)
+  - P41___Merge-Seite_ohne_Crash_bei_leerer_Eingabe  (spans: 296)
+  - S05___Erweiterte_Suchseite_rendert_Formular__clouds_  (spans: 169)
+  - S05___Erweiterte_Suchseite_rendert_Formular__colors_  (spans: 169)
+  - S05___Erweiterte_Suchseite_rendert_Formular__fab_  (spans: 169)
+  - S05___Erweiterte_Suchseite_rendert_Formular__webtrees_  (spans: 169)
+  - S05___Erweiterte_Suchseite_rendert_Formular__xenea_  (spans: 169)
+  - S05___Suche_nach_Nachname_liefert_Treffer__clouds_  (spans: 1612)
+  - S05___Suche_nach_Nachname_liefert_Treffer__colors_  (spans: 1612)
+  - S05___Suche_nach_Nachname_liefert_Treffer__fab_  (spans: 1612)
+  - S05___Suche_nach_Nachname_liefert_Treffer__webtrees_  (spans: 1612)
+  - S05___Suche_nach_Nachname_liefert_Treffer__xenea_  (spans: 1612)
+  - S05___Suche_nach_Vorname_liefert_Treffer__clouds_  (spans: 562)
+  - S05___Suche_nach_Vorname_liefert_Treffer__colors_  (spans: 562)
+  - S05___Suche_nach_Vorname_liefert_Treffer__fab_  (spans: 562)
+  - S05___Suche_nach_Vorname_liefert_Treffer__webtrees_  (spans: 562)
+  - S05___Suche_nach_Vorname_liefert_Treffer__xenea_  (spans: 562)
+  - S06___Erweiterte_Suche_mit_Datumsfeld_liefert_Treffer__clouds_  (spans: 526)
+  - S06___Erweiterte_Suche_mit_Datumsfeld_liefert_Treffer__colors_  (spans: 526)
+  - S06___Erweiterte_Suche_mit_Datumsfeld_liefert_Treffer__fab_  (spans: 526)
+  - S06___Erweiterte_Suche_mit_Datumsfeld_liefert_Treffer__webtrees_  (spans: 526)
+  - S06___Erweiterte_Suche_mit_Datumsfeld_liefert_Treffer__xenea_  (spans: 526)
+  - S07___Phonetische_Suchseite_rendert_Formular__clouds_  (spans: 169)
+  - S07___Phonetische_Suchseite_rendert_Formular__colors_  (spans: 176)
+  - S07___Phonetische_Suchseite_rendert_Formular__fab_  (spans: 169)
+  - S07___Phonetische_Suchseite_rendert_Formular__webtrees_  (spans: 169)
+  - S07___Phonetische_Suchseite_rendert_Formular__xenea_  (spans: 169)
+  - S07___Russell-Soundex-Suche_nach_phonetischer_Variante_liefert_Treffer__clouds_  (spans: 1420)
+  - S07___Russell-Soundex-Suche_nach_phonetischer_Variante_liefert_Treffer__colors_  (spans: 1420)
+  - S07___Russell-Soundex-Suche_nach_phonetischer_Variante_liefert_Treffer__fab_  (spans: 1420)
+  - S07___Russell-Soundex-Suche_nach_phonetischer_Variante_liefert_Treffer__webtrees_  (spans: 1420)
+  - S07___Russell-Soundex-Suche_nach_phonetischer_Variante_liefert_Treffer__xenea_  (spans: 1420)
+  - S07___Russell-Soundex-Suche_ohne_Treffer__clouds_  (spans: 433)
+  - S07___Russell-Soundex-Suche_ohne_Treffer__colors_  (spans: 433)
+  - S07___Russell-Soundex-Suche_ohne_Treffer__fab_  (spans: 433)
+  - S07___Russell-Soundex-Suche_ohne_Treffer__webtrees_  (spans: 433)
+  - S07___Russell-Soundex-Suche_ohne_Treffer__xenea_  (spans: 433)
+  - S08___DM-Soundex-Suche_nach_phonetischer_Variante_liefert_Treffer__clouds_  (spans: 1420)
+  - S08___DM-Soundex-Suche_nach_phonetischer_Variante_liefert_Treffer__colors_  (spans: 1420)
+  - S08___DM-Soundex-Suche_nach_phonetischer_Variante_liefert_Treffer__fab_  (spans: 1420)
+  - S08___DM-Soundex-Suche_nach_phonetischer_Variante_liefert_Treffer__webtrees_  (spans: 1420)
+  - S08___DM-Soundex-Suche_nach_phonetischer_Variante_liefert_Treffer__xenea_  (spans: 1420)
+  - S08___DM-Soundex-Suche_ohne_Treffer__clouds_  (spans: 433)
+  - S08___DM-Soundex-Suche_ohne_Treffer__colors_  (spans: 433)
+  - S08___DM-Soundex-Suche_ohne_Treffer__fab_  (spans: 433)
+  - S08___DM-Soundex-Suche_ohne_Treffer__webtrees_  (spans: 433)
+  - S08___DM-Soundex-Suche_ohne_Treffer__xenea_  (spans: 433)
+  - S09___quick_search_returns_results__clouds_  (spans: 1267)
+  - S09___quick_search_returns_results__colors_  (spans: 1252)
+  - S09___quick_search_returns_results__fab_  (spans: 1252)
+  - S09___quick_search_returns_results__webtrees_  (spans: 1252)
+  - S09___quick_search_returns_results__xenea_  (spans: 1252)
+  - S10___Paginierung__Seitenwechsel_zeigt_andere_Ergebnisse__clouds_  (spans: 9150)
+  - S10___Paginierung__Seitenwechsel_zeigt_andere_Ergebnisse__colors_  (spans: 9150)
+  - S10___Paginierung__Seitenwechsel_zeigt_andere_Ergebnisse__fab_  (spans: 9150)
+  - S10___Paginierung__Seitenwechsel_zeigt_andere_Ergebnisse__webtrees_  (spans: 9150)
+  - S10___Paginierung__Seitenwechsel_zeigt_andere_Ergebnisse__xenea_  (spans: 9150)
+  - S10___Suche_mit_vielen_Treffern_zeigt_Datentabelle__clouds_  (spans: 9150)
+  - S10___Suche_mit_vielen_Treffern_zeigt_Datentabelle__colors_  (spans: 9150)
+  - S10___Suche_mit_vielen_Treffern_zeigt_Datentabelle__fab_  (spans: 9150)
+  - S10___Suche_mit_vielen_Treffern_zeigt_Datentabelle__webtrees_  (spans: 9150)
+  - S10___Suche_mit_vielen_Treffern_zeigt_Datentabelle__xenea_  (spans: 9150)
+  - S10___Suchergebnisse_zeigen_Paginierungs-Controls__clouds_  (spans: 9150)
+  - S10___Suchergebnisse_zeigen_Paginierungs-Controls__colors_  (spans: 9150)
+  - S10___Suchergebnisse_zeigen_Paginierungs-Controls__fab_  (spans: 9150)
+  - S10___Suchergebnisse_zeigen_Paginierungs-Controls__webtrees_  (spans: 9150)
+  - S10___Suchergebnisse_zeigen_Paginierungs-Controls__xenea_  (spans: 9150)
+  - S13___search-and-replace_page_not_accessible_for_visitor  (spans: 253)
+  - S13___search-and-replace_page_renders_for_admin__clouds_  (spans: 169)
+  - S13___search-and-replace_page_renders_for_admin__colors_  (spans: 169)
+  - S13___search-and-replace_page_renders_for_admin__fab_  (spans: 169)
+  - S13___search-and-replace_page_renders_for_admin__webtrees_  (spans: 171)
+  - S13___search-and-replace_page_renders_for_admin__xenea_  (spans: 169)
+  - S13___search-and-replace_page_shows_form_fields__clouds_  (spans: 169)
+  - S13___search-and-replace_page_shows_form_fields__colors_  (spans: 169)
+  - S13___search-and-replace_page_shows_form_fields__fab_  (spans: 169)
+  - S13___search-and-replace_page_shows_form_fields__webtrees_  (spans: 169)
+  - S13___search-and-replace_page_shows_form_fields__xenea_  (spans: 169)
+  - S14___pedigree_chart_area_visible__clouds_  (spans: 1020)
+  - S14___pedigree_chart_area_visible__colors_  (spans: 1020)
+  - S14___pedigree_chart_area_visible__fab_  (spans: 1020)
+  - S14___pedigree_chart_area_visible__webtrees_  (spans: 1020)
+  - S14___pedigree_chart_area_visible__xenea_  (spans: 1022)
+  - S14___pedigree_chart_loads_without_errors__clouds_  (spans: 1030)
+  - S14___pedigree_chart_loads_without_errors__colors_  (spans: 1030)
+  - S14___pedigree_chart_loads_without_errors__fab_  (spans: 1030)
+  - S14___pedigree_chart_loads_without_errors__webtrees_  (spans: 1030)
+  - S14___pedigree_chart_loads_without_errors__xenea_  (spans: 1030)
+  - S16___Beziehungs-Chart-Seite_l_dt_korrekt__clouds_  (spans: 363)
+  - S16___Beziehungs-Chart-Seite_l_dt_korrekt__colors_  (spans: 363)
+  - S16___Beziehungs-Chart-Seite_l_dt_korrekt__fab_  (spans: 363)
+  - S16___Beziehungs-Chart-Seite_l_dt_korrekt__webtrees_  (spans: 363)
+  - S16___Beziehungs-Chart-Seite_l_dt_korrekt__xenea_  (spans: 363)
+  - S16___Beziehungspfad_zwischen_zwei_Personen_angezeigt__clouds_  (spans: 677)
+  - S16___Beziehungspfad_zwischen_zwei_Personen_angezeigt__colors_  (spans: 677)
+  - S16___Beziehungspfad_zwischen_zwei_Personen_angezeigt__fab_  (spans: 677)
+  - S16___Beziehungspfad_zwischen_zwei_Personen_angezeigt__webtrees_  (spans: 677)
+  - S16___Beziehungspfad_zwischen_zwei_Personen_angezeigt__xenea_  (spans: 677)
+  - S16___Eltern-Kind-Beziehung_wird_angezeigt__clouds_  (spans: 1223)
+  - S16___Eltern-Kind-Beziehung_wird_angezeigt__colors_  (spans: 1223)
+  - S16___Eltern-Kind-Beziehung_wird_angezeigt__fab_  (spans: 1223)
+  - S16___Eltern-Kind-Beziehung_wird_angezeigt__webtrees_  (spans: 1223)
+  - S16___Eltern-Kind-Beziehung_wird_angezeigt__xenea_  (spans: 1223)
+  - S18___Branches-Chart_l_dt_ohne_Fehler__clouds_  (spans: 1532)
+  - S18___Branches-Chart_l_dt_ohne_Fehler__colors_  (spans: 1532)
+  - S18___Branches-Chart_l_dt_ohne_Fehler__fab_  (spans: 1532)
+  - S18___Branches-Chart_l_dt_ohne_Fehler__webtrees_  (spans: 1532)
+  - S18___Branches-Chart_l_dt_ohne_Fehler__xenea_  (spans: 1532)
+  - S18___Branches-Chart_zeigt_Inhaltsbereich__clouds_  (spans: 1532)
+  - S18___Branches-Chart_zeigt_Inhaltsbereich__colors_  (spans: 1532)
+  - S18___Branches-Chart_zeigt_Inhaltsbereich__fab_  (spans: 1532)
+  - S18___Branches-Chart_zeigt_Inhaltsbereich__webtrees_  (spans: 1532)
+  - S18___Branches-Chart_zeigt_Inhaltsbereich__xenea_  (spans: 1537)
+  - S18___Descendants-Chart_l_dt_ohne_Fehler__clouds_  (spans: 3887)
+  - S18___Descendants-Chart_l_dt_ohne_Fehler__colors_  (spans: 3887)
+  - S18___Descendants-Chart_l_dt_ohne_Fehler__fab_  (spans: 3887)
+  - S18___Descendants-Chart_l_dt_ohne_Fehler__webtrees_  (spans: 3887)
+  - S18___Descendants-Chart_l_dt_ohne_Fehler__xenea_  (spans: 3887)
+  - S18___Descendants-Chart_zeigt_Inhaltsbereich__clouds_  (spans: 3887)
+  - S18___Descendants-Chart_zeigt_Inhaltsbereich__colors_  (spans: 3887)
+  - S18___Descendants-Chart_zeigt_Inhaltsbereich__fab_  (spans: 3887)
+  - S18___Descendants-Chart_zeigt_Inhaltsbereich__webtrees_  (spans: 3887)
+  - S18___Descendants-Chart_zeigt_Inhaltsbereich__xenea_  (spans: 3887)
+  - S18___FamilyBook-Chart_l_dt_ohne_Fehler__clouds_  (spans: 5072)
+  - S18___FamilyBook-Chart_l_dt_ohne_Fehler__colors_  (spans: 5072)
+  - S18___FamilyBook-Chart_l_dt_ohne_Fehler__fab_  (spans: 5072)
+  - S18___FamilyBook-Chart_l_dt_ohne_Fehler__webtrees_  (spans: 5079)
+  - S18___FamilyBook-Chart_l_dt_ohne_Fehler__xenea_  (spans: 5072)
+  - S18___FamilyBook-Chart_zeigt_Inhaltsbereich__clouds_  (spans: 5072)
+  - S18___FamilyBook-Chart_zeigt_Inhaltsbereich__colors_  (spans: 5072)
+  - S18___FamilyBook-Chart_zeigt_Inhaltsbereich__fab_  (spans: 5072)
+  - S18___FamilyBook-Chart_zeigt_Inhaltsbereich__webtrees_  (spans: 5072)
+  - S18___FamilyBook-Chart_zeigt_Inhaltsbereich__xenea_  (spans: 5072)
+  - S18___Lifespans-Chart_l_dt_ohne_Fehler__clouds_  (spans: 377)
+  - S18___Lifespans-Chart_l_dt_ohne_Fehler__colors_  (spans: 377)
+  - S18___Lifespans-Chart_l_dt_ohne_Fehler__fab_  (spans: 377)
+  - S18___Lifespans-Chart_l_dt_ohne_Fehler__webtrees_  (spans: 377)
+  - S18___Lifespans-Chart_l_dt_ohne_Fehler__xenea_  (spans: 377)
+  - S18___Lifespans-Chart_zeigt_Inhaltsbereich__clouds_  (spans: 377)
+  - S18___Lifespans-Chart_zeigt_Inhaltsbereich__colors_  (spans: 377)
+  - S18___Lifespans-Chart_zeigt_Inhaltsbereich__fab_  (spans: 377)
+  - S18___Lifespans-Chart_zeigt_Inhaltsbereich__webtrees_  (spans: 377)
+  - S18___Lifespans-Chart_zeigt_Inhaltsbereich__xenea_  (spans: 377)
+  - S18___Timeline-Chart_l_dt_ohne_Fehler__clouds_  (spans: 476)
+  - S18___Timeline-Chart_l_dt_ohne_Fehler__colors_  (spans: 476)
+  - S18___Timeline-Chart_l_dt_ohne_Fehler__fab_  (spans: 476)
+  - S18___Timeline-Chart_l_dt_ohne_Fehler__webtrees_  (spans: 476)
+  - S18___Timeline-Chart_l_dt_ohne_Fehler__xenea_  (spans: 476)
+  - S18___Timeline-Chart_zeigt_Inhaltsbereich__clouds_  (spans: 476)
+  - S18___Timeline-Chart_zeigt_Inhaltsbereich__colors_  (spans: 476)
+  - S18___Timeline-Chart_zeigt_Inhaltsbereich__fab_  (spans: 476)
+  - S18___Timeline-Chart_zeigt_Inhaltsbereich__webtrees_  (spans: 476)
+  - S18___Timeline-Chart_zeigt_Inhaltsbereich__xenea_  (spans: 476)
+  - S20___family_list_renders__clouds_  (spans: 169)
+  - S20___family_list_renders__colors_  (spans: 169)
+  - S20___family_list_renders__fab_  (spans: 169)
+  - S20___family_list_renders__webtrees_  (spans: 169)
+  - S20___family_list_renders__xenea_  (spans: 169)
+  - S20___source_list_loads_without_errors__clouds_  (spans: 190)
+  - S20___source_list_loads_without_errors__colors_  (spans: 190)
+  - S20___source_list_loads_without_errors__fab_  (spans: 190)
+  - S20___source_list_loads_without_errors__webtrees_  (spans: 190)
+  - S20___source_list_loads_without_errors__xenea_  (spans: 190)
+  - S20___source_list_shows_entries_or_table__clouds_  (spans: 190)
+  - S20___source_list_shows_entries_or_table__colors_  (spans: 190)
+  - S20___source_list_shows_entries_or_table__fab_  (spans: 190)
+  - S20___source_list_shows_entries_or_table__webtrees_  (spans: 190)
+  - S20___source_list_shows_entries_or_table__xenea_  (spans: 190)
+  - S23___individual_list_renders__clouds_  (spans: 169)
+  - S23___individual_list_renders__colors_  (spans: 169)
+  - S23___individual_list_renders__fab_  (spans: 169)
+  - S23___individual_list_renders__webtrees_  (spans: 169)
+  - S23___individual_list_renders__xenea_  (spans: 169)
+  - S23___person_page_shows_facts_area__clouds_  (spans: 11442)
+  - S23___person_page_shows_facts_area__colors_  (spans: 11442)
+  - S23___person_page_shows_facts_area__fab_  (spans: 11442)
+  - S23___person_page_shows_facts_area__webtrees_  (spans: 11442)
+  - S23___person_page_shows_facts_area__xenea_  (spans: 11442)
+  - S23___person_page_shows_name_and_vital_facts__clouds_  (spans: 11452)
+  - S23___person_page_shows_name_and_vital_facts__colors_  (spans: 11456)
+  - S23___person_page_shows_name_and_vital_facts__fab_  (spans: 11452)
+  - S23___person_page_shows_name_and_vital_facts__webtrees_  (spans: 11452)
+  - S23___person_page_shows_name_and_vital_facts__xenea_  (spans: 11452)
+  - S24___family_page_loads_without_errors__clouds_  (spans: 3412)
+  - S24___family_page_loads_without_errors__colors_  (spans: 3412)
+  - S24___family_page_loads_without_errors__fab_  (spans: 3412)
+  - S24___family_page_loads_without_errors__webtrees_  (spans: 3412)
+  - S24___family_page_loads_without_errors__xenea_  (spans: 3412)
+  - S24___family_page_shows_facts_area__clouds_  (spans: 3402)
+  - S24___family_page_shows_facts_area__colors_  (spans: 3402)
+  - S24___family_page_shows_facts_area__fab_  (spans: 3402)
+  - S24___family_page_shows_facts_area__webtrees_  (spans: 3404)
+  - S24___family_page_shows_facts_area__xenea_  (spans: 3402)
+  - S24___family_page_shows_family_header__clouds_  (spans: 3402)
+  - S24___family_page_shows_family_header__colors_  (spans: 3402)
+  - S24___family_page_shows_family_header__fab_  (spans: 3402)
+  - S24___family_page_shows_family_header__webtrees_  (spans: 3402)
+  - S24___family_page_shows_family_header__xenea_  (spans: 3402)
+  - S26___source_page_renders__clouds_  (spans: 8296)
+  - S26___source_page_renders__colors_  (spans: 8296)
+  - S26___source_page_renders__fab_  (spans: 8296)
+  - S26___source_page_renders__webtrees_  (spans: 8296)
+  - S26___source_page_renders__xenea_  (spans: 8296)
+  - S27___media_page_renders__clouds_  (spans: 631)
+  - S27___media_page_renders__colors_  (spans: 631)
+  - S27___media_page_renders__fab_  (spans: 631)
+  - S27___media_page_renders__webtrees_  (spans: 631)
+  - S27___media_page_renders__xenea_  (spans: 631)
+  - S28___note_page_renders__clouds_  (spans: 487)
+  - S28___note_page_renders__colors_  (spans: 487)
+  - S28___note_page_renders__fab_  (spans: 487)
+  - S28___note_page_renders__webtrees_  (spans: 487)
+  - S28___note_page_renders__xenea_  (spans: 487)
+  - S29___repository_page_renders__clouds_  (spans: 331)
+  - S29___repository_page_renders__colors_  (spans: 331)
+  - S29___repository_page_renders__fab_  (spans: 331)
+  - S29___repository_page_renders__webtrees_  (spans: 331)
+  - S29___repository_page_renders__xenea_  (spans: 331)
+  - S30___submitter_page_renders__clouds_  (spans: 322)
+  - S30___submitter_page_renders__colors_  (spans: 322)
+  - S30___submitter_page_renders__fab_  (spans: 322)
+  - S30___submitter_page_renders__webtrees_  (spans: 322)
+  - S30___submitter_page_renders__xenea_  (spans: 322)
+  - S31___month_calendar_renders__clouds_  (spans: 1658)
+  - S31___month_calendar_renders__colors_  (spans: 1656)
+  - S31___month_calendar_renders__fab_  (spans: 1656)
+  - S31___month_calendar_renders__webtrees_  (spans: 1656)
+  - S31___month_calendar_renders__xenea_  (spans: 1656)
+  - S31___year_calendar_renders__clouds_  (spans: 276)
+  - S31___year_calendar_renders__colors_  (spans: 276)
+  - S31___year_calendar_renders__fab_  (spans: 276)
+  - S31___year_calendar_renders__webtrees_  (spans: 276)
+  - S31___year_calendar_renders__xenea_  (spans: 276)
+  - S33___registration_page_renders  (spans: 112)
+  - S34___password_reset_page_renders  (spans: 112)
+  - S35___my_page_renders_with_blocks__clouds_  (spans: 883)
+  - S35___my_page_renders_with_blocks__colors_  (spans: 883)
+  - S35___my_page_renders_with_blocks__fab_  (spans: 883)
+  - S35___my_page_renders_with_blocks__webtrees_  (spans: 885)
+  - S35___my_page_renders_with_blocks__xenea_  (spans: 885)
+  - S36___contact_page_renders__clouds_  (spans: 172)
+  - S36___contact_page_renders__colors_  (spans: 172)
+  - S36___contact_page_renders__fab_  (spans: 172)
+  - S36___contact_page_renders__webtrees_  (spans: 172)
+  - S36___contact_page_renders__xenea_  (spans: 172)
+  - S37___report_list_renders__clouds_  (spans: 1036)
+  - S37___report_list_renders__colors_  (spans: 1032)
+  - S37___report_list_renders__fab_  (spans: 1032)
+  - S37___report_list_renders__webtrees_  (spans: 1032)
+  - S37___report_list_renders__xenea_  (spans: 1032)
+  - S38___advanced_search_form_renders__clouds_  (spans: 169)
+  - S38___advanced_search_form_renders__colors_  (spans: 169)
+  - S38___advanced_search_form_renders__fab_  (spans: 169)
+  - S38___advanced_search_form_renders__webtrees_  (spans: 174)
+  - S38___advanced_search_form_renders__xenea_  (spans: 169)
+  - S39___phonetic_search_form_renders__clouds_  (spans: 169)
+  - S39___phonetic_search_form_renders__colors_  (spans: 169)
+  - S39___phonetic_search_form_renders__fab_  (spans: 169)
+  - S39___phonetic_search_form_renders__webtrees_  (spans: 171)
+  - S39___phonetic_search_form_renders__xenea_  (spans: 169)
+  - S40___homepage_loads_without_errors__clouds_  (spans: 935)
+  - S40___homepage_loads_without_errors__colors_  (spans: 935)
+  - S40___homepage_loads_without_errors__fab_  (spans: 935)
+  - S40___homepage_loads_without_errors__webtrees_  (spans: 935)
+  - S40___homepage_loads_without_errors__xenea_  (spans: 935)
+  - S40___homepage_shows_tree_statistics_or_welcome_block__clouds_  (spans: 935)
+  - S40___homepage_shows_tree_statistics_or_welcome_block__colors_  (spans: 935)
+  - S40___homepage_shows_tree_statistics_or_welcome_block__fab_  (spans: 935)
+  - S40___homepage_shows_tree_statistics_or_welcome_block__webtrees_  (spans: 935)
+  - S40___homepage_shows_tree_statistics_or_welcome_block__xenea_  (spans: 935)
+  - S41___Statistik-Seite_l_dt_ohne_Fehler__clouds_  (spans: 1057)
+  - S41___Statistik-Seite_l_dt_ohne_Fehler__colors_  (spans: 1057)
+  - S41___Statistik-Seite_l_dt_ohne_Fehler__fab_  (spans: 1057)
+  - S41___Statistik-Seite_l_dt_ohne_Fehler__webtrees_  (spans: 1057)
+  - S41___Statistik-Seite_l_dt_ohne_Fehler__xenea_  (spans: 1057)
+  - S41___Statistik-Seite_zeigt_Diagramm-_Tabellenbereich__clouds_  (spans: 1057)
+  - S41___Statistik-Seite_zeigt_Diagramm-_Tabellenbereich__colors_  (spans: 1059)
+  - S41___Statistik-Seite_zeigt_Diagramm-_Tabellenbereich__fab_  (spans: 1057)
+  - S41___Statistik-Seite_zeigt_Diagramm-_Tabellenbereich__webtrees_  (spans: 1057)
+  - S41___Statistik-Seite_zeigt_Diagramm-_Tabellenbereich__xenea_  (spans: 1057)
+  - S41___Statistik-Seite_zeigt_Inhaltsbereich__clouds_  (spans: 1057)
+  - S41___Statistik-Seite_zeigt_Inhaltsbereich__colors_  (spans: 1057)
+  - S41___Statistik-Seite_zeigt_Inhaltsbereich__fab_  (spans: 1057)
+  - S41___Statistik-Seite_zeigt_Inhaltsbereich__webtrees_  (spans: 1057)
+  - S41___Statistik-Seite_zeigt_Inhaltsbereich__xenea_  (spans: 1057)
+  - S46___Homepage-Block-Konfiguration_erreichbar__clouds_  (spans: 935)
+  - S46___Homepage-Block-Konfiguration_erreichbar__colors_  (spans: 937)
+  - S46___Homepage-Block-Konfiguration_erreichbar__fab_  (spans: 935)
+  - S46___Homepage-Block-Konfiguration_erreichbar__webtrees_  (spans: 940)
+  - S46___Homepage-Block-Konfiguration_erreichbar__xenea_  (spans: 935)
+  - S46___Homepage_zeigt_Statistik-Block__clouds_  (spans: 935)
+  - S46___Homepage_zeigt_Statistik-Block__colors_  (spans: 935)
+  - S46___Homepage_zeigt_Statistik-Block__fab_  (spans: 935)
+  - S46___Homepage_zeigt_Statistik-Block__webtrees_  (spans: 935)
+  - S46___Homepage_zeigt_Statistik-Block__xenea_  (spans: 935)
+  - S46___Homepage_zeigt_mindestens_einen_Block__clouds_  (spans: 935)
+  - S46___Homepage_zeigt_mindestens_einen_Block__colors_  (spans: 935)
+  - S46___Homepage_zeigt_mindestens_einen_Block__fab_  (spans: 935)
+  - S46___Homepage_zeigt_mindestens_einen_Block__webtrees_  (spans: 935)
+  - S46___Homepage_zeigt_mindestens_einen_Block__xenea_  (spans: 935)
+  - S47___Interaktiver_Stammbaum_l_dt__clouds_  (spans: 2524)
+  - S47___Interaktiver_Stammbaum_l_dt__colors_  (spans: 2524)
+  - S47___Interaktiver_Stammbaum_l_dt__fab_  (spans: 2524)
+  - S47___Interaktiver_Stammbaum_l_dt__webtrees_  (spans: 2526)
+  - S47___Interaktiver_Stammbaum_l_dt__xenea_  (spans: 2524)
+  - S47___Stammbaum_zeigt_Personendaten__clouds_  (spans: 2524)
+  - S47___Stammbaum_zeigt_Personendaten__colors_  (spans: 2524)
+  - S47___Stammbaum_zeigt_Personendaten__fab_  (spans: 2524)
+  - S47___Stammbaum_zeigt_Personendaten__webtrees_  (spans: 2524)
+  - S47___Stammbaum_zeigt_Personendaten__xenea_  (spans: 2524)
+  - S47___Widget-Container_sichtbar__clouds_  (spans: 2524)
+  - S47___Widget-Container_sichtbar__colors_  (spans: 2524)
+  - S47___Widget-Container_sichtbar__fab_  (spans: 2524)
+  - S47___Widget-Container_sichtbar__webtrees_  (spans: 2524)
+  - S47___Widget-Container_sichtbar__xenea_  (spans: 2524)
+  - S50___Hilfe-Endpunkt_f_r_unbekannten_Topic_liefert_Fallback__clouds_  (spans: 85)
+  - S50___Hilfe-Endpunkt_f_r_unbekannten_Topic_liefert_Fallback__colors_  (spans: 85)
+  - S50___Hilfe-Endpunkt_f_r_unbekannten_Topic_liefert_Fallback__fab_  (spans: 85)
+  - S50___Hilfe-Endpunkt_f_r_unbekannten_Topic_liefert_Fallback__webtrees_  (spans: 85)
+  - S50___Hilfe-Endpunkt_f_r_unbekannten_Topic_liefert_Fallback__xenea_  (spans: 85)
+  - S50___Hilfe-Endpunkte_liefern_Inhalte_f_r_bekannte_Topics__clouds_  (spans: 1009)
+  - S50___Hilfe-Endpunkte_liefern_Inhalte_f_r_bekannte_Topics__colors_  (spans: 1009)
+  - S50___Hilfe-Endpunkte_liefern_Inhalte_f_r_bekannte_Topics__fab_  (spans: 1009)
+  - S50___Hilfe-Endpunkte_liefern_Inhalte_f_r_bekannte_Topics__webtrees_  (spans: 1009)
+  - S50___Hilfe-Endpunkte_liefern_Inhalte_f_r_bekannte_Topics__xenea_  (spans: 1013)
+  - S50___Hilfe-Icon_auf_Personenseite_f_hrt_zu_Hilfetext__clouds_  (spans: 11456)
+  - S50___Hilfe-Icon_auf_Personenseite_f_hrt_zu_Hilfetext__colors_  (spans: 11452)
+  - S50___Hilfe-Icon_auf_Personenseite_f_hrt_zu_Hilfetext__fab_  (spans: 11452)
+  - S50___Hilfe-Icon_auf_Personenseite_f_hrt_zu_Hilfetext__webtrees_  (spans: 11452)
+  - S50___Hilfe-Icon_auf_Personenseite_f_hrt_zu_Hilfetext__xenea_  (spans: 11452)
+  - should_login_with_valid_credentials  (spans: 1248)
+  - should_reject_invalid_credentials  (spans: 418)
+  - should_show_login_page  (spans: 178)
+JSON-Report: artifacts/layer4/trace-report.json
+# --output-text artifacts/layer4/trace-report.txt — temporär deaktiviert (2026-04-13)
