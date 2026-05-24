@@ -52,7 +52,7 @@ final class ModuleActionIntegrationTest extends MysqlTestCase
         $this->skipIfRequiredModulesDisabled();
     }
 
-    public function test_sec_audit_005_baseline_admin_action_blocked_on_faq(): void
+    public function test_baseline_admin_action_blocked_on_faq(): void
     {
         $this->assertModuleActionBlockedForGuest(
             RequestMethodInterface::METHOD_GET,
@@ -80,7 +80,7 @@ final class ModuleActionIntegrationTest extends MysqlTestCase
     }
 
     #[DataProvider('caseBypassProvider')]
-    public function test_sec_audit_005_all_variants_blocked_by_admin_gate(
+    public function test_all_variants_blocked_by_admin_gate(
         string $method,
         string $action,
         string $module,

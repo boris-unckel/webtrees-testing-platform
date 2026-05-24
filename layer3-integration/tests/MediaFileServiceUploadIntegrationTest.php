@@ -181,7 +181,7 @@ class MediaFileServiceUploadIntegrationTest extends MysqlTestCase
     }
 
     #[DataProvider('dangerousExtensionProvider')]
-    public function test_sec_audit_002_dangerous_extension_is_rejected(string $filename): void
+    public function test_dangerous_extension_is_rejected(string $filename): void
     {
         $request = $this->buildUploadRequest($filename, 'application/octet-stream', '<?php /* malicious */');
 

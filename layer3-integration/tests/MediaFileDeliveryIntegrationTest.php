@@ -227,7 +227,7 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
      * der Skriptausführung verhindert. Ausgelöst über MediaFileThumbnail mit
      * unbekannter XREF, was den Placeholder-Pfad ansteuert.
      */
-    public function test_sec_audit_003_replacement_image_carries_csp(): void
+    public function test_replacement_image_carries_csp(): void
     {
         $this->createTreeWithGedcom('sec003-csp', 'SEC AUDIT 003', self::DEMO_GED);
         $handler = new MediaFileThumbnail();
@@ -250,10 +250,13 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
         self::assertSame('image/svg+xml', $response->getHeaderLine('content-type'));
 
         $csp = $response->getHeaderLine('content-security-policy');
-        self::assertStringContainsString(
-            'script-src none',
-            $csp,
-            'Replacement-Image-Response must carry CSP that prevents script execution',
+        self::assertTrue(
+            $this->cspBlocksScriptExecution($csp),
+            sprintf(
+                'MediaFileThumbnail::handle: Replacement-Image-Response muss CSP-Header tragen, '
+                . 'der Skript-Ausfuehrung verhindert (script-src oder default-src auf none). Aktuell: "%s".',
+                $csp,
+            ),
         );
     }
 
@@ -270,7 +273,7 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
     /**
      * H1 — case-bypass `<SCRIPT>` payload must not reach the browser executable.
      */
-    public function test_sec_audit_001_h1_case_bypass_script_is_browser_safe(): void
+    public function test_h1_case_bypass_script_is_browser_safe(): void
     {
         $response = $this->uploadAndFetchSvg('H1', 0, 'sec001-h1');
         $this->assertSvgBrowserSafe($response, ['<SCRIPT', '<script', 'cookie']);
@@ -279,7 +282,7 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
     /**
      * H2 — `onload=` event handler payload must not reach the browser executable.
      */
-    public function test_sec_audit_001_h2_onload_handler_is_browser_safe(): void
+    public function test_h2_onload_handler_is_browser_safe(): void
     {
         $response = $this->uploadAndFetchSvg('H2', 0, 'sec001-h2');
         $this->assertSvgBrowserSafe($response, ['onload=', 'cookie']);
@@ -288,7 +291,7 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
     /**
      * H3 — `javascript:` URL in xlink:href must not reach the browser executable.
      */
-    public function test_sec_audit_001_h3_javascript_url_is_browser_safe(): void
+    public function test_h3_javascript_url_is_browser_safe(): void
     {
         $response = $this->uploadAndFetchSvg('H3', 0, 'sec001-h3');
         $this->assertSvgBrowserSafe($response, ['javascript:', 'cookie']);
@@ -297,7 +300,7 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
     /**
      * H4 — legitimate SVG (no active content) must round-trip with CSP protection.
      */
-    public function test_sec_audit_001_h4_legitimate_svg_passes_with_csp(): void
+    public function test_h4_legitimate_svg_passes_with_csp(): void
     {
         $response = $this->uploadAndFetchSvg('H4', 0, 'sec001-h4');
 
@@ -306,10 +309,13 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
         self::assertSame('image/svg+xml', $response->getHeaderLine('content-type'));
 
         $csp = $response->getHeaderLine('content-security-policy');
-        self::assertStringContainsString(
-            'script-src none',
-            $csp,
-            'Legitimate SVG must be delivered with CSP script-src none',
+        self::assertTrue(
+            $this->cspBlocksScriptExecution($csp),
+            sprintf(
+                'MediaFileThumbnail::handle: Legitimes SVG muss mit CSP-Header ausgeliefert werden, '
+                . 'der Skript-Ausfuehrung verhindert (script-src oder default-src auf none). Aktuell: "%s".',
+                $csp,
+            ),
         );
 
         $body = (string) $response->getBody();
@@ -320,7 +326,7 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
     /**
      * H5 — lowercase `<script>` baseline must not reach the browser executable.
      */
-    public function test_sec_audit_001_h5_lowercase_script_is_browser_safe(): void
+    public function test_h5_lowercase_script_is_browser_safe(): void
     {
         $response = $this->uploadAndFetchSvg('H5', 0, 'sec001-h5');
         $this->assertSvgBrowserSafe($response, ['<script', 'cookie']);
@@ -407,7 +413,7 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
         );
 
         $csp = $response->getHeaderLine('content-security-policy');
-        if (str_contains($csp, 'script-src none')) {
+        if ($this->cspBlocksScriptExecution($csp)) {
             return;
         }
 
@@ -417,11 +423,52 @@ class MediaFileDeliveryIntegrationTest extends MysqlTestCase
                 $signature,
                 $body,
                 sprintf(
-                    'Without CSP script-src none, body must not contain executable signature %s',
+                    'Without a CSP that prevents script execution, body must not contain executable signature %s',
                     var_export($signature, true),
                 ),
             );
         }
+    }
+
+    /**
+     * Semantische CSP-Auswertung: verhindert dieser Header-Wert die Ausfuehrung
+     * von Skripten? Greift sowohl `script-src 'none'` als auch `default-src 'none'`
+     * als Fallback (CSP-Spec: `script-src` faellt auf `default-src` zurueck, wenn
+     * nicht gesetzt). Toleriert Anfuehrungs- und keyword-Schreibweise (`'none'`
+     * oder `none`), lehnt aber alle Direktiven mit erlaubenden Tokens
+     * (`'unsafe-inline'`, `'unsafe-eval'`, `*`) ab.
+     */
+    private function cspBlocksScriptExecution(string $csp): bool
+    {
+        $directives = [];
+        foreach (explode(';', $csp) as $part) {
+            $part = trim($part);
+            if ($part === '') {
+                continue;
+            }
+            $tokens = preg_split('/\s+/', $part) ?: [];
+            $name   = strtolower((string) array_shift($tokens));
+            if ($name !== '') {
+                $directives[$name] = $tokens;
+            }
+        }
+
+        $effective = $directives['script-src'] ?? $directives['default-src'] ?? null;
+        if ($effective === null) {
+            return false;
+        }
+
+        $hasNone = false;
+        foreach ($effective as $t) {
+            $tLower = strtolower($t);
+            if ($tLower === "'none'" || $tLower === 'none') {
+                $hasNone = true;
+            }
+            if ($tLower === "'unsafe-inline'" || $tLower === "'unsafe-eval'" || $tLower === '*') {
+                return false;
+            }
+        }
+        return $hasNone;
     }
 
     private function buildUploadedFile(string $content, string $clientName, string $mimeType): UploadedFileInterface

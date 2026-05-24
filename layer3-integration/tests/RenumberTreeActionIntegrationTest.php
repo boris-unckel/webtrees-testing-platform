@@ -14,6 +14,7 @@ use Fisharebest\Webtrees\Http\RequestHandlers\RenumberTreePage;
 use Fisharebest\Webtrees\Services\AdminService;
 use Fisharebest\Webtrees\Services\PhpService;
 use Fisharebest\Webtrees\Services\TimeoutService;
+use Illuminate\Database\QueryException;
 
 use function e;
 
@@ -182,7 +183,7 @@ class RenumberTreeActionIntegrationTest extends MysqlTestCase
      * liefert sie als Cross-Tree-Kollision → der xref-Format-Guard im Loop
      * muss greifen.
      */
-    public function test_sec_audit_006_malformed_xref_is_skipped_not_renamed(): void
+    public function test_malformed_xref_is_skipped_not_renamed(): void
     {
         $tree1Id = $this->tree->id();
         $tree2   = $this->treeService->create('rn-sec006-' . uniqid(), 'SEC AUDIT 006 Tree 2');
@@ -212,9 +213,34 @@ class RenumberTreeActionIntegrationTest extends MysqlTestCase
         }
 
         // Property 1: Handler darf nicht crashen — definierte 302-Antwort.
-        $response = $this->handler->handle(
-            $this->createRequest(method: RequestMethodInterface::METHOD_POST, attributes: ['tree' => $this->tree])
-        );
+        //
+        // FAILURE_PIN nach wf_test-iteration_guide.md §i.7: solange Upstream
+        // die malformed XREF in app/Http/RequestHandlers/RenumberTreeAction.php:86
+        // per Inline-Concat in REPLACE(i_gedcom, ...) statt parametrisiertem
+        // Binding einsetzt, wirft das Statement eine QueryException, weil der
+        // Single-Quote in "X'INJECT" die SQL-Syntax zerschiesst. Wir fangen
+        // die Exception hier explizit ab und uebersetzen sie in eine
+        // sprechende Failure-Message — damit ist der Test PHPUnit-seitig
+        // Failure (nicht Error), konsistent zum §i.7-Pattern, und der Defekt
+        // bleibt klar diagnostizierbar.
+        // Siehe docs/security-audit/tasks/SEC-AUDIT-006_renumber_tree_raw_expression.md.
+        try {
+            $response = $this->handler->handle(
+                $this->createRequest(method: RequestMethodInterface::METHOD_POST, attributes: ['tree' => $this->tree])
+            );
+        } catch (QueryException $e) {
+            self::fail(sprintf(
+                'RenumberTreeAction::handle: Malformed XREFs (Verstoss gegen Gedcom::REGEX_XREF) muessen '
+                . 'vom Renumber-Loop uebersprungen werden — kein SQL-Crash, kein Rename. Aktuell QueryException, '
+                . 'weil Upstream `main` in app/Http/RequestHandlers/RenumberTreeAction.php:86 die XREF per '
+                . 'Inline-Concat in REPLACE(i_gedcom, \'0 @{xref}@ INDI\', ...) einsetzt statt per Param-Binding. '
+                . 'FAILURE_PIN nach wf_test-iteration_guide.md §i.7; siehe '
+                . 'docs/security-audit/tasks/SEC-AUDIT-006_renumber_tree_raw_expression.md. '
+                . 'Original-Exception: %s',
+                $e->getMessage(),
+            ));
+        }
+
         $this->assertSame(302, $response->getStatusCode(), 'Handler must not crash on malformed xref');
 
         // Property 2: Malformed xrefs müssen in tree1 unverändert vorliegen

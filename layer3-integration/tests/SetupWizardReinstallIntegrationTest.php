@@ -45,7 +45,7 @@ use Throwable;
  */
 final class SetupWizardReinstallIntegrationTest extends MysqlTestCase
 {
-    public function test_sec_audit_007_reinstall_setpassword_uses_validated_wtpass(): void
+    public function test_reinstall_setpassword_uses_validated_wtpass(): void
     {
         // Voraussetzung: $_POST darf wtpass nicht enthalten, damit der
         // Unterschied zwischen parsedBody und $_POST sichtbar wird.
