@@ -41,7 +41,7 @@ Argumente:
                 docs/security-audit/tasks/ (nicht-blockierend bezüglich Sweep-Lock)
 
 ENV:
-  FORK_REPO     Pfad zum Fork-Repo (Default: /home/borisunckel/phpprojects/webtrees-upstream/webtrees)
+  FORK_REPO     Pfad zum Fork-Repo (Default: ../webtrees-upstream/webtrees relativ zum Repo-Root)
 
 Beispiele:
   $(basename "$0") 042

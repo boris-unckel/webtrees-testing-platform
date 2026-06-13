@@ -28,6 +28,9 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TASKS_DIR="$REPO_ROOT/docs/security-audit/tasks"
 FINDINGS_DIR="$REPO_ROOT/docs/security-audit/findings"
+# Fork-Repo (webtrees-upstream) fuer das "Patched"-Beispiel in der Ausfuehrungs-Sektion.
+# Neutraler Default relativ zum Repo-Root; per FORK_REPO ueberschreibbar.
+FORK_REPO="${FORK_REPO:-$(cd "$REPO_ROOT/.." && pwd)/webtrees-upstream/webtrees}"
 
 usage() {
     cat <<EOF
@@ -183,7 +186,7 @@ cat > "$out_file" <<EOF
 WEBTREES_SOURCE=./upstream/webtrees make test-integration-security-${nnn}
 
 # Patched: Test läuft grün
-WEBTREES_SOURCE=/home/borisunckel/phpprojects/webtrees-upstream/webtrees \\
+WEBTREES_SOURCE=${FORK_REPO} \\
   make test-integration-security-${nnn}
 \`\`\`
 

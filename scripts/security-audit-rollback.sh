@@ -13,7 +13,7 @@
 #   ./scripts/security-audit-rollback.sh <NNN>
 #
 # Vorbedingungen:
-#   - Fork-Repo existiert unter $FORK_REPO (Default: /home/borisunckel/phpprojects/webtrees-upstream/webtrees)
+#   - Fork-Repo existiert unter $FORK_REPO (Default: ../webtrees-upstream/webtrees relativ zum Repo-Root)
 #   - Aktueller HEAD ist der Fix-Commit für SEC-AUDIT-<NNN>
 #   - Keine uncommitteten Änderungen im Fork
 #
@@ -28,7 +28,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TASKS_DIR="$REPO_ROOT/docs/security-audit/tasks"
 DEEPDIVE_DIR="$REPO_ROOT/artifacts/security-audit/deepdive"
-FORK_REPO="${FORK_REPO:-/home/borisunckel/phpprojects/webtrees-upstream/webtrees}"
+FORK_REPO="${FORK_REPO:-$(cd "$REPO_ROOT/.." && pwd)/webtrees-upstream/webtrees}"
 
 usage() {
     cat <<EOF

@@ -113,7 +113,7 @@ if ! awk '$NF == "mysql"' <<<"$compose_ps" | grep -qE 'Up|running'; then
 fi
 
 # Fork-Repo-Zustand prüfen
-fork_repo="${FORK_REPO:-/home/borisunckel/phpprojects/webtrees-upstream/webtrees}"
+fork_repo="${FORK_REPO:-$(cd "$REPO_ROOT/.." && pwd)/webtrees-upstream/webtrees}"
 if [[ -d "$fork_repo/.git" ]]; then
     pushd "$fork_repo" >/dev/null
     if [[ -n "$(git status --porcelain)" ]]; then
