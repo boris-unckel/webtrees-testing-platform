@@ -8,11 +8,11 @@ namespace DombrinksBlagen\WebtreesTests\Integration;
 
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Report\HtmlRenderer;
-use Fisharebest\Webtrees\Report\ReportParserGenerate;
+use Fisharebest\Webtrees\Report\ParserGenerate;
 use Fisharebest\Webtrees\Webtrees;
 
 /**
- * Komponentenintegrationstest: ReportParserGenerate — erweiterte SAX-Handler.
+ * Komponentenintegrationstest: ParserGenerate — erweiterte SAX-Handler.
  *
  * AP B-03: relativesStartHandler (552), addDescendancy (272), imageStartHandler (240),
  *          factsStartHandler (182), factsEndHandler (182), relativesEndHandler (182),
@@ -22,7 +22,7 @@ use Fisharebest\Webtrees\Webtrees;
  * die <relatives>, <facts> und <image> Elemente enthalten.
  *
  * @see docs/tds_conditions_ref.md S44
- * @covers \Fisharebest\Webtrees\Report\ReportParserGenerate
+ * @covers \Fisharebest\Webtrees\Report\ParserGenerate
  */
 class ReportParserGenerateExtendedIntegrationTest extends MysqlTestCase
 {
@@ -84,7 +84,7 @@ class ReportParserGenerateExtendedIntegrationTest extends MysqlTestCase
 
         ob_start();
         try {
-            new ReportParserGenerate($xml, new HtmlRenderer(), $this->relativeReportVars($xref), $this->tree);
+            new ParserGenerate($xml, new HtmlRenderer(), $this->relativeReportVars($xref), $this->tree);
             $output = ob_get_clean();
         } catch (\Throwable $e) {
             ob_get_clean();
@@ -112,7 +112,7 @@ class ReportParserGenerateExtendedIntegrationTest extends MysqlTestCase
 
         ob_start();
         try {
-            new ReportParserGenerate($xml, new HtmlRenderer(), $vars, $this->tree);
+            new ParserGenerate($xml, new HtmlRenderer(), $vars, $this->tree);
             $output = ob_get_clean();
         } catch (\Throwable $e) {
             ob_get_clean();
@@ -136,7 +136,7 @@ class ReportParserGenerateExtendedIntegrationTest extends MysqlTestCase
 
         ob_start();
         try {
-            new ReportParserGenerate($xml, new HtmlRenderer(), $this->individualExtReportVars($xref), $this->tree);
+            new ParserGenerate($xml, new HtmlRenderer(), $this->individualExtReportVars($xref), $this->tree);
             $output = ob_get_clean();
         } catch (\Throwable $e) {
             ob_get_clean();

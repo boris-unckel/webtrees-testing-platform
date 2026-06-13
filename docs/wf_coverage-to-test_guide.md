@@ -366,8 +366,8 @@ Gesamt-Methodenueberdeckung:     19,2%  (853 / 4.441 Methoden)
 
 | Rang | CRAP | Paket | Klasse | Methode | cx |
 |---|---|---|---|---|---|
-| 1 | 6.972 | (root) | RightToLeftSupport | spanLtrRtl | 83 |
-| 2 | 2.256 | Report | ReportHtmlTextBox | render | 47 |
+| 1 | 6.972 | Report | RightToLeftFormatter | format | 83 |
+| 2 | 2.256 | Report | HtmlTextBox | render | 47 |
 | 3 | 1.722 | Http\RequestHandlers | SearchGeneralPage | handle | 41 |
 
 ### A.3 Klassifikation: DB-abhaengig vs. Bootstrap-only
@@ -382,8 +382,8 @@ Gesamt-Methodenueberdeckung:     19,2%  (853 / 4.441 Methoden)
 
 | CRAP | Klasse | Methode | Begruendung | Testbarkeit |
 |---|---|---|---|---|
-| 6.972 | RightToLeftSupport | spanLtrRtl | Kein DB-Zugriff, nur String-Ops | Hoch |
-| 2.256 | ReportHtmlTextBox | render | Reines String-Rendering | Mittel |
+| 6.972 | RightToLeftFormatter | format | Kein DB-Zugriff, nur String-Ops | Hoch |
+| 2.256 | HtmlTextBox | render | Reines String-Rendering | Mittel |
 
 ### A.4 Gap-Analyse Feature-Matrix x Coverage
 
@@ -399,14 +399,14 @@ Gesamt-Methodenueberdeckung:     19,2%  (853 / 4.441 Methoden)
 
 | AP | Klasse | Methode | CRAP/cx | Begruendung | Aufwand |
 |---|---|---|---|---|---|
-| AP1 | RightToLeftSupport | spanLtrRtl | 6972/83 | Bootstrap-only, maximale CRAP-Wirkung | niedrig |
+| AP1 | RightToLeftFormatter | format | 6972/83 | Bootstrap-only, maximale CRAP-Wirkung | niedrig |
 | AP2 | SearchGeneralPage | handle | 1722/41 | DB-abhaengig, FM-S03 kritisch | mittel |
 
 **Gruppe B (CRAP 300-1.000):**
 
 | AP | Klasse | Methode | CRAP/cx | Begruendung | Aufwand |
 |---|---|---|---|---|---|
-| AP3 | ReportHtmlTextBox | render | 2256/47 | Bootstrap-only, grosser CRAP-Block | mittel |
+| AP3 | HtmlTextBox | render | 2256/47 | Bootstrap-only, grosser CRAP-Block | mittel |
 
 ### A.6 Dokumentations-Diff-Vorschlaege
 
@@ -442,9 +442,9 @@ Gesamt-Methodenueberdeckung:     19,2%  (853 / 4.441 Methoden)
 
 | AP | Titel | Status | Ergebnis |
 |---|---|---|---|
-| AP1 | RightToLeftSupport Bootstrap-Test | ABGESCHLOSSEN | 5 Tests, 12 Assertions, Exit 0 |
+| AP1 | RightToLeftFormatter Bootstrap-Test | ABGESCHLOSSEN | 5 Tests, 12 Assertions, Exit 0 |
 | AP2 | SearchGeneralPage::handle | IN ARBEIT | -- |
-| AP3 | ReportHtmlTextBox::render | OFFEN | -- |
+| AP3 | HtmlTextBox::render | OFFEN | -- |
 
 ### B.2 Ausgangslage
 
@@ -458,7 +458,7 @@ Gesamt-Methodenueberdeckung:     19,2%  (853 / 4.441 Methoden)
 
 → [Pflicht-Constraints](wf_test-iteration_guide.md#9-pflicht-constraints)
 
-### B.4 AP-Beispiel: RightToLeftSupport
+### B.4 AP-Beispiel: RightToLeftFormatter
 
 **Status:** ABGESCHLOSSEN
 **Abgeschlossen:** 2026-04-03
@@ -466,12 +466,12 @@ Gesamt-Methodenueberdeckung:     19,2%  (853 / 4.441 Methoden)
 
 | | |
 |---|---|
-| Klasse | `RightToLeftSupport` |
-| Methode | `spanLtrRtl` |
+| Klasse | `RightToLeftFormatter` |
+| Methode | `format` |
 | CRAP | 6.972 |
 | cx | 83 |
-| Paket | (root) |
-| Quellpfad | `upstream/webtrees/app/RightToLeftSupport.php` |
+| Paket | Report |
+| Quellpfad | `upstream/webtrees/app/Report/RightToLeftFormatter.php` |
 
 Bootstrap-only. Konstruktor ohne Parameter. Testklasse: `RightToLeftSupportIntegrationTest`.
 
@@ -492,7 +492,7 @@ Bootstrap-only. Konstruktor ohne Parameter. Testklasse: `RightToLeftSupportInteg
 
 DB-abhaengig: benoetigt `createTreeWithGedcom()`. FM-S03.
 
-### B.6 AP-Beispiel: ReportHtmlTextBox
+### B.6 AP-Beispiel: HtmlTextBox
 
 **Status:** OFFEN
 **Abgeschlossen:** --
@@ -500,11 +500,11 @@ DB-abhaengig: benoetigt `createTreeWithGedcom()`. FM-S03.
 
 | | |
 |---|---|
-| Klasse | `ReportHtmlTextBox` |
+| Klasse | `HtmlTextBox` |
 | Methode | `render` |
 | CRAP | 2.256 |
 | cx | 47 |
 | Paket | Report |
-| Quellpfad | `upstream/webtrees/app/Report/ReportHtmlTextBox.php` |
+| Quellpfad | `upstream/webtrees/app/Report/HtmlTextBox.php` |
 
 Bootstrap-only. Kein DB-Zugriff, reines String-Rendering.

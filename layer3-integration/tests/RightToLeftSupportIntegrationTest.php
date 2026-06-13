@@ -6,68 +6,72 @@ declare(strict_types=1);
 
 namespace DombrinksBlagen\WebtreesTests\Integration;
 
-use Fisharebest\Webtrees\Report\RightToLeftSupport;
+use Fisharebest\Webtrees\Report\RightToLeftFormatter;
 
 /**
- * Komponentenintegrationstest: RightToLeftSupport Bootstrap-Test.
+ * Komponentenintegrationstest: RightToLeftFormatter Bootstrap-Test.
  *
- * spanLtrRtl() ist public static — kein DB, kein Tree.
- * finishCurrentSpan() ist private static (CRAP 10.100) und wird intern von
- * spanLtrRtl() aufgerufen — beide Methoden werden durch RTL-Input abgedeckt.
+ * format() ist eine public Instanzmethode (kein DB, kein Tree). Jede Instanz
+ * verarbeitet genau einen Eingabe-String; die interne Span-Logik wird durch
+ * RTL-Input abgedeckt.
+ *
+ * Upstream-Umbau (PR #5389, Commit aaced7b07e): die ehemals statische
+ * RightToLeftSupport::spanLtrRtl() wurde zur re-entranten Instanzmethode
+ * RightToLeftFormatter::format() refaktoriert.
  *
  * @see docs/tds_conditions_ref.md S44
- * @covers \Fisharebest\Webtrees\Report\RightToLeftSupport
+ * @covers \Fisharebest\Webtrees\Report\RightToLeftFormatter
  */
 class RightToLeftSupportIntegrationTest extends MysqlTestCase
 {
     /**
-     * spanLtrRtl mit LTR-String gibt nicht-leeren String zurück.
+     * format() mit LTR-String gibt nicht-leeren String zurück.
      */
     public function test_span_ltr_rtl_with_ltr_string_returns_string(): void
     {
-        $result = RightToLeftSupport::spanLtrRtl('Hello World');
+        $result = (new RightToLeftFormatter())->format('Hello World');
 
         $this->assertIsString($result);
         $this->assertNotEmpty($result);
     }
 
     /**
-     * spanLtrRtl mit RTL-String (Arabisch) triggert finishCurrentSpan intern.
+     * format() mit RTL-String (Arabisch) triggert finishCurrentSpan intern.
      */
     public function test_span_ltr_rtl_with_rtl_string_triggers_finish_span(): void
     {
-        $result = RightToLeftSupport::spanLtrRtl('مرحبا بالعالم');
+        $result = (new RightToLeftFormatter())->format('مرحبا بالعالم');
 
         $this->assertIsString($result);
     }
 
     /**
-     * spanLtrRtl mit gemischtem RTL/LTR-Text (beide Code-Branches).
+     * format() mit gemischtem RTL/LTR-Text (beide Code-Branches).
      */
     public function test_span_ltr_rtl_with_mixed_text(): void
     {
-        $result = RightToLeftSupport::spanLtrRtl('Hello مرحبا World');
+        $result = (new RightToLeftFormatter())->format('Hello مرحبا World');
 
         $this->assertIsString($result);
         $this->assertNotEmpty($result);
     }
 
     /**
-     * spanLtrRtl mit leerem String gibt String zurück (kein Absturz).
+     * format() mit leerem String gibt String zurück (kein Absturz).
      */
     public function test_span_ltr_rtl_with_empty_string_returns_string(): void
     {
-        $result = RightToLeftSupport::spanLtrRtl('');
+        $result = (new RightToLeftFormatter())->format('');
 
         $this->assertIsString($result);
     }
 
     /**
-     * spanLtrRtl mit Hebräisch (weiterer RTL-Zeichenbereich).
+     * format() mit Hebräisch (weiterer RTL-Zeichenbereich).
      */
     public function test_span_ltr_rtl_with_hebrew_text(): void
     {
-        $result = RightToLeftSupport::spanLtrRtl('שלום עולם');
+        $result = (new RightToLeftFormatter())->format('שלום עולם');
 
         $this->assertIsString($result);
     }

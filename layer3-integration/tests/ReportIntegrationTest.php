@@ -19,7 +19,7 @@ use Fisharebest\Webtrees\Module\ModuleReportInterface;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Report\HtmlRenderer;
 use Fisharebest\Webtrees\Report\PdfRenderer;
-use Fisharebest\Webtrees\Report\ReportParserGenerate;
+use Fisharebest\Webtrees\Report\ParserGenerate;
 use Fisharebest\Webtrees\Services\ModuleService;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Webtrees;
@@ -29,8 +29,8 @@ use Illuminate\Support\Collection;
  * Komponentenintegrationstest: Report-System.
  *
  * ReportSetupPage::handle   — Setup-Formular (CRAP 272)
- * ReportGenerate::handle    — triggert new ReportParserGenerate (CRAP > 4.000 SAX-Kette)
- * ReportParserGenerate direkt — steuert alle SAX-Handler an
+ * ReportGenerate::handle    — triggert new ParserGenerate (CRAP > 4.000 SAX-Kette)
+ * ParserGenerate direkt — steuert alle SAX-Handler an
  * ReportListAction::handle  — Redirect-Logik abhängig von ModuleService-Treffer
  *
  * Verwendet birth_report (kleinstes XML, keine Pflicht-Eingaben).
@@ -41,7 +41,7 @@ use Illuminate\Support\Collection;
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportGenerate
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportListAction
  * @covers \Fisharebest\Webtrees\Http\RequestHandlers\ReportListPage
- * @covers \Fisharebest\Webtrees\Report\ReportParserGenerate
+ * @covers \Fisharebest\Webtrees\Report\ParserGenerate
  * @covers \Fisharebest\Webtrees\Report\HtmlRenderer
  */
 class ReportIntegrationTest extends MysqlTestCase
@@ -116,7 +116,7 @@ class ReportIntegrationTest extends MysqlTestCase
 
     /**
      * ReportGenerate::handle führt birth_report als HTML aus.
-     * Triggert intern new ReportParserGenerate → vollständige SAX-Parser-Kette.
+     * Triggert intern new ParserGenerate → vollständige SAX-Parser-Kette.
      */
     public function test_report_generate_birth_report_html_returns_ok(): void
     {
@@ -144,7 +144,7 @@ class ReportIntegrationTest extends MysqlTestCase
         $this->assertLessThan(400, $response->getStatusCode());
     }
 
-    // --- ReportParserGenerate direkt (SAX-Kette, unabhängig von ModuleService) ---
+    // --- ParserGenerate direkt (SAX-Kette, unabhängig von ModuleService) ---
 
     /**
      * Standard-Vars für Berichte (entsprechen den XML-Input-Defaults).
@@ -168,7 +168,7 @@ class ReportIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * ReportParserGenerate direkt — birth_report triggert SAX-Kette.
+     * ParserGenerate direkt — birth_report triggert SAX-Kette.
      *
      * Dieser Test ist unabhängig vom ModuleService-Status in der DB.
      * Der Konstruktor löst xml_parse() aus → alle protected/private SAX-Handler werden aufgerufen.
@@ -183,7 +183,7 @@ class ReportIntegrationTest extends MysqlTestCase
 
         ob_start();
         try {
-            new ReportParserGenerate($xml, new HtmlRenderer(), self::defaultReportVars(), $this->tree);
+            new ParserGenerate($xml, new HtmlRenderer(), self::defaultReportVars(), $this->tree);
             $output = ob_get_clean();
         } catch (\Throwable $e) {
             ob_get_clean();
@@ -194,7 +194,7 @@ class ReportIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * ReportParserGenerate direkt — cemetery_report (mehr SAX-Elemente).
+     * ParserGenerate direkt — cemetery_report (mehr SAX-Elemente).
      */
     public function test_report_parser_generate_cemetery_report_direct_no_exception(): void
     {
@@ -206,7 +206,7 @@ class ReportIntegrationTest extends MysqlTestCase
 
         ob_start();
         try {
-            new ReportParserGenerate($xml, new HtmlRenderer(), self::defaultReportVars(), $this->tree);
+            new ParserGenerate($xml, new HtmlRenderer(), self::defaultReportVars(), $this->tree);
             $output = ob_get_clean();
         } catch (\Throwable $e) {
             ob_get_clean();
@@ -217,7 +217,7 @@ class ReportIntegrationTest extends MysqlTestCase
     }
 
     /**
-     * ReportParserGenerate direkt — death_report für weitere SAX-Pfad-Abdeckung.
+     * ParserGenerate direkt — death_report für weitere SAX-Pfad-Abdeckung.
      */
     public function test_report_parser_generate_death_report_direct_no_exception(): void
     {
@@ -229,7 +229,7 @@ class ReportIntegrationTest extends MysqlTestCase
 
         ob_start();
         try {
-            new ReportParserGenerate($xml, new HtmlRenderer(), self::defaultReportVars(), $this->tree);
+            new ParserGenerate($xml, new HtmlRenderer(), self::defaultReportVars(), $this->tree);
             $output = ob_get_clean();
         } catch (\Throwable $e) {
             ob_get_clean();
