@@ -16,8 +16,10 @@
 
     <testsuites>
         <testsuite name="unit">
-            <!-- webtrees-eigene Tests (existierende + gefüllte Stubs) -->
-            <directory>/var/www/html/tests/app</directory>
+            <!-- webtrees-eigene Unit-Tests. Upstream-Layout seit dem PSR-4-Umbau
+                 (Commit d0160720fb, nach Tag 2.2.6): tests/app -> tests/Unit,
+                 Namespace Fisharebest\Webtrees\Tests\Unit (autoload-dev: Tests\ -> tests/). -->
+            <directory>/var/www/html/tests/Unit</directory>
         </testsuite>
     </testsuites>
 
