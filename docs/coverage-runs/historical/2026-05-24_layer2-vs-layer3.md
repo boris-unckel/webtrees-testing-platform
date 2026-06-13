@@ -12,7 +12,7 @@
 >   (3,4 MB, erzeugt durch `make test-integration`, gleicher Lauf).
 > - **Codebase:** `upstream/webtrees` @ `d123a1b789e29872d6736ece1d9d47cb0a038e8c`
 >   (im Testing-Platform-Repo als read-only Mount unter `upstream/webtrees/`).
-> - **Erhebungs-Skript:** [`scripts/coverage/clover_aggregate.sh`](../../scripts/coverage/clover_aggregate.sh).
+> - **Erhebungs-Skript:** [`scripts/coverage/clover_aggregate.sh`](../../../scripts/coverage/clover_aggregate.sh).
 >
 > **Self-contained:** Alle Werte sind inline. Eine spätere Löschung von
 > `docs/test-runs/` ändert nichts an der Lesbarkeit dieses Reports.
@@ -64,7 +64,7 @@ weiterverfolgt wird.
 sind direkt auf die Nicht-Übernahme des Fork-Branchs `port-layer2-test-doubles`
 zurückzuführen. Die L3-Gewinne kommen aus der Wachstumsphase seit April
 (82 → 156 L3-Test-Dateien, +90 %) — siehe
-[`2026-05-24_gap-analyse.md`](2026-05-24_gap-analyse.md) §2.1.
+[`2026-05-24_gap-analyse.md`](../2026-05-24_gap-analyse.md) §2.1.
 
 ---
 
@@ -103,7 +103,7 @@ zurückzuführen. Die L3-Gewinne kommen aus der Wachstumsphase seit April
 | `Http/Exceptions`      |   8 |    13 |     0 |  0,0 % |     9 | 69,2 % | +9 |
 
 L3-Middleware-Coverage springt **von 9 % (April) auf 74 %** — die Middleware-
-Reihe `M01–M29` (siehe [Abdeckungs-Snapshot](2026-05-24_abdeckung-snapshot.md))
+Reihe `M01–M29` (siehe [Abdeckungs-Snapshot](../2026-05-24_abdeckung-snapshot.md))
 ist seit April systematisch durch L3-Tests aufgewertet worden.
 
 ### 3.2 Module-Untergruppen (Name-Pattern)
@@ -228,9 +228,9 @@ Coverage), die in diesem Repo nicht aktiviert ist.
 
 ## 8 Anschlussverweise
 
-- [`2026-05-24_abdeckung-snapshot.md`](2026-05-24_abdeckung-snapshot.md) —
+- [`2026-05-24_abdeckung-snapshot.md`](../2026-05-24_abdeckung-snapshot.md) —
   Feature-Matrix-Stand (216 / 2 / 1 / 219).
-- [`2026-05-24_gap-analyse.md`](2026-05-24_gap-analyse.md) —
+- [`2026-05-24_gap-analyse.md`](../2026-05-24_gap-analyse.md) —
   Test-Inventar mit Hybrid-V2-Klassifikation.
-- [`historical/2026-04-11_layer2-vs-layer3.md`](historical/2026-04-11_layer2-vs-layer3.md)
+- [`historical/2026-04-11_layer2-vs-layer3.md`](2026-04-11_layer2-vs-layer3.md)
   — historischer Vorgänger (April-Werte, Fork-Branch-basiert).
