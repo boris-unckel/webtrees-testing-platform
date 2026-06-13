@@ -4,14 +4,14 @@ import { randomUUID } from 'crypto';
 import { trace } from '@opentelemetry/api';
 import { NodeTracerProvider, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { Resource } from '@opentelemetry/resources';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
 export const test = base.extend<{}, { _otelProvider: NodeTracerProvider }>({
   // Worker-scoped: einmal pro Worker initialisiert, bei workers:1 = einmal gesamt
   _otelProvider: [async ({}, use) => {
     const provider = new NodeTracerProvider({
-      resource: new Resource({
+      resource: resourceFromAttributes({
         [ATTR_SERVICE_NAME]: 'playwright-tests',
       }),
       spanProcessors: [

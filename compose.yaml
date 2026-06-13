@@ -131,7 +131,7 @@ services:
     command: ["sleep", "infinity"]
 
   otel-collector:
-    image: docker.io/otel/opentelemetry-collector-contrib:0.148.0
+    image: docker.io/otel/opentelemetry-collector-contrib:0.154.0
     container_name: otel-collector
     ports:
       - "4317:4317"
@@ -143,7 +143,7 @@ services:
       - webtrees-test-net
 
   jaeger:
-    image: docker.io/jaegertracing/jaeger:2.16.0
+    image: docker.io/jaegertracing/jaeger:2.19.0
     container_name: jaeger
     ports:
       - "16686:16686"
@@ -151,7 +151,7 @@ services:
       - webtrees-test-net
 
   adminer:
-    image: docker.io/library/adminer:latest
+    image: docker.io/library/adminer:5.4.2
     container_name: adminer
     ports:
       - "8081:8080"

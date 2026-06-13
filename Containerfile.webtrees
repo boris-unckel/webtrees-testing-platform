@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # webtrees Test-Container: PHP 8.5 + Apache + OTel Auto-Instrumentation
 # webtrees-Source wird per Bind-Mount eingebunden (read-only)
 

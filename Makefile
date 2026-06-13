@@ -19,7 +19,7 @@ COMPOSE_DEBUG = podman-compose -f compose.yaml --profile debug
 COMPOSE_SECURITY = podman-compose -f compose.yaml --profile security
 
 WEBTREES_SOURCE ?= ./upstream/webtrees
-TRIVY_VERSION   ?= 0.69.3
+TRIVY_VERSION   ?= 0.71.0
 TRIVY_IMAGE      = ghcr.io/aquasecurity/trivy:$(TRIVY_VERSION)
 
 .PHONY: help clone-upstream normalize-source-perms generate-passwords up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-integration-security test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report crap-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status

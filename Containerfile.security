@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Sicherheitstest-Container: Distribution-Build + produktionsidentisches Apache+PHP
 # Zwei-Track-Architektur: Dieser Container ist UNABHÄNGIG vom Fachtest-Container.
 #
