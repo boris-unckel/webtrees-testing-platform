@@ -7,8 +7,10 @@ import * as fs from 'fs';
 /**
  * Playwright globalSetup — wird einmal vor allen Tests ausgefuehrt.
  *
- * 1. Rate-Limits in der DB loeschen (verhindert HTTP 429 bei vielen Tests)
- * 2. Admin-Login durchfuehren und storageState speichern
+ * 1. Pflicht-Fixture-Trees pruefen (demo/muster/privacy) — fail-fast mit klarer
+ *    Meldung, falls "make setup" nicht lief (verhindert >150 kryptische Folgefehler)
+ * 2. Rate-Limits in der DB loeschen (verhindert HTTP 429 bei vielen Tests)
+ * 3. Admin-Login durchfuehren und storageState speichern
  *
  * @see docs/tds_conditions_ref.md AP 5c-1
  */
@@ -19,10 +21,40 @@ async function globalSetup(config: FullConfig): Promise<void> {
     throw new Error('WEBTREES_ADMIN_PASSWORD nicht gesetzt — wurde "make setup" ausgefuehrt?');
   }
 
-  // Rate-Limits loeschen (Site- und User-Ebene)
   const host = process.env.MYSQL_HOST ?? 'mysql';
   const pwd = process.env.MYSQL_ROOT_PASSWORD ?? '';
   const db = process.env.MYSQL_DATABASE ?? 'webtrees_test';
+
+  // Pflicht-Fixture-Trees pruefen, BEVOR Tests laufen. Diese Baeume legt
+  // "make setup" an (demo/muster/privacy); "make test-e2e" selbst tut das NICHT.
+  // Fehlen sie, scheitern >150 Tests mit kryptischen Assertion-Fehlern, weil
+  // /tree/demo/... und /tree/privacy/... ins Leere laufen (Tree nicht gefunden).
+  const requiredTrees = ['demo', 'muster', 'privacy'];
+  let existingTrees: string[] | null = null;
+  try {
+    const out = execSync(
+      `mysql -h "${host}" -u root -p"${pwd}" "${db}" -N -B -e "SELECT gedcom_name FROM wt_gedcom;"`,
+      { stdio: ['pipe', 'pipe', 'pipe'] },
+    ).toString();
+    existingTrees = out.split('\n').map((s) => s.trim()).filter((s) => s !== '');
+  } catch {
+    // DB nicht erreichbar / mysql-Client fehlt — analog Rate-Limit-Clearing nicht kritisch.
+    console.warn('globalSetup: Fixture-Tree-Pruefung uebersprungen (DB-Query fehlgeschlagen).');
+  }
+  if (existingTrees !== null) {
+    const present = existingTrees;
+    const missingTrees = requiredTrees.filter((t) => !present.includes(t));
+    if (missingTrees.length > 0) {
+      throw new Error(
+        `globalSetup: E2E-Fixture-Trees fehlen in DB '${db}': [${missingTrees.join(', ')}]. ` +
+          `Vorhanden: [${present.join(', ') || 'keine'}]. Die Specs navigieren auf /tree/demo/... ` +
+          `und /tree/privacy/... — ohne diese Baeume scheitern >150 Tests. Behebung: "make setup" ` +
+          `ausfuehren (legt demo/muster/privacy idempotent an), dann E2E wiederholen.`,
+      );
+    }
+  }
+
+  // Rate-Limits loeschen (Site- und User-Ebene)
   try {
     execSync(
       `mysql -h "${host}" -u root -p"${pwd}" "${db}" -e ` +
