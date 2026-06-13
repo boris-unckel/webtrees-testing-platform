@@ -23,7 +23,7 @@ Vollständige Teststrategie für das Open-Source-Projekt [webtrees](https://gith
 ## Schnellstart
 
 ```bash
-git clone <dieses-repo>
+git clone https://github.com/<OWNER>/webtrees-testing-platform.git
 cd webtrees-testing-platform
 make setup                 # klont Upstream, generiert Passwoerter, startet Stack, richtet ein
 make test-all              # Alle Teststufen ausfuehren
@@ -58,6 +58,13 @@ WEBTREES_SOURCE=/pfad/zum/vorhandenen/checkout
 | Systemtest (Quick) | `make test-e2e-quick` | Playwright | 30 Tests, OTel-Korrelation verifiziert |
 | Performanztest | `make test-performance` | Playwright | Baseline-Vergleich (+20% Schwellwert) |
 
+## Bekannte Abweichungen gegen webtrees `main`
+
+Die Plattform testet bewusst gegen das aktuelle webtrees-`main` (kein Tag-Pin), um Module/Extensions gegen Latest zu prüfen. Dabei können webtrees-**eigene** Tests umgebungsabhängig fehlschlagen, ohne dass ein Defekt der Plattform oder des getesteten Moduls vorliegt:
+
+- **`ReportRegressionTest::testReportHtmlOutputMatchesSnapshot`** (`@individual_report`, `@individual_ext_report`), Layer 2 — *Stand 2026-06-13, beobachtet auf webtrees `main` @ [`7ed6f48`](https://github.com/fisharebest/webtrees/commit/7ed6f4884983ba4d26aa5564b625b66aff022fbb).*
+  Der byte-genaue Snapshot-Vergleich scheitert allein am eingebetteten JPEG: GD/libjpeg in diesem Container schreibt das Kommentarsegment `CREATOR: gd-jpeg v1.0 (using IJG JPEG v62), quality = 70`, das der gespeicherte Snapshot nicht enthält. Reiner libjpeg-Toolchain-Unterschied gegenüber der webtrees-Snapshot-Umgebung — kein Inhalts- oder Layout-Fehler. Test Upstream eingeführt in [`f8617fc`](https://github.com/fisharebest/webtrees/commit/f8617fc1bf947c33865145b4d8afab79c8aac490) (2026-06-01).
+
 ## Container-Stack
 
 6 Container im Podman Compose Stack:
@@ -65,8 +72,8 @@ WEBTREES_SOURCE=/pfad/zum/vorhandenen/checkout
 - **webtrees** — PHP 8.5 + Apache + OTel SDK (Port 8080)
 - **mysql** — MySQL LTS (8.4) (Port 3306)
 - **playwright** — Node.js 22 + Chromium
-- **otel-collector** — OpenTelemetry Sidecar 0.148.0 (OTLP HTTP :4318, gRPC :4317 intern)
-- **jaeger** — Trace-UI 2.16.0 (Port 16686)
+- **otel-collector** — OpenTelemetry Sidecar 0.154.0 (OTLP HTTP :4318, gRPC :4317 intern)
+- **jaeger** — Trace-UI 2.19.0 (Port 16686)
 - **adminer** — DB-Admin, nur Debug-Profil (Port 8081)
 
 ## Fehleranalyse
@@ -120,4 +127,15 @@ podman-compose exec webtrees kill <PID>                                    # Abb
 
 - **Teststrategie**: `docs/tds_conditions_ref.md`
 - **Feature-Matrizen**: Siehe in Teststrategie
+
+## webtrees & Lizenzkontext
+
+Diese Plattform testet [webtrees](https://github.com/fisharebest/webtrees) (GPL-3.0-or-later), enthält aber **keinen** webtrees-Quellcode: Der Upstream wird zur Laufzeit per `make setup` geklont (read-only Mount; `upstream/` ist `.gitignore`d). Die Test-Infrastruktur selbst steht unter AGPL-3.0-or-later (siehe `LICENSE.md`).
+
+Sicherheitsbefunde, die das Audit-Framework dieses Repos im webtrees-Core aufgedeckt hat, wurden an den Upstream gemeldet und in **webtrees 2.2.6** (2026-04-29) adressiert — Details: `docs/security-audit/10_fixing_and_disclosure.md`.
+
+## Mitwirken & Sicherheit
+
+- Beitragshinweise: `CONTRIBUTING.md`
+- Sicherheitsmeldungen: `SECURITY.md`
 

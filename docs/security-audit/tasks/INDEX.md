@@ -55,6 +55,8 @@ Dieser Index wird vom Sweep-Driver (Phase S6 in `06_agentic_loop_driver.md` §3)
 | SEC-AUDIT-006 | fix_verified | defense-in-depth (sqli-readwrite, latent) | ready_for_manual_pr | 2026-04-09 |
 | SEC-AUDIT-008 | fix_verified | brute-force (auth-bypass, D-AUTH) | ready_for_manual_pr | 2026-04-09 |
 
+> **Upstream-Disclosure (Stand 2026-06-13):** Die oben als `ready_for_manual_pr` geführten Befunde wurden an Upstream gemeldet; **webtrees 2.2.6** (2026-04-29) enthält die Fixes für SEC-AUDIT-001, -002, -003, -005 und -007. SEC-AUDIT-006 (klarstellender Kommentar, kein funktionaler Fix) und SEC-AUDIT-008 (keine Änderung) sind in 2.2.6 nicht codeseitig behoben. Vollständige Zuordnung inkl. Upstream-Commits: `../10_fixing_and_disclosure.md` → „Disclosure-Ergebnis (Upstream webtrees 2.2.6)". Damit besteht kein Embargo/0-Day mehr.
+
 ## Needs Manual Review
 
 | ID | Status | Grund | Seit |

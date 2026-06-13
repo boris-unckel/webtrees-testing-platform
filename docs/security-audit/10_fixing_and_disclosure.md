@@ -7,6 +7,23 @@
 **Vorgänger:** `prompt_05_validation.md` (Validierung gegen unpatched + patched).
 **Nachfolger:** `11_finding_report_template.md` (Report-Struktur für Disclosure).
 
+## Disclosure-Ergebnis (Upstream webtrees 2.2.6)
+
+> **Stand 2026-06-13.** Die in diesem Audit bestätigten Befunde wurden an den Upstream `fisharebest/webtrees` gemeldet. Release **[webtrees 2.2.6](https://github.com/fisharebest/webtrees/releases/tag/2.2.6)** (veröffentlicht 2026-04-29, [Release-Ankündigung](https://webtrees.net/blog/2026/04/29/new-webtrees-release-2-2-6.html)) enthält die daraus resultierenden Fixes. Die Ankündigung nennt dazu: *„It includes fixes for a number of security issues. Credit to Boris Unckel for reporting these."* Da die betroffenen Stellen in einer öffentlichen Release adressiert sind, besteht **kein Embargo und kein 0-Day** mehr.
+
+| Befund | Kurzbeschreibung | Status in 2.2.6 | Upstream-Commit(s) |
+|---|---|---|---|
+| SEC-AUDIT-001 | SVG-`<script>`-Filter (`ImageFactory`) + Extension-Lücke (`MediaFileService`) | gefixt | `d32e3cfb19`, `150ffb0e31` |
+| SEC-AUDIT-002 | Extension-/Folder-Allowlist in `MediaFileService::uploadFile()` | gefixt | `150ffb0e31` |
+| SEC-AUDIT-003 | fehlender CSP-Header in `replacementImageResponse()` | gefixt | `a8d95ceb87` |
+| SEC-AUDIT-005 | case-insensitiver Admin-Gate-Bypass in `ModuleAction::handle()` | gefixt | `e90f21dce4` |
+| SEC-AUDIT-007 | `SetupWizard` nutzt rohes `$_POST['wtpass']` statt Validator (LOW) | gefixt | `751c9906a0` |
+| SEC-AUDIT-006 | `RenumberTreeAction` rohe `Expression()`-Interpolation (defense-in-depth) | ohne funktionalen Fix | `eba7e5e38d` (klarstellender Kommentar) |
+| SEC-AUDIT-008 | `LoginAction` ohne Rate-Limit | offen | — |
+| SEC-AUDIT-004 | Audit weiterer SVG-Serve-Pfade | kein Befund | — |
+
+Die Commit-Hashes beziehen sich auf `fisharebest/webtrees` zwischen den Tags `2.2.5` und `2.2.6`. Die fork-seitig vorbereiteten Fix-Commits (siehe `tasks/INDEX.md`, Aggregat-Block) sind die ursprünglichen Patch-Drafts; die hier genannten Hashes sind die tatsächlich in 2.2.6 veröffentlichten Upstream-Änderungen.
+
 ## 1. Drei-Repo-Struktur
 
 Der Fix-Workflow koppelt drei Pfade — zwei davon sind `git clone`s von webtrees, mit **streng getrennten** Rollen:
