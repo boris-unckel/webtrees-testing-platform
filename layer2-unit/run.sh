@@ -37,5 +37,11 @@ su -s /bin/bash www-data -c "cd ${WEBTREES_DIR} && vendor/bin/phpunit \
     --log-junit='${ARTIFACTS}/phpunit-unit.xml' \
     --coverage-clover='${ARTIFACTS}/coverage.xml'" || EXIT_CODE=$?
 
+# Artefakt-Ownership normalisieren: phpunit lief als www-data; sonst erscheinen die
+# Dateien auf dem Host als subuid (rootless-Mapping, z. B. 100032) und der Host-User
+# kann sie nicht les-/loeschbar erreichen. Zurueck auf root (= Host-Owner via Mapping),
+# konsistent mit layer1/3/4/5. Laeuft auch nach rotem Lauf (EXIT_CODE ist abgefangen).
+chown -R root:root "${ARTIFACTS}" 2>/dev/null || true
+
 echo "=== Komponententest abgeschlossen (Exit: ${EXIT_CODE}) ==="
 exit "${EXIT_CODE}"
