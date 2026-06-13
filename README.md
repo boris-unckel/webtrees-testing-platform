@@ -2,6 +2,8 @@
 
 Vollständige Teststrategie für das Open-Source-Projekt [webtrees](https://github.com/fisharebest/webtrees) — PHP-Genealogie-Webapplikation.
 
+**English documentation:** [Reference Manual](REFERENCE_en.md) · [Features & Capabilities](FEATURES_en.md)
+
 ## Lizenz
 
     webtrees-testing-platform — Testinfrastruktur für die webtrees-Genealogie-Webapplikation.
