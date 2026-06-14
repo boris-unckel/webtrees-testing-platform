@@ -22,7 +22,7 @@ WEBTREES_SOURCE ?= ./upstream/webtrees
 TRIVY_VERSION   ?= 0.71.0
 TRIVY_IMAGE      = ghcr.io/aquasecurity/trivy:$(TRIVY_VERSION)
 
-.PHONY: help clone-upstream normalize-source-perms generate-passwords up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-integration-security test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report crap-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status
+.PHONY: help clone-upstream normalize-source-perms generate-passwords generate-fixtures up _compose-up up-debug _compose-up-debug down clean setup test-all test-static test-unit test-integration test-integration-quick test-integration-security test-e2e test-e2e-quick test-performance perfschema-truncate perfschema-extract trace-report crap-report security-build test-security _security-run security-up _security-compose-up security-down security-clean logs status
 
 help: ## Hilfe anzeigen
 	@grep -hE '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -36,14 +36,17 @@ normalize-source-perms: clone-upstream ## webtrees-Source world-readable machen 
 generate-passwords: ## Passwoerter in .env generieren (falls leer)
 	scripts/generate-passwords.sh
 
-up: normalize-source-perms generate-passwords ## Stack starten (alle Container)
+generate-fixtures: ## Generierte Fixtures aus Templates erzeugen (privacy-test.ged)
+	scripts/generate-privacy-fixture.sh
+
+up: normalize-source-perms generate-passwords generate-fixtures ## Stack starten (alle Container)
 	@$(MAKE) --no-print-directory _compose-up
 
 _compose-up:
 	$(COMPOSE) up -d --build
 	@echo "Stack gestartet. webtrees: http://localhost:8080 | Jaeger: http://localhost:16686"
 
-up-debug: normalize-source-perms generate-passwords ## Stack starten inkl. Adminer (Debug-Profil)
+up-debug: normalize-source-perms generate-passwords generate-fixtures ## Stack starten inkl. Adminer (Debug-Profil)
 	@$(MAKE) --no-print-directory _compose-up-debug
 
 _compose-up-debug:
@@ -77,8 +80,19 @@ setup: up ## webtrees im Container einrichten (DB-Migration, Fixtures, Admin-Use
 _setup-exec:
 	$(COMPOSE) exec webtrees /usr/local/bin/setup-webtrees.sh
 
-test-all: setup test-static test-unit test-integration test-e2e test-performance ## Alle Teststufen ausführen
-	@python3 scripts/summarize-test-all.py --artifacts-dir artifacts/
+test-all: setup test-static ## Alle Teststufen (Statik=harter Gate; je Stufe frisches make setup, rot bei jedem Fehler)
+	@rc=0; \
+	for tgt in test-unit test-integration test-e2e test-performance; do \
+	  echo ""; \
+	  echo "=== make setup && make $$tgt ==="; \
+	  if $(MAKE) --no-print-directory setup && $(MAKE) --no-print-directory $$tgt; then :; else \
+	    echo "FEHLGESCHLAGEN: $$tgt (oder dessen Setup)"; rc=1; \
+	  fi; \
+	done; \
+	echo ""; \
+	python3 scripts/summarize-test-all.py --artifacts-dir artifacts/ || true; \
+	if [ "$$rc" -ne 0 ]; then echo "test-all: mindestens ein Layer fehlgeschlagen (Exit 1)."; fi; \
+	exit $$rc
 
 test-static: ## Statischer Test (PHPStan + PHPCS + Trivy)
 	$(COMPOSE) exec webtrees /bin/bash /tests/layer1-static/run.sh

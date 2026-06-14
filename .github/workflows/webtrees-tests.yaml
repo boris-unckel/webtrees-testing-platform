@@ -18,7 +18,7 @@ jobs:
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
@@ -27,7 +27,7 @@ jobs:
         run: make test-static
       - name: Upload artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: static-analysis
           path: artifacts/layer1/
@@ -40,7 +40,7 @@ jobs:
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
@@ -49,7 +49,7 @@ jobs:
         run: make test-unit
       - name: Upload coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: unit-coverage
           path: artifacts/layer2/
@@ -57,12 +57,17 @@ jobs:
 
   komponentenintegrationstest:
     name: Komponentenintegrationstest (PHPUnit + MySQL)
-    needs: komponententest
+    needs: [statischer-test, komponententest]
+    # Strikter Gate nur auf die Statik: laeuft auch, wenn der Komponententest
+    # fehlschlaegt (Upstream-Drift soll erkannt, nicht uebersprungen werden) —
+    # aber nur bei gruener Statik und nicht nach Abbruch. Kein continue-on-error
+    # und kein '|| true': ein echter Fehler hier faerbt Job + Gesamt-Run rot.
+    if: ${{ !cancelled() && needs.statischer-test.result == 'success' }}
     runs-on: ubuntu-latest
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
@@ -71,7 +76,7 @@ jobs:
         run: make test-integration
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: integration-results
           path: artifacts/layer3/
@@ -79,12 +84,15 @@ jobs:
 
   systemtest:
     name: Systemtest (Playwright)
-    needs: komponentenintegrationstest
+    needs: [statischer-test, komponentenintegrationstest]
+    # Wie Komponentenintegrationstest: Gate nur auf die Statik, Folgestufen
+    # laufen trotz Vorgaenger-Fehlern an, ohne Fehler zu maskieren.
+    if: ${{ !cancelled() && needs.statischer-test.result == 'success' }}
     runs-on: ubuntu-latest
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
@@ -93,30 +101,8 @@ jobs:
         run: make test-e2e
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: artifacts/layer4/
-          retention-days: 7
-
-  performanztest:
-    name: Performanztest
-    needs: systemtest
-    runs-on: ubuntu-latest
-    env:
-      WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install podman-compose
-        run: pip install podman-compose
-      - name: Setup
-        run: make setup
-      - name: Run performance tests
-        run: make test-performance
-      - name: Upload performance results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: performance-results
-          path: artifacts/layer5/
           retention-days: 7

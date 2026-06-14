@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Dependabot — automatische Versions-Updates fuer GitHub Actions.
+# Ueberwacht .github/workflows/ und oeffnet PRs bei neuen Action-Releases,
+# auch ueber Breaking-Majors hinweg (z. B. actions/checkout@v6 -> @v7).
+# Ergaenzt das Major-Tag-Pinning der Workflows: Patch/Minor folgen automatisch,
+# neue Majors kommen als PR statt unbemerkt zu veralten.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Alle Action-Updates in einem gebuendelten PR (weniger PR-Rauschen).
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "ci"

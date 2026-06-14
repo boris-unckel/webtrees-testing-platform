@@ -102,12 +102,13 @@ debugging of the distribution container: `make security-build` → `make securit
 
 ### Three things to know before you run tests
 
-> **`make test-all` does not currently run to completion.**
-> `test-all` chains the layers as prerequisites
-> (`setup → test-static → test-unit → test-integration → test-e2e → test-performance`).
-> Make stops at the **first** target that exits non-zero. Because Layer 2 has a known,
-> environment-dependent failure (see §4), Make aborts there and Layers 3–5 never start.
-> **Run the layers individually instead.**
+> **`make test-all` runs every layer; static analysis is a hard gate.**
+> `setup` and `test-static` are prerequisites: if provisioning or the static analysis fails,
+> nothing else runs. Each remaining layer then runs after its **own fresh `make setup`**
+> (`setup → test-unit`, `setup → test-integration`, `setup → test-e2e`, `setup → test-performance`),
+> independently and in sequence — mirroring the per-job setup of the CI pipeline, so every layer
+> starts from clean fixture trees. A failure in one layer no longer skips the others, and
+> `make test-all` exits non-zero if **any** layer (or its setup) failed.
 
 > **Re-run `make setup` before each of Layers 3, 4 and 5.**
 > The integration and system tests create, rename and delete trees, so the mandatory fixture
@@ -116,9 +117,10 @@ debugging of the distribution container: `make security-build` → `make securit
 > `globalSetup` fails fast with a clear message if any required tree is missing, to avoid
 > 150+ cryptic follow-up failures.
 
-> **Known failures stop automatic progression.**
-> Even when run individually, Layers 2 and 3 exit non-zero because of deliberately pinned known
-> failures (see §4). This is expected; coverage and reports are still produced.
+> **Known failures keep `make test-all` red.**
+> Layers 2 and 3 exit non-zero because of deliberately pinned known failures (see §4), so
+> `test-all` always ends non-zero — but every layer still runs, and coverage and reports are
+> produced regardless.
 
 ---
 
@@ -174,8 +176,8 @@ The platform tests against the moving `main` branch of webtrees (no pinned tag) 
 and extensions are validated against the latest upstream. As a result, a small, **known** set
 of tests is red. These are **not** defects of the platform or of a module under test — they are
 either toolchain differences or deliberate *failure pins* that encode the expected behaviour and
-stay red until upstream changes. They are listed here because they stop `make test-all` from
-progressing (see §2).
+stay red until upstream changes. They are listed here because they keep `make test-all` red and
+must not be mistaken for platform defects (see §2).
 
 ### Layer 2 (component tests)
 
