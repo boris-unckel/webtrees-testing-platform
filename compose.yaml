@@ -134,7 +134,6 @@ services:
     image: docker.io/otel/opentelemetry-collector-contrib:0.154.0
     container_name: otel-collector
     ports:
-      - "4317:4317"
       - "4318:4318"
     volumes:
       - ./otel/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro,z

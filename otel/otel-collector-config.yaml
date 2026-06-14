@@ -1,10 +1,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 receivers:
+  # Nur HTTP/protobuf (Port 4318): webtrees-PHP exportiert ueber HTTP, der
+  # gRPC-Receiver (Port 4317) war seit dem Protokollwechsel ungenutzt.
+  # Der collector-interne Export an Jaeger (otlp/jaeger, jaeger:4317) bleibt gRPC.
   otlp:
     protocols:
-      grpc:
-        endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
         cors:
