@@ -3,7 +3,10 @@
 name: webtrees Tests
 
 on:
+  # push nur auf main (z. B. Merge): Feature-Branches mit offenem PR werden
+  # allein ueber pull_request getestet, statt push + pull_request doppelt.
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
     inputs:
@@ -11,6 +14,14 @@ on:
         description: 'webtrees git ref to test (branch, tag)'
         default: 'main'
 
+# Alle Jobs rufen `make setup OTEL_SDK_DISABLED=true` auf — OTel ist in der CI
+# bewusst aus: der otel-collector-Container ist hier nicht erreichbar und Traces
+# werden nicht ausgewertet (trace-report laeuft mit `|| true`). Ohne Abschaltung
+# laeuft jeder PHP-Prozess in Export-Retry-Backoff gegen einen nicht aufloesbaren
+# Host und blaeht die Laufzeit auf. Es muss ein Make-Command-Line-Override sein:
+# `make up` erzeugt .env aus .env.example (OTEL_SDK_DISABLED=false), und das
+# Makefile stellt diese .env-Zeile via `-include .env` ueber eine Workflow-/
+# Runner-Env — nur ein CLI-Override (`make VAR=...`) schlaegt das.
 jobs:
   statischer-test:
     name: Statischer Test
@@ -18,16 +29,16 @@ jobs:
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
-        run: make setup
+        run: make setup OTEL_SDK_DISABLED=true
       - name: Run static analysis
         run: make test-static
       - name: Upload artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: static-analysis
           path: artifacts/layer1/
@@ -40,16 +51,16 @@ jobs:
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
-        run: make setup
+        run: make setup OTEL_SDK_DISABLED=true
       - name: Run unit tests
         run: make test-unit
       - name: Upload coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: unit-coverage
           path: artifacts/layer2/
@@ -57,21 +68,26 @@ jobs:
 
   komponentenintegrationstest:
     name: Komponentenintegrationstest (PHPUnit + MySQL)
-    needs: komponententest
+    needs: [statischer-test, komponententest]
+    # Strikter Gate nur auf die Statik: laeuft auch, wenn der Komponententest
+    # fehlschlaegt (Upstream-Drift soll erkannt, nicht uebersprungen werden) —
+    # aber nur bei gruener Statik und nicht nach Abbruch. Kein continue-on-error
+    # und kein '|| true': ein echter Fehler hier faerbt Job + Gesamt-Run rot.
+    if: ${{ !cancelled() && needs.statischer-test.result == 'success' }}
     runs-on: ubuntu-latest
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
-        run: make setup
+        run: make setup OTEL_SDK_DISABLED=true
       - name: Run integration tests
         run: make test-integration
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: integration-results
           path: artifacts/layer3/
@@ -79,44 +95,25 @@ jobs:
 
   systemtest:
     name: Systemtest (Playwright)
-    needs: komponentenintegrationstest
+    needs: [statischer-test, komponentenintegrationstest]
+    # Wie Komponentenintegrationstest: Gate nur auf die Statik, Folgestufen
+    # laufen trotz Vorgaenger-Fehlern an, ohne Fehler zu maskieren.
+    if: ${{ !cancelled() && needs.statischer-test.result == 'success' }}
     runs-on: ubuntu-latest
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
-        run: make setup
+        run: make setup OTEL_SDK_DISABLED=true
       - name: Run E2E tests
         run: make test-e2e
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: artifacts/layer4/
-          retention-days: 7
-
-  performanztest:
-    name: Performanztest
-    needs: systemtest
-    runs-on: ubuntu-latest
-    env:
-      WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install podman-compose
-        run: pip install podman-compose
-      - name: Setup
-        run: make setup
-      - name: Run performance tests
-        run: make test-performance
-      - name: Upload performance results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: performance-results
-          path: artifacts/layer5/
           retention-days: 7

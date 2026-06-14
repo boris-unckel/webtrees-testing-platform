@@ -155,24 +155,19 @@ mkdir -p "${MEDIA_DIR}"
 chown -R www-data:www-data "${MEDIA_DIR}"
 chmod -R 755 "${MEDIA_DIR}"
 
-# 3b. Privacy-Fixture generieren (Template → privacy-test.ged)
-echo "[3b/4] Privacy-Fixture generieren..."
-PRIVACY_TEMPLATE="${FIXTURES_DIR}/privacy-test-template.ged"
+# 3b. Privacy-Fixture pruefen (NICHT generieren — /fixtures ist read-only gemountet).
+# Die Generierung aus dem Template (privacy-test-template.ged → privacy-test.ged)
+# erfolgt HOST-seitig via scripts/generate-privacy-fixture.sh (Makefile-Target
+# generate-fixtures, Prerequisite von up). Hier nur Existenzpruefung mit Fail-Fast.
+echo "[3b/4] Privacy-Fixture pruefen..."
 PRIVACY_OUTPUT="${FIXTURES_DIR}/privacy-test.ged"
 if [ -f "${PRIVACY_OUTPUT}" ]; then
-    echo "  privacy-test.ged existiert bereits (vom Host generiert)"
-elif [ -f "${PRIVACY_TEMPLATE}" ]; then
-    CURRENT_YEAR=$(date +%Y)
-    content=$(<"${PRIVACY_TEMPLATE}")
-    while [[ "${content}" =~ __YEAR_MINUS_([0-9]+)__ ]]; do
-        offset="${BASH_REMATCH[1]}"
-        replacement=$(( CURRENT_YEAR - offset ))
-        content="${content//__YEAR_MINUS_${offset}__/${replacement}}"
-    done
-    printf '%s\n' "${content}" > "${PRIVACY_OUTPUT}"
-    echo "  privacy-test.ged generiert (Basisjahr: ${CURRENT_YEAR})"
+    echo "  privacy-test.ged vorhanden (host-seitig generiert)"
 else
-    echo "  WARNUNG: ${PRIVACY_TEMPLATE} nicht gefunden, uebersprungen"
+    echo "FEHLER: ${PRIVACY_OUTPUT} fehlt." >&2
+    echo "  /fixtures ist read-only gemountet — die Generierung erfolgt auf dem Host." >&2
+    echo "  Auf dem Host ausfuehren: make generate-fixtures (laeuft automatisch bei make up/setup)." >&2
+    exit 1
 fi
 
 # 4. DB-Migration, Admin-User, GEDCOM-Import — alles in einem PHP-Aufruf

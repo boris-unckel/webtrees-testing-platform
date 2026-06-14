@@ -67,7 +67,7 @@ Artefakte unter `artifacts/layer<N>/`.
 | `MODULE_PATH` | — | Pfad zum Modul-Repo für optionales Modul-Mounting |
 | `MODULE_NAME` | — | Ordnername des Moduls unter `modules_v4/` |
 | `OTEL_SDK_DISABLED` | `false` | `true` deaktiviert PHP-SDK und Boomerang-Injection (Zero Overhead) |
-| `TRIVY_VERSION` | `0.69.3` | Trivy-Image-Version für `make test-static` |
+| `TRIVY_VERSION` | Default im Makefile (`TRIVY_VERSION ?= …`) | Trivy-Image-Version für `make test-static` |
 | `LAYER` | — | Layer-Angabe für `perfschema-extract` (`layer3\|layer4\|layer5`) und `trace-report` (`3\|4\|5`) |
 | `RUN_ID` | — | UUID für manuellen `trace-report` (bei E2E-/Performance-Targets automatisch generiert) |
 

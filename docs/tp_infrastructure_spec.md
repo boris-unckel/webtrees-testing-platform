@@ -268,7 +268,7 @@ Deaktivierung via `OTEL_SDK_DISABLED=true` → Zero Overhead (PHP-SDK-Guard + Bo
 - `open-telemetry/opentelemetry-auto-psr18`
 - `open-telemetry/opentelemetry-auto-psr15`
 
-PHP-Extensions `protobuf` + `grpc` im `Containerfile.webtrees` (via `pecl install`).
+PHP-Extension `protobuf` im `Containerfile.webtrees` (via `pecl install`). Die `grpc`-Extension entfiel mit dem Wechsel auf HTTP/protobuf.
 
 **ENV-Variablen (in `compose.yaml`):**
 ```yaml
@@ -287,8 +287,6 @@ OTEL_LOGS_EXPORTER: "none"
 receivers:
   otlp:
     protocols:
-      grpc:
-        endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
         cors:
@@ -423,7 +421,7 @@ eines spezifischen webtrees-Refs vor einem Versions-Update.
 | `webtrees` | `Containerfile.webtrees` | PHP 8.5 + Apache mod_php + webtrees | 8080:80 | `${WEBTREES_SOURCE}` → `/var/www/html` (ro), Named Vol → `/var/www/html/data/` (rw), `fixtures/` → `/fixtures` (ro) |
 | `mysql` | `docker.io/library/mysql:lts` | Datenbank (MySQL LTS 8.4) | 3306:3306 | Named Vol → `/var/lib/mysql` |
 | `playwright` | `Containerfile.playwright` | Node.js 22 + Chromium (headless) + OTel SDK | — | `layer4-e2e/` + `layer5-performance/` → `/tests` (ro), `artifacts/` → `/artifacts` (rw) |
-| `otel-collector` | `docker.io/otel/opentelemetry-collector-contrib:0.148.0` | OTel Sidecar (OTLP HTTP :4318, gRPC :4317) | 4317:4317, 4318:4318 | `otel/otel-collector-config.yaml` → `/etc/otelcol-contrib/config.yaml` (ro), `artifacts/` → `/artifacts` (rw) |
+| `otel-collector` | `docker.io/otel/opentelemetry-collector-contrib:0.148.0` | OTel Sidecar (OTLP HTTP :4318 inbound; intern gRPC an Jaeger) | 4318:4318 | `otel/otel-collector-config.yaml` → `/etc/otelcol-contrib/config.yaml` (ro), `artifacts/` → `/artifacts` (rw) |
 | `jaeger` | `docker.io/jaegertracing/jaeger:2.16.0` | Trace-Visualisierung | 16686:16686 | — |
 | `adminer` | `docker.io/library/adminer` | DB-Admin (optional, nur Debug) | 8081:8080 | — |
 | `webtrees-security` | `Containerfile.security` | Distribution-Build (ZIP entpackt) + Apache (Profil: security) | 8082:80 | — |

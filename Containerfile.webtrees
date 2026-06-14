@@ -27,8 +27,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zip \
     exif \
     xml \
-    && pecl install pcov protobuf grpc \
-    && docker-php-ext-enable pcov protobuf grpc \
+    && pecl install pcov protobuf \
+    && docker-php-ext-enable pcov protobuf \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # OTel Auto-Instrumentation Extension (separater Layer für Cache-Erhalt)

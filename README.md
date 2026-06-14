@@ -74,7 +74,7 @@ Die Plattform testet bewusst gegen das aktuelle webtrees-`main` (kein Tag-Pin), 
 - **webtrees** — PHP 8.5 + Apache + OTel SDK (Port 8080)
 - **mysql** — MySQL LTS (8.4) (Port 3306)
 - **playwright** — Node.js 22 + Chromium
-- **otel-collector** — OpenTelemetry Sidecar 0.154.0 (OTLP HTTP :4318, gRPC :4317 intern)
+- **otel-collector** — OpenTelemetry Sidecar 0.154.0 (Inbound OTLP HTTP :4318; intern gRPC an Jaeger)
 - **jaeger** — Trace-UI 2.19.0 (Port 16686)
 - **adminer** — DB-Admin, nur Debug-Profil (Port 8081)
 

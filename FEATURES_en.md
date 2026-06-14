@@ -83,7 +83,7 @@ track adds two more via a separate compose profile.
 | `webtrees` | PHP 8.5 + Apache + webtrees + OTel SDK | 8080 |
 | `mysql` | MySQL LTS 8.4 (`utf8mb4_bin`, Performance Schema enabled) | 3306 |
 | `playwright` | Node.js 22 + Chromium (headless) + OTel SDK | — |
-| `otel-collector` | OpenTelemetry collector (OTLP HTTP :4318, gRPC :4317) | 4317, 4318 |
+| `otel-collector` | OpenTelemetry collector (OTLP HTTP :4318 inbound; internal gRPC to Jaeger) | 4318 |
 | `jaeger` | Trace visualisation | 16686 |
 | `adminer` | DB admin (debug profile only) | 8081 |
 | `webtrees-security` | Distribution build (unpacked release ZIP) + Apache (security profile) | 8082 |
