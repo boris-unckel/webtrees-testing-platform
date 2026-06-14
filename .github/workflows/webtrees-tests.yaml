@@ -14,6 +14,14 @@ on:
         description: 'webtrees git ref to test (branch, tag)'
         default: 'main'
 
+# Alle Jobs rufen `make setup OTEL_SDK_DISABLED=true` auf — OTel ist in der CI
+# bewusst aus: der otel-collector-Container ist hier nicht erreichbar und Traces
+# werden nicht ausgewertet (trace-report laeuft mit `|| true`). Ohne Abschaltung
+# laeuft jeder PHP-Prozess in Export-Retry-Backoff gegen einen nicht aufloesbaren
+# Host und blaeht die Laufzeit auf. Es muss ein Make-Command-Line-Override sein:
+# `make up` erzeugt .env aus .env.example (OTEL_SDK_DISABLED=false), und das
+# Makefile stellt diese .env-Zeile via `-include .env` ueber eine Workflow-/
+# Runner-Env — nur ein CLI-Override (`make VAR=...`) schlaegt das.
 jobs:
   statischer-test:
     name: Statischer Test
@@ -25,7 +33,7 @@ jobs:
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
-        run: make setup
+        run: make setup OTEL_SDK_DISABLED=true
       - name: Run static analysis
         run: make test-static
       - name: Upload artifacts
@@ -47,7 +55,7 @@ jobs:
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
-        run: make setup
+        run: make setup OTEL_SDK_DISABLED=true
       - name: Run unit tests
         run: make test-unit
       - name: Upload coverage
@@ -74,7 +82,7 @@ jobs:
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
-        run: make setup
+        run: make setup OTEL_SDK_DISABLED=true
       - name: Run integration tests
         run: make test-integration
       - name: Upload artifacts
@@ -99,7 +107,7 @@ jobs:
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
-        run: make setup
+        run: make setup OTEL_SDK_DISABLED=true
       - name: Run E2E tests
         run: make test-e2e
       - name: Upload Playwright report
