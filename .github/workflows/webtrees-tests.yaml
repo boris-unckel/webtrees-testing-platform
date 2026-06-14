@@ -3,7 +3,10 @@
 name: webtrees Tests
 
 on:
+  # push nur auf main (z. B. Merge): Feature-Branches mit offenem PR werden
+  # allein ueber pull_request getestet, statt push + pull_request doppelt.
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
     inputs:
