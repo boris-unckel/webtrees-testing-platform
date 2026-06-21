@@ -29,7 +29,7 @@ jobs:
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
@@ -51,7 +51,7 @@ jobs:
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
@@ -78,7 +78,7 @@ jobs:
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
@@ -103,7 +103,7 @@ jobs:
     env:
       WEBTREES_REF: ${{ github.event.inputs.webtrees_ref || 'main' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Install podman-compose
         run: pip install podman-compose
       - name: Setup
